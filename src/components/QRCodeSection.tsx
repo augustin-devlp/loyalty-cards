@@ -9,7 +9,8 @@ export default function QRCodeSection({ cardId }: { cardId: string }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const url = `${window.location.origin}/join/${cardId}`;
+    const base = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+    const url = `${base}/join/${cardId}`;
     setJoinUrl(url);
     QRCode.toDataURL(url, {
       width: 320,
@@ -19,7 +20,8 @@ export default function QRCodeSection({ cardId }: { cardId: string }) {
   }, [cardId]);
 
   const handleDownload = useCallback(async () => {
-    const url = `${window.location.origin}/join/${cardId}`;
+    const base = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+    const url = `${base}/join/${cardId}`;
     const dataUrl = await QRCode.toDataURL(url, {
       width: 1200,
       margin: 3,
