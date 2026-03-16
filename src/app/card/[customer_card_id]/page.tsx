@@ -38,7 +38,7 @@ export default async function CustomerCardPage({
 
   if (!cc) notFound();
 
-  const card = cc.loyalty_cards as {
+  const card = cc.loyalty_cards as unknown as {
     card_name: string;
     card_type: "stamp" | "points";
     stamps_required: number | null;
@@ -50,7 +50,7 @@ export default async function CustomerCardPage({
     businesses: { business_name: string } | null;
   };
 
-  const customer = cc.customers as {
+  const customer = cc.customers as unknown as {
     first_name: string;
     last_name: string;
   };
