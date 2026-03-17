@@ -3,11 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
-// ─── Scroll animation hook ───────────────────────────────────────────────────
+// ─── Scroll animation hook ────────────────────────────────────────────────────
 function useFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -18,7 +17,6 @@ function useFadeIn() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
   return { ref, visible };
 }
 
@@ -35,26 +33,11 @@ function FadeIn({ children, className = "", delay = 0 }: { children: React.React
   );
 }
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
-function IconQR() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-7 h-7">
-      <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3" />
-    </svg>
-  );
-}
+// ─── Icons ────────────────────────────────────────────────────────────────────
 function IconStar() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-function IconCheck() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-indigo-600 shrink-0">
-      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
     </svg>
   );
 }
@@ -70,35 +53,25 @@ function IconChevron({ open }: { open: boolean }) {
 function PhoneIllustration() {
   return (
     <div className="relative flex justify-center">
-      {/* Glow */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-64 h-64 bg-indigo-400 rounded-full opacity-20 blur-3xl" />
       </div>
-      {/* Phone */}
       <div className="relative w-56 bg-gray-900 rounded-[2.5rem] shadow-2xl border-4 border-gray-800 overflow-hidden">
-        {/* Notch */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-20 h-5 bg-gray-800 rounded-full" />
         </div>
-        {/* Screen */}
         <div className="bg-gray-50 mx-2 rounded-2xl mb-2 overflow-hidden">
-          {/* Status bar */}
           <div className="bg-indigo-600 px-4 py-3 text-white">
             <p className="text-xs font-bold">Le Café du Coin</p>
             <p className="text-[10px] opacity-75">Carte Fidélité</p>
           </div>
-          {/* Card content */}
           <div className="p-3 space-y-2">
             <div className="bg-white rounded-xl p-3 shadow-sm">
               <p className="text-[10px] text-gray-500 mb-2 font-medium">Bonjour, Marie !</p>
               <p className="text-[9px] text-gray-400 mb-2">☕ 1 café offert tous les 10</p>
-              {/* Stamp grid */}
               <div className="flex flex-wrap gap-1 mb-2">
                 {Array.from({ length: 10 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-5 h-5 rounded-full border flex items-center justify-center text-[8px] font-bold ${i < 7 ? "bg-indigo-600 border-indigo-600 text-white" : "border-gray-300 text-gray-300"}`}
-                  >
+                  <div key={i} className={`w-5 h-5 rounded-full border flex items-center justify-center text-[8px] font-bold ${i < 7 ? "bg-indigo-600 border-indigo-600 text-white" : "border-gray-300 text-gray-300"}`}>
                     {i < 7 ? "✓" : ""}
                   </div>
                 ))}
@@ -108,12 +81,10 @@ function PhoneIllustration() {
               </div>
               <p className="text-[8px] text-gray-400 mt-1">3 cafés pour votre récompense !</p>
             </div>
-            {/* QR */}
             <div className="bg-white rounded-xl p-3 shadow-sm text-center">
               <p className="text-[9px] text-gray-500 mb-1 font-medium">Mon QR code</p>
               <div className="inline-flex p-1 border border-gray-200 rounded-lg">
                 <svg viewBox="0 0 40 40" className="w-12 h-12" fill="none">
-                  {/* Simplified QR pattern */}
                   <rect x="2" y="2" width="12" height="12" rx="1" fill="#1f2937" />
                   <rect x="5" y="5" width="6" height="6" fill="white" />
                   <rect x="7" y="7" width="2" height="2" fill="#1f2937" />
@@ -153,7 +124,6 @@ function PhoneIllustration() {
             </div>
           </div>
         </div>
-        {/* Home indicator */}
         <div className="flex justify-center pb-3">
           <div className="w-24 h-1 bg-gray-600 rounded-full" />
         </div>
@@ -163,6 +133,17 @@ function PhoneIllustration() {
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
+const COMMERCE_TYPES = [
+  { icon: "🥖", label: "Boulangeries" },
+  { icon: "☕", label: "Cafés" },
+  { icon: "🍽️", label: "Restaurants" },
+  { icon: "✂️", label: "Salons de coiffure" },
+  { icon: "👗", label: "Boutiques" },
+  { icon: "💆", label: "Instituts de beauté" },
+  { icon: "🍕", label: "Pizzerias" },
+  { icon: "🌿", label: "Épiceries fines" },
+];
+
 const FEATURES = [
   { icon: "🎨", title: "Carte personnalisée", desc: "Logo, couleurs, nom de votre commerce. Votre identité, votre carte." },
   { icon: "📱", title: "QR code prêt à imprimer", desc: "Générez et téléchargez votre QR code en un clic. Prêt en 30 secondes." },
@@ -177,21 +158,18 @@ const TESTIMONIALS = [
     name: "Sophie L.",
     role: "Boulangerie Artisan Pain",
     avatar: "🥖",
-    rating: 5,
     text: "Avant, mes clients perdaient constamment leurs cartes papier. Avec Stampify, tout est dans leur téléphone. J'ai vu une augmentation de 30% de mes clients réguliers en 2 mois.",
   },
   {
     name: "Marc T.",
     role: "Café Le Grain de Sel",
     avatar: "☕",
-    rating: 5,
     text: "La mise en place a pris exactement 5 minutes comme promis. Mes clients adorent scanner le QR code à la caisse. C'est devenu un rituel agréable.",
   },
   {
     name: "Amina K.",
     role: "Salon Éclat & Beauté",
     avatar: "✂️",
-    rating: 5,
     text: "Le tableau de bord me permet de voir en un coup d'œil qui sont mes clients les plus fidèles. Je peux même personnaliser les offres. Excellent investissement.",
   },
 ];
@@ -244,39 +222,21 @@ const PRO_FR = [
 
 // ─── Pricing card ─────────────────────────────────────────────────────────────
 function PricingCard({
-  name,
-  priceEur,
-  priceCHF,
-  country,
-  features,
-  popular,
-  cta,
+  name, priceEur, priceCHF, isCH, features, popular, cta,
 }: {
-  name: string;
-  priceEur: number;
-  priceCHF: number;
-  country: "fr" | "ch";
-  features: string[];
-  popular?: boolean;
-  cta: string;
+  name: string; priceEur: number; priceCHF: number; isCH: boolean;
+  features: string[]; popular?: boolean; cta: string;
 }) {
-  const price = country === "fr" ? priceEur : priceCHF;
-  const currency = country === "fr" ? "€" : " CHF";
+  const price = isCH ? priceCHF : priceEur;
+  const currency = isCH ? " CHF" : "€";
 
   return (
-    <div
-      className={`relative flex flex-col rounded-3xl p-8 shadow-xl ${
-        popular
-          ? "bg-indigo-600 text-white ring-4 ring-indigo-400 ring-offset-2"
-          : "bg-white text-gray-900 border border-gray-200"
-      }`}
-    >
+    <div className={`relative flex flex-col rounded-3xl p-8 shadow-xl ${popular ? "bg-indigo-600 text-white ring-4 ring-indigo-400 ring-offset-2" : "bg-white text-gray-900 border border-gray-200"}`}>
       {popular && (
         <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-400 to-pink-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
           ⚡ Populaire
         </span>
       )}
-
       <div className="mb-6">
         <h3 className={`text-xl font-bold mb-1 ${popular ? "text-white" : "text-gray-900"}`}>{name}</h3>
         <div className="flex items-end gap-1">
@@ -285,7 +245,6 @@ function PricingCard({
         </div>
         <p className={`text-sm mt-1 ${popular ? "text-indigo-200" : "text-gray-500"}`}>Sans engagement · Résiliable à tout moment</p>
       </div>
-
       <ul className="space-y-3 flex-1 mb-8">
         {features.map((f, i) => (
           <li key={i} className="flex items-start gap-2">
@@ -296,26 +255,36 @@ function PricingCard({
           </li>
         ))}
       </ul>
-
-      <Link
-        href="/signup"
-        className={`block w-full text-center py-3.5 rounded-2xl font-bold text-sm transition-all ${
-          popular
-            ? "bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg"
-            : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"
-        }`}
-      >
+      <Link href="/signup" className={`block w-full text-center py-3.5 rounded-2xl font-bold text-sm transition-all ${popular ? "bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg" : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"}`}>
         {cta}
       </Link>
     </div>
   );
 }
 
+// ─── Auto-detect Swiss locale ─────────────────────────────────────────────────
+function detectSwitzerland(): boolean {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const lang = navigator.language ?? "";
+    const swissTimezones = ["Europe/Zurich", "Europe/Busingen"];
+    const swissLocales = ["fr-CH", "de-CH", "it-CH", "rm-CH"];
+    return swissTimezones.includes(tz) || swissLocales.includes(lang);
+  } catch {
+    return false;
+  }
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [country, setCountry] = useState<"fr" | "ch">("fr");
+  const [isCH, setIsCH] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Detect Switzerland on mount (client-side only)
+  useEffect(() => {
+    setIsCH(detectSwitzerland());
+  }, []);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -328,7 +297,6 @@ export default function LandingPage() {
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
           <button onClick={() => scrollTo("hero")} className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-black text-sm">S</span>
@@ -336,39 +304,27 @@ export default function LandingPage() {
             <span className="font-black text-xl text-gray-900">Stampify</span>
           </button>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <button onClick={() => scrollTo("features")} className="hover:text-indigo-600 transition-colors">Fonctionnalités</button>
             <button onClick={() => scrollTo("pricing")} className="hover:text-indigo-600 transition-colors">Tarifs</button>
             <button onClick={() => scrollTo("faq")} className="hover:text-indigo-600 transition-colors">FAQ</button>
           </nav>
 
-          {/* CTA */}
           <div className="flex items-center gap-3">
             <Link href="/login" className="hidden sm:block text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors">
               Se connecter
             </Link>
-            <Link
-              href="/signup"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors shadow-sm"
-            >
+            <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors shadow-sm">
               Commencer
             </Link>
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-1.5 rounded-lg hover:bg-gray-100"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <button className="md:hidden p-1.5 rounded-lg hover:bg-gray-100" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-                {mobileMenuOpen
-                  ? <path d="M6 18L18 6M6 6l12 12" />
-                  : <path d="M4 6h16M4 12h16M4 18h16" />}
+                {mobileMenuOpen ? <path d="M6 18L18 6M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
               </svg>
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3">
             <button onClick={() => scrollTo("features")} className="block w-full text-left text-sm font-medium text-gray-700 py-2">Fonctionnalités</button>
@@ -381,12 +337,10 @@ export default function LandingPage() {
 
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section id="hero" className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 pt-16 pb-20 sm:pt-24 sm:pb-28">
-        {/* Background decoration */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-100 rounded-full opacity-30 blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-100 rounded-full opacity-30 blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: text */}
           <div>
             <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full mb-6">
               <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
@@ -395,9 +349,7 @@ export default function LandingPage() {
 
             <h1 className="text-4xl sm:text-5xl font-black text-gray-900 leading-tight mb-5">
               Transformez vos cartes de fidélité{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                papier
-              </span>{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">papier</span>{" "}
               en cartes digitales
             </h1>
 
@@ -411,7 +363,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-200 hover:-translate-y-0.5"
               >
-                Commencer gratuitement
+                Commencer maintenant
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                   <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
                 </svg>
@@ -424,18 +376,35 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Trust badges */}
             <div className="flex flex-wrap items-center gap-4 mt-8 text-sm text-gray-500">
-              <span className="flex items-center gap-1.5">✅ Sans engagement</span>
-              <span className="flex items-center gap-1.5">✅ Aucune app à installer</span>
-              <span className="flex items-center gap-1.5">✅ Support en français</span>
+              <span>✅ Sans engagement</span>
+              <span>✅ Aucune app à installer</span>
+              <span>✅ Support en français</span>
             </div>
           </div>
 
-          {/* Right: phone */}
           <div className="flex justify-center lg:justify-end">
             <PhoneIllustration />
           </div>
+        </div>
+      </section>
+
+      {/* ── SOCIAL PROOF / COMMERCE TYPES ──────────────────────────────────── */}
+      <section className="py-12 bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <FadeIn>
+            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
+              Conçu pour tous les commerces de proximité
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              {COMMERCE_TYPES.map(({ icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-2 px-4 py-3 rounded-2xl bg-gray-50 hover:bg-indigo-50 hover:border-indigo-100 border border-gray-100 transition-colors min-w-[90px]">
+                  <span className="text-2xl">{icon}</span>
+                  <span className="text-xs font-medium text-gray-600 text-center leading-tight">{label}</span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -461,39 +430,21 @@ export default function LandingPage() {
       <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
-              Comment ça marche ?
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Comment ça marche ?</h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
               Trois étapes simples pour transformer la fidélisation de votre commerce.
             </p>
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connector line */}
             <div className="hidden md:block absolute top-12 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-0.5 bg-gradient-to-r from-indigo-200 via-indigo-400 to-indigo-200" />
 
             {[
-              {
-                step: "01",
-                icon: "🎨",
-                title: "Créez votre carte",
-                desc: "Personnalisez votre carte de fidélité avec votre logo et vos couleurs. Choisissez entre tampons ou points selon votre activité.",
-              },
-              {
-                step: "02",
-                icon: "📲",
-                title: "Affichez le QR code",
-                desc: "Imprimez le QR code et affichez-le près de votre caisse. Vos clients le scannent en 3 secondes avec leur smartphone.",
-              },
-              {
-                step: "03",
-                icon: "🏆",
-                title: "Fidélisez vos clients",
-                desc: "Scannez les QR codes clients pour ajouter des tampons. Suivez tout depuis votre tableau de bord en temps réel.",
-              },
-            ].map(({ step, icon, title, desc }, i) => (
-              <FadeIn key={step} delay={i * 150} className="flex flex-col items-center text-center">
+              { icon: "🎨", title: "Créez votre carte", desc: "Personnalisez votre carte de fidélité avec votre logo et vos couleurs. Choisissez entre tampons ou points selon votre activité." },
+              { icon: "📲", title: "Affichez le QR code", desc: "Imprimez le QR code et affichez-le près de votre caisse. Vos clients le scannent en 3 secondes avec leur smartphone." },
+              { icon: "🏆", title: "Fidélisez vos clients", desc: "Scannez les QR codes clients pour ajouter des tampons. Suivez tout depuis votre tableau de bord en temps réel." },
+            ].map(({ icon, title, desc }, i) => (
+              <FadeIn key={title} delay={i * 150} className="flex flex-col items-center text-center">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-indigo-100">
                     {icon}
@@ -514,9 +465,7 @@ export default function LandingPage() {
       <section id="features" className="py-20 sm:py-28 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
-              Tout ce dont vous avez besoin
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Tout ce dont vous avez besoin</h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
               Des outils pensés pour les commerçants, simples à utiliser, puissants par nature.
             </p>
@@ -540,12 +489,8 @@ export default function LandingPage() {
       <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
-              Ils font confiance à Stampify
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Des commerçants qui ont transformé leur relation client.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Ils font confiance à Stampify</h2>
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">Des commerçants qui ont transformé leur relation client.</p>
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -553,17 +498,11 @@ export default function LandingPage() {
               <FadeIn key={name} delay={i * 120}>
                 <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
                   <div className="flex gap-1 mb-4">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <IconStar key={j} />
-                    ))}
+                    {Array.from({ length: 5 }).map((_, j) => <IconStar key={j} />)}
                   </div>
-                  <p className="text-gray-700 text-sm leading-relaxed flex-1 mb-6 italic">
-                    &ldquo;{text}&rdquo;
-                  </p>
+                  <p className="text-gray-700 text-sm leading-relaxed flex-1 mb-6 italic">&ldquo;{text}&rdquo;</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-xl">
-                      {avatar}
-                    </div>
+                    <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-xl">{avatar}</div>
                     <div>
                       <p className="font-bold text-gray-900 text-sm">{name}</p>
                       <p className="text-xs text-gray-500">{role}</p>
@@ -583,61 +522,24 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
               Des tarifs simples et transparents
             </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto mb-6">
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">
               Sans engagement, sans surprise. Choisissez la formule qui correspond à votre commerce.
             </p>
-
-            {/* Country toggle */}
-            <div className="inline-flex items-center bg-gray-100 rounded-2xl p-1 gap-1">
-              <button
-                onClick={() => setCountry("fr")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  country === "fr" ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                🇫🇷 France (€)
-              </button>
-              <button
-                onClick={() => setCountry("ch")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  country === "ch" ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                🇨🇭 Suisse (CHF)
-              </button>
-            </div>
           </FadeIn>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
             <FadeIn delay={0}>
-              <PricingCard
-                name="Essentiel"
-                priceEur={19}
-                priceCHF={29}
-                country={country}
-                features={ESSENTIALS_FR}
-                cta="Commencer →"
-              />
+              <PricingCard name="Essentiel" priceEur={19} priceCHF={29} isCH={isCH} features={ESSENTIALS_FR} cta="Commencer →" />
             </FadeIn>
             <FadeIn delay={100}>
-              <PricingCard
-                name="Pro"
-                priceEur={49}
-                priceCHF={79}
-                country={country}
-                features={PRO_FR}
-                popular
-                cta="Commencer →"
-              />
+              <PricingCard name="Pro" priceEur={49} priceCHF={79} isCH={isCH} features={PRO_FR} popular cta="Commencer →" />
             </FadeIn>
           </div>
 
           <FadeIn className="text-center mt-10">
             <p className="text-sm text-gray-500">
               Vous avez plusieurs établissements ou des besoins spécifiques ?{" "}
-              <a href="mailto:contact@stampify.fr" className="text-indigo-600 font-semibold hover:underline">
-                Contactez-nous
-              </a>
+              <a href="mailto:contact@stampify.fr" className="text-indigo-600 font-semibold hover:underline">Contactez-nous</a>
             </p>
           </FadeIn>
         </div>
@@ -647,12 +549,8 @@ export default function LandingPage() {
       <section id="faq" className="py-20 sm:py-28 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <FadeIn className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
-              Questions fréquentes
-            </h2>
-            <p className="text-lg text-gray-500">
-              Tout ce que vous voulez savoir avant de commencer.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Questions fréquentes</h2>
+            <p className="text-lg text-gray-500">Tout ce que vous voulez savoir avant de commencer.</p>
           </FadeIn>
 
           <div className="space-y-3">
@@ -681,9 +579,7 @@ export default function LandingPage() {
       {/* ── CTA BAND ───────────────────────────────────────────────────────── */}
       <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-700">
         <FadeIn className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-            Prêt à fidéliser vos clients ?
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Prêt à fidéliser vos clients ?</h2>
           <p className="text-indigo-200 text-lg mb-8 max-w-xl mx-auto">
             Rejoignez les commerçants qui ont choisi Stampify. Mise en place en 5 minutes, résultats dès la première semaine.
           </p>
@@ -691,7 +587,7 @@ export default function LandingPage() {
             href="/signup"
             className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-indigo-700 font-black px-8 py-4 rounded-2xl transition-all shadow-xl hover:-translate-y-0.5 text-lg"
           >
-            Commencer gratuitement
+            Commencer maintenant
             <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
               <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
             </svg>
@@ -702,8 +598,8 @@ export default function LandingPage() {
       {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
       <footer className="bg-gray-900 text-gray-400 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-10">
-            {/* Logo */}
+          <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
+            {/* Logo + tagline */}
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
@@ -711,18 +607,29 @@ export default function LandingPage() {
                 </div>
                 <span className="font-black text-xl text-white">Stampify</span>
               </div>
-              <p className="text-sm text-gray-500 max-w-xs">
-                La fidélisation digitale pour les commerces de proximité.
-              </p>
+              <p className="text-sm text-gray-500 max-w-xs">La fidélisation digitale pour les commerces de proximité.</p>
             </div>
 
-            {/* Links */}
-            <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <Link href="/login" className="hover:text-white transition-colors">Connexion</Link>
-              <Link href="/signup" className="hover:text-white transition-colors">Inscription</Link>
-              <button onClick={() => scrollTo("pricing")} className="hover:text-white transition-colors">Tarifs</button>
-              <a href="mailto:contact@stampify.fr" className="hover:text-white transition-colors">Contact</a>
-            </nav>
+            {/* Links columns */}
+            <div className="flex flex-wrap gap-x-12 gap-y-6 text-sm">
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Produit</span>
+                <Link href="/login" className="hover:text-white transition-colors">Connexion</Link>
+                <Link href="/signup" className="hover:text-white transition-colors">Inscription</Link>
+                <button onClick={() => scrollTo("pricing")} className="text-left hover:text-white transition-colors">Tarifs</button>
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Support</span>
+                <a href="mailto:contact@stampify.fr" className="hover:text-white transition-colors">Contact</a>
+                <button onClick={() => scrollTo("faq")} className="text-left hover:text-white transition-colors">FAQ</button>
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Légal</span>
+                <Link href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
+                <Link href="/politique-de-confidentialite" className="hover:text-white transition-colors">Politique de confidentialité</Link>
+                <Link href="/conditions-utilisation" className="hover:text-white transition-colors">Conditions d&apos;utilisation</Link>
+              </div>
+            </div>
           </div>
 
           <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-600">
