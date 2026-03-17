@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAnonClient } from "@/lib/supabase/anon";
 import JoinForm from "./JoinForm";
 
 export default async function JoinPage({
@@ -8,7 +8,7 @@ export default async function JoinPage({
   params: Promise<{ card_id: string }>;
 }) {
   const { card_id } = await params;
-  const supabase = await createClient();
+  const supabase = createAnonClient();
 
   const { data: card } = await supabase
     .from("loyalty_cards")

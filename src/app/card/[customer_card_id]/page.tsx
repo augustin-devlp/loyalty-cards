@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAnonClient } from "@/lib/supabase/anon";
 import CustomerQRCode from "@/components/CustomerQRCode";
 
 export default async function CustomerCardPage({
@@ -8,7 +8,7 @@ export default async function CustomerCardPage({
   params: Promise<{ customer_card_id: string }>;
 }) {
   const { customer_card_id } = await params;
-  const supabase = await createClient();
+  const supabase = createAnonClient();
 
   const { data: cc } = await supabase
     .from("customer_cards")
