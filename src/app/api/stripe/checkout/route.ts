@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://loyalty-cards-rho.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.stampify.ch";
 
   const session = await getStripe().checkout.sessions.create({
     customer: customerId,
