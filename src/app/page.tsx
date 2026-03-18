@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { detectCountry } from "@/lib/detectCountry";
 
 // ─── Scroll animation hook ────────────────────────────────────────────────────
 function useFadeIn() {
@@ -262,18 +263,6 @@ function PricingCard({
   );
 }
 
-// ─── Auto-detect Swiss locale ─────────────────────────────────────────────────
-function detectSwitzerland(): boolean {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const lang = navigator.language ?? "";
-    const swissTimezones = ["Europe/Zurich", "Europe/Busingen"];
-    const swissLocales = ["fr-CH", "de-CH", "it-CH", "rm-CH"];
-    return swissTimezones.includes(tz) || swissLocales.includes(lang);
-  } catch {
-    return false;
-  }
-}
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function LandingPage() {
@@ -281,9 +270,8 @@ export default function LandingPage() {
   const [isCH, setIsCH] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Detect Switzerland on mount (client-side only)
   useEffect(() => {
-    setIsCH(detectSwitzerland());
+    setIsCH(detectCountry() === "CH");
   }, []);
 
   const scrollTo = (id: string) => {

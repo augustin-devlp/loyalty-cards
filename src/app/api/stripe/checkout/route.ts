@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
-  const { plan } = await req.json() as { plan: "essential" | "pro" };
+  const body = await req.json() as { plan: "essential" | "pro"; country?: string };
+  const { plan } = body;
   if (!plan || !["essential", "pro"].includes(plan)) {
     return NextResponse.json({ error: "Plan invalide" }, { status: 400 });
   }
@@ -31,7 +32,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Commerce introuvable" }, { status: 404 });
   }
 
-  const country = (business.country ?? "FR") as "FR" | "CH";
+  const country = (
+    (body.country === "CH" || body.country === "FR") ? body.country : (business.country ?? "FR")
+  ) as "FR" | "CH";
   const planKey = getPlanKey(plan, country);
   const lookupKey = PRICE_LOOKUP_KEYS[planKey]; // "stampify_essential_fr" etc.
 

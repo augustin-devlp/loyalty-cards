@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { detectCountry } from "@/lib/detectCountry";
 
 const PLANS = {
   essential: {
@@ -47,24 +48,26 @@ function SubscribeContent() {
   const searchParams = useSearchParams();
   const canceled = searchParams.get("canceled") === "1";
 
-  const [country, setCountry] = useState<"FR" | "CH">("FR");
+  const [country, setCountry] = useState<"FR" | "CH">(() =>
+    typeof window !== "undefined" ? detectCountry() : "FR"
+  );
   const [loading, setLoading] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
+    setCountry(detectCountry());
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { router.push("/login"); return; }
       setEmail(user.email ?? "");
       const { data: biz } = await supabase
         .from("businesses")
-        .select("country, subscription_status")
+        .select("subscription_status")
         .eq("id", user.id)
         .single();
       if (!biz) { router.push("/login"); return; }
       if (biz.subscription_status === "active") { router.push("/dashboard"); return; }
-      if (biz.country === "CH") setCountry("CH");
     });
   }, [router]);
 
@@ -75,7 +78,7 @@ function SubscribeContent() {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, country }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) {
