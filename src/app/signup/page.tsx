@@ -61,7 +61,7 @@ export default function SignupPage() {
       }
     }
 
-    router.push("/dashboard");
+    router.push("/subscribe");
     router.refresh();
   };
 
