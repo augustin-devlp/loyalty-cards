@@ -1,8 +1,18 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2026-02-25.clover",
+    });
+  }
+  return _stripe;
+}
 
 // Lookup keys for Stripe prices — created once by /api/stripe/setup
 export const PRICE_LOOKUP_KEYS = {
@@ -23,7 +33,7 @@ export function getPlanKey(
 
 /** Resolve a Stripe Price ID from its lookup key (throws if not found) */
 export async function getPriceByLookupKey(lookupKey: string): Promise<string> {
-  const prices = await stripe.prices.list({
+  const prices = await getStripe().prices.list({
     lookup_keys: [lookupKey],
     active: true,
     limit: 1,

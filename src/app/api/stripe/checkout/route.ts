@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { stripe, getPlanKey, getPriceByLookupKey } from "@/lib/stripe";
+import { getStripe, getPlanKey, getPriceByLookupKey } from "@/lib/stripe";
 
 /**
  * POST /api/stripe/checkout
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   // Get or create Stripe customer
   let customerId: string = business.stripe_customer_id ?? "";
   if (!customerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       email: business.email ?? user.email,
       name: business.business_name,
       metadata: { supabase_user_id: user.id },
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://loyalty-cards-rho.vercel.app";
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     payment_method_types: ["card"],
     line_items: [{ price: priceId, quantity: 1 }],

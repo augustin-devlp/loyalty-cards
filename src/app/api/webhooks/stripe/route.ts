@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
 
 // Use anon client — updates go through SECURITY DEFINER functions
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
   let event: import("stripe").Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Invalid signature";
     console.error("Webhook signature verification failed:", msg);

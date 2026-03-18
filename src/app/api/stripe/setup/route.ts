@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { stripe, PRICE_LOOKUP_KEYS } from "@/lib/stripe";
+import { getStripe, PRICE_LOOKUP_KEYS } from "@/lib/stripe";
 
 /**
  * POST /api/stripe/setup
@@ -22,7 +22,7 @@ export async function POST() {
 
   for (const plan of plans) {
     // Check if price already exists for this lookup key
-    const existing = await stripe.prices.list({
+    const existing = await getStripe().prices.list({
       lookup_keys: [plan.key],
       active: true,
       limit: 1,
@@ -34,7 +34,7 @@ export async function POST() {
     }
 
     // Create product + price
-    const price = await stripe.prices.create({
+    const price = await getStripe().prices.create({
       currency: plan.currency,
       unit_amount: plan.amount,
       recurring: { interval: "month" },
