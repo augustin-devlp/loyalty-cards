@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getStripe, getPlanKey, getPriceByLookupKey } from "@/lib/stripe";
+import { getStripe, getPlanKey, getPriceByLookupKey, PRICE_LOOKUP_KEYS } from "@/lib/stripe";
 
 /**
  * POST /api/stripe/checkout
@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
   }
 
   const country = (business.country ?? "FR") as "FR" | "CH";
-  const lookupKey = getPlanKey(plan, country);
+  const planKey = getPlanKey(plan, country);
+  const lookupKey = PRICE_LOOKUP_KEYS[planKey]; // "stampify_essential_fr" etc.
 
   // Get or create Stripe customer
   let customerId: string = business.stripe_customer_id ?? "";
@@ -74,12 +75,12 @@ export async function POST(req: NextRequest) {
     client_reference_id: user.id,
     metadata: {
       supabase_user_id: user.id,
-      plan: lookupKey,
+      plan: planKey,
     },
     subscription_data: {
       metadata: {
         supabase_user_id: user.id,
-        plan: lookupKey,
+        plan: planKey,
       },
     },
     allow_promotion_codes: true,
