@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import LogoutButton from "./LogoutButton";
 
-const links = [
+const OWNER_LINKS = [
   {
     href: "/dashboard/scan",
     label: "Scanner",
@@ -24,6 +26,18 @@ const links = [
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
         <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
+      </svg>
+    ),
+  },
+  {
+    href: "/dashboard/team",
+    label: "Équipe",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
   },
@@ -51,8 +65,33 @@ const links = [
   },
 ];
 
+const EMPLOYEE_LINKS = [
+  {
+    href: "/dashboard/scan",
+    label: "Scanner",
+    icon: OWNER_LINKS[0].icon,
+  },
+];
+
 export default function DashboardNav() {
   const pathname = usePathname();
+  const [isEmployee, setIsEmployee] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("employees")
+        .select("id")
+        .eq("auth_user_id", user.id)
+        .eq("invite_accepted", true)
+        .maybeSingle();
+      setIsEmployee(!!data);
+    });
+  }, []);
+
+  const links = isEmployee ? EMPLOYEE_LINKS : OWNER_LINKS;
 
   return (
     <header
