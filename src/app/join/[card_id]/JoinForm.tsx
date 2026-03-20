@@ -15,6 +15,7 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
           first_name: firstName.trim(),
           last_name: lastName.trim(),
           email: email.toLowerCase().trim(),
+          phone: phone.trim() || null,
         })
         .select("id")
         .single();
@@ -82,6 +84,13 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
       setLoading(false);
       return;
     }
+
+    // Send welcome SMS (fire-and-forget — does not block navigation)
+    fetch("/api/sms/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_card_id: newCard.id }),
+    }).catch(() => {/* silently ignore SMS errors */});
 
     router.push(`/card/${newCard.id}`);
   };
@@ -127,6 +136,19 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="marie@exemple.fr"
+          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Téléphone <span className="text-gray-400 font-normal">(optionnel — pour les notifications SMS)</span>
+        </label>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+33 6 12 34 56 78"
           className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>

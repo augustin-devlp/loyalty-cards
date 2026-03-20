@@ -84,6 +84,14 @@ export default function ScanPage() {
     }
     await supabase.from("transactions").insert(txRows);
 
+    if (reached) {
+      fetch("/api/sms/reward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_card_id: customerCard.id }),
+      }).catch(() => {/* silently ignore SMS errors */});
+    }
+
     setRewardReached(reached);
     setPhase("success");
   };
@@ -114,6 +122,14 @@ export default function ScanPage() {
       txRows.push({ customer_card_id: customerCard.id, type: "reward_claimed", value: 1 });
     }
     await supabase.from("transactions").insert(txRows);
+
+    if (reached) {
+      fetch("/api/sms/reward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_card_id: customerCard.id }),
+      }).catch(() => {/* silently ignore SMS errors */});
+    }
 
     setRewardReached(reached);
     setPhase("success");
