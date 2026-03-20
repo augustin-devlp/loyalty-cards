@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const QrScanner = dynamic(() => import("./QrScanner"), { ssr: false });
 
-type Phase = "scanning" | "loading" | "scanned" | "processing" | "success";
+type Phase = "scanning" | "loading" | "scanned" | "processing" | "success" | "error";
 
 interface CustomerCard {
   id: string;
@@ -15,6 +15,7 @@ interface CustomerCard {
   rewards_claimed: number;
   customers: { first_name: string; last_name: string };
   loyalty_cards: {
+    id: string;
     card_name: string;
     card_type: "stamp" | "points";
     stamps_required: number | null;
@@ -25,12 +26,21 @@ interface CustomerCard {
   };
 }
 
+interface ActivePromo {
+  id: string;
+  title: string;
+  multiplier: number;
+}
+
 export default function ScanPage() {
   const [phase, setPhase] = useState<Phase>("scanning");
   const [customerCard, setCustomerCard] = useState<CustomerCard | null>(null);
   const [pointsToAdd, setPointsToAdd] = useState(1);
   const [rewardReached, setRewardReached] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activePromo, setActivePromo] = useState<ActivePromo | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [stampsAdded, setStampsAdded] = useState(1);
 
   const handleScan = useCallback(async (qrValue: string) => {
     setPhase("loading");
@@ -42,7 +52,7 @@ export default function ScanPage() {
       .select(
         `id, current_stamps, current_points, rewards_claimed,
          customers (first_name, last_name),
-         loyalty_cards (card_name, card_type, stamps_required, reward_threshold, reward_description, primary_color, text_color)`
+         loyalty_cards (id, card_name, card_type, stamps_required, reward_threshold, reward_description, primary_color, text_color)`
       )
       .eq("qr_code_value", qrValue)
       .single();
@@ -53,7 +63,25 @@ export default function ScanPage() {
       return;
     }
 
-    setCustomerCard(data as unknown as CustomerCard);
+    const cc = data as unknown as CustomerCard;
+    setCustomerCard(cc);
+
+    // Check for active promotion on this card
+    const cardId = (cc.loyalty_cards as unknown as { id?: string }).id;
+    if (cardId) {
+      const { data: promoData } = await supabase
+        .from("promotions")
+        .select("id, title, multiplier")
+        .eq("card_id", cardId)
+        .eq("is_active", true)
+        .lte("start_date", new Date().toISOString())
+        .gte("end_date", new Date().toISOString())
+        .maybeSingle();
+      setActivePromo(promoData as ActivePromo | null);
+    } else {
+      setActivePromo(null);
+    }
+
     setPhase("scanned");
   }, []);
 
@@ -62,8 +90,27 @@ export default function ScanPage() {
     setPhase("processing");
 
     const supabase = createClient();
+
+    // Anti-fraud: max 3 stamps per day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from("transactions")
+      .select("id", { count: "exact", head: true })
+      .eq("customer_card_id", customerCard.id)
+      .eq("type", "stamp_added")
+      .gte("created_at", today.toISOString());
+
+    if ((count ?? 0) >= 3) {
+      setErrorMessage("Limite atteinte : maximum 3 tampons par jour pour ce client.");
+      setPhase("error");
+      return;
+    }
+
+    const multiplier = activePromo?.multiplier ?? 1;
     const stampsRequired = customerCard.loyalty_cards.stamps_required ?? 10;
-    const newStamps = customerCard.current_stamps + 1;
+    const added = multiplier;
+    const newStamps = customerCard.current_stamps + added;
     const reached = newStamps >= stampsRequired;
 
     await supabase
@@ -77,9 +124,25 @@ export default function ScanPage() {
       .eq("id", customerCard.id);
 
     const txRows: { customer_card_id: string; type: string; value: number }[] = [
-      { customer_card_id: customerCard.id, type: "stamp_added", value: 1 },
+      { customer_card_id: customerCard.id, type: "stamp_added", value: added },
     ];
     if (reached) {
+      // Anti-fraud: max 1 reward per week
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      const { count: rewardCount } = await supabase
+        .from("transactions")
+        .select("id", { count: "exact", head: true })
+        .eq("customer_card_id", customerCard.id)
+        .eq("type", "reward_claimed")
+        .gte("created_at", weekAgo.toISOString());
+
+      if ((rewardCount ?? 0) >= 1) {
+        setErrorMessage("Ce client a déjà réclamé une récompense cette semaine.");
+        setPhase("error");
+        return;
+      }
+
       txRows.push({ customer_card_id: customerCard.id, type: "reward_claimed", value: 1 });
     }
     await supabase.from("transactions").insert(txRows);
@@ -90,8 +153,14 @@ export default function ScanPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_card_id: customerCard.id }),
       }).catch(() => {/* silently ignore SMS errors */});
+      fetch("/api/email/reward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_card_id: customerCard.id }),
+      }).catch(() => {/* silently ignore email errors */});
     }
 
+    setStampsAdded(added);
     setRewardReached(reached);
     setPhase("success");
   };
@@ -101,6 +170,23 @@ export default function ScanPage() {
     setPhase("processing");
 
     const supabase = createClient();
+
+    // Anti-fraud: max 3 point additions per day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from("transactions")
+      .select("id", { count: "exact", head: true })
+      .eq("customer_card_id", customerCard.id)
+      .eq("type", "points_added")
+      .gte("created_at", today.toISOString());
+
+    if ((count ?? 0) >= 3) {
+      setErrorMessage("Limite atteinte : maximum 3 ajouts de points par jour pour ce client.");
+      setPhase("error");
+      return;
+    }
+
     const rewardThreshold = customerCard.loyalty_cards.reward_threshold ?? 100;
     const newPoints = customerCard.current_points + pointsToAdd;
     const reached = newPoints >= rewardThreshold;
@@ -119,6 +205,22 @@ export default function ScanPage() {
       { customer_card_id: customerCard.id, type: "points_added", value: pointsToAdd },
     ];
     if (reached) {
+      // Anti-fraud: max 1 reward per week
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      const { count: rewardCount } = await supabase
+        .from("transactions")
+        .select("id", { count: "exact", head: true })
+        .eq("customer_card_id", customerCard.id)
+        .eq("type", "reward_claimed")
+        .gte("created_at", weekAgo.toISOString());
+
+      if ((rewardCount ?? 0) >= 1) {
+        setErrorMessage("Ce client a déjà réclamé une récompense cette semaine.");
+        setPhase("error");
+        return;
+      }
+
       txRows.push({ customer_card_id: customerCard.id, type: "reward_claimed", value: 1 });
     }
     await supabase.from("transactions").insert(txRows);
@@ -129,6 +231,11 @@ export default function ScanPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customer_card_id: customerCard.id }),
       }).catch(() => {/* silently ignore SMS errors */});
+      fetch("/api/email/reward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customer_card_id: customerCard.id }),
+      }).catch(() => {/* silently ignore email errors */});
     }
 
     setRewardReached(reached);
@@ -139,6 +246,9 @@ export default function ScanPage() {
     setCustomerCard(null);
     setRewardReached(false);
     setError(null);
+    setErrorMessage(null);
+    setActivePromo(null);
+    setStampsAdded(1);
     setPointsToAdd(1);
     setPhase("scanning");
   };
@@ -245,6 +355,12 @@ export default function ScanPage() {
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-5 space-y-4">
             <p className="font-semibold text-gray-900">Valider un achat</p>
 
+            {activePromo && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-sm text-amber-700">
+                🎁 Promo active : <strong>{activePromo.title}</strong> — x{activePromo.multiplier} tampons
+              </div>
+            )}
+
             {card.card_type === "stamp" ? (
               <button
                 onClick={handleAddStamp}
@@ -252,7 +368,11 @@ export default function ScanPage() {
                 className="w-full font-semibold py-3.5 rounded-xl text-sm transition-colors disabled:opacity-50"
                 style={{ backgroundColor: bg, color: fg }}
               >
-                {phase === "processing" ? "Enregistrement…" : "Ajouter 1 tampon"}
+                {phase === "processing"
+                  ? "Enregistrement…"
+                  : activePromo
+                  ? `Ajouter ${activePromo.multiplier} tampons (x${activePromo.multiplier})`
+                  : "Ajouter 1 tampon"}
               </button>
             ) : (
               <div className="space-y-3">
@@ -316,9 +436,14 @@ export default function ScanPage() {
             <p className="text-xl font-bold text-gray-900">Validé !</p>
             <p className="text-sm text-gray-500">
               {card.card_type === "stamp"
-                ? `1 tampon ajouté pour ${customer.first_name} ${customer.last_name}`
+                ? `${stampsAdded} tampon${stampsAdded > 1 ? "s" : ""} ajouté${stampsAdded > 1 ? "s" : ""} pour ${customer.first_name} ${customer.last_name}`
                 : `${pointsToAdd} point${pointsToAdd > 1 ? "s" : ""} ajouté${pointsToAdd > 1 ? "s" : ""} pour ${customer.first_name} ${customer.last_name}`}
             </p>
+            {activePromo && card.card_type === "stamp" && stampsAdded > 1 && (
+              <p className="text-xs text-amber-600">
+                x{activePromo.multiplier} grâce à la promo {activePromo.title}
+              </p>
+            )}
 
             <button
               onClick={reset}
@@ -328,6 +453,25 @@ export default function ScanPage() {
               Scanner un autre client
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ── ERROR ── */}
+      {phase === "error" && (
+        <div className="bg-white rounded-2xl border border-red-200 shadow-sm px-6 py-8 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-3xl mx-auto">
+            ✗
+          </div>
+          <p className="text-xl font-bold text-red-700">Action refusée</p>
+          <p className="text-sm text-red-600">
+            {errorMessage ?? "Une erreur s'est produite."}
+          </p>
+          <button
+            onClick={reset}
+            className="mt-2 w-full font-semibold py-3 rounded-xl text-sm text-white bg-red-500 transition-colors hover:bg-red-600"
+          >
+            Retour au scanner
+          </button>
         </div>
       )}
     </div>

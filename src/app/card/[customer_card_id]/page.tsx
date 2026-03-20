@@ -19,8 +19,10 @@ export default async function CustomerCardPage({
       current_points,
       rewards_claimed,
       qr_code_value,
+      referral_code,
       customers ( first_name, last_name ),
       loyalty_cards (
+        id,
         card_name,
         card_type,
         stamps_required,
@@ -29,7 +31,7 @@ export default async function CustomerCardPage({
         primary_color,
         text_color,
         logo_url,
-        businesses ( business_name )
+        businesses ( business_name, plan )
       )
     `
     )
@@ -39,6 +41,7 @@ export default async function CustomerCardPage({
   if (!cc) notFound();
 
   const card = cc.loyalty_cards as unknown as {
+    id: string;
     card_name: string;
     card_type: "stamp" | "points";
     stamps_required: number | null;
@@ -47,13 +50,25 @@ export default async function CustomerCardPage({
     primary_color: string;
     text_color: string;
     logo_url: string | null;
-    businesses: { business_name: string } | null;
+    businesses: { business_name: string; plan: string } | null;
   };
+
+  // Fetch active promotion for this card
+  const { data: promo } = await supabase
+    .from("promotions")
+    .select("title, multiplier, start_date, end_date")
+    .eq("card_id", card.id)
+    .eq("is_active", true)
+    .lte("start_date", new Date().toISOString())
+    .gte("end_date", new Date().toISOString())
+    .maybeSingle();
 
   const customer = cc.customers as unknown as {
     first_name: string;
     last_name: string;
   };
+
+  const isPro = card.businesses?.plan === "pro";
 
   const bg = card.primary_color;
   const fg = card.text_color;
@@ -69,6 +84,18 @@ export default async function CustomerCardPage({
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
       <div className="w-full max-w-sm space-y-5">
+
+        {/* Promo banner */}
+        {promo && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl px-5 py-4 text-center">
+            <p className="text-sm font-bold text-amber-800">
+              🎁 Promo en cours : {promo.title} — x{promo.multiplier} tampons
+            </p>
+            <p className="text-xs text-amber-600 mt-1">
+              Jusqu'au {new Date(promo.end_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+            </p>
+          </div>
+        )}
 
         {/* Branded card */}
         <div className="rounded-2xl shadow-xl overflow-hidden">
@@ -190,6 +217,19 @@ export default async function CustomerCardPage({
             customerCardId={cc.id}
           />
         </div>
+
+        {/* Referral code (Pro only) */}
+        {isPro && cc.referral_code && (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+            <p className="text-xs text-gray-400 mb-1">Votre code parrain</p>
+            <p className="text-2xl font-black tracking-widest text-indigo-600">
+              {cc.referral_code}
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              Partagez ce code pour gagner 2 tampons bonus !
+            </p>
+          </div>
+        )}
 
         {/* Wallet buttons */}
         <div className="space-y-3">
