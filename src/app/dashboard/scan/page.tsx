@@ -15,7 +15,7 @@ export default async function ScanRoute() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <DashboardNav />
 
       <main className="max-w-lg mx-auto">

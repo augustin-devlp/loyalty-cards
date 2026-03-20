@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   const businessName = business?.business_name ?? user.email;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <DashboardNav />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">

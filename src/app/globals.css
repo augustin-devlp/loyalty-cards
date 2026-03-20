@@ -5,6 +5,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Dashboard theme variables — overridden at runtime by ThemeApplier */
+  --dash-accent:     #534AB7;
+  --dash-accent-sub: rgba(83,74,183,0.12);
+  --dash-bg:         #f9fafb;
+  --dash-surface:    #ffffff;
+  --dash-text:       #111827;
+  --dash-muted:      #6b7280;
+  --dash-border:     #e5e7eb;
+  --dash-nav-bg:     #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
