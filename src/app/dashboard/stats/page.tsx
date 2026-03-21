@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DashboardNav from "@/components/DashboardNav";
 import ActivityChart from "@/components/ActivityChart";
+import ExportPDFButton from "./ExportPDFButton";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -152,12 +153,13 @@ export default async function StatsPage() {
     existing.points += cc.current_points;
     customerMap.set(cc.customer_id, existing);
   }
-  const top5 = Array.from(customerMap.values())
+  const allClients = Array.from(customerMap.values())
     .sort(
       (a, b) =>
         b.rewards - a.rewards || b.stamps + b.points - (a.stamps + a.points)
-    )
-    .slice(0, 5);
+    );
+  const top5 = allClients.slice(0, 5);
+  const top10 = allClients.slice(0, 10);
 
   // Activity chart — 30 days
   const thirtyDaysAgo = new Date(now.getTime() - 29 * 24 * 60 * 60 * 1000);

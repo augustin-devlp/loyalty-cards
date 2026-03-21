@@ -153,9 +153,11 @@ const NICHE_TEMPLATES: NicheTemplate[] = [
   },
 ];
 
-interface NewCardFormProps { userId: string; }
+interface NewCardFormProps { userId: string; plan?: string | null; }
 
-export default function NewCardForm({ userId }: NewCardFormProps) {
+interface EstablishmentOption { id: string; name: string; }
+
+export default function NewCardForm({ userId, plan }: NewCardFormProps) {
   const router = useRouter();
 
   // Template selection state
@@ -181,6 +183,20 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
   const [bgPreview, setBgPreview]               = useState<string | null>(null);
   const [loading, setLoading]                   = useState(false);
   const [error, setError]                       = useState<string | null>(null);
+  const [establishments, setEstablishments]     = useState<EstablishmentOption[]>([]);
+  const [establishmentId, setEstablishmentId]   = useState<string>("");
+
+  // Load establishments for Business plan users
+  useState(() => {
+    if (plan !== "business") return;
+    const supabase = createClient();
+    supabase
+      .from("establishments")
+      .select("id, name")
+      .eq("business_id", userId)
+      .order("created_at")
+      .then(({ data }) => setEstablishments(data ?? []));
+  });
 
   const niche = selectedNiche !== null ? NICHE_TEMPLATES[selectedNiche] : null;
 
@@ -258,6 +274,7 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
         stamp_shape: stampShape,
         card_style: cardStyle,
         qr_code_value: crypto.randomUUID(),
+        establishment_id: establishmentId || null,
       })
       .select()
       .single();
@@ -402,6 +419,25 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
                   className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
+
+              {/* Établissement (Business plan) */}
+              {plan === "business" && establishments.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Établissement <span className="font-normal text-gray-400">(optionnel)</span>
+                  </label>
+                  <select
+                    value={establishmentId}
+                    onChange={(e) => setEstablishmentId(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">— Aucun établissement —</option>
+                    {establishments.map((est) => (
+                      <option key={est.id} value={est.id}>{est.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {/* Message de bienvenue */}
               <div>

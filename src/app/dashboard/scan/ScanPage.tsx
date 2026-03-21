@@ -148,16 +148,11 @@ export default function ScanPage() {
     await supabase.from("transactions").insert(txRows);
 
     if (reached) {
-      fetch("/api/sms/reward", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_card_id: customerCard.id }),
-      }).catch(() => {/* silently ignore SMS errors */});
-      fetch("/api/email/reward", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_card_id: customerCard.id }),
-      }).catch(() => {/* silently ignore email errors */});
+      const body = JSON.stringify({ customer_card_id: customerCard.id });
+      const jsonHeader = { "Content-Type": "application/json" };
+      fetch("/api/sms/reward",         { method: "POST", headers: jsonHeader, body }).catch(() => {});
+      fetch("/api/email/reward",        { method: "POST", headers: jsonHeader, body }).catch(() => {});
+      fetch("/api/sms/google-review",  { method: "POST", headers: jsonHeader, body }).catch(() => {});
     }
 
     setStampsAdded(added);
@@ -226,16 +221,11 @@ export default function ScanPage() {
     await supabase.from("transactions").insert(txRows);
 
     if (reached) {
-      fetch("/api/sms/reward", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_card_id: customerCard.id }),
-      }).catch(() => {/* silently ignore SMS errors */});
-      fetch("/api/email/reward", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer_card_id: customerCard.id }),
-      }).catch(() => {/* silently ignore email errors */});
+      const body = JSON.stringify({ customer_card_id: customerCard.id });
+      const jsonHeader = { "Content-Type": "application/json" };
+      fetch("/api/sms/reward",         { method: "POST", headers: jsonHeader, body }).catch(() => {});
+      fetch("/api/email/reward",        { method: "POST", headers: jsonHeader, body }).catch(() => {});
+      fetch("/api/sms/google-review",  { method: "POST", headers: jsonHeader, body }).catch(() => {});
     }
 
     setRewardReached(reached);

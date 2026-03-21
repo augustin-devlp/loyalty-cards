@@ -10,9 +10,13 @@ export default async function NewCardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
+
+  const { data: biz } = await supabase
+    .from("businesses")
+    .select("plan")
+    .eq("id", user.id)
+    .single();
 
   return (
     <div className="min-h-screen">
@@ -38,7 +42,7 @@ export default async function NewCardPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-          <NewCardForm userId={user.id} />
+          <NewCardForm userId={user.id} plan={biz?.plan ?? null} />
         </div>
       </main>
     </div>

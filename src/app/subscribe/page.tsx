@@ -43,6 +43,18 @@ const PLANS = {
 
 type PlanId = keyof typeof PLANS;
 
+const BUSINESS_FEATURES = [
+  "Tout ce qu'inclut Pro",
+  "Comptes employés illimités",
+  "Multi-établissements (jusqu'à 10)",
+  "Intégration caisse / API",
+  "Campagnes SMS & push",
+  "Rapport mensuel automatique",
+  "Onboarding personnalisé inclus",
+  "Account manager dédié",
+  "SLA 99,9% garanti",
+];
+
 function SubscribeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -101,7 +113,7 @@ function SubscribeContent() {
         <span className="font-black text-2xl text-gray-900">Stampify</span>
       </div>
 
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-5xl">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black text-gray-900 mb-2">
             Choisissez votre formule
@@ -123,7 +135,7 @@ function SubscribeContent() {
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {(Object.entries(PLANS) as [PlanId, (typeof PLANS)[PlanId]][]).map(
             ([id, plan]) => {
               const price = country === "CH" ? plan.priceCHF : plan.priceEur;
@@ -188,6 +200,37 @@ function SubscribeContent() {
               );
             }
           )}
+
+          {/* Business plan — contact CTA */}
+          <div className="relative flex flex-col rounded-3xl p-8 shadow-xl bg-indigo-600 text-white ring-4 ring-yellow-400 ring-offset-2">
+            <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+              💎 Premium
+            </span>
+            <div className="mb-6">
+              <h2 className="text-xl font-bold mb-1 text-white">Business</h2>
+              <div className="flex items-end gap-1">
+                <span className="text-5xl font-black text-white">{country === "CH" ? "149" : "99"}</span>
+                <span className="text-lg font-semibold mb-1 text-indigo-200">{country === "CH" ? " CHF" : "€"}/mois</span>
+              </div>
+              <p className="text-sm mt-1 text-indigo-200">Engagement 3 mois minimum</p>
+            </div>
+            <ul className="space-y-2.5 flex-1 mb-8">
+              {BUSINESS_FEATURES.map((f) => (
+                <li key={f} className="flex items-start gap-2">
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 shrink-0 mt-0.5 text-indigo-200">
+                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm text-indigo-100">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href={`mailto:contact@stampify.ch?subject=${encodeURIComponent("Demande forfait Business Stampify")}`}
+              className="block w-full py-3.5 rounded-2xl font-bold text-sm text-center transition-all bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg"
+            >
+              Nous contacter →
+            </a>
+          </div>
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-8">
