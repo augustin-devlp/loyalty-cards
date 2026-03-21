@@ -24,7 +24,7 @@ export default async function JoinPage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("business_name")
+    .select("business_name, plan, subscription_status")
     .eq("id", card.business_id)
     .single();
 
@@ -89,6 +89,7 @@ export default async function JoinPage({
             cardId={card.id}
             primaryColor={card.primary_color}
             textColor={card.text_color}
+            isPro={business?.plan === "pro" && business?.subscription_status === "active"}
           />
         </div>
       </div>

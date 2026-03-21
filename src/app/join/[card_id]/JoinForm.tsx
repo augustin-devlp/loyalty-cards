@@ -8,14 +8,16 @@ interface JoinFormProps {
   cardId: string;
   primaryColor: string;
   textColor: string;
+  isPro: boolean;
 }
 
-export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormProps) {
+export default function JoinForm({ cardId, primaryColor, textColor, isPro }: JoinFormProps) {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,12 +87,58 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
       return;
     }
 
-    // Send welcome SMS (fire-and-forget — does not block navigation)
+    // Generate and assign a unique referral code
+    const { data: refCode } = await supabase.rpc("generate_referral_code");
+    if (refCode) {
+      await supabase
+        .from("customer_cards")
+        .update({ referral_code: refCode as string })
+        .eq("id", newCard.id);
+    }
+
+    // Apply referral bonus if a code was entered (Pro only)
+    if (isPro && referralCode.trim()) {
+      const code = referralCode.trim().toUpperCase();
+      const { data: referrerCard } = await supabase
+        .from("customer_cards")
+        .select("id, current_stamps, card_id")
+        .eq("referral_code", code)
+        .eq("card_id", cardId)
+        .maybeSingle();
+
+      if (referrerCard) {
+        // Add 2 bonus stamps to referrer
+        await supabase
+          .from("customer_cards")
+          .update({ current_stamps: (referrerCard.current_stamps ?? 0) + 2 })
+          .eq("id", referrerCard.id);
+
+        await supabase.from("transactions").insert({
+          customer_card_id: referrerCard.id,
+          type: "stamp_added",
+          value: 2,
+        });
+
+        await supabase.from("referrals").insert({
+          referrer_card_id: referrerCard.id,
+          referred_card_id: newCard.id,
+          bonus_given: true,
+        });
+      }
+    }
+
+    // Fire-and-forget notifications
     fetch("/api/sms/welcome", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ customer_card_id: newCard.id }),
-    }).catch(() => {/* silently ignore SMS errors */});
+    }).catch(() => {/* silently ignore */});
+
+    fetch("/api/email/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_card_id: newCard.id }),
+    }).catch(() => {/* silently ignore */});
 
     router.push(`/card/${newCard.id}`);
   };
@@ -152,6 +200,22 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
           className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
+
+      {isPro && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Code parrain <span className="text-gray-400 font-normal">(optionnel — votre parrain gagne 2 tampons)</span>
+          </label>
+          <input
+            type="text"
+            value={referralCode}
+            onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+            placeholder="Ex : A3F7B2"
+            maxLength={6}
+            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      )}
 
       <button
         type="submit"
