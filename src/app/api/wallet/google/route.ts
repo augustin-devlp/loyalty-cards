@@ -19,10 +19,24 @@ function getServiceAccount(): ServiceAccountKey | null {
   }
 }
 
+/** Normalise une couleur hex en "#RRGGBB" valide. Retourne le fallback si invalide. */
+function normalizeHex(color: string | null | undefined, fallback = "#534AB7"): string {
+  if (!color) return fallback;
+  const hex = color.replace("#", "").trim();
+  if (/^[0-9a-fA-F]{6}$/.test(hex)) return `#${hex}`;
+  if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+    const [r, g, b] = hex.split("");
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return fallback;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const customerCardId = searchParams.get("customer_card_id");
-  if (!customerCardId) return NextResponse.json({ error: "customer_card_id required" }, { status: 400 });
+  if (!customerCardId) {
+    return NextResponse.json({ error: "customer_card_id required" }, { status: 400 });
+  }
 
   const serviceAccount = getServiceAccount();
   if (!serviceAccount) {
@@ -36,6 +50,7 @@ export async function GET(req: NextRequest) {
       id,
       current_stamps,
       current_points,
+      rewards_claimed,
       qr_code_value,
       customers ( first_name, last_name ),
       loyalty_cards (
@@ -63,106 +78,129 @@ export async function GET(req: NextRequest) {
     stamps_required: number | null;
     reward_threshold: number | null;
     reward_description: string;
-    primary_color: string;
+    primary_color: string | null;
     logo_url: string | null;
     businesses: { business_name: string } | null;
   };
 
-  const classId = `${ISSUER_ID}.loyalty_${lc.id.replace(/-/g, "")}`;
-  const objectId = `${ISSUER_ID}.customer_${cc.id.replace(/-/g, "")}`;
   const businessName = lc.businesses?.business_name ?? "Stampify";
-
-  // Hex color without '#' for Google Wallet (must be 6-digit hex)
-  const hexColor = (lc.primary_color ?? "#534AB7").replace("#", "");
-  const rgbHex = hexColor.length === 6 ? hexColor : "534AB7";
-  const r = parseInt(rgbHex.slice(0, 2), 16);
-  const g = parseInt(rgbHex.slice(2, 4), 16);
-  const b = parseInt(rgbHex.slice(4, 6), 16);
-
-  const loyaltyClass = {
-    id: classId,
-    issuerName: businessName,
-    programName: lc.card_name,
-    programLogo: lc.logo_url
-      ? {
-          sourceUri: { uri: lc.logo_url },
-          contentDescription: { defaultValue: { language: "fr", value: lc.card_name } },
-        }
-      : {
-          sourceUri: { uri: "https://www.stampify.ch/icon-512.svg" },
-          contentDescription: { defaultValue: { language: "fr", value: "Stampify" } },
-        },
-    rewardsTierLabel: "Récompense",
-    rewardsTier: lc.reward_description,
-    reviewStatus: "UNDER_REVIEW",
-    hexBackgroundColor: `#${rgbHex}`,
-    heroImage: {
-      sourceUri: { uri: "https://www.stampify.ch/icon-512.svg" },
-      contentDescription: { defaultValue: { language: "fr", value: "Stampify" } },
-    },
-    textModulesData: [
-      {
-        id: "reward_info",
-        header: "Récompense",
-        body: lc.reward_description,
-      },
-    ],
-  };
+  const bgColor = normalizeHex(lc.primary_color);
 
   const isStamp = lc.card_type === "stamp";
   const stampsRequired = lc.stamps_required ?? 10;
   const rewardThreshold = lc.reward_threshold ?? 100;
-  const currentBalance = isStamp ? cc.current_stamps : cc.current_points;
+  const currentBalance = isStamp ? (cc.current_stamps ?? 0) : (cc.current_points ?? 0);
   const maxBalance = isStamp ? stampsRequired : rewardThreshold;
+  const unit = isStamp ? "tampon" : "point";
+  const unitPlural = isStamp ? "tampons" : "points";
+
+  // IDs: strip dashes for Google Wallet compatibility
+  const classId = `${ISSUER_ID}.loyalty_${lc.id.replace(/-/g, "")}`;
+  const objectId = `${ISSUER_ID}.customer_${cc.id.replace(/-/g, "")}`;
+
+  // ── LoyaltyClass — programme de fidélité (template partagé) ─────────────────
+  const loyaltyClass = {
+    id: classId,
+
+    // Titre principal = nom du commerce
+    issuerName: businessName,
+    // Sous-titre / nom du programme = nom de la carte
+    programName: lc.card_name,
+
+    // Logo : logo du commerce si disponible, sinon icône Stampify
+    programLogo: {
+      sourceUri: {
+        uri: lc.logo_url ?? "https://www.stampify.ch/icon-512.svg",
+      },
+      contentDescription: {
+        defaultValue: { language: "fr", value: businessName },
+      },
+    },
+
+    // Fond aux couleurs du commerce
+    hexBackgroundColor: bgColor,
+
+    // Niveau de récompense affiché sous le programme
+    rewardsTierLabel: "Récompense",
+    rewardsTier: lc.reward_description,
+
+    // Statut requis pour l'API
+    reviewStatus: "UNDER_REVIEW",
+
+    // Blocs texte additionnels visibles sur la carte
+    textModulesData: [
+      {
+        id: "business",
+        header: "Commerce",
+        body: businessName,
+      },
+      {
+        id: "reward",
+        header: "Récompense disponible à",
+        body: `${maxBalance} ${unitPlural}`,
+      },
+    ],
+  };
+
+  // ── LoyaltyObject — carte individuelle du client ─────────────────────────────
+  const remaining = Math.max(maxBalance - currentBalance, 0);
+  const progressLabel = `${currentBalance} / ${maxBalance} ${unitPlural}`;
+  const remainingLabel =
+    remaining > 0
+      ? `Encore ${remaining} ${remaining === 1 ? unit : unitPlural} avant la récompense`
+      : `Récompense disponible ! Présentez votre carte.`;
 
   const loyaltyObject = {
     id: objectId,
     classId,
     state: "ACTIVE",
-    accountId: cc.id,
+
+    // Identité du porteur
     accountName: `${customer.first_name} ${customer.last_name}`,
+    accountId: cc.id.slice(0, 8).toUpperCase(),
+
+    // Jauge principale : tampons / points actuels
     loyaltyPoints: {
       balance: { int: currentBalance },
       label: isStamp ? "Tampons" : "Points",
     },
-    secondaryLoyaltyPoints: {
-      balance: { int: maxBalance },
-      label: isStamp ? "Tampons requis" : "Seuil",
-    },
+
+    // Fond aux couleurs du commerce (override sur l'objet pour garantir la couleur)
+    hexBackgroundColor: bgColor,
+
+    // Blocs texte : progression détaillée + récompense
     textModulesData: [
       {
-        id: "reward_desc",
-        header: "Votre récompense",
+        id: "progress",
+        header: "Progression",
+        body: progressLabel,
+      },
+      {
+        id: "status",
+        header: "Statut",
+        body: remainingLabel,
+      },
+      {
+        id: "reward",
+        header: "🎁 Récompense",
         body: lc.reward_description,
       },
+      {
+        id: "card_program",
+        header: "Programme",
+        body: `${lc.card_name} — ${businessName}`,
+      },
     ],
+
+    // QR code à présenter au commerçant
     barcode: {
       type: "QR_CODE",
       value: cc.qr_code_value,
-      alternateText: cc.qr_code_value.slice(0, 8).toUpperCase(),
+      alternateText: "Présenter au commerçant",
     },
-    hexBackgroundColor: `#${rgbHex}`,
-    heroImage: {
-      sourceUri: { uri: "https://www.stampify.ch/icon-512.svg" },
-      contentDescription: { defaultValue: { language: "fr", value: "Stampify" } },
-    },
-    // Suppress unused fields
-    infoModuleData: {
-      labelValueRows: [
-        {
-          columns: [
-            { label: "Commerce", value: businessName },
-            { label: "Programme", value: lc.card_name },
-          ],
-        },
-      ],
-    },
-    // Color from RGB
-    cardColorHex: `#${rgbHex}`,
-    // Custom color object for newer API
-    hexBorderColor: `rgb(${r},${g},${b})`,
   };
 
+  // ── JWT signé RS256 ──────────────────────────────────────────────────────────
   const payload = {
     iss: serviceAccount.client_email,
     aud: "google",
