@@ -25,6 +25,12 @@ export default async function CardDetailPage({
 
   if (!card) notFound();
 
+  const { data: business } = await supabase
+    .from("businesses")
+    .select("join_background_url")
+    .eq("id", user.id)
+    .single();
+
   return (
     <div>
       <DashboardNav />
@@ -82,6 +88,7 @@ export default async function CardDetailPage({
               is_active: card.is_active,
             }}
             userId={user.id}
+            currentBgUrl={business?.join_background_url ?? null}
           />
         </div>
       </main>

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createAnonClient } from "@/lib/supabase/anon";
 import CustomerQRCode from "@/components/CustomerQRCode";
 import GoogleWalletButton from "@/components/GoogleWalletButton";
+import { getShape } from "@/lib/stampShapes";
 
 export default async function CustomerCardPage({
   params,
@@ -83,29 +84,29 @@ export default async function CustomerCardPage({
   const stampProgress = Math.min(currentStamps / stampsRequired, 1);
   const pointsProgress = Math.min(currentPoints / rewardThreshold, 1);
 
-  const shape = (card.stamp_shape ?? "circle") as "circle" | "star" | "heart";
+  const shape = card.stamp_shape ?? "circle";
+  const shapeData = getShape(shape);
   const style = (card.card_style ?? "rounded") as "rounded" | "square" | "modern";
   const borderRadius = style === "square" ? "4px" : style === "modern" ? "12px" : "20px";
 
   function StampCell({ filled }: { filled: boolean }) {
-    if (shape === "star") return (
-      <span style={{ fontSize: 28, color: filled ? bg : "#d1d5db", lineHeight: 1 }}>{filled ? "★" : "☆"}</span>
-    );
-    if (shape === "heart") return (
-      <span style={{ fontSize: 28, color: filled ? bg : "#d1d5db", lineHeight: 1 }}>{filled ? "♥" : "♡"}</span>
-    );
-    return (
-      <div
-        style={{
+    if (shape === "circle") {
+      return (
+        <div style={{
           width: 36, height: 36, borderRadius: "50%",
           border: `2px solid ${bg}`,
           backgroundColor: filled ? bg : "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 15, fontWeight: 700, color: filled ? fg : bg,
-        }}
-      >
-        {filled ? "✓" : ""}
-      </div>
+        }}>
+          {filled ? "✓" : ""}
+        </div>
+      );
+    }
+    return (
+      <svg viewBox="0 0 24 24" width={36} height={36}
+        style={{ color: bg, opacity: filled ? 1 : 0.2 }}
+        dangerouslySetInnerHTML={{ __html: shapeData.svg }} />
     );
   }
 

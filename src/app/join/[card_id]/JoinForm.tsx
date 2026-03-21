@@ -8,10 +8,9 @@ interface JoinFormProps {
   cardId: string;
   primaryColor: string;
   textColor: string;
-  isPro: boolean;
 }
 
-export default function JoinForm({ cardId, primaryColor, textColor, isPro }: JoinFormProps) {
+export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormProps) {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -101,8 +100,8 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
         .eq("id", newCard.id);
     }
 
-    // Apply referral bonus if a code was entered (Pro only)
-    if (isPro && referralCode.trim()) {
+    // Apply referral bonus if a code was entered
+    if (referralCode.trim()) {
       const code = referralCode.trim().toUpperCase();
       const { data: referrerCard } = await supabase
         .from("customer_cards")
@@ -202,22 +201,20 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
         </div>
       </div>
 
-      {isPro && (
-        <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-            Code parrain <span className="font-normal normal-case text-gray-400">(optionnel)</span>
-          </label>
-          <input
-            type="text"
-            value={referralCode}
-            onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-            placeholder="Ex : A3F7B2"
-            maxLength={6}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm uppercase tracking-widest font-mono focus:outline-none focus:ring-2 bg-gray-50"
-          />
-          <p className="text-xs text-gray-400 mt-1">Votre parrain gagne 2 tampons bonus</p>
-        </div>
-      )}
+      <div>
+        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+          Code parrain <span className="font-normal normal-case text-gray-400">(optionnel)</span>
+        </label>
+        <input
+          type="text"
+          value={referralCode}
+          onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+          placeholder="Ex : A3F7B2"
+          maxLength={6}
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm uppercase tracking-widest font-mono focus:outline-none focus:ring-2 bg-gray-50"
+        />
+        <p className="text-xs text-gray-400 mt-1">Votre parrain gagne 2 tampons bonus</p>
+      </div>
 
       <button
         type="submit"
