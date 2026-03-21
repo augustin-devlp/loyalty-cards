@@ -29,19 +29,28 @@ export const STAMP_SHAPES: StampShape[] = [
     value: "croissant",
     label: "Croissant",
     emoji: "🥐",
-    svg: `<path d="M4 17c2-6 6-10 14-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M4 17c3-2 9-2 14-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M4 17c1 2 4 3 7 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+    // Crescent shape: outer 9-radius arc + inner 6-radius arc → clean moon/croissant
+    svg: `<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" fill="currentColor"/>`,
   },
   {
     value: "coffee",
     label: "Café",
     emoji: "☕",
-    svg: `<path d="M17 8h1a4 4 0 0 1 0 8h-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="6" y1="2" x2="6" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="2" x2="10" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    // Coffee cup with handle + two wavy S-curve steam wisps
+    svg: `<path d="M17 8h1a4 4 0 0 1 0 8h-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+<path d="M6.5 1C6.5 2.5 8 3.5 6.5 5S5 6.5 6.5 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+<path d="M10.5 1C10.5 2.5 12 3.5 10.5 5S9 6.5 10.5 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,
   },
   {
     value: "scissors",
     label: "Ciseaux",
     emoji: "✂️",
-    svg: `<circle cx="6" cy="6" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="20" y1="4" x2="8.12" y2="15.88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="14.47" y1="14.48" x2="20" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    // Two ring handles on the left, two blades crossing toward the right
+    svg: `<circle cx="6" cy="6" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<line x1="20" y1="4" x2="8.12" y2="15.88" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="14.47" y1="14.48" x2="20" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
   },
   {
     value: "flower",
@@ -53,7 +62,12 @@ export const STAMP_SHAPES: StampShape[] = [
     value: "crown",
     label: "Couronne",
     emoji: "👑",
-    svg: `<path d="M3 17l3-8 4 4 2-6 2 6 4-4 3 8H3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><line x1="3" y1="20" x2="21" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    // 3-spike royal crown: side spikes at y=9, center spike at y=6, gems at each tip
+    svg: `<path d="M2 18L5 9l5 4 2-7 2 7 5-4 3 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="2" y1="18" x2="22" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<circle cx="5" cy="9" r="1.5" fill="currentColor"/>
+<circle cx="12" cy="6" r="1.5" fill="currentColor"/>
+<circle cx="19" cy="9" r="1.5" fill="currentColor"/>`,
   },
   {
     value: "diamond",
@@ -77,7 +91,12 @@ export const STAMP_SHAPES: StampShape[] = [
     value: "pizza",
     label: "Pizza",
     emoji: "🍕",
-    svg: `<path d="M12 2L2 20h20L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><circle cx="9" cy="14" r="1.5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="14" cy="12" r="1.5" stroke="currentColor" stroke-width="1" fill="none"/>`,
+    // Triangle slice with curved crust at base and visible toppings
+    svg: `<path d="M12 2L2 22h20L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+<path d="M5 20C7 22 17 22 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+<circle cx="9" cy="15" r="1.5" fill="currentColor"/>
+<circle cx="14" cy="13" r="1.5" fill="currentColor"/>
+<circle cx="11" cy="10" r="1" fill="currentColor"/>`,
   },
   {
     value: "key",
@@ -107,25 +126,47 @@ export const STAMP_SHAPES: StampShape[] = [
     value: "paw",
     label: "Patte",
     emoji: "🐾",
-    svg: `<circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="17" cy="7" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="4" cy="13" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="20" cy="13" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 22c-4 0-7-3-7-6s1.5-4 4-4h6c2.5 0 4 1 4 4s-3 6-7 6z" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
+    // Large central pad + 4 toe pads above, like a real animal paw print
+    svg: `<ellipse cx="12" cy="16.5" rx="4.5" ry="3.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<circle cx="7.5" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<circle cx="11" cy="10.5" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<circle cx="15" cy="10.5" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<circle cx="18.5" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
   },
   {
     value: "rainbow",
     label: "Arc-en-ciel",
     emoji: "🌈",
-    svg: `<path d="M22 17a10 10 0 0 0-20 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M17 17a5 5 0 0 0-10 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,
+    // 4 concentric arcs of decreasing radius — classic rainbow shape
+    svg: `<path d="M3 18a9 9 0 0 1 18 0" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M5.5 18a6.5 6.5 0 0 1 13 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+<path d="M8 18a4 4 0 0 1 8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+<path d="M10 18a2 2 0 0 1 4 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,
   },
   {
     value: "butterfly",
     label: "Papillon",
     emoji: "🦋",
-    svg: `<path d="M12 12C12 7 8 3 4 4s-4 8 0 10c2 1 5 0 8-2z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 12c0-5 4-9 8-8s4 8 0 10c-2 1-5 0-8-2z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/><line x1="12" y1="12" x2="12" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    // 4 filled wings (upper pair larger, lower pair smaller) + body line
+    svg: `<path d="M12 8C12 4.5 9 2 6 3 5 7 8 10.5 12 10Z" fill="currentColor"/>
+<path d="M12 8C12 4.5 15 2 18 3 19 7 16 10.5 12 10Z" fill="currentColor"/>
+<path d="M12 14C12 11 9 9 5.5 10.5 6.5 14 9.5 16.5 12 15Z" fill="currentColor"/>
+<path d="M12 14C12 11 15 9 18.5 10.5 17.5 14 14.5 16.5 12 15Z" fill="currentColor"/>
+<line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
   },
   {
     value: "laurel",
     label: "Lauriers",
     emoji: "🏅",
-    svg: `<path d="M5 12c-1-2-1-5 0-7 2 1 3 3 3 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M19 12c1-2 1-5 0-7-2 1-3 3-3 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M7 14c-1-1-2-3-2-5 1 0 3 1 4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M17 14c1-1 2-3 2-5-1 0-3 1-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M12 5v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 19c1.5-1 5.5-1 8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    // Central stem with 3 pairs of leaf-shaped paths fanning outward, tied at the base
+    svg: `<path d="M12 22v-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M12 19c-1-2.5-4-3.5-6-2.5 1 3 4 4.5 6 2.5z" fill="currentColor"/>
+<path d="M12 19c1-2.5 4-3.5 6-2.5-1 3-4 4.5-6 2.5z" fill="currentColor"/>
+<path d="M12 15c-1-2.5-4-3.5-6-2.5 1 3 4 4.5 6 2.5z" fill="currentColor"/>
+<path d="M12 15c1-2.5 4-3.5 6-2.5-1 3-4 4.5-6 2.5z" fill="currentColor"/>
+<path d="M12 11c-1-2-3.5-3-5.5-2 1 2.5 3.5 4 5.5 2z" fill="currentColor"/>
+<path d="M12 11c1-2 3.5-3 5.5-2-1 2.5-3.5 4-5.5 2z" fill="currentColor"/>
+<path d="M8 22h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
   },
 ];
 

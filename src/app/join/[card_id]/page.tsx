@@ -50,7 +50,7 @@ export default async function JoinPage({
         style={{
           backgroundColor: bg,
           ...(joinBg ? {
-            backgroundImage: `url(${joinBg})`,
+            backgroundImage: `url("${joinBg}")`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           } : {}),
