@@ -15,7 +15,6 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,14 +25,21 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
     setLoading(true);
     setError(null);
 
+    const normalizedPhone = phone.trim().replace(/\s/g, "");
+    if (!normalizedPhone) {
+      setError("Le numéro de téléphone est requis.");
+      setLoading(false);
+      return;
+    }
+
     const supabase = createClient();
 
-    // Find or create customer
+    // Find or create customer by phone
     let customerId: string;
     const { data: existing } = await supabase
       .from("customers")
       .select("id")
-      .eq("email", email.toLowerCase().trim())
+      .eq("phone", normalizedPhone)
       .maybeSingle();
 
     if (existing) {
@@ -44,8 +50,7 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
         .insert({
           first_name: firstName.trim(),
           last_name: lastName.trim(),
-          email: email.toLowerCase().trim(),
-          phone: phone.trim() || null,
+          phone: normalizedPhone,
         })
         .select("id")
         .single();
@@ -107,7 +112,6 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
         .maybeSingle();
 
       if (referrerCard) {
-        // Add 2 bonus stamps to referrer
         await supabase
           .from("customer_cards")
           .update({ current_stamps: (referrerCard.current_stamps ?? 0) + 2 })
@@ -153,58 +157,55 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
 
       <div className="flex gap-3">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Prénom
+          </label>
           <input
             type="text"
             required
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="Marie"
-            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+            style={{ "--tw-ring-color": primaryColor } as React.CSSProperties}
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Nom
+          </label>
           <input
             type="text"
             required
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Dupont"
-            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="marie@exemple.fr"
-          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Téléphone <span className="text-gray-400 font-normal">(optionnel — pour les notifications SMS)</span>
+        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+          Téléphone
         </label>
-        <input
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="+33 6 12 34 56 78"
-          className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">📱</span>
+          <input
+            type="tel"
+            required
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+33 6 12 34 56 78"
+            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+          />
+        </div>
       </div>
 
       {isPro && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Code parrain <span className="text-gray-400 font-normal">(optionnel — votre parrain gagne 2 tampons)</span>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Code parrain <span className="font-normal normal-case text-gray-400">(optionnel)</span>
           </label>
           <input
             type="text"
@@ -212,21 +213,22 @@ export default function JoinForm({ cardId, primaryColor, textColor, isPro }: Joi
             onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
             placeholder="Ex : A3F7B2"
             maxLength={6}
-            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm uppercase tracking-widest font-mono focus:outline-none focus:ring-2 bg-gray-50"
           />
+          <p className="text-xs text-gray-400 mt-1">Votre parrain gagne 2 tampons bonus</p>
         </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full font-semibold py-3 rounded-xl transition-colors disabled:opacity-60 text-sm"
+        className="w-full font-bold py-3.5 rounded-xl transition-all disabled:opacity-60 text-sm active:scale-[0.98] shadow-lg mt-2"
         style={{ backgroundColor: primaryColor, color: textColor }}
       >
-        {loading ? "Inscription…" : "Obtenir ma carte de fidélité"}
+        {loading ? "Inscription…" : "Obtenir ma carte de fidélité →"}
       </button>
 
-      <p className="text-xs text-gray-400 text-center">
+      <p className="text-xs text-gray-400 text-center leading-relaxed">
         Si vous avez déjà une carte, vous serez redirigé automatiquement.
       </p>
     </form>
