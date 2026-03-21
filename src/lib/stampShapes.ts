@@ -31,15 +31,15 @@ export const STAMP_SHAPES: StampShape[] = [
   },
   {
     value: "croissant",
-    label: "Croissant",
-    emoji: "🥐",
-    // Arch body (thick stroke) + two curling tips + diagonal score lines
-    svg: `<path d="M5.5 21.5c.5-3 1.5-6 3-8.5 1-2 2-3 3.5-3s2.5 1 3.5 3c1.5 2.5 2.5 5.5 3 8.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path d="M5.5 21.5c-1.5.5-2.5-.5-2-2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-<path d="M18.5 21.5c1.5.5 2.5-.5 2-2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
-<line x1="10" y1="12" x2="9.2" y2="16.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-<line x1="12.5" y1="11" x2="11.7" y2="15.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-<line x1="15" y1="12" x2="14.2" y2="16.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>`,
+    label: "Baguette",
+    emoji: "🥖",
+    // Long rectangle tilted -15° + 3 vertical score lines (become diagonal after rotation)
+    svg: `<g transform="rotate(-15 12 12)">
+<rect x="2.5" y="10.5" width="19" height="3" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<line x1="7.5" y1="10.5" x2="7.5" y2="13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="12" y1="10.5" x2="12" y2="13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="16.5" y1="10.5" x2="16.5" y2="13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</g>`,
   },
   {
     value: "coffee",
@@ -99,9 +99,13 @@ export const STAMP_SHAPES: StampShape[] = [
   },
   {
     value: "leaf",
-    label: "Feuille",
-    emoji: "🍃",
-    svg: `<path d="M17 8C8 10 5.9 16.17 3.82 19c3.25-1.45 8.1-3.61 12.18-5C18.5 10.5 20 4 20 4S17.5 6.5 17 8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><line x1="3.82" y1="19" x2="8" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+    label: "Panier",
+    emoji: "🧺",
+    // Shopping basket: handle arch + rectangular body + 2 horizontal weave lines
+    svg: `<path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path d="M4 10h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+<line x1="6.5" y1="14" x2="17.5" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="6.5" y1="17" x2="17.5" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
   },
   {
     value: "pizza",
@@ -162,24 +166,18 @@ export const STAMP_SHAPES: StampShape[] = [
   },
   {
     value: "butterfly",
-    label: "Yoga",
-    emoji: "🧘",
-    // Rolled yoga mat: rectangle body + ellipse rolls at each end + texture lines
-    svg: `<rect x="4" y="9" width="16" height="6" rx="0.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-<ellipse cx="4" cy="12" rx="1.5" ry="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-<ellipse cx="20" cy="12" rx="1.5" ry="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-<line x1="9" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-<line x1="13" y1="9" x2="13" y2="15" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-<line x1="17" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>`,
+    label: "Enso",
+    emoji: "☯️",
+    // Zen enso: almost-complete circle drawn in one brushstroke, gap at top-right
+    svg: `<path d="M16.5 4.2A9 9 0 1 1 19.8 7.5" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
   },
   {
     value: "nail",
-    label: "Ongle",
-    emoji: "💅",
-    // Fingernail: rounded rectangle outline + polish fill in top portion + cuticle arc
-    svg: `<path d="M8 20V10a4 4 0 0 1 8 0v10H8z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M8.5 10a3.5 3.5 0 0 1 7 0v3.5H8.5V10z" fill="currentColor"/>
-<path d="M8.5 14.5a3.5 3.5 0 0 0 7 0" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/>`,
+    label: "Diamant",
+    emoji: "💎",
+    // Simple diamond: square losange + horizontal midline
+    svg: `<polygon points="12,2 22,12 12,22 2,12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+<line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
   },
   {
     value: "laurel",

@@ -199,7 +199,7 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
     setStampShape(t.shape);
     setCardStyle(t.style);
     if (!rewardDescription) setRewardDescription(t.defaultReward);
-    if (!cardName)          setCardName(`Carte fidélité ${t.label}`);
+    setCardName(`Carte fidélité ${t.label}`);
     setShowForm(true);
   };
 
