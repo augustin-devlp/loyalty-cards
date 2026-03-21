@@ -5,10 +5,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import CardPreview from "@/components/CardPreview";
 
-interface NewCardFormProps {
-  userId: string;
-}
-
 type StampShape = "circle" | "star" | "heart";
 type CardStyle = "rounded" | "square" | "modern";
 
@@ -24,23 +20,39 @@ const CARD_STYLES: { value: CardStyle; label: string; desc: string }[] = [
   { value: "modern",  label: "Moderne", desc: "Bande + dégradé" },
 ];
 
-export default function NewCardForm({ userId }: NewCardFormProps) {
-  const router = useRouter();
+interface Card {
+  id: string;
+  card_name: string;
+  card_type: "stamp" | "points";
+  stamps_required: number | null;
+  points_per_purchase: number | null;
+  reward_threshold: number | null;
+  reward_description: string;
+  welcome_message: string | null;
+  primary_color: string;
+  text_color: string;
+  logo_url: string | null;
+  stamp_shape: string;
+  card_style: string;
+  is_active: boolean;
+}
 
-  const [cardName, setCardName] = useState("");
-  const [cardType, setCardType] = useState<"stamp" | "points">("stamp");
-  const [stampsRequired, setStampsRequired] = useState(10);
-  const [pointsPerPurchase, setPointsPerPurchase] = useState(1);
-  const [rewardThreshold, setRewardThreshold] = useState(100);
-  const [rewardDescription, setRewardDescription] = useState("");
-  const [welcomeMessage, setWelcomeMessage] = useState("");
-  const [primaryColor, setPrimaryColor] = useState("#4F46E5");
-  const [textColor, setTextColor] = useState("#FFFFFF");
-  const [stampShape, setStampShape] = useState<StampShape>("circle");
-  const [cardStyle, setCardStyle] = useState<CardStyle>("rounded");
+export default function EditCardForm({ card, userId }: { card: Card; userId: string }) {
+  const router = useRouter();
+  const [cardName, setCardName] = useState(card.card_name);
+  const [rewardDescription, setRewardDescription] = useState(card.reward_description);
+  const [welcomeMessage, setWelcomeMessage] = useState(card.welcome_message ?? "");
+  const [stampsRequired, setStampsRequired] = useState(card.stamps_required ?? 10);
+  const [pointsPerPurchase, setPointsPerPurchase] = useState(card.points_per_purchase ?? 1);
+  const [rewardThreshold, setRewardThreshold] = useState(card.reward_threshold ?? 100);
+  const [primaryColor, setPrimaryColor] = useState(card.primary_color);
+  const [textColor, setTextColor] = useState(card.text_color);
+  const [stampShape, setStampShape] = useState<StampShape>((card.stamp_shape ?? "circle") as StampShape);
+  const [cardStyle, setCardStyle] = useState<CardStyle>((card.card_style ?? "rounded") as CardStyle);
+  const [logoPreview, setLogoPreview] = useState<string | null>(card.logo_url);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,13 +64,14 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccess(false);
 
     const supabase = createClient();
-    let logoUrl: string | null = null;
+    let logoUrl = card.logo_url;
 
     if (logoFile) {
       const ext = logoFile.name.split(".").pop();
@@ -68,7 +81,7 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
         .upload(path, logoFile, { upsert: false });
 
       if (uploadError) {
-        setError("Erreur lors de l'upload du logo : " + uploadError.message);
+        setError("Erreur upload logo : " + uploadError.message);
         setLoading(false);
         return;
       }
@@ -77,58 +90,54 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
       logoUrl = urlData.publicUrl;
     }
 
-    const { data, error: insertError } = await supabase
+    const { error: updateError } = await supabase
       .from("loyalty_cards")
-      .insert({
-        business_id: userId,
+      .update({
         card_name: cardName,
-        card_type: cardType,
-        stamps_required: cardType === "stamp" ? stampsRequired : null,
-        points_per_purchase: cardType === "points" ? pointsPerPurchase : null,
-        reward_threshold: cardType === "points" ? rewardThreshold : null,
         reward_description: rewardDescription,
         welcome_message: welcomeMessage.trim() || null,
-        logo_url: logoUrl,
+        stamps_required: card.card_type === "stamp" ? stampsRequired : card.stamps_required,
+        points_per_purchase: card.card_type === "points" ? pointsPerPurchase : card.points_per_purchase,
+        reward_threshold: card.card_type === "points" ? rewardThreshold : card.reward_threshold,
         primary_color: primaryColor,
         text_color: textColor,
         stamp_shape: stampShape,
         card_style: cardStyle,
-        qr_code_value: crypto.randomUUID(),
+        logo_url: logoUrl,
       })
-      .select()
-      .single();
+      .eq("id", card.id);
 
-    if (insertError) {
-      setError("Erreur : " + insertError.message);
-      setLoading(false);
-      return;
+    if (updateError) {
+      setError("Erreur : " + updateError.message);
+    } else {
+      setSuccess(true);
+      router.refresh();
     }
-
-    router.push(`/dashboard/cards/${data.id}`);
+    setLoading(false);
   };
 
   return (
     <div className="flex flex-col xl:flex-row gap-10">
       {/* ── FORM ── */}
-      <form onSubmit={handleSubmit} className="flex-1 space-y-6 min-w-0">
+      <form onSubmit={handleSave} className="flex-1 space-y-5 min-w-0">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
-            {error}
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">{error}</div>
+        )}
+        {success && (
+          <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm">
+            ✓ Modifications enregistrées.
           </div>
         )}
 
-        {/* Nom */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Nom de la carte</label>
           <input
             type="text" required value={cardName}
             onChange={(e) => setCardName(e.target.value)}
-            placeholder="ex: Carte fidélité Boulangerie"
             className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
-        {/* Message de bienvenue */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Message de bienvenue <span className="text-gray-400 font-normal">(optionnel)</span>
@@ -136,60 +145,45 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
           <input
             type="text" value={welcomeMessage}
             onChange={(e) => setWelcomeMessage(e.target.value)}
-            placeholder="ex: Bienvenue chez nous, profitez de vos avantages !"
+            placeholder="ex: Bienvenue chez nous !"
             className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
-          <p className="text-xs text-gray-400 mt-1">Affiché sur la page d&apos;inscription client</p>
         </div>
 
-        {/* Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Type de carte</label>
-          <div className="flex gap-3">
-            {(["stamp", "points"] as const).map((type) => (
-              <button
-                key={type} type="button" onClick={() => setCardType(type)}
-                className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
-                  cardType === type
-                    ? "bg-indigo-600 border-indigo-600 text-white"
-                    : "bg-white border-gray-300 text-gray-700 hover:border-indigo-400"
-                }`}
-              >
-                {type === "stamp" ? "🔖 Tampons" : "⭐ Points"}
-              </button>
-            ))}
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Récompense</label>
+          <input
+            type="text" required value={rewardDescription}
+            onChange={(e) => setRewardDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </div>
 
-        {/* Stamps */}
-        {cardType === "stamp" && (
+        {card.card_type === "stamp" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tampons pour la récompense
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Tampons requis</label>
             <input
-              type="number" required min={1} max={50} value={stampsRequired}
+              type="number" min={1} max={50} value={stampsRequired}
               onChange={(e) => setStampsRequired(Number(e.target.value))}
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         )}
 
-        {/* Points */}
-        {cardType === "points" && (
+        {card.card_type === "points" && (
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">Points par achat</label>
               <input
-                type="number" required min={1} value={pointsPerPurchase}
+                type="number" min={1} value={pointsPerPurchase}
                 onChange={(e) => setPointsPerPurchase(Number(e.target.value))}
                 className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Seuil récompense (pts)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Seuil (pts)</label>
               <input
-                type="number" required min={1} value={rewardThreshold}
+                type="number" min={1} value={rewardThreshold}
                 onChange={(e) => setRewardThreshold(Number(e.target.value))}
                 className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -197,20 +191,8 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
           </div>
         )}
 
-        {/* Reward */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description de la récompense</label>
-          <input
-            type="text" required value={rewardDescription}
-            onChange={(e) => setRewardDescription(e.target.value)}
-            placeholder="ex: 1 croissant offert"
-            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        {/* Logo */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Logo (optionnel)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
           <input
             type="file" accept="image/*" onChange={handleLogoChange}
             className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
@@ -220,72 +202,50 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
           )}
         </div>
 
-        {/* Colors */}
         <div className="flex gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Couleur principale</label>
             <div className="flex items-center gap-2">
-              <input
-                type="color" value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="h-10 w-14 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              />
-              <span className="text-sm text-gray-500 font-mono">{primaryColor}</span>
+              <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)}
+                className="h-10 w-14 rounded-lg border border-gray-300 cursor-pointer p-0.5" />
+              <span className="text-sm font-mono text-gray-500">{primaryColor}</span>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Couleur du texte</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Couleur texte</label>
             <div className="flex items-center gap-2">
-              <input
-                type="color" value={textColor}
-                onChange={(e) => setTextColor(e.target.value)}
-                className="h-10 w-14 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              />
-              <span className="text-sm text-gray-500 font-mono">{textColor}</span>
+              <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)}
+                className="h-10 w-14 rounded-lg border border-gray-300 cursor-pointer p-0.5" />
+              <span className="text-sm font-mono text-gray-500">{textColor}</span>
             </div>
           </div>
         </div>
 
-        {/* Stamp shape (only for stamp cards) */}
-        {cardType === "stamp" && (
+        {card.card_type === "stamp" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Forme des tampons</label>
             <div className="flex gap-2">
               {STAMP_SHAPES.map((s) => (
-                <button
-                  key={s.value} type="button"
-                  onClick={() => setStampShape(s.value)}
+                <button key={s.value} type="button" onClick={() => setStampShape(s.value)}
                   className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border text-xs font-medium transition-colors ${
-                    stampShape === s.value
-                      ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                      : "border-gray-200 text-gray-600 hover:border-indigo-300"
-                  }`}
-                >
-                  <span className="text-xl">{s.icon}</span>
-                  {s.label}
+                    stampShape === s.value ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 text-gray-600 hover:border-indigo-300"
+                  }`}>
+                  <span className="text-xl">{s.icon}</span>{s.label}
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Card style */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Style de la carte</label>
           <div className="flex gap-2">
             {CARD_STYLES.map((s) => (
-              <button
-                key={s.value} type="button"
-                onClick={() => setCardStyle(s.value)}
+              <button key={s.value} type="button" onClick={() => setCardStyle(s.value)}
                 className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border text-xs font-medium transition-colors ${
-                  cardStyle === s.value
-                    ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                    : "border-gray-200 text-gray-600 hover:border-indigo-300"
-                }`}
-              >
-                <span className="text-lg">
-                  {s.value === "rounded" ? "▢" : s.value === "square" ? "■" : "◈"}
-                </span>
+                  cardStyle === s.value ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-gray-200 text-gray-600 hover:border-indigo-300"
+                }`}>
+                <span className="text-lg">{s.value === "rounded" ? "▢" : s.value === "square" ? "■" : "◈"}</span>
                 <span>{s.label}</span>
                 <span className="text-[10px] opacity-60">{s.desc}</span>
               </button>
@@ -293,11 +253,9 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
           </div>
         </div>
 
-        <button
-          type="submit" disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors"
-        >
-          {loading ? "Création en cours…" : "Créer la carte"}
+        <button type="submit" disabled={loading}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors">
+          {loading ? "Enregistrement…" : "Enregistrer les modifications"}
         </button>
       </form>
 
@@ -306,7 +264,7 @@ export default function NewCardForm({ userId }: NewCardFormProps) {
         <p className="text-sm font-medium text-gray-700 mb-3">Aperçu en direct</p>
         <CardPreview
           cardName={cardName}
-          cardType={cardType}
+          cardType={card.card_type}
           stampsRequired={stampsRequired}
           pointsPerPurchase={pointsPerPurchase}
           rewardThreshold={rewardThreshold}
