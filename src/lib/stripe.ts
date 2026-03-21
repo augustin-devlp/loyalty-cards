@@ -20,12 +20,14 @@ export const PRICE_LOOKUP_KEYS = {
   essential_ch: "stampify_essential_ch",
   pro_fr:       "stampify_pro_fr",
   pro_ch:       "stampify_pro_ch",
+  business_fr:  "stampify_business_fr",
+  business_ch:  "stampify_business_ch",
 } as const;
 
 export type PlanKey = keyof typeof PRICE_LOOKUP_KEYS;
 
 export function getPlanKey(
-  plan: "essential" | "pro",
+  plan: "essential" | "pro" | "business",
   country: "FR" | "CH"
 ): PlanKey {
   return `${plan}_${country.toLowerCase()}` as PlanKey;

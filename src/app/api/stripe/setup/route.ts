@@ -3,7 +3,7 @@ import { getStripe, PRICE_LOOKUP_KEYS } from "@/lib/stripe";
 
 /**
  * POST /api/stripe/setup
- * Creates the 4 Stampify products/prices in Stripe (idempotent via lookup_keys).
+ * Creates the 6 Stampify products/prices in Stripe (idempotent via lookup_keys).
  * Call this once after deploying to production.
  */
 export async function POST() {
@@ -16,12 +16,13 @@ export async function POST() {
     { key: PRICE_LOOKUP_KEYS.essential_ch, name: "Stampify Essentiel",  currency: "chf", amount: 2900 },
     { key: PRICE_LOOKUP_KEYS.pro_fr,       name: "Stampify Pro",        currency: "eur", amount: 4900 },
     { key: PRICE_LOOKUP_KEYS.pro_ch,       name: "Stampify Pro",        currency: "chf", amount: 7900 },
+    { key: PRICE_LOOKUP_KEYS.business_fr,  name: "Stampify Business",   currency: "eur", amount: 9900 },
+    { key: PRICE_LOOKUP_KEYS.business_ch,  name: "Stampify Business",   currency: "chf", amount: 14900 },
   ];
 
   const results: Record<string, string> = {};
 
   for (const plan of plans) {
-    // Check if price already exists for this lookup key
     const existing = await getStripe().prices.list({
       lookup_keys: [plan.key],
       active: true,
@@ -33,7 +34,6 @@ export async function POST() {
       continue;
     }
 
-    // Create product + price
     const price = await getStripe().prices.create({
       currency: plan.currency,
       unit_amount: plan.amount,

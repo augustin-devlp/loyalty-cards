@@ -221,42 +221,80 @@ const PRO_FR = [
   "Support prioritaire",
 ];
 
+const BUSINESS_FR = [
+  "Tout ce qu'inclut Pro",
+  "Comptes employés illimités",
+  "Multi-établissements",
+  "Intégration caisse / API",
+  "Campagnes SMS & push",
+  "Carte cadeau digitale",
+  "Programme VIP multi-niveaux",
+  "Onboarding personnalisé inclus",
+  "Account manager dédié",
+  "SLA 99,9% garanti",
+];
+
+const ONE_SHOT_ADDONS = [
+  { icon: "🎯", label: "Full onboarding", desc: "Configuration complète par un expert Stampify", price: "29€" },
+  { icon: "🌐", label: "Site vitrine", desc: "Mini-site web pour votre commerce (1 page)", price: "99€" },
+  { icon: "📱", label: "Campagne SMS", desc: "Envoi d'une campagne SMS à tous vos clients", price: "29€" },
+  { icon: "⭐", label: "Audit Google Business", desc: "Optimisation de votre fiche Google My Business", price: "39€" },
+  { icon: "📸", label: "Shooting photo", desc: "Séance photo professionnelle pour votre commerce", price: "149€" },
+];
+
+const MONTHLY_ADDONS = [
+  { icon: "👑", label: "Programme VIP", desc: "Niveaux de fidélité multi-paliers" },
+  { icon: "🎁", label: "Carte cadeau digitale", desc: "Vente et gestion de cartes cadeaux" },
+  { icon: "🌍", label: "Multi-langues", desc: "Carte client en 2 langues au choix" },
+  { icon: "🔔", label: "Notifications push", desc: "Alertes promos directement sur les téléphones" },
+  { icon: "📅", label: "Module réservation", desc: "Prise de rendez-vous intégrée à la carte" },
+  { icon: "📲", label: "Instagram automatique", desc: "Publications auto sur votre compte Instagram" },
+];
+
 // ─── Pricing card ─────────────────────────────────────────────────────────────
 function PricingCard({
-  name, priceEur, priceCHF, isCH, features, popular, cta,
+  name, priceEur, priceCHF, isCH, features, popular, premium, commitment, cta,
 }: {
   name: string; priceEur: number; priceCHF: number; isCH: boolean;
-  features: string[]; popular?: boolean; cta: string;
+  features: string[]; popular?: boolean; premium?: boolean; commitment?: string; cta: string;
 }) {
   const price = isCH ? priceCHF : priceEur;
   const currency = isCH ? " CHF" : "€";
+  const highlighted = popular || premium;
 
   return (
-    <div className={`relative flex flex-col rounded-3xl p-8 shadow-xl ${popular ? "bg-indigo-600 text-white ring-4 ring-indigo-400 ring-offset-2" : "bg-white text-gray-900 border border-gray-200"}`}>
+    <div className={`relative flex flex-col rounded-3xl p-8 shadow-xl ${highlighted ? "bg-indigo-600 text-white ring-4 ring-indigo-400 ring-offset-2" : "bg-white text-gray-900 border border-gray-200"}`}>
       {popular && (
         <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-400 to-pink-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
           ⚡ Populaire
         </span>
       )}
+      {premium && (
+        <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+          💎 Premium
+        </span>
+      )}
       <div className="mb-6">
-        <h3 className={`text-xl font-bold mb-1 ${popular ? "text-white" : "text-gray-900"}`}>{name}</h3>
+        <h3 className={`text-xl font-bold mb-1 ${highlighted ? "text-white" : "text-gray-900"}`}>{name}</h3>
         <div className="flex items-end gap-1">
-          <span className={`text-5xl font-black ${popular ? "text-white" : "text-gray-900"}`}>{price}</span>
-          <span className={`text-lg font-semibold mb-1 ${popular ? "text-indigo-200" : "text-gray-500"}`}>{currency}/mois</span>
+          <span className={`text-5xl font-black ${highlighted ? "text-white" : "text-gray-900"}`}>{price}</span>
+          <span className={`text-lg font-semibold mb-1 ${highlighted ? "text-indigo-200" : "text-gray-500"}`}>{currency}/mois</span>
         </div>
-        <p className={`text-sm mt-1 ${popular ? "text-indigo-200" : "text-gray-500"}`}>Sans engagement · Résiliable à tout moment</p>
+        <p className={`text-sm mt-1 ${highlighted ? "text-indigo-200" : "text-gray-500"}`}>
+          {commitment ?? "Sans engagement · Résiliable à tout moment"}
+        </p>
       </div>
       <ul className="space-y-3 flex-1 mb-8">
         {features.map((f, i) => (
           <li key={i} className="flex items-start gap-2">
-            <svg viewBox="0 0 20 20" fill="currentColor" className={`w-5 h-5 shrink-0 mt-0.5 ${popular ? "text-indigo-200" : "text-indigo-600"}`}>
+            <svg viewBox="0 0 20 20" fill="currentColor" className={`w-5 h-5 shrink-0 mt-0.5 ${highlighted ? "text-indigo-200" : "text-indigo-600"}`}>
               <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
             </svg>
-            <span className={`text-sm ${popular ? "text-indigo-100" : "text-gray-700"} ${i === 0 && name === "Pro" ? "font-medium" : ""}`}>{f}</span>
+            <span className={`text-sm ${highlighted ? "text-indigo-100" : "text-gray-700"} ${i === 0 && name !== "Essentiel" ? "font-medium" : ""}`}>{f}</span>
           </li>
         ))}
       </ul>
-      <Link href="/signup" className={`block w-full text-center py-3.5 rounded-2xl font-bold text-sm transition-all ${popular ? "bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg" : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"}`}>
+      <Link href="/signup" className={`block w-full text-center py-3.5 rounded-2xl font-bold text-sm transition-all ${highlighted ? "bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg" : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"}`}>
         {cta}
       </Link>
     </div>
@@ -515,12 +553,67 @@ export default function LandingPage() {
             </p>
           </FadeIn>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
             <FadeIn delay={0}>
-              <PricingCard name="Essentiel" priceEur={19} priceCHF={29} isCH={isCH} features={ESSENTIALS_FR} cta="Commencer →" />
+              <PricingCard name="Essentiel" priceEur={19} priceCHF={29} isCH={isCH} features={ESSENTIALS_FR} cta="Commencer maintenant →" />
             </FadeIn>
             <FadeIn delay={100}>
-              <PricingCard name="Pro" priceEur={49} priceCHF={79} isCH={isCH} features={PRO_FR} popular cta="Commencer →" />
+              <PricingCard name="Pro" priceEur={49} priceCHF={79} isCH={isCH} features={PRO_FR} popular cta="Commencer maintenant →" />
+            </FadeIn>
+            <FadeIn delay={200}>
+              <PricingCard name="Business" priceEur={99} priceCHF={149} isCH={isCH} features={BUSINESS_FR} premium commitment="Engagement 3 mois minimum" cta="Nous contacter →" />
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ADD-ONS ─────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-24 bg-white border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <FadeIn className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3">Add-ons à la carte</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              Complétez votre forfait avec des services ponctuels ou mensuels selon vos besoins.
+            </p>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-2 gap-10">
+            {/* One-shot */}
+            <FadeIn>
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-5">Services ponctuels</p>
+                <div className="space-y-4">
+                  {ONE_SHOT_ADDONS.map(({ icon, label, desc, price }) => (
+                    <div key={label} className="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                      <span className="text-2xl shrink-0">{icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-900 text-sm">{label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                      </div>
+                      <span className="shrink-0 text-sm font-black text-indigo-600 whitespace-nowrap">{price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Monthly */}
+            <FadeIn delay={100}>
+              <div className="bg-indigo-50 rounded-3xl p-8 border border-indigo-100">
+                <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-5">Options mensuelles · +9€/mois chacune</p>
+                <div className="space-y-4">
+                  {MONTHLY_ADDONS.map(({ icon, label, desc }) => (
+                    <div key={label} className="flex items-start gap-4 bg-white rounded-2xl p-4 shadow-sm border border-indigo-50">
+                      <span className="text-2xl shrink-0">{icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-900 text-sm">{label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                      </div>
+                      <span className="shrink-0 text-sm font-black text-indigo-600 whitespace-nowrap">+9€/mois</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </FadeIn>
           </div>
 

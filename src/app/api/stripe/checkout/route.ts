@@ -15,9 +15,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
-  const body = await req.json() as { plan: "essential" | "pro"; country?: string };
+  const body = await req.json() as { plan: "essential" | "pro" | "business"; country?: string };
   const { plan } = body;
-  if (!plan || !["essential", "pro"].includes(plan)) {
+  if (!plan || !["essential", "pro", "business"].includes(plan)) {
     return NextResponse.json({ error: "Plan invalide" }, { status: 400 });
   }
 
