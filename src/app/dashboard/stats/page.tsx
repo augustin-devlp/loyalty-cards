@@ -52,6 +52,13 @@ export default async function StatsPage() {
 
   if (!user) redirect("/login");
 
+  const { data: business } = await supabase
+    .from("businesses")
+    .select("business_name")
+    .eq("id", user.id)
+    .single();
+  const businessName = business?.business_name ?? "";
+
   // 1. Merchant's loyalty cards (RLS filters by business_id = auth.uid())
   const { data: loyaltyCards } = await supabase
     .from("loyalty_cards")
@@ -185,9 +192,22 @@ export default async function StatsPage() {
       <DashboardNav />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Statistiques</h1>
-          <p className="text-sm text-gray-500 mt-1">Vue d'ensemble de votre programme de fidélité.</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Statistiques</h1>
+            <p className="text-sm text-gray-500 mt-1">Vue d'ensemble de votre programme de fidélité.</p>
+          </div>
+          <ExportPDFButton
+            businessName={businessName}
+            totalClients={totalClients}
+            stampsTotal={stampsTotal}
+            pointsTotal={pointsTotal}
+            rewardsTotal={rewardsTotal}
+            top10={top10}
+            chartData={chartData}
+            hasStamps={hasStamps}
+            hasPoints={hasPoints}
+          />
         </div>
 
         {!hasData && loyaltyCards?.length === 0 && (
