@@ -80,7 +80,7 @@ const NICHE_TEMPLATES: NicheTemplate[] = [
     ],
   },
   {
-    label: "Institut beauté", emoji: "💆", shape: "flower", style: "rounded",
+    label: "Institut beauté", emoji: "💆", shape: "nail", style: "rounded",
     defaultReward: "1 soin offert",
     variants: [
       { label: "Clair",   primary: "#FCE4EC", text: "#AD1457" },
