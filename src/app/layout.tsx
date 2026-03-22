@@ -10,6 +10,17 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Stampify",
   },
+  openGraph: {
+    title: "Stampify",
+    description: "Gérez vos cartes de fidélité",
+    images: [{ url: "/icon-512.svg" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "Stampify",
+    description: "Gérez vos cartes de fidélité",
+    images: ["/icon-512.svg"],
+  },
 };
 
 export default function RootLayout({
