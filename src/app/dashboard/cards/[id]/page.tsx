@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import DashboardNav from "@/components/DashboardNav";
 import QRCodeSection from "@/components/QRCodeSection";
 import EditCardForm from "./EditCardForm";
+import VipTiersSection from "./VipTiersSection";
 
 export default async function CardDetailPage({
   params,
@@ -27,9 +28,11 @@ export default async function CardDetailPage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("join_background_url")
+    .select("join_background_url, plan")
     .eq("id", user.id)
     .single();
+
+  const isProOrBusiness = business?.plan === "pro" || business?.plan === "business";
 
   return (
     <div>
@@ -91,6 +94,21 @@ export default async function CardDetailPage({
             currentBgUrl={business?.join_background_url ?? null}
           />
         </div>
+
+        {/* VIP Tiers — Pro/Business only */}
+        {isProOrBusiness ? (
+          <VipTiersSection cardId={card.id} />
+        ) : (
+          <div className="rounded-2xl border p-8 shadow-sm" style={{ background: "var(--dash-surface)", borderColor: "var(--dash-border)" }}>
+            <h2 className="text-lg font-semibold mb-2 flex items-center gap-2" style={{ color: "var(--dash-text)" }}>
+              👑 Paliers VIP
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">Pro / Business</span>
+            </h2>
+            <p className="text-sm" style={{ color: "var(--dash-muted)" }}>
+              Passez au plan Pro ou Business pour activer les paliers VIP et fidéliser encore plus vos clients.
+            </p>
+          </div>
+        )}
       </main>
     </div>
   );

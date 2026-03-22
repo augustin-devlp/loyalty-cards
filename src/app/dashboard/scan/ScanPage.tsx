@@ -155,6 +155,13 @@ export default function ScanPage() {
       fetch("/api/sms/google-review",  { method: "POST", headers: jsonHeader, body }).catch(() => {});
     }
 
+    // Check for VIP tier upgrade (fire-and-forget)
+    fetch("/api/vip-tiers/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_card_id: customerCard.id }),
+    }).catch(() => {});
+
     setStampsAdded(added);
     setRewardReached(reached);
     setPhase("success");
@@ -227,6 +234,13 @@ export default function ScanPage() {
       fetch("/api/email/reward",        { method: "POST", headers: jsonHeader, body }).catch(() => {});
       fetch("/api/sms/google-review",  { method: "POST", headers: jsonHeader, body }).catch(() => {});
     }
+
+    // Check for VIP tier upgrade (fire-and-forget)
+    fetch("/api/vip-tiers/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer_card_id: customerCard.id }),
+    }).catch(() => {});
 
     setRewardReached(reached);
     setPhase("success");

@@ -20,6 +20,7 @@ export default async function CustomerCardPage({
       current_stamps,
       current_points,
       rewards_claimed,
+      current_tier_id,
       qr_code_value,
       referral_code,
       customers ( first_name, last_name ),
@@ -68,6 +69,26 @@ export default async function CustomerCardPage({
     .lte("start_date", new Date().toISOString())
     .gte("end_date", new Date().toISOString())
     .maybeSingle();
+
+  // Fetch VIP tiers if plan is Pro/Business
+  interface VipTierRow { id: string; tier_name: string; stamps_required: number; reward_description: string; discount_percentage: number | null; position: number; }
+  let vipTiers: VipTierRow[] = [];
+  const ccCurrentTierId = (cc as unknown as { current_tier_id: string | null }).current_tier_id ?? null;
+
+  if (card.businesses?.plan === "pro" || card.businesses?.plan === "business") {
+    const { data: tiersData } = await supabase
+      .from("vip_tiers")
+      .select("id, tier_name, stamps_required, reward_description, discount_percentage, position")
+      .eq("card_id", card.id)
+      .order("stamps_required", { ascending: true });
+    vipTiers = (tiersData ?? []) as VipTierRow[];
+  }
+
+  const currentVipTier = vipTiers.find((t) => t.id === ccCurrentTierId) ?? null;
+  const progress = card.card_type === "stamp" ? (cc.current_stamps ?? 0) : (cc.current_points ?? 0);
+  const nextVipTier = vipTiers.find((t) => t.stamps_required > progress) ?? null;
+
+  const TIER_COLORS = ["#9CA3AF", "#CD7F32", "#C0C0C0", "#FFD700", "#8B5CF6"];
 
   const customer = cc.customers as unknown as { first_name: string; last_name: string };
   const googleWalletEnabled = !!process.env.GOOGLE_WALLET_CREDENTIALS;
@@ -248,6 +269,78 @@ export default async function CustomerCardPage({
               <p className="text-xs text-gray-400 mb-1">Votre code parrain</p>
               <p className="text-2xl font-black tracking-widest" style={{ color: bg }}>{cc.referral_code}</p>
               <p className="text-xs text-gray-400 mt-2">Partagez ce code pour gagner 2 tampons bonus !</p>
+            </div>
+          )}
+
+          {/* VIP Tier section */}
+          {vipTiers.length > 0 && (
+            <div className="rounded-2xl border border-gray-200 p-5">
+              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                👑 Statut VIP
+              </h3>
+              {/* Current tier badge */}
+              {currentVipTier ? (
+                <div className="flex items-center gap-3 mb-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                    style={{ backgroundColor: TIER_COLORS[vipTiers.indexOf(currentVipTier) % TIER_COLORS.length] }}
+                  >
+                    {currentVipTier.tier_name[0]}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm text-gray-900">{currentVipTier.tier_name}</p>
+                    <p className="text-xs text-gray-500">{currentVipTier.reward_description}</p>
+                    {currentVipTier.discount_percentage != null && (
+                      <span className="text-xs font-medium text-green-600">-{currentVipTier.discount_percentage}% de réduction</span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 mb-3">Aucun palier atteint pour l&apos;instant.</p>
+              )}
+              {/* Progress to next tier */}
+              {nextVipTier && (
+                <div>
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>Prochain palier : <strong>{nextVipTier.tier_name}</strong></span>
+                    <span>{progress} / {nextVipTier.stamps_required}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(progress / nextVipTier.stamps_required, 1) * 100}%`,
+                        backgroundColor: TIER_COLORS[vipTiers.indexOf(nextVipTier) % TIER_COLORS.length],
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Plus que {nextVipTier.stamps_required - progress} {card.card_type === "stamp" ? "tampon(s)" : "point(s)"} pour atteindre {nextVipTier.tier_name} !
+                  </p>
+                </div>
+              )}
+              {/* All tiers progress map */}
+              {vipTiers.length > 1 && (
+                <div className="mt-4 flex items-center gap-1">
+                  {vipTiers.map((t, i) => {
+                    const reached = progress >= t.stamps_required;
+                    return (
+                      <div key={t.id} className="flex-1 flex flex-col items-center gap-1">
+                        <div
+                          className="w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                          style={{
+                            borderColor: TIER_COLORS[i % TIER_COLORS.length],
+                            backgroundColor: reached ? TIER_COLORS[i % TIER_COLORS.length] : "transparent",
+                          }}
+                        >
+                          {reached && <span className="text-white text-xs font-bold">✓</span>}
+                        </div>
+                        <span className="text-xs text-gray-400 truncate w-full text-center">{t.tier_name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
