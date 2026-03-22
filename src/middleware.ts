@@ -2,8 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  // Inject x-pathname into the REQUEST headers so that server components
+  // can read it via headers(). Setting it only on the response headers
+  // would NOT make it visible to headers() in server layouts.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+
   let supabaseResponse = NextResponse.next({
-    request,
+    request: { headers: requestHeaders },
   });
 
   const supabase = createServerClient(
@@ -18,8 +24,9 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
+          // Recreate the response preserving our custom request headers
           supabaseResponse = NextResponse.next({
-            request,
+            request: { headers: requestHeaders },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,9 +58,6 @@ export async function middleware(request: NextRequest) {
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
-
-  // Expose pathname as a header so server layouts can read it
-  supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname);
 
   return supabaseResponse;
 }

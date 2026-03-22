@@ -48,7 +48,9 @@ function JoinContent() {
       email: info.email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard/scan`,
+        // Redirect to /auth/callback which exchanges the code for a session,
+        // then forwards to /dashboard/scan (required for Supabase PKCE flow)
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard/scan`,
       },
     });
 
