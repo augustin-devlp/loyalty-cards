@@ -1,15 +1,18 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Conditions d'utilisation – Stampify",
+  description: "Conditions générales d'utilisation de la plateforme Stampify.",
+};
+
 export default function ConditionsUtilisation() {
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100 py-4 px-6">
         <Link href="/" className="flex items-center gap-2 w-fit">
-          <svg width="28" height="28" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect x="8" y="8" width="176" height="148" rx="36" fill="#534AB7"/>
-            <polygon points="40,156 40,186 74,156" fill="#534AB7"/>
-            <text x="96" y="114" fontFamily="Arial, sans-serif" fontSize="100" fontWeight="900" textAnchor="middle" fill="white">S</text>
-          </svg>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#534AB7" }}>
+            <span className="text-white font-black text-xs">S</span>
+          </div>
           <span className="font-black text-lg text-gray-900">Stampify</span>
         </Link>
       </header>
@@ -18,180 +21,171 @@ export default function ConditionsUtilisation() {
         <h1 className="text-3xl font-black text-gray-900 mb-4">Conditions d&apos;utilisation</h1>
         <p className="text-gray-500 text-sm mb-10">Dernière mise à jour : mars 2026</p>
 
-        <div className="space-y-10 text-gray-700 text-sm leading-relaxed">
+        <div className="space-y-10 text-gray-600 text-sm leading-relaxed">
 
+          {/* 1 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">1. Présentation du service</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">1. Description du service</h2>
             <p>
-              Stampify est une plateforme SaaS (Software as a Service) permettant aux commerçants de créer et gérer
-              des programmes de cartes de fidélité digitales pour leurs clients. Le service est accessible à l&apos;adresse{" "}
-              <strong>stampify.ch</strong>.
-            </p>
-            <p className="mt-2">
-              Stampify est édité par Augustin Domenget, domicilié en France.
-              Contact : <a href="mailto:contact@stampify.ch" className="text-indigo-600 hover:underline">contact@stampify.ch</a>
+              Stampify est une plateforme SaaS (Software as a Service) permettant aux commerçants de créer et
+              gérer des programmes de cartes de fidélité numériques pour leurs clients. Le service comprend la
+              création de cartes, la gestion des tampons, l'envoi de notifications, la génération de rapports
+              statistiques et l'intégration avec Google Wallet.
             </p>
           </section>
 
+          {/* 2 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">2. Utilisateurs autorisés</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">2. Utilisateurs concernés</h2>
             <p>
-              L&apos;accès à Stampify est réservé aux <strong>commerçants professionnels</strong>. En créant un compte,
-              vous déclarez agir dans le cadre de votre activité professionnelle et non en tant que consommateur
-              au sens du droit de la consommation.
-            </p>
-            <p className="mt-2">
-              L&apos;utilisation du service à des fins personnelles ou non commerciales est interdite.
+              Stampify est une plateforme réservée aux <strong>commerçants professionnels</strong> (personnes
+              physiques ou morales exerçant une activité commerciale). L'ouverture d'un compte implique que
+              l'utilisateur agit dans le cadre de son activité professionnelle et dispose de la capacité
+              juridique pour s'engager contractuellement.
             </p>
           </section>
 
+          {/* 3 */}
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">3. Offres et tarifs</h2>
-            <p className="mb-4">Stampify propose trois formules d&apos;abonnement :</p>
-
+            <p className="mb-3">Stampify propose trois plans d'abonnement :</p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700">Formule</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700">Prix (€ / CHF)</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700">Engagement</th>
+              <table className="w-full text-sm border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-700">Plan</th>
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-700">Prix mensuel (€)</th>
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-700">Prix mensuel (CHF)</th>
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-700">Engagement</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody>
                   <tr>
-                    <td className="px-4 py-3 font-medium">Essentiel</td>
-                    <td className="px-4 py-3">19 € / 29 CHF / mois</td>
-                    <td className="px-4 py-3">Sans engagement</td>
+                    <td className="border border-gray-200 px-3 py-2 font-medium">Essentiel</td>
+                    <td className="border border-gray-200 px-3 py-2">19 €</td>
+                    <td className="border border-gray-200 px-3 py-2">29 CHF</td>
+                    <td className="border border-gray-200 px-3 py-2">Sans engagement</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-200 px-3 py-2 font-medium">Pro</td>
+                    <td className="border border-gray-200 px-3 py-2">49 €</td>
+                    <td className="border border-gray-200 px-3 py-2">79 CHF</td>
+                    <td className="border border-gray-200 px-3 py-2">Sans engagement</td>
                   </tr>
                   <tr>
-                    <td className="px-4 py-3 font-medium">Pro</td>
-                    <td className="px-4 py-3">49 € / 79 CHF / mois</td>
-                    <td className="px-4 py-3">Sans engagement</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-3 font-medium">Business</td>
-                    <td className="px-4 py-3">99 € / 149 CHF / mois</td>
-                    <td className="px-4 py-3">3 mois minimum</td>
+                    <td className="border border-gray-200 px-3 py-2 font-medium">Business</td>
+                    <td className="border border-gray-200 px-3 py-2">99 €</td>
+                    <td className="border border-gray-200 px-3 py-2">149 CHF</td>
+                    <td className="border border-gray-200 px-3 py-2">3 mois minimum</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            <p className="mt-3 text-gray-500 text-xs">
+            <p className="mt-3 text-gray-500">
               Les tarifs sont indiqués hors taxes. Stampify se réserve le droit de modifier ses tarifs avec un
-              préavis de 30 jours par e-mail.
+              préavis de 30 jours par email.
             </p>
           </section>
 
+          {/* 4 */}
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-3">4. Paiement</h2>
             <p>
-              Le paiement s&apos;effectue via <strong>Stripe</strong>, prestataire de paiement sécurisé. Un prélèvement
-              mensuel automatique est réalisé à la date anniversaire de l&apos;abonnement.
-            </p>
-            <p className="mt-2">
-              En cas d&apos;échec de paiement, Stampify se réserve le droit de suspendre l&apos;accès au service après
-              un délai de grâce de 7 jours. Les données sont conservées pendant 30 jours suivant la suspension
-              avant suppression définitive.
-            </p>
-            <p className="mt-2">
-              Stampify ne stocke aucune information de carte bancaire — ces données sont traitées exclusivement
-              par Stripe.
+              Les paiements sont traités par <strong>Stripe</strong>, prestataire de paiement sécurisé. Le
+              prélèvement est effectué mensuellement de façon automatique à la date anniversaire de l'abonnement.
+              En cas d'échec de paiement, Stampify se réserve le droit de suspendre l'accès au service jusqu'à
+              régularisation.
             </p>
           </section>
 
+          {/* 5 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">5. Résiliation et engagement</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">5. Résiliation</h2>
             <p>
-              Les formules <strong>Essentiel</strong> et <strong>Pro</strong> sont sans engagement : vous pouvez
-              résilier à tout moment depuis votre tableau de bord (&quot;Facturation&quot; → &quot;Gérer l&apos;abonnement&quot;).
-              La résiliation prend effet à la fin de la période de facturation en cours.
-            </p>
-            <p className="mt-2">
-              La formule <strong>Business</strong> requiert un engagement minimum de <strong>3 mois</strong>. Toute
-              résiliation avant ce délai entraîne la facturation des mois restants de la période d&apos;engagement.
-              Passé ce délai, la résiliation est libre et prend effet à la fin de la période en cours.
-            </p>
-            <p className="mt-2">
-              Aucun remboursement partiel n&apos;est effectué pour les périodes déjà facturées, sauf disposition
-              légale contraire.
+              L'abonnement peut être résilié à tout moment depuis le tableau de bord Stampify (section
+              Facturation). La résiliation prend effet à la fin de la période de facturation en cours. Pour
+              le plan Business, la résiliation ne peut intervenir qu'après la période minimale d'engagement de
+              3 mois. Aucun remboursement partiel n'est accordé pour la période restante après résiliation.
             </p>
           </section>
 
+          {/* 6 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">6. Obligations du commerçant</h2>
-            <p>En utilisant Stampify, le commerçant s&apos;engage à :</p>
-            <ul className="list-disc pl-5 space-y-1 mt-2">
-              <li>Utiliser le service conformément à la législation applicable</li>
-              <li>Obtenir le consentement de ses clients pour la collecte de leurs données personnelles</li>
-              <li>Ne pas utiliser la plateforme à des fins illicites, frauduleuses ou trompeuses</li>
-              <li>Assurer la sécurité de ses identifiants de connexion</li>
-              <li>Ne pas transmettre ses identifiants à des tiers non autorisés</li>
-            </ul>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">6. Responsabilités</h2>
+            <div className="space-y-3">
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-1">Stampify s'engage à :</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Héberger et sécuriser les données conformément aux bonnes pratiques</li>
+                  <li>Assurer une disponibilité du service de 99 % par mois (hors maintenance planifiée)</li>
+                  <li>Notifier les commerçants en cas d'incident impactant leurs données</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-1">Le commerçant est responsable de :</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>La conception et la gestion de son programme de fidélité</li>
+                  <li>L'information de ses clients sur la collecte de leurs données personnelles</li>
+                  <li>La conformité de son usage avec la réglementation applicable (RGPD, LPD)</li>
+                  <li>La confidentialité de ses identifiants de connexion</li>
+                </ul>
+              </div>
+            </div>
             <p className="mt-3">
-              Le commerçant est seul responsable de son programme de fidélité, de ses communications avec ses
-              clients et du respect du RGPD vis-à-vis de ceux-ci.
+              Stampify ne pourra être tenu responsable des dommages indirects, perte de chiffre d'affaires ou
+              préjudice commercial résultant de l'utilisation ou de l'indisponibilité du service.
             </p>
           </section>
 
+          {/* 7 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">7. Responsabilité de Stampify</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">7. Propriété intellectuelle</h2>
             <p>
-              Stampify s&apos;engage à fournir le service avec diligence et à maintenir une disponibilité raisonnable
-              de la plateforme. Stampify héberge les données du commerçant et de ses clients, mais ne peut être
-              tenu responsable :
-            </p>
-            <ul className="list-disc pl-5 space-y-1 mt-2">
-              <li>Des actions ou omissions du commerçant vis-à-vis de ses clients</li>
-              <li>Des interruptions de service dues à des tiers (hébergeur, opérateur télécom, etc.)</li>
-              <li>Des pertes indirectes ou manques à gagner</li>
-              <li>Des dommages résultant d&apos;une utilisation non conforme aux présentes conditions</li>
-            </ul>
-            <p className="mt-3">
-              La responsabilité de Stampify est limitée au montant des sommes effectivement versées par le
-              commerçant au cours des 3 derniers mois.
+              La plateforme Stampify, son interface, son code source et ses contenus sont la propriété exclusive
+              de Stampify. Toute reproduction, copie ou exploitation non autorisée est interdite.
             </p>
           </section>
 
+          {/* 8 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">8. Propriété intellectuelle</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">8. Modification des CGU</h2>
             <p>
-              L&apos;ensemble des éléments de la plateforme Stampify (interface, code, marque, logo) sont la propriété
-              exclusive d&apos;Augustin Domenget. Toute reproduction ou utilisation sans autorisation expresse est interdite.
-            </p>
-            <p className="mt-2">
-              Le commerçant conserve la propriété de ses données et du contenu qu&apos;il crée via la plateforme
-              (logo, nom de carte, etc.).
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">9. Modification des conditions</h2>
-            <p>
-              Stampify se réserve le droit de modifier les présentes conditions d&apos;utilisation. En cas de
-              modification substantielle, les commerçants seront informés par e-mail avec un préavis de 30 jours.
-              La poursuite de l&apos;utilisation du service après ce délai vaut acceptation des nouvelles conditions.
+              Stampify se réserve le droit de modifier les présentes conditions à tout moment. Les utilisateurs
+              seront informés par email au moins 15 jours avant l'entrée en vigueur de toute modification
+              substantielle. La poursuite de l'utilisation du service après cette date vaut acceptation des
+              nouvelles conditions.
             </p>
           </section>
 
+          {/* 9 */}
           <section>
-            <h2 className="text-lg font-bold text-gray-900 mb-3">10. Droit applicable et juridiction compétente</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">9. Droit applicable et litiges</h2>
             <p>
-              Les présentes conditions d&apos;utilisation sont régies par le <strong>droit français</strong>. En cas
-              de litige, et après tentative de résolution amiable, le tribunal compétent sera le{" "}
-              <strong>Tribunal de Paris</strong>.
+              Les présentes conditions sont régies par le <strong>droit français</strong>. En cas de litige,
+              les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut,
+              le tribunal compétent sera celui du ressort du siège social de Stampify.
+            </p>
+          </section>
+
+          {/* 10 */}
+          <section>
+            <h2 className="text-lg font-bold text-gray-900 mb-3">10. Contact</h2>
+            <p>
+              Pour toute question relative aux présentes conditions :{" "}
+              <a href="mailto:contact@stampify.ch" className="underline" style={{ color: "#534AB7" }}>
+                contact@stampify.ch
+              </a>
             </p>
           </section>
 
         </div>
       </main>
 
-      <footer className="border-t border-gray-100 py-8 px-6 mt-16">
-        <div className="max-w-3xl mx-auto flex flex-wrap gap-4 text-sm text-gray-500">
-          <Link href="/" className="hover:text-gray-900">Accueil</Link>
-          <Link href="/mentions-legales" className="hover:text-gray-900">Mentions légales</Link>
-          <Link href="/politique-de-confidentialite" className="hover:text-gray-900">Politique de confidentialité</Link>
+      <footer className="border-t border-gray-100 py-8 px-6 mt-8">
+        <div className="max-w-3xl mx-auto flex flex-wrap gap-4 text-xs text-gray-400">
+          <Link href="/" className="hover:text-gray-600 transition-colors">Accueil</Link>
+          <Link href="/politique-de-confidentialite" className="hover:text-gray-600 transition-colors">Politique de confidentialité</Link>
+          <span>© 2026 Stampify</span>
         </div>
       </footer>
     </div>

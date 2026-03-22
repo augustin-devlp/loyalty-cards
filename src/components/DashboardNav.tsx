@@ -134,12 +134,16 @@ export default function DashboardNav() {
             href="/dashboard"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
           >
-            <svg width="32" height="32" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect x="8" y="8" width="176" height="148" rx="36" fill="#534AB7"/>
-              <polygon points="40,156 40,186 74,156" fill="#534AB7"/>
-              <text x="96" y="114" fontFamily="Arial, sans-serif" fontSize="100" fontWeight="900" textAnchor="middle" fill="white">S</text>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <rect width="28" height="28" rx="7" fill="#534AB7"/>
+              {/* bulle de conversation */}
+              <path d="M6 7C6 5.9 6.9 5 8 5H20C21.1 5 22 5.9 22 7V17C22 18.1 21.1 19 20 19H16L12 23V19H8C6.9 19 6 18.1 6 17V7Z" fill="white" fillOpacity="0.15"/>
+              <path d="M6 7C6 5.9 6.9 5 8 5H20C21.1 5 22 5.9 22 7V17C22 18.1 21.1 19 20 19H16L12 23V19H8C6.9 19 6 18.1 6 17V7Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
+              {/* silhouette personne */}
+              <circle cx="14" cy="10.5" r="2" fill="white"/>
+              <path d="M10 17C10 14.8 11.8 13 14 13C16.2 13 18 14.8 18 17" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
-            <span className="text-base font-bold" style={{ color: "#534AB7" }}>Stampify</span>
+            <span className="text-base font-black" style={{ color: "#534AB7" }}>Stampify</span>
           </Link>
           <nav className="flex items-center gap-1">
             {links.map((link) => {
