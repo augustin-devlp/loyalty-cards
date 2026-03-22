@@ -52,6 +52,7 @@ export default function SignupPage() {
         email: formData.email,
         business_name: formData.businessName,
         country: formData.country,
+        status: "pending",
       });
 
       if (insertError) {
