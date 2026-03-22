@@ -66,7 +66,7 @@ export default async function DashboardLayout({
   return (
     <>
       <ThemeApplier accent={accent} dark={dark} />
-      <div style={{ minHeight: "100vh", background: "var(--dash-bg)", color: "var(--dash-text)" }}>
+      <div className="pb-16 md:pb-0" style={{ minHeight: "100vh", background: "var(--dash-bg)", color: "var(--dash-text)" }}>
         {children}
       </div>
     </>
