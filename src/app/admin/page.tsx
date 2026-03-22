@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminPendingActions from "@/components/AdminPendingActions";
 
-const ADMIN_EMAIL = "augustin-domenget@stampify.ch";
+const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ export default async function AdminPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || user.email !== ADMIN_EMAIL) redirect("/");
+  if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) redirect("/");
 
   // Fetch all businesses
   const { data: businesses } = await supabase
