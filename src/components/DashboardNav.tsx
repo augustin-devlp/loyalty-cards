@@ -132,10 +132,14 @@ export default function DashboardNav() {
         <div className="flex items-center gap-5">
           <Link
             href="/dashboard"
-            className="text-base font-bold hover:opacity-80 transition-opacity shrink-0"
-            style={{ color: "var(--dash-text)" }}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
           >
-            Loyalty Cards
+            <svg width="32" height="32" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="8" y="8" width="176" height="148" rx="36" fill="#534AB7"/>
+              <polygon points="40,156 40,186 74,156" fill="#534AB7"/>
+              <text x="96" y="114" fontFamily="Arial, sans-serif" fontSize="100" fontWeight="900" textAnchor="middle" fill="white">S</text>
+            </svg>
+            <span className="text-base font-bold" style={{ color: "#534AB7" }}>Stampify</span>
           </Link>
           <nav className="flex items-center gap-1">
             {links.map((link) => {
