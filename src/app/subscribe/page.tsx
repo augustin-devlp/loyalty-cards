@@ -65,28 +65,39 @@ function SubscribeContent() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     setCountry(detectCountry());
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) { router.push("/login"); return; }
+      if (!user) {
+        // Non connecté : montrer la page normalement
+        setIsChecking(false);
+        return;
+      }
       setEmail(user.email ?? "");
       const { data: biz } = await supabase
         .from("businesses")
         .select("status, plan")
         .eq("id", user.id)
         .single();
-      if (!biz) { router.push("/login"); return; }
+      if (!biz) { setIsChecking(false); return; }
       if (biz.status === "active") { router.push("/dashboard"); return; }
       if (biz.status === "pending" && biz.plan) {
         router.push("/subscribe/confirmation");
         return;
       }
+      setIsChecking(false);
     });
   }, [router]);
 
   const handleSubscribe = async (plan: PlanId) => {
+    // Non connecté : rediriger vers l'inscription avec le plan présélectionné
+    if (!email) {
+      router.push(`/signup?plan=${plan}`);
+      return;
+    }
     setLoading(plan);
     setError(null);
     try {
@@ -103,6 +114,14 @@ function SubscribeContent() {
       setLoading(null);
     }
   };
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-gray-400 text-sm">Chargement…</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col items-center justify-center px-4 py-16">

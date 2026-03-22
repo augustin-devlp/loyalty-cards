@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
   const { error } = await supabase
     .from("businesses")
-    .update({ status: "active", activation_code: null })
+    .update({ status: "active", subscription_status: "active", activation_code: null })
     .eq("id", businessId);
 
   if (error) {

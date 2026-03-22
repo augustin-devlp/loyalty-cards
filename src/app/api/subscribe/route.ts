@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
   const { data: biz } = await supabase
     .from("businesses")
-    .select("business_name, email, country")
+    .select("business_name, email, country, status")
     .eq("id", user.id)
     .single();
 
@@ -34,6 +34,13 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Commerce introuvable" },
       { status: 404 }
+    );
+  }
+
+  if (biz.status === "active") {
+    return NextResponse.json(
+      { error: "Abonnement déjà actif" },
+      { status: 400 }
     );
   }
 
