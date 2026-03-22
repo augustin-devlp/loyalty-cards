@@ -16,9 +16,60 @@ export default async function DashboardPage() {
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("business_name, country")
+    .select("business_name, country, status")
     .eq("id", user.id)
     .single();
+
+  // Pending check — show waiting page
+  if (!business || business.status !== "active") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-lg text-center">
+          <div className="flex items-center gap-2 justify-center mb-8">
+            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-black">S</span>
+            </div>
+            <span className="font-black text-2xl text-gray-900">Stampify</span>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-amber-200 shadow-xl p-10">
+            <div className="text-5xl mb-4">⏳</div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">
+              Compte en attente d&apos;activation
+            </h1>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Votre compte est en cours de validation. Augustin vous contactera
+              sous <strong>24h</strong> pour vous envoyer votre code
+              d&apos;activation.
+            </p>
+
+            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 text-left space-y-3 mb-6">
+              <p className="text-sm font-semibold text-amber-900">Contact :</p>
+              <a
+                href="mailto:augustin-domenget@stampify.ch"
+                className="flex items-center gap-2 text-amber-700 text-sm hover:underline"
+              >
+                <span>✉️</span> augustin-domenget@stampify.ch
+              </a>
+              <a
+                href="https://wa.me/33676549599"
+                className="flex items-center gap-2 text-amber-700 text-sm hover:underline"
+              >
+                <span>💬</span> WhatsApp : +33 6 76 54 95 99
+              </a>
+            </div>
+
+            <Link
+              href="/activate"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-colors"
+            >
+              J&apos;ai reçu mon code → Activer
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const { data: cards } = await supabase
     .from("loyalty_cards")

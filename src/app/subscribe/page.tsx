@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { detectCountry } from "@/lib/detectCountry";
@@ -57,8 +57,6 @@ const BUSINESS_FEATURES = [
 
 function SubscribeContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const canceled = searchParams.get("canceled") === "1";
 
   const [country, setCountry] = useState<"FR" | "CH">(() =>
     typeof window !== "undefined" ? detectCountry() : "FR"
@@ -66,6 +64,7 @@ function SubscribeContent() {
   const [loading, setLoading] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     setCountry(detectCountry());
@@ -75,11 +74,15 @@ function SubscribeContent() {
       setEmail(user.email ?? "");
       const { data: biz } = await supabase
         .from("businesses")
-        .select("subscription_status")
+        .select("status, plan")
         .eq("id", user.id)
         .single();
       if (!biz) { router.push("/login"); return; }
-      if (biz.subscription_status === "active") { router.push("/dashboard"); return; }
+      if (biz.status === "active") { router.push("/dashboard"); return; }
+      if (biz.status === "pending" && biz.plan) {
+        router.push("/subscribe/confirmation");
+        return;
+      }
     });
   }, [router]);
 
@@ -87,16 +90,14 @@ function SubscribeContent() {
     setLoading(plan);
     setError(null);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, country }),
+        body: JSON.stringify({ plan, phone, country }),
       });
       const data = await res.json();
-      if (!res.ok || !data.url) {
-        throw new Error(data.error ?? "Erreur lors de la création du paiement.");
-      }
-      window.location.href = data.url;
+      if (!res.ok) throw new Error(data.error ?? "Erreur lors de l'envoi.");
+      router.push("/subscribe/confirmation");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inattendue.");
       setLoading(null);
@@ -114,7 +115,7 @@ function SubscribeContent() {
       </div>
 
       <div className="w-full max-w-5xl">
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-black text-gray-900 mb-2">
             Choisissez votre formule
           </h1>
@@ -122,11 +123,23 @@ function SubscribeContent() {
             {email && <span className="text-gray-700 font-medium">{email} · </span>}
             {country === "CH" ? "🇨🇭 Prix en CHF" : "🇫🇷 Prix en €"}
           </p>
-          {canceled && (
-            <div className="mt-4 inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-sm px-4 py-2.5 rounded-xl">
-              ⚠️ Paiement annulé. Vous pouvez choisir une formule ci-dessous.
-            </div>
-          )}
+          <p className="text-sm text-indigo-600 mt-2 font-medium">
+            Votre compte sera activé sous 24h après validation par notre équipe.
+          </p>
+        </div>
+
+        {/* Phone field */}
+        <div className="max-w-sm mx-auto mb-8">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Numéro de téléphone <span className="text-gray-400">(pour votre code d'activation)</span>
+          </label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+33 6 12 34 56 78"
+            className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+          />
         </div>
 
         {error && (
@@ -194,7 +207,7 @@ function SubscribeContent() {
                         : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md"
                     }`}
                   >
-                    {loading === id ? "Redirection…" : `Choisir ${plan.name}`}
+                    {loading === id ? "Envoi en cours…" : `Choisir ${plan.name}`}
                   </button>
                 </div>
               );
@@ -225,7 +238,7 @@ function SubscribeContent() {
               ))}
             </ul>
             <a
-              href={`mailto:contact@stampify.ch?subject=${encodeURIComponent("Demande forfait Business Stampify")}`}
+              href={`mailto:augustin-domenget@stampify.ch?subject=${encodeURIComponent("Demande forfait Business Stampify")}`}
               className="block w-full py-3.5 rounded-2xl font-bold text-sm text-center transition-all bg-white text-indigo-600 hover:bg-indigo-50 shadow-lg"
             >
               Nous contacter →
