@@ -24,6 +24,15 @@ export default function AdminPendingActions({
   const [loadingGen, setLoadingGen] = useState<string | null>(null);
   const [loadingAct, setLoadingAct] = useState<string | null>(null);
 
+  const safeJson = async (res: Response) => {
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { error: text || `HTTP ${res.status}` };
+    }
+  };
+
   const generateCode = async (businessId: string) => {
     setLoadingGen(businessId);
     try {
@@ -32,12 +41,13 @@ export default function AdminPendingActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ businessId }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const data = await safeJson(res);
+      if (!res.ok) throw new Error(data.error ?? `Erreur ${res.status}`);
+      if (!data.code) throw new Error("Aucun code retourné par le serveur");
       setCodes((prev) => ({ ...prev, [businessId]: data.code }));
       router.refresh();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
+      alert(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
       setLoadingGen(null);
     }
@@ -52,11 +62,11 @@ export default function AdminPendingActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ businessId }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const data = await safeJson(res);
+      if (!res.ok) throw new Error(data.error ?? `Erreur ${res.status}`);
       router.refresh();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
+      alert(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
       setLoadingAct(null);
     }

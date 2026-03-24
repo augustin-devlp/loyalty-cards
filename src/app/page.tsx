@@ -254,7 +254,6 @@ const MONTHLY_ADDONS = [
   { icon: "🌍", label: "Multi-langues", desc: "Carte client en 2 langues au choix" },
   { icon: "🔔", label: "Notifications push", desc: "Alertes promos directement sur les téléphones" },
   { icon: "📅", label: "Module réservation", desc: "Prise de rendez-vous intégrée à la carte" },
-  { icon: "📲", label: "Instagram automatique (sur demande)", desc: "Publications auto sur votre compte Instagram" },
 ];
 
 // ─── Pricing card ─────────────────────────────────────────────────────────────

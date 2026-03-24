@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import DashboardNav from "@/components/DashboardNav";
+import OnboardingTour from "@/components/OnboardingTour";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("business_name, country, status")
+    .select("business_name, country, status, first_login")
     .eq("id", user.id)
     .single();
 
@@ -81,6 +82,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen">
       <DashboardNav />
+      {business.first_login && <OnboardingTour />}
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
         {/* Welcome */}
