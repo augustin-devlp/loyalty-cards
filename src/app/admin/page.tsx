@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminPendingActions from "@/components/AdminPendingActions";
+import AdminGate from "@/components/AdminGate";
 
 const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
 
@@ -90,6 +91,7 @@ export default async function AdminPage() {
   });
 
   return (
+    <AdminGate>
     <div style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "system-ui, Arial, sans-serif" }}>
       {/* Header */}
       <div style={{ background: "#534AB7", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -214,5 +216,6 @@ export default async function AdminPage() {
         </div>
       </div>
     </div>
+    </AdminGate>
   );
 }
