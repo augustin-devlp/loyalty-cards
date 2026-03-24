@@ -5,6 +5,7 @@ import DashboardNav from "@/components/DashboardNav";
 import QRCodeSection from "@/components/QRCodeSection";
 import EditCardForm from "./EditCardForm";
 import VipTiersSection from "./VipTiersSection";
+import PushNotificationSection from "./PushNotificationSection";
 
 export default async function CardDetailPage({
   params,
@@ -94,6 +95,9 @@ export default async function CardDetailPage({
             currentBgUrl={business?.join_background_url ?? null}
           />
         </div>
+
+        {/* Push Notifications */}
+        <PushNotificationSection cardId={card.id} />
 
         {/* VIP Tiers — Pro/Business only */}
         {isProOrBusiness ? (
