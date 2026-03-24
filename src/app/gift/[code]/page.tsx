@@ -11,9 +11,21 @@ export default async function GiftCardPage({ params }: Props) {
 
   const { data: card } = await supabase
     .from("gift_cards")
-    .select("code, amount, is_used, used_at")
+    .select("code, amount, is_used, used_at, business_id")
     .eq("code", code.toUpperCase())
     .single();
+
+  let businessName = "Stampify";
+  if (card?.business_id) {
+    const { data: business } = await supabase
+      .from("businesses")
+      .select("business_name")
+      .eq("id", card.business_id)
+      .single();
+    if (business?.business_name) {
+      businessName = business.business_name;
+    }
+  }
 
   if (!card) {
     return (
@@ -38,7 +50,7 @@ export default async function GiftCardPage({ params }: Props) {
           <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
             <span className="text-white font-black text-sm">S</span>
           </div>
-          <span className="font-black text-xl text-gray-900">Stampify</span>
+          <span className="font-black text-xl text-gray-900">{businessName}</span>
         </div>
 
         {card.is_used ? (

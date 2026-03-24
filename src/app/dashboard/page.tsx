@@ -75,6 +75,7 @@ export default async function DashboardPage() {
   const { data: cards } = await supabase
     .from("loyalty_cards")
     .select("id, card_name, card_type, primary_color, text_color, is_active")
+    .eq("business_id", user.id)
     .order("created_at", { ascending: false });
 
   const businessName = business?.business_name ?? user.email;

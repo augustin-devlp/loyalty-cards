@@ -144,6 +144,7 @@ const DRAWER_LINKS = [
   { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },
   { href: "/dashboard/promotions", label: "Promos", icon: <PromoIcon /> },
   { href: "/dashboard/establishments", label: "Établissements", icon: <EstablishmentIcon /> },
+  { href: "/dashboard/gift-cards", label: "Cartes cadeaux", icon: <GiftIcon /> },
   { href: "/dashboard/settings", label: "Paramètres", icon: <SettingsIcon /> },
 ];
 
