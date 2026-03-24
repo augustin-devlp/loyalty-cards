@@ -17,7 +17,7 @@ export default async function DashboardPage() {
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("business_name, country, status, first_login")
+    .select("business_name, country, status, onboarding_completed")
     .eq("id", user.id)
     .single();
 
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen">
       <DashboardNav />
-      {business.first_login && <OnboardingTour />}
+      {!business.onboarding_completed && <OnboardingTour />}
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
         {/* Welcome */}

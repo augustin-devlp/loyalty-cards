@@ -38,7 +38,11 @@ const STEPS = [
   },
 ];
 
-export default function OnboardingTour() {
+interface OnboardingTourProps {
+  onComplete?: () => void;
+}
+
+export default function OnboardingTour({ onComplete }: OnboardingTourProps) {
   const [step, setStep] = useState(0);
   const [dismissed, setDismissed] = useState(false);
   const router = useRouter();
@@ -46,6 +50,7 @@ export default function OnboardingTour() {
   const dismiss = async () => {
     await fetch("/api/onboarding/done", { method: "POST" });
     setDismissed(true);
+    onComplete?.();
   };
 
   const next = () => {

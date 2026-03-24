@@ -12,7 +12,7 @@ export async function POST() {
 
     const { error } = await supabase
       .from("businesses")
-      .update({ first_login: false })
+      .update({ onboarding_completed: true })
       .eq("id", user.id);
 
     if (error) {
