@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { createAnonClient } from "@/lib/supabase/anon";
 import CustomerQRCode from "@/components/CustomerQRCode";
 import GoogleWalletButton from "@/components/GoogleWalletButton";
-import PushSubscribeButton from "@/components/PushSubscribeButton";
 import { getShape } from "@/lib/stampShapes";
 
 export default async function CustomerCardPage({
@@ -343,11 +342,6 @@ export default async function CustomerCardPage({
                 </div>
               )}
             </div>
-          )}
-
-          {/* Push notification subscribe button */}
-          {process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
-            <PushSubscribeButton customerCardId={cc.id} accentColor={bg} />
           )}
 
           {/* Wallet buttons */}
