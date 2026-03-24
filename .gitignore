@@ -37,3 +37,8 @@ next-env.d.ts
 
 # claude code
 .claude/
+
+# Google Cloud service account credentials
+dev-solstice-490917-m5-f44e8e466f06.json
+*-credentials.json
+*-service-account.json
