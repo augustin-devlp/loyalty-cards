@@ -4,6 +4,18 @@ import DashboardNav from "@/components/DashboardNav";
 import ActivityChart from "@/components/ActivityChart";
 import ExportPDFButton from "./ExportPDFButton";
 
+function Delta({ curr, prev }: { curr: number; prev: number }) {
+  if (prev === 0 && curr === 0) return null;
+  const diff = curr - prev;
+  const pct = prev === 0 ? 100 : Math.round((diff / prev) * 100);
+  const up = diff >= 0;
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-semibold ${up ? "text-green-600" : "text-red-500"}`}>
+      {up ? "▲" : "▼"} {Math.abs(pct)}%
+    </span>
+  );
+}
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 function StatCard({
@@ -109,8 +121,63 @@ export default async function StatsPage() {
 
   // ── Aggregations ────────────────────────────────────────────────────────────
 
+  // Spin wheel stats
+  const { data: spinWheel } = await supabase
+    .from("spin_wheels")
+    .select("id")
+    .eq("business_id", user.id)
+    .maybeSingle();
+
+  const prevMonthStart = new Date();
+  prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+  prevMonthStart.setDate(1);
+  prevMonthStart.setHours(0,0,0,0);
+
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const startOfPrevMonth = prevMonthStart.toISOString();
+
+  let spinEntriesThisMonth = 0;
+  let spinEntriesPrevMonth = 0;
+  let topReward = "—";
+
+  if (spinWheel?.id) {
+    const { data: entries } = await supabase
+      .from("spin_entries")
+      .select("reward_won, created_at")
+      .eq("wheel_id", spinWheel.id);
+
+    const all = entries ?? [];
+    spinEntriesThisMonth = all.filter(e => e.created_at >= startOfMonth).length;
+    spinEntriesPrevMonth = all.filter(e => e.created_at >= startOfPrevMonth && e.created_at < startOfMonth).length;
+
+    // top reward
+    const rewardCount: Record<string, number> = {};
+    for (const e of all) {
+      if (e.reward_won) rewardCount[e.reward_won] = (rewardCount[e.reward_won] ?? 0) + 1;
+    }
+    const topEntry = Object.entries(rewardCount).sort((a, b) => b[1] - a[1])[0];
+    if (topEntry) topReward = topEntry[0];
+  }
+
+  // Lottery stats
+  const { data: lotteries } = await supabase
+    .from("lotteries")
+    .select("id, title, is_active, max_winners")
+    .eq("business_id", user.id);
+
+  const lotteryIds = (lotteries ?? []).map(l => l.id);
+  let lotteryParticipants = 0;
+  let lotteryWinners = 0;
+  if (lotteryIds.length > 0) {
+    const { data: lentries } = await supabase
+      .from("lottery_entries")
+      .select("is_winner")
+      .in("lottery_id", lotteryIds);
+    lotteryParticipants = (lentries ?? []).length;
+    lotteryWinners = (lentries ?? []).filter(e => e.is_winner).length;
+  }
+  const activeLotteries = (lotteries ?? []).filter(l => l.is_active);
 
   const totalClients = new Set(customerCards.map((cc) => cc.customer_id)).size;
 
@@ -266,6 +333,60 @@ export default async function StatsPage() {
           </h2>
           <p className="text-xs text-gray-400 mb-5">Nombre de scans (tampons + points) par jour</p>
           <ActivityChart data={chartData} />
+        </div>
+
+        {/* ── Gamification stats ─────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Spin wheel */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">🎰</span>
+              <h2 className="text-base font-bold text-gray-900">Roue de la fortune</h2>
+            </div>
+            {!spinWheel ? (
+              <p className="text-sm text-gray-400">Roue non configurée. <a href="/dashboard/spin-wheel" className="text-indigo-600 underline">Configurer →</a></p>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Spins ce mois</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-indigo-600">{spinEntriesThisMonth}</span>
+                    <Delta curr={spinEntriesThisMonth} prev={spinEntriesPrevMonth} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Récompense la + gagnée</span>
+                  <span className="text-sm font-semibold text-gray-800">{topReward}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Lottery */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">🎁</span>
+              <h2 className="text-base font-bold text-gray-900">Loterie</h2>
+            </div>
+            {lotteries?.length === 0 ? (
+              <p className="text-sm text-gray-400">Aucune loterie créée. <a href="/dashboard/lottery" className="text-indigo-600 underline">Créer →</a></p>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Loteries actives</span>
+                  <span className="text-2xl font-bold text-violet-600">{activeLotteries.length}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Total participants</span>
+                  <span className="text-2xl font-bold text-indigo-600">{lotteryParticipants}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Gagnants tirés</span>
+                  <span className="text-2xl font-bold text-green-600">{lotteryWinners}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Bottom row ──────────────────────────────────────────────────── */}

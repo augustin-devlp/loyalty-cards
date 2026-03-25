@@ -219,6 +219,8 @@ const PRO_FR = [
   "Statistiques avancées + export PDF",
   "Avis Google automatique",
   "Support prioritaire",
+  "Roue de la fortune gamifiée 🎰",
+  "Loterie avec vérification avis Google 🎁",
 ];
 
 const BUSINESS_FR = [
@@ -229,6 +231,8 @@ const BUSINESS_FR = [
   "Campagnes SMS & push",
   "Carte cadeau digitale",
   "Programme VIP multi-niveaux",
+  "Roue de la fortune avancée",
+  "Loterie participative",
   "Onboarding personnalisé inclus",
   "Appel mensuel + suivi personnalisé",
   "Support prioritaire réponse 24h",
@@ -563,7 +567,7 @@ export default function LandingPage() {
               <PricingCard name="Essentiel" priceEur={19} priceCHF={29} isCH={isCH} features={ESSENTIALS_FR} cta="Commencer maintenant →" />
             </FadeIn>
             <FadeIn delay={100}>
-              <PricingCard name="Pro" priceEur={49} priceCHF={79} isCH={isCH} features={PRO_FR} popular cta="Commencer maintenant →" />
+              <PricingCard name="Pro" priceEur={59} priceCHF={89} isCH={isCH} features={PRO_FR} popular cta="Commencer maintenant →" />
             </FadeIn>
             <FadeIn delay={200}>
               <PricingCard name="Business" priceEur={99} priceCHF={149} isCH={isCH} features={BUSINESS_FR} premium commitment="Engagement 3 mois minimum" cta="Nous contacter →" />

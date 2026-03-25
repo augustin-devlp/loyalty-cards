@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const referralCode = searchParams.get("ref");
+
   const [formData, setFormData] = useState({
     businessName: "",
     email: "",
     password: "",
     country: "FR",
+    referredBy: referralCode || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,13 +56,30 @@ export default function SignupPage() {
         email: formData.email,
         business_name: formData.businessName,
         country: formData.country,
-        status: "pending",
+        referred_by: formData.referredBy || null,
       });
 
       if (insertError) {
         setError(insertError.message);
         setLoading(false);
         return;
+      }
+
+      // Si un code de parrainage est fourni, incrémenter les stats du parrain
+      if (formData.referredBy) {
+        try {
+          await fetch("/api/affiliates/handle-referral", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              referralCode: formData.referredBy,
+              newBusinessId: data.user.id,
+            }),
+          });
+        } catch (err) {
+          console.error("Erreur lors du traitement du parrainage:", err);
+          // On ne bloque pas l'inscription si le parrainage échoue
+        }
       }
     }
 
@@ -77,6 +98,16 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Champ caché pour le code de parrainage */}
+          <input type="hidden" name="referredBy" value={formData.referredBy} />
+
+          {referralCode && (
+            <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700">
+              Vous avez été recommandé avec le code:{" "}
+              <span className="font-semibold">{referralCode}</span>
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="businessName"

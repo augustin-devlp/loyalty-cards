@@ -23,8 +23,8 @@ const PLANS = {
   },
   pro: {
     name: "Pro",
-    priceEur: 49,
-    priceCHF: 79,
+    priceEur: 59,
+    priceCHF: 89,
     popular: true,
     features: [
       "Tout ce qu'inclut Essentiel",
@@ -37,6 +37,8 @@ const PLANS = {
       "Statistiques avancées + export PDF",
       "Avis Google automatique",
       "Support prioritaire",
+      "Roue de la fortune gamifiée 🎰",
+      "Loterie avec vérification avis Google 🎁",
     ],
   },
 } as const;
@@ -47,12 +49,14 @@ const BUSINESS_FEATURES = [
   "Tout ce qu'inclut Pro",
   "Comptes employés illimités",
   "Multi-établissements (jusqu'à 10)",
-  "Intégration caisse / API",
+  "Bientôt disponible : Intégration caisse / API",
   "Campagnes SMS & push",
   "Rapport mensuel automatique",
+  "Roue de la fortune avancée",
+  "Loterie participative",
   "Onboarding personnalisé inclus",
-  "Account manager dédié",
-  "SLA 99,9% garanti",
+  "Appel mensuel + suivi personnalisé",
+  "Support prioritaire réponse 24h",
 ];
 
 function SubscribeContent() {

@@ -14,8 +14,8 @@ export async function POST() {
   const plans = [
     { key: PRICE_LOOKUP_KEYS.essential_fr, name: "Stampify Essentiel",  currency: "eur", amount: 1900 },
     { key: PRICE_LOOKUP_KEYS.essential_ch, name: "Stampify Essentiel",  currency: "chf", amount: 2900 },
-    { key: PRICE_LOOKUP_KEYS.pro_fr,       name: "Stampify Pro",        currency: "eur", amount: 4900 },
-    { key: PRICE_LOOKUP_KEYS.pro_ch,       name: "Stampify Pro",        currency: "chf", amount: 7900 },
+    { key: PRICE_LOOKUP_KEYS.pro_fr,       name: "Stampify Pro",        currency: "eur", amount: 5900 },
+    { key: PRICE_LOOKUP_KEYS.pro_ch,       name: "Stampify Pro",        currency: "chf", amount: 8900 },
     { key: PRICE_LOOKUP_KEYS.business_fr,  name: "Stampify Business",   currency: "eur", amount: 9900 },
     { key: PRICE_LOOKUP_KEYS.business_ch,  name: "Stampify Business",   currency: "chf", amount: 14900 },
   ];

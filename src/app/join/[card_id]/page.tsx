@@ -27,6 +27,26 @@ export default async function JoinPage({
     .eq("id", card.business_id)
     .single();
 
+  // Check active spin wheel and lottery for Pro/Business plans
+  const isPro = business?.plan === "pro" || business?.plan === "business";
+  let hasActiveSpin = false;
+  let hasActiveLottery = false;
+  if (isPro) {
+    const { data: wheel } = await supabase
+      .from("spin_wheels")
+      .select("is_active")
+      .eq("business_id", card.business_id)
+      .maybeSingle();
+    hasActiveSpin = wheel?.is_active ?? false;
+
+    const { count: lotteryCount } = await supabase
+      .from("lotteries")
+      .select("id", { count: "exact", head: true })
+      .eq("business_id", card.business_id)
+      .eq("is_active", true);
+    hasActiveLottery = (lotteryCount ?? 0) > 0;
+  }
+
   const bg = card.primary_color;
   const fg = card.text_color;
 
@@ -144,6 +164,30 @@ export default async function JoinPage({
           </div>
         </div>
       </div>
+
+      {/* ── Gamification buttons ── */}
+      {(hasActiveSpin || hasActiveLottery) && (
+        <div className="bg-white/10 backdrop-blur-sm px-5 py-3 flex gap-2 justify-center">
+          {hasActiveSpin && (
+            <a
+              href={`/spin/${card.business_id}`}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-95"
+              style={{ background: "rgba(255,255,255,0.9)", color: bg }}
+            >
+              🎰 Tenter ma chance
+            </a>
+          )}
+          {hasActiveLottery && (
+            <a
+              href={`/lottery/${card.business_id}`}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-95"
+              style={{ background: "rgba(255,255,255,0.9)", color: bg }}
+            >
+              🎁 Participer à la loterie
+            </a>
+          )}
+        </div>
+      )}
 
       {/* ── White form section ── */}
       <div className="flex-1 bg-white rounded-t-3xl shadow-2xl px-5 pt-7 pb-10 -mt-4 relative z-10">
