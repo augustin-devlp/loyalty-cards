@@ -29,7 +29,7 @@ export default async function CardDetailPage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("join_background_url, plan")
+    .select("join_background_url, plan, business_name")
     .eq("id", user.id)
     .single();
 
@@ -66,8 +66,12 @@ export default async function CardDetailPage({
           </span>
         </div>
 
-        {/* QR code section */}
-        <QRCodeSection cardId={card.id} />
+        {/* QR code + partage */}
+        <QRCodeSection
+          cardId={card.id}
+          cardName={card.card_name}
+          businessName={business?.business_name ?? ""}
+        />
 
         {/* Edit form */}
         <div className="rounded-2xl border p-8 shadow-sm" style={{ background: "var(--dash-surface)", borderColor: "var(--dash-border)" }}>

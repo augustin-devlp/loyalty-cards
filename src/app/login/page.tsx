@@ -7,12 +7,16 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Forgot password modal state
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,22 +26,34 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     const supabase = createClient();
-
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
-
     if (signInError) {
       setError("Email ou mot de passe incorrect.");
       setLoading(false);
       return;
     }
-
     router.push("/dashboard");
     router.refresh();
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotLoading(false);
+    if (error) {
+      setForgotError(error.message);
+    } else {
+      setForgotSent(true);
+    }
   };
 
   return (
@@ -45,17 +61,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Connexion</h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            Accédez à votre espace commerce
-          </p>
+          <p className="text-gray-500 mt-1 text-sm">Accédez à votre espace commerce</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Adresse e-mail
             </label>
             <input
@@ -71,12 +82,18 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Mot de passe
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Mot de passe
+              </label>
+              <button
+                type="button"
+                onClick={() => { setForgotOpen(true); setForgotEmail(formData.email); setForgotSent(false); setForgotError(null); }}
+                className="text-xs text-indigo-600 hover:text-indigo-500 font-medium"
+              >
+                Mot de passe oublié ?
+              </button>
+            </div>
             <input
               id="password"
               name="password"
@@ -106,14 +123,65 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Pas encore de compte ?{" "}
-          <Link
-            href="/signup"
-            className="text-indigo-600 hover:text-indigo-500 font-medium"
-          >
+          <Link href="/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
             S&apos;inscrire
           </Link>
         </p>
       </div>
+
+      {/* Forgot password modal */}
+      {forgotOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setForgotOpen(false); }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900">Mot de passe oublié</h2>
+              <button onClick={() => setForgotOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl font-bold leading-none">×</button>
+            </div>
+
+            {forgotSent ? (
+              <div className="text-center py-4">
+                <div className="text-4xl mb-3">📧</div>
+                <p className="font-semibold text-gray-900">Email envoyé !</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Un email de réinitialisation a été envoyé à <strong>{forgotEmail}</strong>.
+                  Vérifiez votre boîte de réception.
+                </p>
+                <button onClick={() => setForgotOpen(false)} className="mt-5 w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">
+                  Fermer
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgot} className="space-y-4">
+                <p className="text-sm text-gray-500">
+                  Entrez votre adresse email pour recevoir un lien de réinitialisation.
+                </p>
+                <input
+                  type="email"
+                  required
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="vous@exemple.com"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                />
+                {forgotError && (
+                  <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2">{forgotError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-2.5 px-4 rounded-lg transition"
+                >
+                  {forgotLoading ? "Envoi…" : "Envoyer le lien"}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

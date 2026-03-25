@@ -3,7 +3,7 @@ import { createAnonClient } from "@/lib/supabase/anon";
 import CustomerQRCode from "@/components/CustomerQRCode";
 import GoogleWalletButton from "@/components/GoogleWalletButton";
 import PushSubscribeButton from "@/components/PushSubscribeButton";
-import { getShape } from "@/lib/stampShapes";
+import CustomerCardStampsRealtime from "@/components/CustomerCardStampsRealtime";
 
 export default async function CustomerCardPage({
   params,
@@ -103,34 +103,9 @@ export default async function CustomerCardPage({
   const currentStamps = cc.current_stamps ?? 0;
   const currentPoints = cc.current_points ?? 0;
 
-  const stampProgress = Math.min(currentStamps / stampsRequired, 1);
-  const pointsProgress = Math.min(currentPoints / rewardThreshold, 1);
-
   const shape = card.stamp_shape ?? "circle";
-  const shapeData = getShape(shape);
   const style = (card.card_style ?? "rounded") as "rounded" | "square" | "modern";
   const borderRadius = style === "square" ? "4px" : style === "modern" ? "12px" : "20px";
-
-  function StampCell({ filled }: { filled: boolean }) {
-    if (shape === "circle") {
-      return (
-        <div style={{
-          width: 34, height: 34, borderRadius: "50%",
-          border: `2px solid ${bg}`,
-          backgroundColor: filled ? bg : "transparent",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 14, fontWeight: 700, color: filled ? fg : bg,
-        }}>
-          {filled ? "✓" : ""}
-        </div>
-      );
-    }
-    return (
-      <svg viewBox="0 0 24 24" width={34} height={34}
-        style={{ color: bg, opacity: filled ? 1 : 0.2 }}
-        dangerouslySetInnerHTML={{ __html: shapeData.svg }} />
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -199,48 +174,20 @@ export default async function CustomerCardPage({
               <p className="text-sm mt-0.5" style={{ opacity: 0.7 }}>🎁 {card.reward_description}</p>
             </div>
 
-            {/* Progress */}
+            {/* Progress — realtime via Supabase channel */}
             <div className="bg-white px-6 py-5">
-              {card.card_type === "stamp" ? (
-                <div>
-                  <div className="flex justify-between text-sm font-medium text-gray-700 mb-3">
-                    <span>Tampons</span>
-                    <span>{currentStamps} / {stampsRequired}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {Array.from({ length: Math.min(stampsRequired, 15) }).map((_, i) => (
-                      <StampCell key={i} filled={i < currentStamps} />
-                    ))}
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${stampProgress * 100}%`, backgroundColor: bg }} />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {stampsRequired - currentStamps > 0
-                      ? `Plus que ${stampsRequired - currentStamps} tampon(s) pour votre récompense !`
-                      : "🎉 Vous avez atteint votre récompense !"}
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex justify-between text-sm font-medium text-gray-700 mb-3">
-                    <span>Points</span>
-                    <span>{currentPoints} / {rewardThreshold} pts</span>
-                  </div>
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${pointsProgress * 100}%`, backgroundColor: bg }} />
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    {rewardThreshold - currentPoints > 0
-                      ? `Plus que ${rewardThreshold - currentPoints} points pour votre récompense !`
-                      : "🎉 Vous avez atteint votre récompense !"}
-                  </p>
-                </div>
-              )}
-
-              {cc.rewards_claimed > 0 && (
-                <p className="text-xs text-gray-400 mt-3">Récompenses obtenues : {cc.rewards_claimed}</p>
-              )}
+              <CustomerCardStampsRealtime
+                customerCardId={cc.id}
+                initialStamps={currentStamps}
+                initialPoints={currentPoints}
+                cardType={card.card_type}
+                stampsRequired={stampsRequired}
+                rewardThreshold={rewardThreshold}
+                primaryColor={bg}
+                textColor={fg}
+                stampShape={shape}
+                rewardsClaimed={cc.rewards_claimed}
+              />
             </div>
 
             {/* Modern bottom accent bar */}

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import DashboardNav from "@/components/DashboardNav";
-import OnboardingTour from "@/components/OnboardingTour";
+import OnboardingTourClient from "@/components/OnboardingTourClient";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen">
       <DashboardNav />
-      {!business.onboarding_completed && <OnboardingTour />}
+      {!business.onboarding_completed && <OnboardingTourClient businessId={user.id} />}
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
         {/* Welcome */}
