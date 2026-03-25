@@ -5,8 +5,8 @@ import { sendSms, normalizePhone } from "@/lib/brevo";
 /**
  * POST /api/sms/welcome
  * Body: { customer_card_id: string }
- * Sends a welcome SMS to the customer if the business is on the Pro plan.
- * Called from the public /join page — no auth required.
+ * Envoie un SMS de bienvenue au client avec le lien vers sa carte.
+ * Uniquement si le commerçant est en plan Pro ou Business et si le client a un téléphone.
  */
 export async function POST(req: NextRequest) {
   const { customer_card_id } = await req.json() as { customer_card_id: string };
@@ -19,14 +19,13 @@ export async function POST(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Fetch customer phone + business plan in one query
   const { data } = await supabase
     .from("customer_cards")
     .select(`
       id,
-      customers (phone),
+      customers ( first_name, phone ),
       loyalty_cards (
-        businesses (plan)
+        businesses ( plan, business_name )
       )
     `)
     .eq("id", customer_card_id)
@@ -36,20 +35,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ sent: false, reason: "card not found" });
   }
 
-  const customer = data.customers as unknown as { phone: string | null } | null;
-  const loyaltyCard = data.loyalty_cards as unknown as { businesses: { plan: string | null } | null } | null;
+  const customer = data.customers as unknown as { first_name: string; phone: string | null } | null;
+  const loyaltyCard = data.loyalty_cards as unknown as {
+    businesses: { plan: string | null; business_name: string | null } | null;
+  } | null;
+
   const plan = loyaltyCard?.businesses?.plan ?? null;
+  const businessName = loyaltyCard?.businesses?.business_name ?? "votre commerce";
+  const firstName = customer?.first_name ?? "vous";
   const phone = customer?.phone ?? null;
 
-  if (plan !== "pro") {
-    return NextResponse.json({ sent: false, reason: "not pro plan" });
+  if (plan !== "pro" && plan !== "business") {
+    return NextResponse.json({ sent: false, reason: "plan not eligible" });
   }
   if (!phone) {
     return NextResponse.json({ sent: false, reason: "no phone" });
   }
 
-  const cardUrl = `https://www.stampify.ch/card/${customer_card_id}`;
-  const message = `Bienvenue sur Stampify ! Retrouvez votre carte de fidélité ici : ${cardUrl}`;
+  const cardUrl = `https://stampify.ch/card/${customer_card_id}`;
+  const message = `Bonjour ${firstName} ! 🎁 Voici votre carte de fidélité ${businessName} : ${cardUrl}. Présentez ce lien à chaque visite pour cumuler vos tampons !`;
 
   try {
     await sendSms(normalizePhone(phone), message);
