@@ -235,17 +235,17 @@ const BUSINESS_FR = [
 ];
 
 const PACKS = [
-  { icon: "🚀", label: "Pack Starter", desc: "Parfait pour débuter", features: ["Full onboarding", "Audit Google Business"], price: "29€" },
-  { icon: "✨", label: "Pack Visibilité", desc: "Augmentez votre visibilité", features: ["Site web", "Audit Google Business", "Campagne SMS"], price: "79€" },
-  { icon: "💎", label: "Pack All-In", desc: "Tout ce qu'il faut", features: ["Site web", "Full onboarding", "Audit Google Business", "Campagne SMS", "1 mois push offert"], price: "149€" },
+  { icon: "🚀", label: "Pack Starter", desc: "Parfait pour débuter", features: ["Full onboarding", "Audit Google Business"], price: "79€", oldPrice: "98€", saving: "-20%" },
+  { icon: "✨", label: "Pack Visibilité", desc: "Augmentez votre visibilité", features: ["Site web 1er mois", "Audit Google Business", "Campagne SMS"], price: "129€", oldPrice: "177€", saving: "-27%" },
+  { icon: "💎", label: "Pack All-In", desc: "Tout ce qu'il faut", features: ["Site web 1er mois", "Full onboarding", "Audit Google Business", "Campagne SMS", "1 mois push offert"], price: "199€", oldPrice: "276€", saving: "-28%" },
 ];
 
 const ONE_SHOT_ADDONS = [
-  { icon: "🎯", label: "Full onboarding", desc: "Configuration complète par un expert Stampify", price: "19€" },
-  { icon: "🌐", label: "Site web", desc: "Mini-site web pour votre commerce (1 page). 149€ les 3 premiers mois puis 29€/mois", price: "149€" },
-  { icon: "📱", label: "Campagne SMS", desc: "Envoi d'une campagne SMS à tous vos clients", price: "19€" },
-  { icon: "⭐", label: "Audit Google Business", desc: "Optimisation de votre fiche Google My Business", price: "29€" },
-  { icon: "📸", label: "Shooting photo", desc: "Séance photo professionnelle pour votre commerce", price: "99€" },
+  { icon: "🎯", label: "Full onboarding", desc: "Configuration complète par un expert Stampify", price: "49€" },
+  { icon: "🌐", label: "Site web", desc: "Mini-site web pour votre commerce (1 page) — sans engagement", price: "79€/mois" },
+  { icon: "📱", label: "Campagne SMS ponctuelle", desc: "Envoi d'une campagne SMS à tous vos clients", price: "29€" },
+  { icon: "⭐", label: "Audit Google Business", desc: "Optimisation de votre fiche Google My Business", price: "49€" },
+  { icon: "📸", label: "Shooting photo", desc: "Séance photo professionnelle pour votre commerce", price: "149€" },
 ];
 
 const MONTHLY_ADDONS = [
@@ -583,10 +583,15 @@ export default function LandingPage() {
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {PACKS.map(({ icon, label, desc, features, price }, i) => (
+            {PACKS.map(({ icon, label, desc, features, price, oldPrice, saving }, i) => (
               <FadeIn key={label} delay={i * 100}>
                 <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all h-full flex flex-col">
-                  <div className="text-4xl mb-3">{icon}</div>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="text-4xl">{icon}</div>
+                    {saving && (
+                      <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">{saving}</span>
+                    )}
+                  </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{label}</h3>
                   <p className="text-sm text-gray-500 mb-4">{desc}</p>
                   <div className="mb-6 flex-1">
@@ -601,7 +606,12 @@ export default function LandingPage() {
                       ))}
                     </ul>
                   </div>
-                  <div className="text-2xl font-black text-indigo-600 mb-4">{price}</div>
+                  <div className="mb-4">
+                    <div className="flex items-end gap-2">
+                      <span className="text-2xl font-black text-indigo-600">{price}</span>
+                      {oldPrice && <span className="text-sm text-gray-400 line-through mb-0.5">au lieu de {oldPrice}</span>}
+                    </div>
+                  </div>
                   <a href="/signup" className="block w-full text-center py-2.5 rounded-xl font-semibold text-sm bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
                     Choisir ce pack
                   </a>
