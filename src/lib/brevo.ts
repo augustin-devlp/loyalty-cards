@@ -75,13 +75,16 @@ export function normalizePhone(phone: string): string {
   // Strip all spaces, dashes, dots, parentheses
   let n = phone.replace(/[\s\-().]/g, "");
 
-  // Remove leading + (Brevo wants no + prefix)
   if (n.startsWith("+")) {
+    // +33612345678 → 33612345678  /  +41761234567 → 41761234567
     n = n.slice(1);
-  }
-  // French/Swiss local format: starts with 06, 07, 04... → prepend country code 33
-  else if (n.startsWith("0")) {
+  } else if (n.startsWith("0")) {
+    // 0612345678 → 33612345678  (French local format)
     n = "33" + n.slice(1);
+  } else if (/^[67]\d{8}$/.test(n)) {
+    // 9 digits starting with 6 or 7 = French mobile without leading 0 or country code
+    // e.g. "676549599" → "33676549599"
+    n = "33" + n;
   }
 
   console.log("[brevo] normalizePhone:", phone, "→", n);

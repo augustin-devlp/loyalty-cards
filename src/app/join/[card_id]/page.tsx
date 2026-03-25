@@ -23,7 +23,7 @@ export default async function JoinPage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("business_name, plan, subscription_status, join_background_url")
+    .select("business_name, plan, subscription_status, join_background_url, country")
     .eq("id", card.business_id)
     .single();
 
@@ -165,6 +165,7 @@ export default async function JoinPage({
             cardId={card.id}
             primaryColor={bg}
             textColor={fg}
+            country={business?.country ?? "FR"}
           />
         </div>
       </div>

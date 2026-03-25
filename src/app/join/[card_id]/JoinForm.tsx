@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -8,16 +8,24 @@ interface JoinFormProps {
   cardId: string;
   primaryColor: string;
   textColor: string;
+  country?: string; // "CH" | "FR" | ...
 }
 
-export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormProps) {
+export default function JoinForm({ cardId, primaryColor, textColor, country }: JoinFormProps) {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
+  // Pre-fill +41 for Swiss businesses, +33 otherwise
+  const defaultPrefix = country === "CH" ? "+41" : "+33";
+  const [phone, setPhone] = useState(defaultPrefix);
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Update prefix if country prop changes after mount
+  useEffect(() => {
+    setPhone(country === "CH" ? "+41" : "+33");
+  }, [country]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,17 +196,15 @@ export default function JoinForm({ cardId, primaryColor, textColor }: JoinFormPr
         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
           Téléphone
         </label>
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">📱</span>
-          <input
-            type="tel"
-            required
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+33 6 12 34 56 78"
-            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
-          />
-        </div>
+        <input
+          type="tel"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={country === "CH" ? "+41 76 123 45 67" : "+33 6 12 34 56 78"}
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+        />
+        <p className="text-xs text-gray-400 mt-1">Format international — ex : {country === "CH" ? "+41 76 123 45 67" : "+33 6 12 34 56 78"}</p>
       </div>
 
       <div>

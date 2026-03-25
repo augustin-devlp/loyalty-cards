@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { createAnonClient } from "@/lib/supabase/anon";
 import CustomerQRCode from "@/components/CustomerQRCode";
