@@ -173,7 +173,7 @@ export default function JoinForm({ cardId, primaryColor, textColor, country }: J
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="Marie"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50 text-black"
             style={{ "--tw-ring-color": primaryColor } as React.CSSProperties}
           />
         </div>
@@ -187,7 +187,7 @@ export default function JoinForm({ cardId, primaryColor, textColor, country }: J
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Dupont"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50 text-black"
           />
         </div>
       </div>
@@ -202,7 +202,7 @@ export default function JoinForm({ cardId, primaryColor, textColor, country }: J
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder={country === "CH" ? "+41 76 123 45 67" : "+33 6 12 34 56 78"}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 bg-gray-50 text-black"
         />
         <p className="text-xs text-gray-400 mt-1">Format international — ex : {country === "CH" ? "+41 76 123 45 67" : "+33 6 12 34 56 78"}</p>
       </div>
@@ -217,7 +217,7 @@ export default function JoinForm({ cardId, primaryColor, textColor, country }: J
           onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
           placeholder="Ex : A3F7B2"
           maxLength={6}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm uppercase tracking-widest font-mono focus:outline-none focus:ring-2 bg-gray-50"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm uppercase tracking-widest font-mono focus:outline-none focus:ring-2 bg-gray-50 text-black"
         />
         <p className="text-xs text-gray-400 mt-1">Votre parrain gagne 2 tampons bonus</p>
       </div>
