@@ -84,6 +84,15 @@ function Confetti() {
 // ── Canvas Wheel ──────────────────────────────────────────────────────────────
 function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [size, setSize] = useState(320); // logical CSS size
+
+  // Responsive: 480px on desktop, 320px on mobile
+  useEffect(() => {
+    const update = () => setSize(window.innerWidth < 640 ? 320 : 480);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -91,32 +100,45 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const SIZE = canvas.width; // 320
-    const cx = SIZE / 2;       // 160
-    const r = cx - 22;         // 138 — wheel radius (leaves room for 8px gold ring + shadow)
+    const dpr  = window.devicePixelRatio || 1;
+    const SIZE = size;                    // logical pixels
+    const sc   = SIZE / 320;             // scale factor (1 at 320, 1.5 at 480)
+
+    // Physical pixels = logical × DPR for crisp rendering
+    canvas.width  = SIZE * dpr;
+    canvas.height = SIZE * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // all coords below are logical
+
+    const cx      = SIZE / 2;
+    const ringW   = Math.round(10 * sc);
+    const capR    = Math.round(22 * sc);
+    const r       = cx - capR - Math.round(2 * sc); // wheel radius
     const equalSweep = (Math.PI * 2) / segments.length;
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
-    // ── Drop shadow (drawn first, behind everything)
+    // ── Drop shadow
     ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,0.45)";
-    ctx.shadowBlur = 28;
-    ctx.shadowOffsetY = 6;
+    ctx.shadowColor   = "rgba(0,0,0,0.45)";
+    ctx.shadowBlur    = Math.round(28 * sc);
+    ctx.shadowOffsetY = Math.round(6 * sc);
     ctx.beginPath();
-    ctx.arc(cx, cx, r + 10, 0, Math.PI * 2);
+    ctx.arc(cx, cx, r + ringW, 0, Math.PI * 2);
     ctx.fillStyle = "#F59E0B";
     ctx.fill();
     ctx.restore();
 
-    // ── Gold outer ring (#F59E0B, ~10px wide)
+    // ── Gold outer ring
     ctx.beginPath();
-    ctx.arc(cx, cx, r + 10, 0, Math.PI * 2);
+    ctx.arc(cx, cx, r + ringW, 0, Math.PI * 2);
     ctx.fillStyle = "#F59E0B";
     ctx.fill();
 
-    // ── Slices (overwrite center of gold ring, exposing only the ring border)
-    let angle = rotation - Math.PI / 2;
+    // ── Slices
+    const n          = segments.length;
+    const baseFontPx = n <= 4 ? 15 : n <= 6 ? 13 : 11;
+    let   angle      = rotation - Math.PI / 2;
+
     segments.forEach((seg) => {
       const sweep = equalSweep;
 
@@ -125,70 +147,80 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
       ctx.moveTo(cx, cx);
       ctx.arc(cx, cx, r, angle, angle + sweep);
       ctx.closePath();
-      ctx.fillStyle = seg.color;
+      ctx.fillStyle    = seg.color;
       ctx.fill();
-
-      // White border 3px
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 3;
+      ctx.strokeStyle  = "#ffffff";
+      ctx.lineWidth    = Math.round(3 * sc);
       ctx.stroke();
 
-      // Bold white label
+      // Label — truncate at 10 chars, fit to 80% of slice radius
       ctx.save();
       ctx.translate(cx, cx);
       ctx.rotate(angle + sweep / 2);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#ffffff";
-      ctx.shadowColor = "rgba(0,0,0,0.6)";
-      ctx.shadowBlur = 5;
-      ctx.font = "bold 12px system-ui, -apple-system, sans-serif";
-      const txt = seg.label.length > 13 ? seg.label.slice(0, 12) + "…" : seg.label;
-      ctx.fillText(txt, r - 12, 4);
+      ctx.textAlign    = "right";
+      ctx.fillStyle    = "#ffffff";
+      ctx.shadowColor  = "rgba(0,0,0,0.6)";
+      ctx.shadowBlur   = 5;
+
+      let txt      = seg.label.length > 10 ? seg.label.slice(0, 10) + "…" : seg.label;
+      const xOff   = Math.round(12 * sc);
+      const maxW   = (r - xOff) * 0.8;
+      let   fSize  = Math.round(baseFontPx * sc);
+
+      ctx.font = `bold ${fSize}px system-ui, -apple-system, sans-serif`;
+      while (ctx.measureText(txt).width > maxW && fSize > 7) {
+        fSize--;
+        ctx.font = `bold ${fSize}px system-ui, -apple-system, sans-serif`;
+      }
+
+      ctx.fillText(txt, r - xOff, Math.round(4 * sc));
       ctx.restore();
 
       angle += sweep;
     });
 
-    // ── Center cap — gold radial gradient
-    const capGrad = ctx.createRadialGradient(cx - 4, cx - 4, 2, cx, cx, 22);
+    // ── Center cap
+    const capGrad = ctx.createRadialGradient(cx - Math.round(4 * sc), cx - Math.round(4 * sc), Math.round(2 * sc), cx, cx, capR);
     capGrad.addColorStop(0, "#fde68a");
     capGrad.addColorStop(1, "#b45309");
     ctx.beginPath();
-    ctx.arc(cx, cx, 22, 0, Math.PI * 2);
-    ctx.fillStyle = capGrad;
+    ctx.arc(cx, cx, capR, 0, Math.PI * 2);
+    ctx.fillStyle   = capGrad;
     ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,0.9)";
-    ctx.lineWidth = 2;
+    ctx.lineWidth   = Math.round(2 * sc);
     ctx.stroke();
 
-    // ── Arrow — bright red, large, pointing INTO the wheel from the top
-    // Base at y=2 (top of canvas), tip at the wheel edge
-    const arrowTipY = cx - r + 2;   // just inside wheel edge
-    const arrowBaseY = 2;
-    const arrowHalfW = 18;
+    // ── Arrow (red triangle pointing down from top)
+    const arrowHalfW = Math.round(18 * sc);
+    const arrowBaseY = Math.round(2 * sc);
+    const arrowTipY  = cx - r + Math.round(2 * sc);
 
     ctx.beginPath();
     ctx.moveTo(cx, arrowTipY);
     ctx.lineTo(cx - arrowHalfW, arrowBaseY);
     ctx.lineTo(cx + arrowHalfW, arrowBaseY);
     ctx.closePath();
-    ctx.fillStyle = "#EF4444";
+    ctx.fillStyle   = "#EF4444";
     ctx.shadowColor = "rgba(0,0,0,0.5)";
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur  = Math.round(8 * sc);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2.5;
-    ctx.shadowBlur = 0;
+    ctx.lineWidth   = Math.round(2.5 * sc);
+    ctx.shadowBlur  = 0;
     ctx.stroke();
 
-  }, [segments, rotation]);
+  }, [segments, rotation, size]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={320}
-      height={320}
-      style={{ minWidth: 320, filter: "drop-shadow(0 10px 28px rgba(0,0,0,0.35))" }}
+      style={{
+        width: size,
+        height: size,
+        minWidth: size,
+        filter: "drop-shadow(0 10px 28px rgba(0,0,0,0.35))",
+      }}
     />
   );
 }
@@ -244,8 +276,9 @@ export default function SpinPage() {
     return () => clearTimeout(t);
   }, [resendTimer]);
 
-  function cleanP(p: string) { return p.replace(/\s/g, ""); }
-  function isE164(p: string) { return /^\+[1-9]\d{6,14}$/.test(cleanP(p)); }
+  // Strip everything except leading + and digits — used on both client and server
+  function normalizePhone(p: string) { return p.replace(/[^+\d]/g, ""); }
+  function isE164(p: string) { return /^\+[1-9]\d{6,14}$/.test(normalizePhone(p)); }
 
   const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
@@ -295,7 +328,7 @@ export default function SpinPage() {
     const res = await fetch("/api/verify/send-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: cleanP(phone) }),
+      body: JSON.stringify({ phone: normalizePhone(phone) }),
     });
     const data = await res.json();
     setSendingCode(false);
@@ -311,7 +344,7 @@ export default function SpinPage() {
     const res = await fetch("/api/verify/send-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: cleanP(phone) }),
+      body: JSON.stringify({ phone: normalizePhone(phone) }),
     });
     const data = await res.json();
     setSendingCode(false);
@@ -330,7 +363,7 @@ export default function SpinPage() {
     const vRes = await fetch("/api/verify/check-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: cleanP(phone), code: verifCode }),
+      body: JSON.stringify({ phone: normalizePhone(phone), code: verifCode }),
     });
     const vData = await vRes.json();
     if (!vData.verified) {
@@ -343,7 +376,7 @@ export default function SpinPage() {
     const eligRes = await fetch("/api/spin/check-eligibility", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ wheelId: wheel.id, phone: cleanP(phone), frequency: wheel.frequency }),
+      body: JSON.stringify({ wheelId: wheel.id, phone: normalizePhone(phone), frequency: wheel.frequency }),
     });
     const eligData = await eligRes.json();
     if (!eligData.eligible) {
@@ -379,7 +412,7 @@ export default function SpinPage() {
     const eligRes = await fetch("/api/spin/check-eligibility", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ wheelId: wheel.id, phone: cleanP(phone), frequency: wheel.frequency }),
+      body: JSON.stringify({ wheelId: wheel.id, phone: normalizePhone(phone), frequency: wheel.frequency }),
     });
     const eligData = await eligRes.json();
 
@@ -401,7 +434,7 @@ export default function SpinPage() {
     if (!wheel || wonIndex === null) return;
     const sb = createAnonClient();
     const reward = wheel.segments[wonIndex]?.reward ?? null;
-    const cleanPhone = cleanP(phone);
+    const cleanPhone = normalizePhone(phone);
     // Always insert a new row — multiple rows per phone is intentional for replay tracking
     await sb.from("spin_results").insert({
       wheel_id: wheel.id,
@@ -493,7 +526,7 @@ export default function SpinPage() {
                   {error && <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 font-medium">{error}</div>}
                   <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-4 text-center">
                     <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Code envoyé par SMS au</p>
-                    <p className="text-base font-bold text-amber-900">{cleanP(phone)}</p>
+                    <p className="text-base font-bold text-amber-900">{normalizePhone(phone)}</p>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Code de vérification *</label>
