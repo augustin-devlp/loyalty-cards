@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminPendingActions from "@/components/AdminPendingActions";
+import AdminUpgradeRequests from "@/components/AdminUpgradeRequests";
 import AdminGate from "@/components/AdminGate";
 
 const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
@@ -86,6 +87,13 @@ export default async function AdminPage() {
     .from("transactions")
     .select("id", { count: "exact", head: true });
 
+  // Pending upgrade / add-on requests
+  const { data: upgradeRequests } = await supabase
+    .from("upgrade_requests")
+    .select("id, business_name, business_email, business_phone, current_plan, requested_item, request_type, created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
   const today = new Date().toLocaleDateString("fr-FR", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
@@ -108,6 +116,11 @@ export default async function AdminPage() {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
+
+        {/* Upgrade / add-on requests section */}
+        {(upgradeRequests ?? []).length > 0 && (
+          <AdminUpgradeRequests requests={upgradeRequests ?? []} />
+        )}
 
         {/* Pending merchants section */}
         {pendingList.length > 0 && (
