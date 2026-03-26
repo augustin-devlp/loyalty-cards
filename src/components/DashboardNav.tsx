@@ -124,8 +124,8 @@ function GiftIcon() {
 const OWNER_LINKS = [
   { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon className="w-4 h-4" /> },
   { href: "/dashboard/stats", label: "Statistiques", icon: <StatsIcon className="w-4 h-4" /> },
-  { href: "/dashboard/spin-wheel", label: "Roue 🎰", icon: <PromoIcon /> },
-  { href: "/dashboard/lottery", label: "Loterie 🎁", icon: <GiftIcon /> },
+  { href: "/dashboard/spin-wheel", label: "Roue", icon: <PromoIcon /> },
+  { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
   { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
   { href: "/dashboard/billing", label: "Facturation", icon: <BillingIcon /> },
   { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },
@@ -141,8 +141,8 @@ const EMPLOYEE_LINKS = [
 
 // Drawer links (mobile menu)
 const DRAWER_LINKS = [
-  { href: "/dashboard/spin-wheel", label: "Roue de la fortune 🎰", icon: <PromoIcon /> },
-  { href: "/dashboard/lottery", label: "Loterie 🎁", icon: <GiftIcon /> },
+  { href: "/dashboard/spin-wheel", label: "Roue de la fortune", icon: <PromoIcon /> },
+  { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
   { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
   { href: "/dashboard/billing", label: "Facturation", icon: <BillingIcon /> },
   { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },
