@@ -16,6 +16,7 @@ interface WheelData {
   is_active: boolean;
   frequency: string;
   segments: Segment[];
+  require_google_review: boolean;
 }
 
 interface BusinessData {
@@ -189,7 +190,7 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
 export default function SpinPage() {
   const { business_id: businessId } = useParams<{ business_id: string }>();
 
-  const [step, setStep] = useState<"form" | "wheel" | "result">("form");
+  const [step, setStep] = useState<"form" | "review" | "wheel" | "result">("form");
   const [wheel, setWheel] = useState<WheelData | null>(null);
   const [business, setBusiness] = useState<BusinessData | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -205,6 +206,9 @@ export default function SpinPage() {
   const [sendingCode, setSendingCode] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
+  // Google review mode
+  const [reviewOpened, setReviewOpened] = useState(false);
+
   // Animation
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -218,7 +222,7 @@ export default function SpinPage() {
   useEffect(() => {
     const sb = createAnonClient();
     Promise.all([
-      sb.from("spin_wheels").select("id, is_active, frequency, segments").eq("business_id", businessId).maybeSingle(),
+      sb.from("spin_wheels").select("id, is_active, frequency, segments, require_google_review").eq("business_id", businessId).maybeSingle(),
       sb.from("businesses").select("business_name, google_place_id").eq("id", businessId).maybeSingle(),
     ]).then(([wRes, bRes]) => {
       if (wRes.data) setWheel(wRes.data as WheelData);
@@ -340,7 +344,7 @@ export default function SpinPage() {
       return;
     }
 
-    // 2. Anti-doublon check (existing logic)
+    // 2. Anti-doublon check
     const sb = createAnonClient();
     const { data: existing } = await sb
       .from("spin_entries")
@@ -374,6 +378,19 @@ export default function SpinPage() {
     }
 
     setSubmitting(false);
+
+    // 3. Mode: require Google review before spinning?
+    const needsReview = wheel.require_google_review && !!business?.google_place_id;
+    if (needsReview) {
+      setStep("review");
+    } else {
+      setStep("wheel");
+      setTimeout(startSpin, 600);
+    }
+  };
+
+  // Called when user clicks "J'ai laissé mon avis" in review mode
+  const handleReviewConfirmed = () => {
     setStep("wheel");
     setTimeout(startSpin, 600);
   };
@@ -402,6 +419,9 @@ export default function SpinPage() {
 
   const won = wheel && wonIndex !== null ? wheel.segments[wonIndex] : null;
   const hasReward = !!won?.reward;
+  const googleReviewUrl = business?.google_place_id
+    ? `https://search.google.com/local/writereview?placeid=${business.google_place_id}`
+    : null;
 
   // ── Loading ──
   if (loading) return (
@@ -482,7 +502,7 @@ export default function SpinPage() {
                   <button type="submit" disabled={submitting || verifCode.length !== 4}
                     className="w-full py-4 rounded-2xl font-black text-white text-base shadow-lg disabled:opacity-50 transition-all active:scale-95"
                     style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}>
-                    {submitting ? "Vérification…" : "🎰 Vérifier et tourner !"}
+                    {submitting ? "Vérification…" : "🎰 Vérifier et continuer"}
                   </button>
                   <button type="button" onClick={handleResend} disabled={sendingCode || resendTimer > 0}
                     className="w-full text-sm text-gray-400 hover:text-gray-600 disabled:opacity-50 py-1">
@@ -520,6 +540,54 @@ export default function SpinPage() {
                 </>
               )}
             </>
+          )}
+
+          {/* ── Step: review (Mode 2 — Google review required) ── */}
+          {step === "review" && (
+            <div className="flex flex-col items-center text-center gap-6 py-4">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-md"
+                style={{ background: "linear-gradient(135deg, #fef3c7, #fde68a)" }}>
+                ⭐
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-gray-900">Dernière étape !</h2>
+                <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                  Laissez un avis Google sur{" "}
+                  <strong className="text-gray-800">{business?.business_name}</strong>{" "}
+                  pour débloquer la roue.
+                </p>
+              </div>
+
+              <div className="w-full space-y-3">
+                {googleReviewUrl && (
+                  <a
+                    href={googleReviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setReviewOpened(true)}
+                    className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-white text-base shadow-lg transition-all active:scale-95"
+                    style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}
+                  >
+                    ⭐ Laisser mon avis Google
+                  </a>
+                )}
+
+                <button
+                  onClick={handleReviewConfirmed}
+                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 ${
+                    reviewOpened
+                      ? "bg-green-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}
+                >
+                  {reviewOpened ? "✓ J'ai laissé mon avis → Tourner la roue !" : "J'ai déjà laissé un avis"}
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Merci pour votre soutien ! Votre avis aide {business?.business_name} à se faire connaître.
+              </p>
+            </div>
           )}
 
           {/* ── Step: wheel ── */}
@@ -586,10 +654,10 @@ export default function SpinPage() {
                   </>
                 )}
 
-                {/* Google review */}
-                {business?.google_place_id && (
+                {/* Google review — shown in Mode 1 (optional) or Mode 2 if somehow skipped */}
+                {!wheel.require_google_review && googleReviewUrl && (
                   <a
-                    href={`https://search.google.com/local/writereview?placeid=${business.google_place_id}`}
+                    href={googleReviewUrl}
                     target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full py-3.5 bg-white border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-700 hover:border-gray-200 hover:bg-gray-50 transition-all shadow-sm"
                   >

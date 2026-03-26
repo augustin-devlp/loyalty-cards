@@ -11,11 +11,13 @@ interface LotteryData {
   is_active: boolean;
   draw_date: string | null;
   business_id: string;
+  require_google_review: boolean;
 }
 
 interface BusinessInfo {
   business_name: string;
   primary_color: string;
+  google_place_id: string | null;
 }
 
 export default function LotteryPublicPage() {
@@ -24,7 +26,7 @@ export default function LotteryPublicPage() {
   const [lottery, setLottery] = useState<LotteryData | null>(null);
   const [business, setBusiness] = useState<BusinessInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState<"form" | "done">("form");
+  const [step, setStep] = useState<"form" | "review" | "done">("form");
   const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("+33 ");
   const [submitting, setSubmitting] = useState(false);
@@ -35,24 +37,27 @@ export default function LotteryPublicPage() {
   const [sendingCode, setSendingCode] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
+  // Google review mode
+  const [reviewOpened, setReviewOpened] = useState(false);
+
   useEffect(() => {
     const sb = createAnonClient();
     sb.from("lotteries")
-      .select("id, title, reward_description, is_active, draw_date, business_id")
+      .select("id, title, reward_description, is_active, draw_date, business_id, require_google_review")
       .eq("id", lottery_id)
       .maybeSingle()
       .then(async ({ data: lot }) => {
         if (!lot) { setLoading(false); return; }
         setLottery(lot as LotteryData);
 
-        // Fetch business info + primary color from loyalty_cards
         const [bRes, cRes] = await Promise.all([
-          sb.from("businesses").select("business_name").eq("id", lot.business_id).maybeSingle(),
+          sb.from("businesses").select("business_name, google_place_id").eq("id", lot.business_id).maybeSingle(),
           sb.from("loyalty_cards").select("primary_color").eq("business_id", lot.business_id).eq("is_active", true).limit(1).maybeSingle(),
         ]);
         setBusiness({
           business_name: bRes.data?.business_name ?? "Ce commerce",
           primary_color: cRes.data?.primary_color ?? "#534AB7",
+          google_place_id: bRes.data?.google_place_id ?? null,
         });
         setLoading(false);
       });
@@ -103,6 +108,26 @@ export default function LotteryPublicPage() {
     setResendTimer(30);
   };
 
+  // Insert participant in DB
+  const insertParticipant = async (): Promise<boolean> => {
+    if (!lottery) return false;
+    const sb = createAnonClient();
+    const { error: insertErr } = await sb.from("lottery_participants").insert({
+      lottery_id: lottery.id,
+      first_name: firstName.trim(),
+      phone: cleanP(phone),
+    });
+    if (insertErr) {
+      if (insertErr.code === "23505") {
+        setError("Vous êtes déjà inscrit à cette loterie avec ce numéro.");
+      } else {
+        setError("Une erreur est survenue. Réessayez.");
+      }
+      return false;
+    }
+    return true;
+  };
+
   const handleVerifyAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!lottery) return;
@@ -123,29 +148,32 @@ export default function LotteryPublicPage() {
       return;
     }
 
-    // 2. Register participation
-    const sb = createAnonClient();
-    const { error: insertErr } = await sb.from("lottery_participants").insert({
-      lottery_id: lottery.id,
-      first_name: firstName.trim(),
-      phone: cleanP(phone),
-    });
-
-    if (insertErr) {
-      if (insertErr.code === "23505") {
-        setError("Vous êtes déjà inscrit à cette loterie avec ce numéro.");
-      } else {
-        setError("Une erreur est survenue. Réessayez.");
-      }
+    // 2. Mode: require Google review before registering?
+    const needsReview = lottery.require_google_review && !!business?.google_place_id;
+    if (needsReview) {
       setSubmitting(false);
+      setStep("review");
       return;
     }
 
+    // Mode 1: insert directly
+    const ok = await insertParticipant();
     setSubmitting(false);
-    setStep("done");
+    if (ok) setStep("done");
+  };
+
+  // Called when user confirms they left a review (Mode 2)
+  const handleReviewConfirmed = async () => {
+    setSubmitting(true);
+    const ok = await insertParticipant();
+    setSubmitting(false);
+    if (ok) setStep("done");
   };
 
   const primaryColor = business?.primary_color ?? "#534AB7";
+  const googleReviewUrl = business?.google_place_id
+    ? `https://search.google.com/local/writereview?placeid=${business.google_place_id}`
+    : null;
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -183,6 +211,7 @@ export default function LotteryPublicPage() {
       {/* White card */}
       <div className="flex-1 bg-white rounded-t-3xl -mt-4 px-5 pt-8 pb-12 max-w-md w-full mx-auto">
 
+        {/* ── Step: form ── */}
         {step === "form" && (
           <>
             {codeStep ? (
@@ -227,7 +256,7 @@ export default function LotteryPublicPage() {
                     className="w-full py-3.5 rounded-xl font-bold text-white text-sm shadow-lg disabled:opacity-60 transition-all active:scale-95 mt-2"
                     style={{ background: primaryColor }}
                   >
-                    {submitting ? "Vérification…" : "🎁 Confirmer ma participation"}
+                    {submitting ? "Vérification…" : "Vérifier et continuer →"}
                   </button>
 
                   <button
@@ -308,6 +337,66 @@ export default function LotteryPublicPage() {
           </>
         )}
 
+        {/* ── Step: review (Mode 2 — Google review required) ── */}
+        {step === "review" && (
+          <div className="flex flex-col items-center text-center gap-6 py-4">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-md"
+              style={{ background: "linear-gradient(135deg, #fef9c3, #fde68a)" }}>
+              ⭐
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-gray-900">Dernière étape !</h2>
+              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                Laissez un avis Google sur{" "}
+                <strong className="text-gray-800">{business?.business_name}</strong>{" "}
+                pour confirmer votre participation à la loterie.
+              </p>
+            </div>
+
+            <div className="w-full space-y-3">
+              {googleReviewUrl && (
+                <a
+                  href={googleReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setReviewOpened(true)}
+                  className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-white text-base shadow-lg transition-all active:scale-95"
+                  style={{ background: primaryColor }}
+                >
+                  ⭐ Laisser mon avis Google
+                </a>
+              )}
+
+              <button
+                onClick={handleReviewConfirmed}
+                disabled={submitting}
+                className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 ${
+                  reviewOpened
+                    ? "bg-green-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              >
+                {submitting
+                  ? "Enregistrement…"
+                  : reviewOpened
+                  ? "✓ J'ai laissé mon avis → Confirmer ma participation !"
+                  : "J'ai déjà laissé un avis"}
+              </button>
+            </div>
+
+            {error && (
+              <div className="w-full bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Merci pour votre soutien ! Votre avis aide {business?.business_name} à se faire connaître.
+            </p>
+          </div>
+        )}
+
+        {/* ── Step: done ── */}
         {step === "done" && (
           <div className="text-center py-8 space-y-4">
             <div className="text-6xl">🎉</div>
@@ -331,6 +420,17 @@ export default function LotteryPublicPage() {
             <p className="text-xs text-gray-400">
               Bonne chance, {firstName} ! Vous serez contacté sur votre numéro en cas de victoire.
             </p>
+
+            {/* Google review — shown in Mode 1 (optional after registration) */}
+            {!lottery.require_google_review && googleReviewUrl && (
+              <a
+                href={googleReviewUrl}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3.5 bg-white border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-700 hover:border-gray-200 hover:bg-gray-50 transition-all shadow-sm mt-4"
+              >
+                ⭐ Laisser un avis Google
+              </a>
+            )}
           </div>
         )}
       </div>

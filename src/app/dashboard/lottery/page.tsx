@@ -13,6 +13,7 @@ interface Lottery {
   is_active: boolean;
   draw_date: string | null;
   created_at: string;
+  require_google_review: boolean;
   participant_count?: number;
 }
 
@@ -35,7 +36,7 @@ export default function LotteryPage() {
   const [loadingParticipants, setLoadingParticipants] = useState(false);
 
   // New lottery form
-  const [form, setForm] = useState({ title: "", reward: "", drawDate: "" });
+  const [form, setForm] = useState({ title: "", reward: "", drawDate: "", requireGoogleReview: false });
   const [formOpen, setFormOpen] = useState(false);
   const [formErr, setFormErr] = useState<string | null>(null);
 
@@ -43,7 +44,7 @@ export default function LotteryPage() {
     const sb = createClient();
     const { data } = await sb
       .from("lotteries")
-      .select("id, business_id, title, reward_description, is_active, draw_date, created_at")
+      .select("id, business_id, title, reward_description, is_active, draw_date, created_at, require_google_review")
       .eq("business_id", uid)
       .order("created_at", { ascending: false });
 
@@ -59,7 +60,7 @@ export default function LotteryPage() {
         return { ...lot, participant_count: count ?? 0 };
       })
     );
-    setLotteries(enriched);
+    setLotteries(enriched as Lottery[]);
   }, []);
 
   useEffect(() => {
@@ -87,8 +88,9 @@ export default function LotteryPage() {
       reward_description: form.reward.trim(),
       draw_date: form.drawDate || null,
       is_active: true,
+      require_google_review: form.requireGoogleReview,
     });
-    setForm({ title: "", reward: "", drawDate: "" });
+    setForm({ title: "", reward: "", drawDate: "", requireGoogleReview: false });
     setFormOpen(false);
     setCreating(false);
     await loadLotteries(businessId);
@@ -98,6 +100,12 @@ export default function LotteryPage() {
     const sb = createClient();
     await sb.from("lotteries").update({ is_active: !lot.is_active }).eq("id", lot.id);
     setLotteries(prev => prev.map(l => l.id === lot.id ? { ...l, is_active: !l.is_active } : l));
+  };
+
+  const toggleGoogleReview = async (lot: Lottery) => {
+    const sb = createClient();
+    await sb.from("lotteries").update({ require_google_review: !lot.require_google_review }).eq("id", lot.id);
+    setLotteries(prev => prev.map(l => l.id === lot.id ? { ...l, require_google_review: !l.require_google_review } : l));
   };
 
   const deleteLottery = async (id: string) => {
@@ -177,6 +185,22 @@ export default function LotteryPage() {
                 <input type="date" value={form.drawDate} onChange={e => setForm({ ...form, drawDate: e.target.value })}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-gray-50" />
               </div>
+
+              {/* Google Review toggle in create form */}
+              <div className="flex items-center justify-between gap-4 bg-gray-50 rounded-xl px-4 py-3.5">
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Exiger un avis Google</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Le client laisse un avis avant de participer</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, requireGoogleReview: !form.requireGoogleReview })}
+                  className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${form.requireGoogleReview ? "bg-[#534AB7]" : "bg-gray-300"}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${form.requireGoogleReview ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+                </button>
+              </div>
+
               <button type="submit" disabled={creating}
                 className="w-full py-3 bg-[#534AB7] text-white rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-60 transition-colors">
                 {creating ? "Création…" : "Créer la loterie"}
@@ -204,6 +228,11 @@ export default function LotteryPage() {
                         <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${lot.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                           {lot.is_active ? "● Active" : "○ Inactive"}
                         </span>
+                        {lot.require_google_review && (
+                          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+                            ⭐ Avis requis
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-gray-500 mt-1">🎁 {lot.reward_description}</p>
                       {lot.draw_date && (
@@ -236,6 +265,10 @@ export default function LotteryPage() {
                     <button onClick={() => toggleActive(lot)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${lot.is_active ? "bg-amber-50 text-amber-700 hover:bg-amber-100" : "bg-green-50 text-green-700 hover:bg-green-100"}`}>
                       {lot.is_active ? "Désactiver" : "Activer"}
+                    </button>
+                    <button onClick={() => toggleGoogleReview(lot)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${lot.require_google_review ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      {lot.require_google_review ? "⭐ Désactiver avis" : "⭐ Exiger avis Google"}
                     </button>
                     <button onClick={() => deleteLottery(lot.id)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-xl text-xs font-semibold hover:bg-red-100 transition-colors">

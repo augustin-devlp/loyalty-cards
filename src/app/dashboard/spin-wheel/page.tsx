@@ -18,6 +18,7 @@ interface WheelRow {
   is_active: boolean;
   frequency: string;
   segments: Segment[];
+  require_google_review: boolean;
 }
 
 const PALETTE = [
@@ -76,6 +77,7 @@ export default function SpinWheelPage() {
   const [segments, setSegments] = useState<Segment[]>(DEFAULT_SEGMENTS);
   const [frequency, setFrequency] = useState<"once" | "daily" | "weekly" | "monthly">("once");
   const [isActive, setIsActive] = useState(false);
+  const [requireGoogleReview, setRequireGoogleReview] = useState(false);
   const [businessId, setBusinessId] = useState<string>("");
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
@@ -96,6 +98,7 @@ export default function SpinWheelPage() {
         setSegments(Array.isArray(w.segments) && w.segments.length ? w.segments : DEFAULT_SEGMENTS);
         setFrequency(w.frequency as "once" | "daily" | "weekly" | "monthly");
         setIsActive(w.is_active);
+        setRequireGoogleReview(w.require_google_review ?? false);
       }
       setLoading(false);
     });
@@ -111,14 +114,14 @@ export default function SpinWheelPage() {
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
     if (wheel) {
-      await sb.from("spin_wheels").update({ segments, frequency, is_active: isActive }).eq("id", wheel.id);
+      await sb.from("spin_wheels").update({ segments, frequency, is_active: isActive, require_google_review: requireGoogleReview }).eq("id", wheel.id);
     } else {
-      const { data } = await sb.from("spin_wheels").insert({ business_id: user.id, segments, frequency, is_active: isActive }).select().single();
+      const { data } = await sb.from("spin_wheels").insert({ business_id: user.id, segments, frequency, is_active: isActive, require_google_review: requireGoogleReview }).select().single();
       if (data) setWheel(data as WheelRow);
     }
     setSaving(false); setSaveOk(true);
     setTimeout(() => setSaveOk(false), 2500);
-  }, [wheel, segments, frequency, isActive, total]);
+  }, [wheel, segments, frequency, isActive, requireGoogleReview, total]);
 
   const toggleActive = async () => {
     if (!wheel) return;
@@ -206,6 +209,34 @@ export default function SpinWheelPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Google Review Mode */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-sm font-bold text-gray-700">Exiger un avis Google</h2>
+                  <p className="text-xs text-gray-400 mt-0.5 leading-snug">
+                    Le client laisse un avis avant de tourner la roue
+                  </p>
+                </div>
+                <button
+                  onClick={() => setRequireGoogleReview(!requireGoogleReview)}
+                  className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${requireGoogleReview ? "bg-[#534AB7]" : "bg-gray-200"}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${requireGoogleReview ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+                </button>
+              </div>
+              {requireGoogleReview && (
+                <p className="mt-3 text-xs text-indigo-600 bg-indigo-50 rounded-xl px-3 py-2 leading-snug">
+                  Mode actif : après vérification SMS, le client verra un bouton &quot;Laisser un avis Google&quot; avant de pouvoir tourner.
+                </p>
+              )}
+              {!requireGoogleReview && (
+                <p className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2 leading-snug">
+                  Mode simple : participation directe après vérification SMS. Le bouton avis Google s&apos;affiche en option après la roue.
+                </p>
+              )}
             </div>
 
             {/* Segments */}
