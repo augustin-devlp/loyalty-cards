@@ -230,13 +230,26 @@ export default function SpinPage() {
     setWonIndex(idx);
 
     const total = segs.reduce((a, s) => a + s.probability, 0);
+
+    // Build cumulative start angle for each segment
     let cumAngle = 0;
     for (let i = 0; i < idx; i++) cumAngle += (segs[i].probability / total) * Math.PI * 2;
-    const segCenter = cumAngle + (segs[idx].probability / total) * Math.PI * 2 / 2;
-    const stopAngle = Math.PI * 2 * 6 + (Math.PI / 2) - segCenter;
+    const sweep = (segs[idx].probability / total) * Math.PI * 2;
+
+    // Pick a random landing point within the winning segment (25%–75% into it)
+    const landingOffset = cumAngle + sweep * (0.25 + Math.random() * 0.5);
+
+    // The canvas draws segments starting at (rotation - π/2).
+    // The arrow sits at canvas angle -π/2 (12 o'clock).
+    // The segment under the arrow satisfies: (-finalRotation) mod 2π = landingOffset.
+    // So we need: finalRotation ≡ -landingOffset (mod 2π)
+    // delta = (-landingOffset - rotation) mod 2π  → always in [0, 2π)
+    const TAU = Math.PI * 2;
+    const delta = (((-landingOffset - rotation) % TAU) + TAU) % TAU;
 
     startRotRef.current = rotation;
-    targetRotRef.current = rotation + stopAngle;
+    // Add 6 full rotations on top of delta for visual effect
+    targetRotRef.current = rotation + delta + TAU * 6;
     startTimeRef.current = performance.now();
     setSpinning(true);
 
