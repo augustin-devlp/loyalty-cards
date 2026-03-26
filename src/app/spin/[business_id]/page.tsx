@@ -199,6 +199,12 @@ export default function SpinPage() {
   const [error, setError] = useState<string | null>(null);
   const [alreadyPlayed, setAlreadyPlayed] = useState<string | null>(null);
 
+  // Phone verification
+  const [codeStep,    setCodeStep]    = useState(false);
+  const [verifCode,   setVerifCode]   = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
   // Animation
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -220,6 +226,15 @@ export default function SpinPage() {
       setLoading(false);
     });
   }, [businessId]);
+
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const t = setTimeout(() => setResendTimer(r => r - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendTimer]);
+
+  function cleanP(p: string) { return p.replace(/\s/g, ""); }
+  function isE164(p: string) { return /^\+[1-9]\d{6,14}$/.test(cleanP(p)); }
 
   const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
@@ -269,18 +284,69 @@ export default function SpinPage() {
 
   useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current); }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!wheel) return;
-    setSubmitting(true);
     setError(null);
+    if (!isE164(phone)) {
+      setError("Format invalide. Exemple : +33 6 12 34 56 78 ou +41 76 123 45 67");
+      return;
+    }
+    setSendingCode(true);
+    const res = await fetch("/api/verify/send-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: cleanP(phone) }),
+    });
+    const data = await res.json();
+    setSendingCode(false);
+    if (!res.ok) { setError(data.error ?? "Erreur lors de l'envoi du SMS."); return; }
+    setCodeStep(true);
+    setResendTimer(30);
+  };
 
+  const handleResend = async () => {
+    if (resendTimer > 0) return;
+    setError(null);
+    setSendingCode(true);
+    const res = await fetch("/api/verify/send-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: cleanP(phone) }),
+    });
+    const data = await res.json();
+    setSendingCode(false);
+    if (!res.ok) { setError(data.error ?? "Erreur."); return; }
+    setResendTimer(30);
+  };
+
+  const handleVerifyAndSpin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wheel) return;
+    setError(null);
+    if (verifCode.length !== 4) { setError("Entrez les 4 chiffres du code."); return; }
+    setSubmitting(true);
+
+    // 1. Verify the SMS code
+    const vRes = await fetch("/api/verify/check-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: cleanP(phone), code: verifCode }),
+    });
+    const vData = await vRes.json();
+    if (!vData.verified) {
+      setError(vData.error ?? "Code invalide ou expiré.");
+      setSubmitting(false);
+      return;
+    }
+
+    // 2. Anti-doublon check (existing logic)
     const sb = createAnonClient();
     const { data: existing } = await sb
       .from("spin_entries")
       .select("last_spin_at")
       .eq("wheel_id", wheel.id)
-      .eq("phone", phone.trim())
+      .eq("phone", cleanP(phone))
       .order("last_spin_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -394,56 +460,61 @@ export default function SpinPage() {
                   <h2 className="text-xl font-black text-gray-900">À bientôt !</h2>
                   <p className="text-gray-500 text-sm leading-relaxed">{alreadyPlayed}</p>
                 </div>
+              ) : codeStep ? (
+                // ── Code verification ──
+                <form onSubmit={handleVerifyAndSpin} className="space-y-5">
+                  {error && <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 font-medium">{error}</div>}
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-4 text-center">
+                    <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Code envoyé par SMS au</p>
+                    <p className="text-base font-bold text-amber-900">{cleanP(phone)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Code de vérification *</label>
+                    <input
+                      type="text" inputMode="numeric" maxLength={4} required autoFocus
+                      value={verifCode}
+                      onChange={e => setVerifCode(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      placeholder="• • • •"
+                      className="w-full text-center text-3xl font-bold tracking-[0.6em] border-2 border-gray-200 rounded-2xl px-4 py-4 bg-gray-50 focus:outline-none focus:border-amber-400 text-black"
+                    />
+                    <p className="text-xs text-gray-400 mt-2 text-center">Le code expire dans 10 minutes</p>
+                  </div>
+                  <button type="submit" disabled={submitting || verifCode.length !== 4}
+                    className="w-full py-4 rounded-2xl font-black text-white text-base shadow-lg disabled:opacity-50 transition-all active:scale-95"
+                    style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}>
+                    {submitting ? "Vérification…" : "🎰 Vérifier et tourner !"}
+                  </button>
+                  <button type="button" onClick={handleResend} disabled={sendingCode || resendTimer > 0}
+                    className="w-full text-sm text-gray-400 hover:text-gray-600 disabled:opacity-50 py-1">
+                    {resendTimer > 0 ? `Renvoyer dans ${resendTimer}s` : sendingCode ? "Envoi…" : "Renvoyer le code"}
+                  </button>
+                  <button type="button" onClick={() => { setCodeStep(false); setVerifCode(""); setError(null); }}
+                    className="w-full text-xs text-gray-400 hover:text-gray-500">← Modifier mon numéro</button>
+                </form>
               ) : (
+                // ── Phone input ──
                 <>
                   <div className="text-center mb-7">
                     <h2 className="text-xl font-black text-gray-900">Tentez votre chance !</h2>
                     <p className="text-gray-400 text-sm mt-1">Entrez vos infos pour faire tourner la roue 🍀</p>
                   </div>
-
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                      <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 font-medium">
-                        {error}
-                      </div>
-                    )}
-
+                  <form onSubmit={handleSendCode} className="space-y-4">
+                    {error && <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 font-medium">{error}</div>}
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                        Prénom *
-                      </label>
-                      <input
-                        type="text" required
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                        placeholder="Marie"
-                        className="w-full border border-gray-200 rounded-2xl px-4 py-3.5 text-sm text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:bg-white transition"
-                        style={{ "--tw-ring-color": "#d97706" } as React.CSSProperties}
-                      />
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Prénom *</label>
+                      <input type="text" required value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Marie"
+                        className="w-full border border-gray-200 rounded-2xl px-4 py-3.5 text-sm text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:bg-white transition" />
                     </div>
-
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                        Téléphone *
-                      </label>
-                      <input
-                        type="tel" required
-                        value={phone}
-                        onChange={e => setPhone(e.target.value)}
-                        placeholder="+33 6 12 34 56 78"
-                        className="w-full border border-gray-200 rounded-2xl px-4 py-3.5 text-sm text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:bg-white transition"
-                        style={{ "--tw-ring-color": "#d97706" } as React.CSSProperties}
-                      />
-                      <p className="text-xs text-gray-400 mt-1.5 ml-1">1 participation par numéro</p>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Téléphone *</label>
+                      <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+33 6 12 34 56 78"
+                        className="w-full border border-gray-200 rounded-2xl px-4 py-3.5 text-sm text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:bg-white transition" />
+                      <p className="text-xs text-gray-400 mt-1.5 ml-1">Format international requis · ex : +33 6 12 34 56 78</p>
                     </div>
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
+                    <button type="submit" disabled={sendingCode}
                       className="w-full py-4 rounded-2xl font-black text-white text-base shadow-lg disabled:opacity-50 transition-all active:scale-95 mt-2"
-                      style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}
-                    >
-                      {submitting ? "Vérification…" : "🎰 Faire tourner la roue !"}
+                      style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}>
+                      {sendingCode ? "Envoi du code…" : "📱 Recevoir le code par SMS"}
                     </button>
                   </form>
                 </>
