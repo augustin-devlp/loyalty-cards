@@ -91,61 +91,65 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const SIZE = canvas.width;
-    const cx = SIZE / 2;
-    const r = cx - 20;
+    const SIZE = canvas.width; // 320
+    const cx = SIZE / 2;       // 160
+    const r = cx - 22;         // 138 — wheel radius (leaves room for 8px gold ring + shadow)
     const total = segments.reduce((a, s) => a + s.probability, 0) || 1;
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
-    // ── Dark outer shadow ring
+    // ── Drop shadow (drawn first, behind everything)
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.45)";
+    ctx.shadowBlur = 28;
+    ctx.shadowOffsetY = 6;
     ctx.beginPath();
-    ctx.arc(cx, cx, r + 14, 0, Math.PI * 2);
-    ctx.fillStyle = "#1a0a03";
+    ctx.arc(cx, cx, r + 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#F59E0B";
+    ctx.fill();
+    ctx.restore();
+
+    // ── Gold outer ring (#F59E0B, ~10px wide)
+    ctx.beginPath();
+    ctx.arc(cx, cx, r + 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#F59E0B";
     ctx.fill();
 
-    // ── Gold border ring
-    const goldGrad = ctx.createLinearGradient(0, 0, SIZE, SIZE);
-    goldGrad.addColorStop(0, "#fbbf24");
-    goldGrad.addColorStop(0.5, "#f59e0b");
-    goldGrad.addColorStop(1, "#d97706");
-    ctx.beginPath();
-    ctx.arc(cx, cx, r + 9, 0, Math.PI * 2);
-    ctx.fillStyle = goldGrad;
-    ctx.fill();
-
-    // ── Slices
+    // ── Slices (overwrite center of gold ring, exposing only the ring border)
     let angle = rotation - Math.PI / 2;
     segments.forEach((seg) => {
       const sweep = (seg.probability / total) * Math.PI * 2;
 
+      // Filled slice
       ctx.beginPath();
       ctx.moveTo(cx, cx);
       ctx.arc(cx, cx, r, angle, angle + sweep);
       ctx.closePath();
       ctx.fillStyle = seg.color;
       ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.5)";
-      ctx.lineWidth = 1.5;
+
+      // White border 3px
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Label
+      // Bold white label
       ctx.save();
       ctx.translate(cx, cx);
       ctx.rotate(angle + sweep / 2);
       ctx.textAlign = "right";
-      ctx.fillStyle = "#fff";
-      ctx.shadowColor = "rgba(0,0,0,0.5)";
-      ctx.shadowBlur = 4;
-      ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.shadowColor = "rgba(0,0,0,0.6)";
+      ctx.shadowBlur = 5;
+      ctx.font = "bold 12px system-ui, -apple-system, sans-serif";
       const txt = seg.label.length > 13 ? seg.label.slice(0, 12) + "…" : seg.label;
-      ctx.fillText(txt, r - 10, 4);
+      ctx.fillText(txt, r - 12, 4);
       ctx.restore();
 
       angle += sweep;
     });
 
-    // ── Center cap — gold radial
+    // ── Center cap — gold radial gradient
     const capGrad = ctx.createRadialGradient(cx - 4, cx - 4, 2, cx, cx, 22);
     capGrad.addColorStop(0, "#fde68a");
     capGrad.addColorStop(1, "#b45309");
@@ -153,24 +157,27 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
     ctx.arc(cx, cx, 22, 0, Math.PI * 2);
     ctx.fillStyle = capGrad;
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.8)";
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // ── Arrow pointer at top (pointing INTO the wheel)
-    const arrowTip = cx - r + 6;
-    const arrowBase = 14;
+    // ── Arrow — bright red, large, pointing INTO the wheel from the top
+    // Base at y=2 (top of canvas), tip at the wheel edge
+    const arrowTipY = cx - r + 2;   // just inside wheel edge
+    const arrowBaseY = 2;
+    const arrowHalfW = 18;
+
     ctx.beginPath();
-    ctx.moveTo(cx - arrowBase, 6);
-    ctx.lineTo(cx + arrowBase, 6);
-    ctx.lineTo(cx, arrowTip);
+    ctx.moveTo(cx, arrowTipY);
+    ctx.lineTo(cx - arrowHalfW, arrowBaseY);
+    ctx.lineTo(cx + arrowHalfW, arrowBaseY);
     ctx.closePath();
-    ctx.fillStyle = "#3E1F0A";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 6;
+    ctx.fillStyle = "#EF4444";
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 8;
     ctx.fill();
-    ctx.strokeStyle = "#fbbf24";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2.5;
     ctx.shadowBlur = 0;
     ctx.stroke();
 
@@ -181,7 +188,7 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
       ref={canvasRef}
       width={320}
       height={320}
-      style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.4))" }}
+      style={{ minWidth: 320, filter: "drop-shadow(0 10px 28px rgba(0,0,0,0.35))" }}
     />
   );
 }
@@ -249,25 +256,15 @@ export default function SpinPage() {
     setWonIndex(idx);
 
     const total = segs.reduce((a, s) => a + s.probability, 0);
-
-    // Build cumulative start angle for each segment
     let cumAngle = 0;
     for (let i = 0; i < idx; i++) cumAngle += (segs[i].probability / total) * Math.PI * 2;
     const sweep = (segs[idx].probability / total) * Math.PI * 2;
-
-    // Pick a random landing point within the winning segment (25%–75% into it)
     const landingOffset = cumAngle + sweep * (0.25 + Math.random() * 0.5);
 
-    // The canvas draws segments starting at (rotation - π/2).
-    // The arrow sits at canvas angle -π/2 (12 o'clock).
-    // The segment under the arrow satisfies: (-finalRotation) mod 2π = landingOffset.
-    // So we need: finalRotation ≡ -landingOffset (mod 2π)
-    // delta = (-landingOffset - rotation) mod 2π  → always in [0, 2π)
     const TAU = Math.PI * 2;
     const delta = (((-landingOffset - rotation) % TAU) + TAU) % TAU;
 
     startRotRef.current = rotation;
-    // Add 6 full rotations on top of delta for visual effect
     targetRotRef.current = rotation + delta + TAU * 6;
     startTimeRef.current = performance.now();
     setSpinning(true);
@@ -331,7 +328,7 @@ export default function SpinPage() {
     if (verifCode.length !== 4) { setError("Entrez les 4 chiffres du code."); return; }
     setSubmitting(true);
 
-    // 1. Verify the SMS code
+    // 1. Verify SMS code
     const vRes = await fetch("/api/verify/check-code", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -379,7 +376,7 @@ export default function SpinPage() {
 
     setSubmitting(false);
 
-    // 3. Mode: require Google review before spinning?
+    // 3. Google review gate?
     const needsReview = wheel.require_google_review && !!business?.google_place_id;
     if (needsReview) {
       setStep("review");
@@ -389,10 +386,21 @@ export default function SpinPage() {
     }
   };
 
-  // Called when user clicks "J'ai laissé mon avis" in review mode
+  // After user confirms they left a review (Mode 2)
   const handleReviewConfirmed = () => {
     setStep("wheel");
     setTimeout(startSpin, 600);
+  };
+
+  // Reset to form for daily/weekly/monthly replay
+  const handleReplay = () => {
+    setStep("form");
+    setCodeStep(false);
+    setVerifCode("");
+    setError(null);
+    setWonIndex(null);
+    setAlreadyPlayed(null);
+    setReviewOpened(false);
   };
 
   const saveResult = useCallback(async () => {
@@ -419,6 +427,11 @@ export default function SpinPage() {
 
   const won = wheel && wonIndex !== null ? wheel.segments[wonIndex] : null;
   const hasReward = !!won?.reward;
+  const canReplay = wheel?.frequency !== "once";
+
+  const googleMapsUrl = business?.google_place_id
+    ? `https://www.google.com/maps/search/?api=1&query_place_id=${business.google_place_id}`
+    : null;
   const googleReviewUrl = business?.google_place_id
     ? `https://search.google.com/local/writereview?placeid=${business.google_place_id}`
     : null;
@@ -450,10 +463,8 @@ export default function SpinPage() {
         className="relative flex flex-col items-center px-5 pt-12 pb-10 text-center overflow-hidden"
         style={{ background: "linear-gradient(135deg, #3E1F0A 0%, #6B3A2A 100%)" }}
       >
-        {/* Decorative circles */}
         <div className="absolute top-[-40px] right-[-40px] w-48 h-48 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #fbbf24, transparent)" }} />
         <div className="absolute bottom-[-20px] left-[-20px] w-32 h-32 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #fbbf24, transparent)" }} />
-
         <div className="relative z-10">
           <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mb-4 mx-auto shadow-lg"
             style={{ background: "rgba(255,255,255,0.15)", border: "2px solid rgba(255,255,255,0.3)" }}>
@@ -542,7 +553,7 @@ export default function SpinPage() {
             </>
           )}
 
-          {/* ── Step: review (Mode 2 — Google review required) ── */}
+          {/* ── Step: review (Mode 2 — Google review required before spinning) ── */}
           {step === "review" && (
             <div className="flex flex-col items-center text-center gap-6 py-4">
               <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-md"
@@ -559,33 +570,60 @@ export default function SpinPage() {
               </div>
 
               <div className="w-full space-y-3">
-                {googleReviewUrl && (
-                  <a
-                    href={googleReviewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setReviewOpened(true)}
-                    className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-white text-base shadow-lg transition-all active:scale-95"
-                    style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)" }}
-                  >
-                    ⭐ Laisser mon avis Google
-                  </a>
-                )}
 
-                <button
-                  onClick={handleReviewConfirmed}
-                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 ${
-                    reviewOpened
-                      ? "bg-green-600 text-white shadow-md"
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                  }`}
-                >
-                  {reviewOpened ? "✓ J'ai laissé mon avis → Tourner la roue !" : "J'ai déjà laissé un avis"}
-                </button>
+                {/* Option A — trust-based */}
+                <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Option A · Laisser un avis</p>
+
+                  {googleMapsUrl && (
+                    <a
+                      href={googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setReviewOpened(true)}
+                      className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-base shadow-lg transition-all active:scale-95 ${
+                        reviewOpened
+                          ? "opacity-80 cursor-default"
+                          : ""
+                      }`}
+                      style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)", color: "#fff" }}
+                    >
+                      ⭐ Laisser mon avis Google
+                    </a>
+                  )}
+
+                  {reviewOpened && (
+                    <button
+                      onClick={handleReviewConfirmed}
+                      className="w-full py-3.5 rounded-2xl font-black text-white text-sm bg-green-600 hover:bg-green-700 shadow-md transition-all active:scale-95"
+                    >
+                      ✓ J&apos;ai laissé mon avis → Continuer
+                    </button>
+                  )}
+
+                  {!reviewOpened && (
+                    <button
+                      onClick={handleReviewConfirmed}
+                      className="w-full py-2.5 rounded-2xl text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      J&apos;ai déjà laissé un avis →
+                    </button>
+                  )}
+                </div>
+
+                {/* Option B — coming soon */}
+                <div className="bg-gray-50 rounded-2xl p-4 opacity-50 select-none">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Option B · Vérification automatique</p>
+                  <div className="flex items-center gap-2 py-2.5 px-3 rounded-xl border border-dashed border-gray-300">
+                    <span className="text-sm">🔒</span>
+                    <p className="text-xs text-gray-400 font-medium">Vérification automatique via Google (bientôt disponible)</p>
+                  </div>
+                </div>
+
               </div>
 
               <p className="text-xs text-gray-400 leading-relaxed">
-                Merci pour votre soutien ! Votre avis aide {business?.business_name} à se faire connaître.
+                Votre avis aide {business?.business_name} à se faire connaître. Merci !
               </p>
             </div>
           )}
@@ -636,25 +674,14 @@ export default function SpinPage() {
                 ) : (
                   <>
                     <div className="text-6xl">🍀</div>
-                    <div>
-                      <h2 className="text-2xl font-black text-gray-900">Merci d&apos;avoir joué !</h2>
-                      <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                        Tentez encore lors de votre prochaine visite !
-                      </p>
-                    </div>
-                    <div
-                      className="w-full rounded-2xl px-5 py-4"
-                      style={{ background: "linear-gradient(135deg, #fef3c7, #fde68a)" }}
-                    >
-                      <p className="text-sm font-bold text-amber-800">
-                        🎰 Segment : {won.label}
-                      </p>
-                      <p className="text-xs text-amber-700 mt-1">La chance vous sourit peut-être la prochaine fois !</p>
-                    </div>
+                    <h2 className="text-2xl font-black text-gray-900">Tentez encore lors de votre prochaine visite !</h2>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      La chance vous sourit peut-être la prochaine fois.
+                    </p>
                   </>
                 )}
 
-                {/* Google review — shown in Mode 1 (optional) or Mode 2 if somehow skipped */}
+                {/* Google review — Mode 1 only (optional, after result) */}
                 {!wheel.require_google_review && googleReviewUrl && (
                   <a
                     href={googleReviewUrl}
@@ -664,6 +691,17 @@ export default function SpinPage() {
                     ⭐ Laisser un avis Google
                   </a>
                 )}
+
+                {/* Rejouer button — only for daily / weekly / monthly */}
+                {canReplay && (
+                  <button
+                    onClick={handleReplay}
+                    className="w-full py-3.5 rounded-2xl font-bold text-sm border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-all active:scale-95"
+                  >
+                    🔄 Rejouer
+                  </button>
+                )}
+
               </div>
             </>
           )}
