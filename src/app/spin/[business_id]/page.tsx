@@ -1,433 +1,369 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { createAnonClient } from "@/lib/supabase/anon";
 
 interface Segment {
-  id: string;
   label: string;
   color: string;
   probability: number;
+  reward: string;
 }
 
-interface SpinWheel {
+interface WheelData {
   id: string;
   is_active: boolean;
   frequency: string;
+  segments: Segment[];
 }
 
-interface Business {
+interface BusinessData {
   business_name: string;
-  logo_url: string | null;
   google_place_id: string | null;
+  primary_color?: string;
 }
 
-interface PrimaryColor {
-  primary_color: string;
-}
-
-// Compute the final rotation angle for the wheel given a target segment index
-function getStopAngle(segments: Segment[], targetIndex: number): number {
-  const total = segments.reduce((sum, s) => sum + s.probability, 0);
-  let cumulative = 0;
-  for (let i = 0; i < targetIndex; i++) {
-    cumulative += segments[i].probability / total;
+// ── Weighted random pick ───────────────────────────────────────────────────────
+function pickSegment(segments: Segment[]): number {
+  const total = segments.reduce((a, s) => a + s.probability, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < segments.length; i++) {
+    r -= segments[i].probability;
+    if (r <= 0) return i;
   }
-  // Middle of the target segment
-  const segFraction = segments[targetIndex].probability / total;
-  const targetCenter = cumulative + segFraction / 2;
-
-  // We want the center of the target segment to land at the top (pointer)
-  // Wheel starts at top (-90deg), so we need to rotate such that targetCenter * 360 lands at 0
-  const offsetDeg = targetCenter * 360;
-  // Spin 5 full turns + offset to stop at the right sector
-  return 5 * 360 + (360 - offsetDeg);
+  return segments.length - 1;
 }
 
-function WheelSVG({
+// ── Canvas Wheel ──────────────────────────────────────────────────────────────
+function CanvasWheel({
   segments,
   rotation,
 }: {
   segments: Segment[];
   rotation: number;
 }) {
-  const size = 280;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = size / 2 - 4;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const total = segments.reduce((sum, s) => sum + s.probability, 0);
-  let currentAngle = -Math.PI / 2;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-  const paths: React.ReactNode[] = [];
+    const size = canvas.width;
+    const cx = size / 2;
+    const r = cx - 10;
+    const total = segments.reduce((a, s) => a + s.probability, 0) || 1;
 
-  segments.forEach((seg, i) => {
-    const fraction = seg.probability / (total || 1);
-    const angle = fraction * 2 * Math.PI;
-    const endAngle = currentAngle + angle;
+    ctx.clearRect(0, 0, size, size);
 
-    const x1 = cx + r * Math.cos(currentAngle);
-    const y1 = cy + r * Math.sin(currentAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const largeArc = angle > Math.PI ? 1 : 0;
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(cx, cx, r + 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fill();
 
-    const midAngle = currentAngle + angle / 2;
-    const labelR = r * 0.65;
-    const lx = cx + labelR * Math.cos(midAngle);
-    const ly = cy + labelR * Math.sin(midAngle);
+    let angle = rotation - Math.PI / 2;
+    segments.forEach((seg) => {
+      const sweep = (seg.probability / total) * Math.PI * 2;
 
-    const d = [
-      `M ${cx} ${cy}`,
-      `L ${x1} ${y1}`,
-      `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
-      "Z",
-    ].join(" ");
+      // Slice
+      ctx.beginPath();
+      ctx.moveTo(cx, cx);
+      ctx.arc(cx, cx, r, angle, angle + sweep);
+      ctx.closePath();
+      ctx.fillStyle = seg.color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
 
-    const maxLen = Math.max(4, Math.floor(12 * fraction));
-    const displayLabel =
-      seg.label.length > maxLen ? seg.label.slice(0, maxLen - 1) + "…" : seg.label;
+      // Label
+      ctx.save();
+      ctx.translate(cx, cx);
+      ctx.rotate(angle + sweep / 2);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 11px system-ui, sans-serif";
+      const txt = seg.label.length > 12 ? seg.label.slice(0, 11) + "…" : seg.label;
+      ctx.fillText(txt, r - 14, 4);
+      ctx.restore();
 
-    paths.push(
-      <g key={i}>
-        <path d={d} fill={seg.color} stroke="white" strokeWidth="2" />
-        {fraction > 0.05 && (
-          <text
-            x={lx}
-            y={ly}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="white"
-            fontSize="10"
-            fontWeight="bold"
-            style={{ pointerEvents: "none", userSelect: "none" }}
-          >
-            {displayLabel}
-          </text>
-        )}
-      </g>
-    );
+      angle += sweep;
+    });
 
-    currentAngle = endAngle;
-  });
+    // Center cap
+    ctx.beginPath();
+    ctx.arc(cx, cx, 18, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+    ctx.strokeStyle = "#534AB7";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Arrow indicator at top
+    ctx.beginPath();
+    ctx.moveTo(cx - 10, cx - r - 4);
+    ctx.lineTo(cx + 10, cx - r - 4);
+    ctx.lineTo(cx, cx - r + 16);
+    ctx.closePath();
+    ctx.fillStyle = "#534AB7";
+    ctx.fill();
+  }, [segments, rotation]);
 
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      style={{
-        transform: `rotate(${rotation}deg)`,
-        transition: rotation !== 0 ? "transform 3s cubic-bezier(0.17, 0.67, 0.12, 1)" : "none",
-      }}
-    >
-      <circle cx={cx} cy={cy} r={r + 2} fill="none" stroke="#E5E7EB" strokeWidth="4" />
-      {paths}
-      <circle cx={cx} cy={cy} r={10} fill="white" stroke="#534AB7" strokeWidth="2" />
-    </svg>
+    <canvas
+      ref={canvasRef}
+      width={300}
+      height={300}
+      className="drop-shadow-2xl"
+      style={{ borderRadius: "50%" }}
+    />
   );
 }
 
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function SpinPage() {
-  const params = useParams();
-  const business_id = params.business_id as string;
+  const { business_id: businessId } = useParams<{ business_id: string }>();
 
-  const [loading, setLoading] = useState(true);
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [primaryColor, setPrimaryColor] = useState("#534AB7");
-  const [wheel, setWheel] = useState<SpinWheel | null>(null);
-  const [segments, setSegments] = useState<Segment[]>([]);
-  const [unavailable, setUnavailable] = useState(false);
-
+  const [step, setStep] = useState<"form" | "wheel" | "result">("form");
+  const [wheel, setWheel] = useState<WheelData | null>(null);
+  const [business, setBusiness] = useState<BusinessData | null>(null);
   const [firstName, setFirstName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
+  const [phone, setPhone] = useState("+33 ");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [alreadyPlayed, setAlreadyPlayed] = useState<string | null>(null);
 
-  const [spinning, setSpinning] = useState(false);
+  // Wheel animation
   const [rotation, setRotation] = useState(0);
-  const [result, setResult] = useState<string | null>(null);
-  const [spinError, setSpinError] = useState<string | null>(null);
-  const [alreadyPlayed, setAlreadyPlayed] = useState(false);
-  const [nextSpinAt, setNextSpinAt] = useState<string | null>(null);
-
-  const spinDone = useRef(false);
+  const [spinning, setSpinning] = useState(false);
+  const [wonIndex, setWonIndex] = useState<number | null>(null);
+  const animRef = useRef<number | null>(null);
+  const startRotRef = useRef(0);
+  const targetRotRef = useRef(0);
+  const startTimeRef = useRef(0);
+  const DURATION = 4000;
 
   useEffect(() => {
-    const supabase = createAnonClient();
-
-    async function load() {
-      // Fetch business info
-      const { data: biz } = await supabase
-        .from("businesses")
-        .select("business_name, logo_url, google_place_id")
-        .eq("id", business_id)
-        .single();
-
-      setBusiness(biz ?? null);
-
-      // Fetch primary color from loyalty_cards
-      const { data: card } = await supabase
-        .from("loyalty_cards")
-        .select("primary_color")
-        .eq("business_id", business_id)
-        .eq("is_active", true)
-        .limit(1)
-        .single();
-
-      if (card) {
-        setPrimaryColor((card as PrimaryColor).primary_color ?? "#534AB7");
-      }
-
-      // Fetch active spin wheel
-      const { data: spinWheel } = await supabase
-        .from("spin_wheels")
-        .select("id, is_active, frequency")
-        .eq("business_id", business_id)
-        .single();
-
-      if (!spinWheel || !spinWheel.is_active) {
-        setUnavailable(true);
-        setLoading(false);
-        return;
-      }
-
-      setWheel(spinWheel as SpinWheel);
-
-      // Fetch segments
-      const { data: rewards } = await supabase
-        .from("spin_rewards")
-        .select("id, label, color, probability")
-        .eq("wheel_id", spinWheel.id)
-        .order("created_at", { ascending: true });
-
-      setSegments((rewards ?? []) as Segment[]);
+    const sb = createAnonClient();
+    Promise.all([
+      sb.from("spin_wheels").select("id, is_active, frequency, segments").eq("business_id", businessId).maybeSingle(),
+      sb.from("businesses").select("business_name, google_place_id").eq("id", businessId).maybeSingle(),
+      sb.from("loyalty_cards").select("primary_color").eq("business_id", businessId).eq("is_active", true).maybeSingle(),
+    ]).then(([wRes, bRes, cRes]) => {
+      if (wRes.data) setWheel(wRes.data as WheelData);
+      if (bRes.data) setBusiness({ ...bRes.data, primary_color: cRes.data?.primary_color ?? "#534AB7" });
       setLoading(false);
-    }
+    });
+  }, [businessId]);
 
-    load();
-  }, [business_id]);
+  const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
-  const handleSpin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-    setSpinError(null);
-    setResult(null);
-    setAlreadyPlayed(false);
-    spinDone.current = false;
+  const startSpin = useCallback(() => {
+    if (!wheel || spinning) return;
+    const segs = wheel.segments;
+    const idx = pickSegment(segs);
+    setWonIndex(idx);
 
-    if (!firstName.trim()) {
-      setFormError("Veuillez entrer votre prénom.");
-      return;
-    }
-    if (!phone.trim()) {
-      setFormError("Veuillez entrer votre numéro de téléphone.");
-      return;
-    }
+    const total = segs.reduce((a, s) => a + s.probability, 0);
+    let cumAngle = 0;
+    for (let i = 0; i < idx; i++) cumAngle += (segs[i].probability / total) * Math.PI * 2;
+    const segCenter = cumAngle + (segs[idx].probability / total) * Math.PI * 2 / 2;
 
+    // How much to rotate so the winning segment ends at top (arrow)
+    const stopAngle = Math.PI * 2 * 5 + (Math.PI / 2) - segCenter;
+    startRotRef.current = rotation;
+    targetRotRef.current = rotation + stopAngle;
+    startTimeRef.current = performance.now();
     setSpinning(true);
 
-    try {
-      const res = await fetch(`/api/spin/${business_id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ first_name: firstName.trim(), phone: phone.trim() }),
-      });
-
-      const data = await res.json() as {
-        reward?: string;
-        error?: string;
-        next_spin_at?: string;
-      };
-
-      if (!res.ok) {
+    const animate = (now: number) => {
+      const elapsed = now - startTimeRef.current;
+      const t = Math.min(elapsed / DURATION, 1);
+      const eased = easeOut(t);
+      setRotation(startRotRef.current + (targetRotRef.current - startRotRef.current) * eased);
+      if (t < 1) {
+        animRef.current = requestAnimationFrame(animate);
+      } else {
         setSpinning(false);
-        if (res.status === 409) {
-          setAlreadyPlayed(true);
-          setSpinError(data.error ?? "Vous avez déjà participé");
-          if (data.next_spin_at) setNextSpinAt(data.next_spin_at);
-        } else {
-          setSpinError(data.error ?? "Erreur lors du tirage");
-        }
-        return;
+        setStep("result");
       }
+    };
+    animRef.current = requestAnimationFrame(animate);
+  }, [wheel, spinning, rotation]);
 
-      // Find the winning segment index to animate correctly
-      const wonLabel = data.reward ?? "";
-      const winIndex = segments.findIndex((s) => s.label === wonLabel);
-      const targetIndex = winIndex >= 0 ? winIndex : 0;
+  useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current); }, []);
 
-      const stopAngle = getStopAngle(segments, targetIndex);
-      setRotation(stopAngle);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wheel) return;
+    setSubmitting(true);
+    setError(null);
 
-      // Wait for the animation to finish (3s)
-      setTimeout(() => {
-        setResult(wonLabel);
-        setSpinning(false);
-        spinDone.current = true;
-      }, 3200);
-    } catch {
-      setSpinning(false);
-      setSpinError("Erreur réseau. Veuillez réessayer.");
+    // Check anti-doublon
+    const sb = createAnonClient();
+    const { data: existing } = await sb
+      .from("spin_entries")
+      .select("last_spin_at")
+      .eq("wheel_id", wheel.id)
+      .eq("phone", phone.trim())
+      .order("last_spin_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existing) {
+      const lastSpin = new Date(existing.last_spin_at);
+      const now = new Date();
+      let blocked = false;
+      let msg = "";
+      if (wheel.frequency === "once") {
+        blocked = true; msg = "Vous avez déjà participé à cette roue.";
+      } else if (wheel.frequency === "daily") {
+        blocked = lastSpin.toDateString() === now.toDateString();
+        if (blocked) msg = "Vous avez déjà joué aujourd'hui. Revenez demain !";
+      } else if (wheel.frequency === "weekly") {
+        const diff = (now.getTime() - lastSpin.getTime()) / 86400000;
+        blocked = diff < 7;
+        if (blocked) msg = `Revenez dans ${Math.ceil(7 - diff)} jour(s).`;
+      } else if (wheel.frequency === "monthly") {
+        const diff = (now.getTime() - lastSpin.getTime()) / 86400000;
+        blocked = diff < 30;
+        if (blocked) msg = `Revenez dans ${Math.ceil(30 - diff)} jour(s).`;
+      }
+      if (blocked) { setAlreadyPlayed(msg); setSubmitting(false); return; }
     }
+
+    setSubmitting(false);
+    setStep("wheel");
+    setTimeout(startSpin, 600);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const saveResult = useCallback(async () => {
+    if (!wheel || wonIndex === null) return;
+    const sb = createAnonClient();
+    const reward = wheel.segments[wonIndex]?.reward ?? null;
+    await sb.from("spin_results").insert({
+      wheel_id: wheel.id,
+      first_name: firstName.trim(),
+      phone: phone.trim(),
+      reward,
+    });
+    // Also upsert spin_entries for anti-doublon tracking
+    const existing2 = await sb.from("spin_entries").select("id").eq("wheel_id", wheel.id).eq("phone", phone.trim()).maybeSingle();
+    if (existing2.data) {
+      await sb.from("spin_entries").update({ last_spin_at: new Date().toISOString(), reward_won: reward ?? undefined }).eq("id", existing2.data.id);
+    } else {
+      await sb.from("spin_entries").insert({ wheel_id: wheel.id, phone: phone.trim(), reward_won: reward ?? undefined });
+    }
+  }, [wheel, wonIndex, firstName, phone]);
 
-  const googleReviewUrl = business?.google_place_id
-    ? `https://search.google.com/local/writereview?placeid=${business.google_place_id}`
-    : null;
+  useEffect(() => {
+    if (step === "result") saveResult();
+  }, [step, saveResult]);
+
+  const primaryColor = business?.primary_color ?? "#534AB7";
+  const won = wheel && wonIndex !== null ? wheel.segments[wonIndex] : null;
+  const hasReward = won?.reward;
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-8 h-8 border-4 border-[#534AB7] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (!wheel || !wheel.is_active || wheel.segments.length === 0) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 text-center">
+      <div className="text-5xl mb-4">🎰</div>
+      <h1 className="text-xl font-bold text-gray-800">{business?.business_name ?? "Ce commerce"}</h1>
+      <p className="text-gray-500 mt-2">La roue de la fortune n&apos;est pas disponible pour le moment.</p>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: primaryColor }}>
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <div className="flex flex-col items-center pt-10 pb-6 px-4">
-        {business?.logo_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={business.logo_url}
-            alt={business.business_name}
-            className="w-16 h-16 rounded-2xl object-cover shadow-md mb-3 bg-white"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-bold text-white mb-3 shadow-md">
-            {business?.business_name?.[0]?.toUpperCase() ?? "?"}
-          </div>
-        )}
-        <h1 className="text-white font-bold text-xl text-center">
-          {business?.business_name ?? "Roue de la fortune"}
-        </h1>
-        <p className="text-white/70 text-sm mt-1">Tentez votre chance !</p>
+      <div className="text-white px-5 pt-10 pb-6 text-center" style={{ background: primaryColor }}>
+        <div className="text-4xl mb-2">🎰</div>
+        <h1 className="text-xl font-bold">{business?.business_name}</h1>
+        <p className="text-sm opacity-80 mt-1">Roue de la fortune</p>
       </div>
 
-      {/* Main card */}
-      <div className="flex-1 bg-white rounded-t-3xl px-4 pt-8 pb-10 flex flex-col items-center max-w-md mx-auto w-full">
-        {unavailable ? (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4">🎡</div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Roue indisponible
-            </h2>
-            <p className="text-gray-500 text-sm">
-              La roue n'est pas disponible pour le moment. Revenez plus tard !
+      <div className="flex-1 bg-white rounded-t-3xl -mt-4 px-5 pt-8 pb-10 max-w-md w-full mx-auto">
+
+        {/* ── Step: form ── */}
+        {step === "form" && (
+          <>
+            {alreadyPlayed ? (
+              <div className="text-center py-8">
+                <div className="text-5xl mb-4">⏰</div>
+                <p className="text-gray-700 font-semibold">{alreadyPlayed}</p>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-gray-900 mb-1">Tentez votre chance !</h2>
+                <p className="text-sm text-gray-500 mb-6">Entrez vos infos pour faire tourner la roue.</p>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {error && <p className="text-red-500 text-sm bg-red-50 rounded-xl px-3 py-2">{error}</p>}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Prénom *</label>
+                    <input type="text" required value={firstName} onChange={e => setFirstName(e.target.value)}
+                      placeholder="Marie" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-gray-50" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Téléphone *</label>
+                    <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
+                      placeholder="+33 6 12 34 56 78" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-black focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-gray-50" />
+                  </div>
+                  <button type="submit" disabled={submitting}
+                    className="w-full py-3.5 rounded-xl font-bold text-white text-sm shadow-lg disabled:opacity-60 transition-all active:scale-95"
+                    style={{ background: primaryColor }}>
+                    {submitting ? "Vérification…" : "🎰 Faire tourner la roue !"}
+                  </button>
+                </form>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ── Step: wheel ── */}
+        {step === "wheel" && (
+          <div className="flex flex-col items-center gap-6 py-4">
+            <CanvasWheel segments={wheel.segments} rotation={rotation} />
+            <p className="text-sm text-gray-500 animate-pulse">
+              {spinning ? "La roue tourne…" : "Préparation…"}
             </p>
           </div>
-        ) : alreadyPlayed ? (
-          <div className="text-center py-16 space-y-4">
-            <div className="text-5xl mb-2">⏳</div>
-            <h2 className="text-xl font-bold text-gray-800">{spinError}</h2>
-            {nextSpinAt && (
-              <p className="text-gray-500 text-sm">
-                Prochain tirage disponible le{" "}
-                {new Date(nextSpinAt).toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
+        )}
+
+        {/* ── Step: result ── */}
+        {step === "result" && won && (
+          <div className="text-center py-6 space-y-4">
+            <div className="text-6xl">{hasReward ? "🎉" : "😊"}</div>
+            <h2 className="text-2xl font-black text-gray-900">
+              {hasReward ? "Félicitations !" : "Merci d'avoir joué !"}
+            </h2>
+            {hasReward ? (
+              <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5">
+                <p className="text-sm text-indigo-600 font-semibold mb-1">Votre récompense :</p>
+                <p className="text-xl font-black text-indigo-700">{won.reward}</p>
+                <p className="text-xs text-indigo-400 mt-2">Présentez cet écran au commerçant pour en profiter.</p>
+              </div>
+            ) : (
+              <p className="text-gray-600">Segment obtenu : <strong>{won.label}</strong></p>
             )}
-          </div>
-        ) : result !== null ? (
-          /* Result screen */
-          <div className="text-center space-y-6 w-full">
-            <div className="flex justify-center">
-              <WheelSVG segments={segments} rotation={rotation} />
-            </div>
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200 p-6">
-              <p className="text-sm text-indigo-600 font-semibold mb-1">Votre résultat</p>
-              <p className="text-2xl font-bold text-gray-900">{result}</p>
-            </div>
-            {googleReviewUrl && (
+
+            {business?.google_place_id && (
               <a
-                href={googleReviewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-amber-400 hover:bg-amber-500 text-white font-bold py-3 rounded-xl text-center transition-colors shadow-sm"
+                href={`https://search.google.com/local/writereview?placeid=${business.google_place_id}`}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
               >
-                Laisser un avis Google ⭐
+                ⭐ Laisser un avis Google
               </a>
             )}
-          </div>
-        ) : (
-          /* Wheel + form */
-          <div className="w-full space-y-6">
-            {/* Wheel preview (static before spin) */}
-            <div className="flex justify-center relative">
-              {/* Pointer */}
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 z-10"
-                style={{ marginTop: "-6px" }}
-              >
-                <svg width="20" height="28" viewBox="0 0 20 28">
-                  <polygon points="0,0 20,0 10,28" fill="#534AB7" />
-                </svg>
-              </div>
-              <WheelSVG segments={segments} rotation={rotation} />
-            </div>
-
-            {spinError && !alreadyPlayed && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 font-medium">
-                {spinError}
-              </div>
-            )}
-
-            <form onSubmit={handleSpin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Prénom
-                </label>
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Votre prénom"
-                  disabled={spinning}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Téléphone
-                </label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+41 79 123 45 67"
-                  disabled={spinning}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-                />
-              </div>
-              {formError && (
-                <p className="text-sm text-red-600 font-medium">{formError}</p>
-              )}
-              <button
-                type="submit"
-                disabled={spinning || segments.length === 0}
-                className="w-full font-bold py-3.5 rounded-xl text-white transition-all shadow-md disabled:opacity-50"
-                style={{ backgroundColor: primaryColor }}
-              >
-                {spinning ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    La roue tourne…
-                  </span>
-                ) : (
-                  "Faire tourner la roue 🎡"
-                )}
-              </button>
-              <p className="text-xs text-gray-400 text-center">
-                En participant, vous acceptez que votre numéro soit utilisé uniquement pour cette opération.
-              </p>
-            </form>
           </div>
         )}
       </div>
