@@ -370,33 +370,51 @@ export default function SpinPage() {
     setTimeout(startSpin, 600);
   };
 
-  // Reset to form for daily/weekly/monthly replay
-  const handleReplay = () => {
-    setStep("form");
-    setCodeStep(false);
-    setVerifCode("");
+  // Replay — server check then spin directly (no new SMS needed)
+  const handleReplay = async () => {
+    if (!wheel) return;
     setError(null);
+    setSubmitting(true);
+
+    const eligRes = await fetch("/api/spin/check-eligibility", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wheelId: wheel.id, phone: cleanP(phone), frequency: wheel.frequency }),
+    });
+    const eligData = await eligRes.json();
+
+    if (!eligData.eligible) {
+      setAlreadyPlayed(eligData.message);
+      setWonIndex(null);
+      setStep("form");
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
     setWonIndex(null);
-    setAlreadyPlayed(null);
-    setReviewOpened(false);
+    setStep("wheel");
+    setTimeout(startSpin, 600);
   };
 
   const saveResult = useCallback(async () => {
     if (!wheel || wonIndex === null) return;
     const sb = createAnonClient();
     const reward = wheel.segments[wonIndex]?.reward ?? null;
+    const cleanPhone = cleanP(phone);
+    // Always insert a new row — multiple rows per phone is intentional for replay tracking
     await sb.from("spin_results").insert({
       wheel_id: wheel.id,
       first_name: firstName.trim(),
-      phone: phone.trim(),
+      phone: cleanPhone,
       reward,
     });
-    const existing2 = await sb.from("spin_entries").select("id").eq("wheel_id", wheel.id).eq("phone", phone.trim()).maybeSingle();
-    if (existing2.data) {
-      await sb.from("spin_entries").update({ last_spin_at: new Date().toISOString(), reward_won: reward ?? undefined }).eq("id", existing2.data.id);
-    } else {
-      await sb.from("spin_entries").insert({ wheel_id: wheel.id, phone: phone.trim(), reward_won: reward ?? undefined });
-    }
+    await sb.from("spin_entries").insert({
+      wheel_id: wheel.id,
+      phone: cleanPhone,
+      last_spin_at: new Date().toISOString(),
+      reward_won: reward,
+    });
   }, [wheel, wonIndex, firstName, phone]);
 
   useEffect(() => {
@@ -670,13 +688,14 @@ export default function SpinPage() {
                   </a>
                 )}
 
-                {/* Rejouer button — only for daily / weekly / monthly */}
+                {/* Rejouer button — only if lost AND frequency !== once */}
                 {canReplay && (
                   <button
                     onClick={handleReplay}
-                    className="w-full py-3.5 rounded-2xl font-bold text-sm border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-all active:scale-95"
+                    disabled={submitting}
+                    className="w-full py-3.5 rounded-2xl font-bold text-sm border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                   >
-                    🔄 Rejouer
+                    {submitting ? "Vérification…" : "🔄 Rejouer"}
                   </button>
                 )}
 
