@@ -94,7 +94,7 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
     const SIZE = canvas.width; // 320
     const cx = SIZE / 2;       // 160
     const r = cx - 22;         // 138 — wheel radius (leaves room for 8px gold ring + shadow)
-    const total = segments.reduce((a, s) => a + s.probability, 0) || 1;
+    const equalSweep = (Math.PI * 2) / segments.length;
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
@@ -118,7 +118,7 @@ function CanvasWheel({ segments, rotation }: { segments: Segment[]; rotation: nu
     // ── Slices (overwrite center of gold ring, exposing only the ring border)
     let angle = rotation - Math.PI / 2;
     segments.forEach((seg) => {
-      const sweep = (seg.probability / total) * Math.PI * 2;
+      const sweep = equalSweep;
 
       // Filled slice
       ctx.beginPath();
@@ -255,11 +255,9 @@ export default function SpinPage() {
     const idx = pickSegment(segs);
     setWonIndex(idx);
 
-    const total = segs.reduce((a, s) => a + s.probability, 0);
-    let cumAngle = 0;
-    for (let i = 0; i < idx; i++) cumAngle += (segs[i].probability / total) * Math.PI * 2;
-    const sweep = (segs[idx].probability / total) * Math.PI * 2;
-    const landingOffset = cumAngle + sweep * (0.25 + Math.random() * 0.5);
+    const segSweep = (Math.PI * 2) / segs.length;
+    const cumAngle = idx * segSweep;
+    const landingOffset = cumAngle + segSweep * (0.25 + Math.random() * 0.5);
 
     const TAU = Math.PI * 2;
     const delta = (((-landingOffset - rotation) % TAU) + TAU) % TAU;
@@ -341,37 +339,17 @@ export default function SpinPage() {
       return;
     }
 
-    // 2. Anti-doublon check
-    const sb = createAnonClient();
-    const { data: existing } = await sb
-      .from("spin_entries")
-      .select("last_spin_at")
-      .eq("wheel_id", wheel.id)
-      .eq("phone", cleanP(phone))
-      .order("last_spin_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (existing) {
-      const lastSpin = new Date(existing.last_spin_at);
-      const now = new Date();
-      let blocked = false;
-      let msg = "";
-      if (wheel.frequency === "once") {
-        blocked = true; msg = "Vous avez déjà participé à cette roue.";
-      } else if (wheel.frequency === "daily") {
-        blocked = lastSpin.toDateString() === now.toDateString();
-        if (blocked) msg = "Vous avez déjà joué aujourd'hui. Revenez demain !";
-      } else if (wheel.frequency === "weekly") {
-        const diff = (now.getTime() - lastSpin.getTime()) / 86400000;
-        blocked = diff < 7;
-        if (blocked) msg = `Revenez dans ${Math.ceil(7 - diff)} jour(s).`;
-      } else if (wheel.frequency === "monthly") {
-        const diff = (now.getTime() - lastSpin.getTime()) / 86400000;
-        blocked = diff < 30;
-        if (blocked) msg = `Revenez dans ${Math.ceil(30 - diff)} jour(s).`;
-      }
-      if (blocked) { setAlreadyPlayed(msg); setSubmitting(false); return; }
+    // 2. Anti-doublon check (server-side)
+    const eligRes = await fetch("/api/spin/check-eligibility", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wheelId: wheel.id, phone: cleanP(phone), frequency: wheel.frequency }),
+    });
+    const eligData = await eligRes.json();
+    if (!eligData.eligible) {
+      setAlreadyPlayed(eligData.message);
+      setSubmitting(false);
+      return;
     }
 
     setSubmitting(false);
@@ -427,7 +405,7 @@ export default function SpinPage() {
 
   const won = wheel && wonIndex !== null ? wheel.segments[wonIndex] : null;
   const hasReward = !!won?.reward;
-  const canReplay = wheel?.frequency !== "once";
+  const canReplay = wheel?.frequency !== "once" && !hasReward;
 
   const googleMapsUrl = business?.google_place_id
     ? `https://www.google.com/maps/search/?api=1&query_place_id=${business.google_place_id}`
