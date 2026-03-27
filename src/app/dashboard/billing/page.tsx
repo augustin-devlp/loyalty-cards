@@ -90,41 +90,86 @@ const UPGRADE_GAINS: Partial<Record<PlanKey, { to: PlanKey; gains: string[] }>> 
 };
 
 // ── Add-ons ───────────────────────────────────────────────────────────────────
-const ADDONS = [
+const ADDONS_ONESHOT = [
   {
-    id: "onboarding",
+    id: "full-onboarding",
     icon: "🎯",
-    name: "Onboarding guidé",
-    price: "19€/mois",
+    name: "Full onboarding",
+    price: "9€",
     description: "Accompagnement personnalisé pour configurer votre compte de A à Z.",
-  },
-  {
-    id: "sms-campaign",
-    icon: "📱",
-    name: "Campagne SMS ponctuelle",
-    price: "19€/mois",
-    description: "Envoyez une campagne SMS promotionnelle à tous vos clients.",
-  },
-  {
-    id: "google-review-auto",
-    icon: "⭐",
-    name: "Demande avis Google auto",
-    price: "29€/mois",
-    description: "Sollicitez automatiquement vos clients après chaque visite.",
-  },
-  {
-    id: "photo-shoot",
-    icon: "📸",
-    name: "Shooting photo produits",
-    price: "99€ one-shot",
-    description: "Photos professionnelles de vos produits par un photographe partenaire.",
   },
   {
     id: "website",
     icon: "🌐",
     name: "Site vitrine one-page",
-    price: "149€ one-shot",
+    price: "99€",
     description: "Un site web professionnel optimisé SEO pour votre commerce.",
+  },
+  {
+    id: "sms-campaign",
+    icon: "📱",
+    name: "Campagne SMS ponctuelle",
+    price: "29€",
+    description: "Envoyez une campagne SMS promotionnelle à tous vos clients.",
+  },
+  {
+    id: "google-audit",
+    icon: "⭐",
+    name: "Audit Google Business",
+    price: "39€",
+    description: "Optimisation complète de votre fiche Google Business Profile.",
+  },
+  {
+    id: "photo-shoot",
+    icon: "📸",
+    name: "Shooting photo produits",
+    price: "149€",
+    description: "Photos professionnelles de vos produits par un photographe partenaire.",
+  },
+];
+
+const ADDONS_MONTHLY = [
+  {
+    id: "vip-program",
+    icon: "👑",
+    name: "Programme VIP",
+    price: "+9€/mois",
+    description: "Palier fidélité supplémentaire pour récompenser vos meilleurs clients.",
+  },
+  {
+    id: "web-widget",
+    icon: "🔗",
+    name: "Widget site web",
+    price: "+9€/mois",
+    description: "Bouton « rejoindre » intégrable sur votre site pour booster les inscriptions.",
+  },
+  {
+    id: "booking-integration",
+    icon: "📅",
+    name: "Intégration réservation",
+    price: "+29€/mois",
+    description: "Connexion avec TheFork, Planity ou Booksy pour synchroniser vos réservations.",
+  },
+  {
+    id: "instagram-management",
+    icon: "📸",
+    name: "Gestion Instagram",
+    price: "+99€/mois",
+    description: "Publication de 2 à 3 posts par semaine gérés par notre équipe créative.",
+  },
+  {
+    id: "sms-pack-500",
+    icon: "💬",
+    name: "Pack SMS 500 messages",
+    price: "39€",
+    description: "Crédit de 500 SMS pour vos campagnes et notifications clients.",
+  },
+  {
+    id: "sms-pack-1000",
+    icon: "💬",
+    name: "Pack SMS 1000 messages",
+    price: "69€",
+    description: "Crédit de 1 000 SMS pour vos campagnes et notifications clients.",
   },
 ];
 
@@ -312,13 +357,61 @@ export default function BillingPage() {
           </div>
         )}
 
-        {/* ── SECTION 3 : Add-ons ─────────────────────────────────────────────── */}
+        {/* ── SECTION 3 : Services one-shot ───────────────────────────────────── */}
         <div>
-          <h2 className="text-base font-bold text-gray-700 mb-1">Add-ons disponibles</h2>
-          <p className="text-sm text-gray-500 mb-4">Services complémentaires disponibles quel que soit votre plan.</p>
+          <h2 className="text-base font-bold text-gray-700 mb-1">Services one-shot</h2>
+          <p className="text-sm text-gray-500 mb-4">Paiement unique — disponibles quel que soit votre plan.</p>
 
           <div className="grid sm:grid-cols-2 gap-4">
-            {ADDONS.map((addon) => {
+            {ADDONS_ONESHOT.map((addon) => {
+              const state = addonState[addon.id];
+              return (
+                <div key={addon.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl shrink-0">{addon.icon}</span>
+                    <div>
+                      <p className="font-bold text-gray-900 text-sm">{addon.name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 leading-snug">{addon.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 mt-auto pt-3 border-t border-gray-100">
+                    <span className="text-base font-black text-[#534AB7]">{addon.price}</span>
+
+                    {state === "done" ? (
+                      <span className="text-xs font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-xl">
+                        ✓ Demande envoyée
+                      </span>
+                    ) : state === "error" ? (
+                      <button
+                        onClick={() => requestItem(addon.id, "addon")}
+                        className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition-colors"
+                      >
+                        Réessayer
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => requestItem(addon.id, "addon")}
+                        disabled={state === "pending"}
+                        className="text-xs font-bold text-white bg-[#534AB7] hover:bg-indigo-700 px-4 py-1.5 rounded-xl disabled:opacity-50 transition-colors"
+                      >
+                        {state === "pending" ? "Envoi…" : "Ajouter"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── SECTION 4 : Features mensuelles ─────────────────────────────────── */}
+        <div>
+          <h2 className="text-base font-bold text-gray-700 mb-1">Features mensuelles</h2>
+          <p className="text-sm text-gray-500 mb-4">En plus de votre forfait — activables à tout moment.</p>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {ADDONS_MONTHLY.map((addon) => {
               const state = addonState[addon.id];
               return (
                 <div key={addon.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3">
