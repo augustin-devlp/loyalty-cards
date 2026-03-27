@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
   }
 
   const cardUrl = `https://stampify.ch/card/${customer_card_id}`;
-  const message = `Bonjour ${firstName} ! 🎁 Voici votre carte de fidélité ${businessName} : ${cardUrl}. Présentez ce lien à chaque visite pour cumuler vos tampons !`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(cardUrl)}`;
+  const message = `Bonjour ${firstName} ! 🎁 Carte fidélité ${businessName} : ${cardUrl}\nVotre QR code (à screenshotter) : ${qrUrl}`;
 
   try {
     await sendSms(normalizePhone(phone), message);

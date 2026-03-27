@@ -167,23 +167,23 @@ export default async function JoinPage({
 
       {/* ── Gamification buttons ── */}
       {(hasActiveSpin || hasActiveLottery) && (
-        <div className="bg-white/10 backdrop-blur-sm px-5 py-3 flex gap-2 justify-center">
+        <div className="px-5 py-4 flex flex-col gap-3" style={{ background: "rgba(0,0,0,0.18)" }}>
           {hasActiveSpin && (
             <a
               href={`/spin/${card.business_id}`}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-95"
-              style={{ background: "rgba(255,255,255,0.9)", color: bg }}
+              className="flex items-center justify-center w-full font-bold text-sm text-white rounded-2xl shadow-md transition-all active:scale-95 px-5 text-center leading-snug"
+              style={{ background: "rgba(0,0,0,0.72)", minHeight: 56 }}
             >
-              🎰 Tenter ma chance
+              🎡 Tenter ma chance à la roue — Gagne une récompense !
             </a>
           )}
           {hasActiveLottery && (
             <a
               href={`/lottery/${card.business_id}`}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all active:scale-95"
-              style={{ background: "rgba(255,255,255,0.9)", color: bg }}
+              className="flex items-center justify-center w-full font-bold text-sm text-white rounded-2xl shadow-md transition-all active:scale-95 px-5 text-center leading-snug"
+              style={{ background: "rgba(0,0,0,0.72)", minHeight: 56 }}
             >
-              🎁 Participer à la loterie
+              🎟️ Participer à la loterie — Tente de gagner le grand prix !
             </a>
           )}
         </div>
