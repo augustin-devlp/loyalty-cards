@@ -196,10 +196,16 @@ export default function BillingPage() {
     </div>
   );
 
-  const currentPlan = (biz?.plan ?? "essential") as PlanKey;
-  const planInfo = PLANS[currentPlan] ?? PLANS.essential;
+  // Normalize: anything that isn't "pro" or "business" is treated as "essential"
+  const rawPlan = biz?.plan;
+  const currentPlan: PlanKey =
+    rawPlan === "pro" ? "pro" :
+    rawPlan === "business" ? "business" :
+    "essential";
+  const planInfo = PLANS[currentPlan];
   const country = (biz?.country ?? "FR") as "FR" | "CH";
-  const upgrade = UPGRADE_GAINS[currentPlan] ?? null;
+  // Always show upgrade section unless on Business (the top plan)
+  const upgrade = currentPlan !== "business" ? UPGRADE_GAINS[currentPlan] ?? null : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -211,23 +217,15 @@ export default function BillingPage() {
         {/* ── SECTION 1 : Plan actuel ─────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Plan actuel</p>
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-black text-gray-900">{planInfo.name}</h2>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full ${planInfo.badge}`}>Actif</span>
-              </div>
-              <p className="text-sm text-gray-500 mt-1">
-                {country === "CH" ? planInfo.price_ch : planInfo.price_fr} · Sans engagement
-              </p>
+          <div className="px-6 py-5 border-b border-gray-100">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Plan actuel</p>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-black text-gray-900">{planInfo.name}</h2>
+              <span className={`text-xs font-bold px-3 py-1 rounded-full ${planInfo.badge}`}>Actif</span>
             </div>
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-md shrink-0"
-              style={{ background: planInfo.color }}
-            >
-              {currentPlan === "essential" ? "E" : currentPlan === "pro" ? "P" : "B"}
-            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              {country === "CH" ? planInfo.price_ch : planInfo.price_fr} · Sans engagement
+            </p>
           </div>
 
           {/* Features */}
