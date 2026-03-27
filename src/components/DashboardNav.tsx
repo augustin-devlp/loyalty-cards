@@ -139,18 +139,7 @@ const EMPLOYEE_LINKS = [
   { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon className="w-4 h-4" /> },
 ];
 
-// Drawer links (mobile menu)
-const DRAWER_LINKS = [
-  { href: "/dashboard/spin-wheel", label: "Roue de la fortune", icon: <PromoIcon /> },
-  { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
-  { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
-  { href: "/dashboard/billing", label: "Facturation", icon: <BillingIcon /> },
-  { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },
-  { href: "/dashboard/promotions", label: "Promos", icon: <PromoIcon /> },
-  { href: "/dashboard/establishments", label: "Établissements", icon: <EstablishmentIcon /> },
-  { href: "/dashboard/gift-cards", label: "Cartes cadeaux", icon: <GiftIcon /> },
-  { href: "/dashboard/settings", label: "Paramètres", icon: <SettingsIcon /> },
-];
+// Drawer uses the same list as desktop — single source of truth.
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -307,7 +296,7 @@ export default function DashboardNav() {
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">
                 Navigation
               </p>
-              {DRAWER_LINKS.map((link) => {
+              {desktopLinks.map((link) => {
                 const active = pathname.startsWith(link.href);
                 return (
                   <Link
