@@ -83,8 +83,8 @@ export async function POST(req: NextRequest) {
   const reviewsData = await reviewsRes.json() as { reviews?: Array<{ updateTime: string }> };
   const reviews = reviewsData.reviews ?? [];
 
-  const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
-  const recentReview = reviews.find((r) => new Date(r.updateTime) > tenMinAgo);
+  const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+  const recentReview = reviews.find((r) => new Date(r.updateTime) > thirtyMinutesAgo);
 
   if (recentReview) {
     console.log("[lottery/verify-review] ✅ Recent review found for lottery", lotteryId);

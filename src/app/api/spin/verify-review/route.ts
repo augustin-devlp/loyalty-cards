@@ -73,9 +73,9 @@ export async function POST(req: NextRequest) {
   const reviewsData = await reviewsRes.json() as { reviews?: Array<{ updateTime: string }> };
   const reviews = reviewsData.reviews ?? [];
 
-  // Check if any review was posted in the last 10 minutes
-  const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
-  const recentReview = reviews.find((r) => new Date(r.updateTime) > tenMinAgo);
+  // Check if any review was posted in the last 30 minutes
+  const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+  const recentReview = reviews.find((r) => new Date(r.updateTime) > thirtyMinutesAgo);
 
   if (recentReview) {
     console.log("[spin/verify-review] ✅ Recent review found for business", businessId);
