@@ -33,7 +33,7 @@ function itemLabel(req: UpgradeRequest) {
   return ADDON_LABELS[req.requested_item] ?? req.requested_item;
 }
 
-export default function AdminUpgradeRequests({ requests: initial }: { requests: UpgradeRequest[] }) {
+export default function AdminUpgradeRequests({ requests: initial, pin }: { requests: UpgradeRequest[]; pin: string }) {
   const [requests, setRequests] = useState(initial);
   const [approving, setApproving] = useState<string | null>(null);
   const [done, setDone] = useState<Set<string>>(new Set());
@@ -46,7 +46,7 @@ export default function AdminUpgradeRequests({ requests: initial }: { requests: 
     const res = await fetch("/api/admin/approve-upgrade", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ requestId: req.id }),
+      body: JSON.stringify({ requestId: req.id, pin }),
     });
     const data = await res.json();
     setApproving(null);

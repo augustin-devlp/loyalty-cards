@@ -1,31 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
+const ADMIN_PIN = "0808";
 
 export async function POST(req: Request) {
   try {
-    // 1. Vérifier la session admin
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const body = await req.json() as { businessId?: string; pin?: string };
 
-    console.log("[generate-code] user email:", user?.email ?? "non connecté");
-
-    if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
-      console.warn("[generate-code] Accès refusé pour:", user?.email);
+    // Auth: PIN-only (no Supabase session required)
+    if (body.pin !== ADMIN_PIN) {
+      console.warn("[generate-code] Accès refusé — PIN incorrect");
       return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-    }
-
-    // 2. Parser le body
-    let body: { businessId?: string };
-    try {
-      body = await req.json();
-    } catch {
-      console.error("[generate-code] Body JSON invalide");
-      return NextResponse.json({ error: "Body invalide" }, { status: 400 });
     }
 
     const { businessId } = body;
@@ -36,13 +21,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "ID manquant" }, { status: 400 });
     }
 
-    // 3. Générer code 4 chiffres
+    // Generate 4-digit code
     const code = String(Math.floor(1000 + Math.random() * 9000));
     console.log(`[generate-code] code généré: ${code} pour businessId: ${businessId}`);
 
-    // 4. Update via service role key (bypass RLS)
+    // Update via service role key (bypass RLS)
     const adminDb = createAdminClient();
-
     const { data: updated, error } = await adminDb
       .from("businesses")
       .update({ activation_code: code })

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { sendSms, normalizePhone } from "@/lib/brevo";
 
-const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com", "augustindom999@gmail.com"];
+const ADMIN_PIN = "0808";
 
 const PLAN_LABELS: Record<string, string> = {
   essential: "Essentiel",
@@ -19,24 +18,30 @@ const ADDON_LABELS: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  // 1. Admin auth check
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
+  const { requestId, pin } = await req.json() as { requestId?: string; pin?: string };
+
+  // Auth: PIN-only (no Supabase session required)
+  if (pin !== ADMIN_PIN) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
   }
 
-  const { requestId } = await req.json() as { requestId?: string };
   if (!requestId) return NextResponse.json({ error: "requestId manquant" }, { status: 400 });
 
-  const url  = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return NextResponse.json({ error: "Config manquante" }, { status: 500 });
 
-  // 2. Fetch the request
-  const reqRes = await fetch(`${url}/rest/v1/upgrade_requests?id=eq.${requestId}&select=*`, {
-    headers: { apikey: key, Authorization: `Bearer ${key}` },
-  });
+  const hdrs: Record<string, string> = {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    "Content-Type": "application/json",
+  };
+
+  // 1. Fetch the upgrade request
+  const reqRes = await fetch(
+    `${url}/rest/v1/upgrade_requests?id=eq.${requestId}&select=*`,
+    { headers: hdrs },
+  );
   const [upgradeReq] = await reqRes.json() as Array<{
     id: string;
     business_id: string;
@@ -51,33 +56,29 @@ export async function POST(req: Request) {
   if (!upgradeReq) return NextResponse.json({ error: "Demande introuvable" }, { status: 404 });
   if (upgradeReq.status !== "pending") return NextResponse.json({ error: "Déjà traitée" }, { status: 409 });
 
-  // 3. Mark request as approved
+  // 2. Mark request as approved
   await fetch(`${url}/rest/v1/upgrade_requests?id=eq.${requestId}`, {
     method: "PATCH",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
+    headers: { ...hdrs, Prefer: "return=minimal" },
     body: JSON.stringify({ status: "approved", approved_at: new Date().toISOString() }),
   });
 
-  // 4. If plan upgrade → update businesses.plan
+  // 3. If plan upgrade → update businesses.plan
   if (upgradeReq.request_type === "plan") {
-    await fetch(`${url}/rest/v1/businesses?id=eq.${upgradeReq.business_id}`, {
+    const patchRes = await fetch(`${url}/rest/v1/businesses?id=eq.${upgradeReq.business_id}`, {
       method: "PATCH",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
+      headers: { ...hdrs, Prefer: "return=minimal" },
       body: JSON.stringify({ plan: upgradeReq.requested_item }),
     });
+    if (!patchRes.ok) {
+      const text = await patchRes.text();
+      console.error("[approve-upgrade] Failed to update businesses.plan:", patchRes.status, text);
+    } else {
+      console.log(`[approve-upgrade] ✅ businesses.plan updated to "${upgradeReq.requested_item}" for business ${upgradeReq.business_id}`);
+    }
   }
 
-  // 5. Send SMS to merchant if phone available
+  // 4. Send SMS confirmation to merchant (non-blocking)
   const planLabel = upgradeReq.request_type === "plan"
     ? `Plan ${PLAN_LABELS[upgradeReq.requested_item] ?? upgradeReq.requested_item}`
     : (ADDON_LABELS[upgradeReq.requested_item] ?? upgradeReq.requested_item);
@@ -86,8 +87,9 @@ export async function POST(req: Request) {
     try {
       await sendSms(
         normalizePhone(upgradeReq.business_phone),
-        `Stampify : Votre compte ${upgradeReq.business_name} a été mis à niveau ! ${planLabel} est maintenant actif. Connectez-vous sur stampify.ch`
+        `Stampify : Votre compte ${upgradeReq.business_name} a été mis à niveau ! ${planLabel} est maintenant actif. Connectez-vous sur stampify.ch`,
       );
+      console.log(`[approve-upgrade] ✅ SMS sent to ${upgradeReq.business_phone}`);
     } catch (smsErr) {
       console.error("[approve-upgrade] SMS error (non-blocking):", smsErr);
     }

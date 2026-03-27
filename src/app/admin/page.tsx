@@ -227,7 +227,7 @@ function Dashboard({ data }: { data: AdminData }) {
 
         {/* Upgrade requests */}
         {upgradeRequests.length > 0 && (
-          <AdminUpgradeRequests requests={upgradeRequests} />
+          <AdminUpgradeRequests requests={upgradeRequests} pin={PIN} />
         )}
 
         {/* Pending merchants */}
@@ -242,7 +242,7 @@ function Dashboard({ data }: { data: AdminData }) {
               </span>
             </div>
             <div style={{ marginBottom: 40 }}>
-              <AdminPendingActions pendingBusinesses={pendingList} />
+              <AdminPendingActions pendingBusinesses={pendingList} pin={PIN} />
             </div>
           </>
         )}

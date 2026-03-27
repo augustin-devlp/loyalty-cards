@@ -16,8 +16,10 @@ interface PendingBusiness {
 
 export default function AdminPendingActions({
   pendingBusinesses,
+  pin,
 }: {
   pendingBusinesses: PendingBusiness[];
+  pin: string;
 }) {
   const router = useRouter();
   const [codes, setCodes] = useState<Record<string, string>>({});
@@ -39,7 +41,7 @@ export default function AdminPendingActions({
       const res = await fetch("/api/admin/generate-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId }),
+        body: JSON.stringify({ businessId, pin }),
       });
       const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error ?? `Erreur ${res.status}`);
@@ -60,7 +62,7 @@ export default function AdminPendingActions({
       const res = await fetch("/api/admin/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessId }),
+        body: JSON.stringify({ businessId, pin }),
       });
       const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error ?? `Erreur ${res.status}`);

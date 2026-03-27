@@ -1,24 +1,21 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 
-const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
+const ADMIN_PIN = "0808";
 
 export async function POST(req: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { businessId, pin } = await req.json() as { businessId?: string; pin?: string };
 
-  if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
+  // Auth: PIN-only (no Supabase session required)
+  if (pin !== ADMIN_PIN) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
   }
 
-  const { businessId } = await req.json() as { businessId?: string };
   if (!businessId) {
     return NextResponse.json({ error: "businessId manquant" }, { status: 400 });
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
   if (!url || !key) {
     return NextResponse.json({ error: "Variables d'environnement manquantes" }, { status: 500 });
   }
@@ -40,5 +37,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: text || `HTTP ${res.status}` }, { status: 500 });
   }
 
+  console.log(`[activate] ✅ Business ${businessId} activated`);
   return NextResponse.json({ success: true });
 }
