@@ -1,12 +1,49 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { useEffect, useState } from "react";
 import AdminPendingActions from "@/components/AdminPendingActions";
 import AdminUpgradeRequests from "@/components/AdminUpgradeRequests";
-import AdminGate from "@/components/AdminGate";
 
-const ADMIN_EMAILS = ["augustin-domenget@stampify.ch", "augustindomenget@gmail.com"];
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
+interface Business {
+  id: string;
+  business_name: string;
+  email: string;
+  country: string | null;
+  plan: string | null;
+  subscription_status: string | null;
+  status: string;
+  phone: string | null;
+  activation_code: string | null;
+  created_at: string;
+}
+
+interface UpgradeRequest {
+  id: string;
+  business_name: string;
+  business_email: string;
+  business_phone: string | null;
+  current_plan: string;
+  requested_item: string;
+  request_type: string;
+  created_at: string;
+}
+
+interface AdminData {
+  businesses: Business[];
+  upgradeRequests: UpgradeRequest[];
+  totalCustomers: number;
+  totalCards: number;
+  totalTx: number;
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const PIN         = "0808";
+const SESSION_KEY = "admin_unlocked";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function StatCard({
   label,
@@ -40,29 +77,121 @@ function StatCard({
   );
 }
 
-// ─── page ─────────────────────────────────────────────────────────────────────
+async function fetchDashboard(): Promise<AdminData | null> {
+  try {
+    const res = await fetch("/api/admin/dashboard", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin: PIN }),
+    });
+    if (!res.ok) return null;
+    return await res.json() as AdminData;
+  } catch {
+    return null;
+  }
+}
 
-export default async function AdminPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+// ── PIN form ──────────────────────────────────────────────────────────────────
 
-  if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) redirect("/");
+function PinForm({
+  onSuccess,
+}: {
+  onSuccess: (data: AdminData) => void;
+}) {
+  const [input, setInput]     = useState("");
+  const [error, setError]     = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch all businesses
-  const { data: businesses } = await supabase
-    .from("businesses")
-    .select("id, business_name, email, country, plan, subscription_status, status, phone, activation_code, created_at")
-    .order("created_at", { ascending: false });
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input !== PIN) {
+      setError(true);
+      setInput("");
+      return;
+    }
+    setLoading(true);
+    const data = await fetchDashboard();
+    setLoading(false);
+    if (!data) {
+      setError(true);
+      setInput("");
+      return;
+    }
+    sessionStorage.setItem(SESSION_KEY, "true");
+    onSuccess(data);
+  };
 
-  const bizList = businesses ?? [];
+  return (
+    <div style={{ minHeight: "100vh", background: "#f9fafb", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, Arial, sans-serif" }}>
+      <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 20, padding: "40px 48px", width: 320, textAlign: "center", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+        <div style={{ background: "#534AB7", borderRadius: 12, width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+          <span style={{ color: "#fff", fontSize: 22, fontWeight: 900 }}>S</span>
+        </div>
+        <h1 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 800, color: "#111827" }}>Accès admin</h1>
+        <p style={{ margin: "0 0 28px", fontSize: 13, color: "#9ca3af" }}>Entrez le code secret</p>
+        <form onSubmit={submit}>
+          <input
+            type="password"
+            inputMode="numeric"
+            maxLength={4}
+            value={input}
+            onChange={(e) => { setInput(e.target.value); setError(false); }}
+            placeholder="••••"
+            autoFocus
+            disabled={loading}
+            style={{
+              width: "100%",
+              border: `2px solid ${error ? "#ef4444" : "#e5e7eb"}`,
+              borderRadius: 12,
+              padding: "12px 16px",
+              fontSize: 22,
+              textAlign: "center",
+              letterSpacing: "0.3em",
+              outline: "none",
+              boxSizing: "border-box",
+              marginBottom: 12,
+              opacity: loading ? 0.6 : 1,
+            }}
+          />
+          {error && (
+            <p style={{ margin: "0 0 12px", color: "#ef4444", fontSize: 13, fontWeight: 600 }}>
+              Code incorrect
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%",
+              background: "#534AB7",
+              color: "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "12px",
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? "Chargement…" : "Accéder"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
-  // Pending vs active
-  const pendingList = bizList.filter((b) => b.status === "pending");
-  const activeList = bizList.filter((b) => b.status !== "pending");
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 
-  // Stats
+function Dashboard({ data }: { data: AdminData }) {
+  const { businesses, upgradeRequests, totalCustomers, totalCards, totalTx } = data;
+
+  const bizList       = businesses;
+  const pendingList   = bizList.filter((b) => b.status === "pending");
+  const activeList    = bizList.filter((b) => b.status !== "pending");
   const totalMerchants = bizList.length;
-  const proCount = bizList.filter((b) => b.plan === "pro" && b.status === "active").length;
+  const proCount      = bizList.filter((b) => b.plan === "pro"       && b.status === "active").length;
   const essentialCount = bizList.filter((b) => b.plan === "essential" && b.status === "active").length;
 
   const startOfMonth = new Date();
@@ -74,32 +203,11 @@ export default async function AdminPage() {
     .filter((b) => b.status === "active")
     .reduce((sum, b) => sum + (b.plan === "pro" ? 59 : 29), 0);
 
-  // Global counts
-  const { count: totalCustomers } = await supabase
-    .from("customers")
-    .select("id", { count: "exact", head: true });
-
-  const { count: totalCards } = await supabase
-    .from("customer_cards")
-    .select("id", { count: "exact", head: true });
-
-  const { count: totalTx } = await supabase
-    .from("transactions")
-    .select("id", { count: "exact", head: true });
-
-  // Pending upgrade / add-on requests
-  const { data: upgradeRequests } = await supabase
-    .from("upgrade_requests")
-    .select("id, business_name, business_email, business_phone, current_plan, requested_item, request_type, created_at")
-    .eq("status", "pending")
-    .order("created_at", { ascending: false });
-
   const today = new Date().toLocaleDateString("fr-FR", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
 
   return (
-    <AdminGate>
     <div style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "system-ui, Arial, sans-serif" }}>
       {/* Header */}
       <div style={{ background: "#534AB7", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -117,12 +225,12 @@ export default async function AdminPage() {
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
 
-        {/* Upgrade / add-on requests section */}
-        {(upgradeRequests ?? []).length > 0 && (
-          <AdminUpgradeRequests requests={upgradeRequests ?? []} />
+        {/* Upgrade requests */}
+        {upgradeRequests.length > 0 && (
+          <AdminUpgradeRequests requests={upgradeRequests} />
         )}
 
-        {/* Pending merchants section */}
+        {/* Pending merchants */}
         {pendingList.length > 0 && (
           <>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -155,9 +263,9 @@ export default async function AdminPage() {
           Activité plateforme
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
-          <StatCard label="Total clients" value={totalCustomers ?? 0} color="indigo" />
-          <StatCard label="Cartes distribuées" value={totalCards ?? 0} color="green" />
-          <StatCard label="Transactions" value={totalTx ?? 0} color="gray" />
+          <StatCard label="Total clients" value={totalCustomers} color="indigo" />
+          <StatCard label="Cartes distribuées" value={totalCards} color="green" />
+          <StatCard label="Transactions" value={totalTx} color="gray" />
         </div>
 
         {/* Merchant table */}
@@ -190,7 +298,6 @@ export default async function AdminPage() {
                     : biz.plan === "essential"
                     ? { bg: "#f0fdf4", text: "#15803d" }
                     : { bg: "#fef2f2", text: "#b91c1c" };
-
                   const statusLabel = biz.status === "active" ? "Actif" : biz.status === "suspended" ? "Suspendu" : "Inactif";
                   const statusColor = biz.status === "active"
                     ? { bg: "#f0fdf4", text: "#15803d" }
@@ -229,6 +336,31 @@ export default async function AdminPage() {
         </div>
       </div>
     </div>
-    </AdminGate>
   );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function AdminPage() {
+  const [data,     setData]     = useState<AdminData | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
+
+  // On mount: restore session if already unlocked
+  useEffect(() => {
+    if (sessionStorage.getItem(SESSION_KEY) === "true") {
+      fetchDashboard().then((d) => {
+        if (d) { setData(d); setUnlocked(true); }
+        else    { sessionStorage.removeItem(SESSION_KEY); }
+      });
+    }
+  }, []);
+
+  const handleSuccess = (d: AdminData) => {
+    setData(d);
+    setUnlocked(true);
+  };
+
+  if (unlocked && data) return <Dashboard data={data} />;
+
+  return <PinForm onSuccess={handleSuccess} />;
 }
