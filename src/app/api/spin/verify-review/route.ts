@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 const CLIENT_ID     = process.env.GOOGLE_CLIENT_ID!;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 
+// Exchange a refresh_token for a fresh access_token
 async function getFreshAccessToken(refreshToken: string): Promise<string | null> {
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -16,7 +17,7 @@ async function getFreshAccessToken(refreshToken: string): Promise<string | null>
     }),
   });
   if (!res.ok) {
-    console.error("[lottery/verify-review] Token refresh failed:", res.status, await res.text());
+    console.error("[spin/verify-review] Token refresh failed:", res.status, await res.text());
     return null;
   }
   const data = await res.json() as { access_token?: string };
@@ -24,29 +25,18 @@ async function getFreshAccessToken(refreshToken: string): Promise<string | null>
 }
 
 export async function POST(req: NextRequest) {
-  const { lotteryId } = await req.json() as { lotteryId?: string };
-  if (!lotteryId) {
-    return NextResponse.json({ error: "lotteryId requis" }, { status: 400 });
+  const { businessId } = await req.json() as { businessId?: string };
+  if (!businessId) {
+    return NextResponse.json({ error: "businessId requis" }, { status: 400 });
   }
 
   const adminDb = createAdminClient();
-
-  // Resolve business from lottery
-  const { data: lottery } = await adminDb
-    .from("lotteries")
-    .select("business_id")
-    .eq("id", lotteryId)
-    .single();
-
-  if (!lottery?.business_id) {
-    return NextResponse.json({ error: "Loterie introuvable" }, { status: 404 });
-  }
 
   // Fetch credentials
   const { data: biz } = await adminDb
     .from("businesses")
     .select("google_refresh_token, google_place_id")
-    .eq("id", lottery.business_id)
+    .eq("id", businessId)
     .single();
 
   if (!biz?.google_refresh_token || !biz?.google_place_id) {
@@ -73,7 +63,7 @@ export async function POST(req: NextRequest) {
 
   if (!reviewsRes.ok) {
     const body = await reviewsRes.text();
-    console.error("[lottery/verify-review] Google API error:", reviewsRes.status, body);
+    console.error("[spin/verify-review] Google API error:", reviewsRes.status, body);
     return NextResponse.json({
       verified: false,
       message: "Nous n'avons pas trouvé votre avis. Attendez 2 minutes et réessayez.",
@@ -83,11 +73,12 @@ export async function POST(req: NextRequest) {
   const reviewsData = await reviewsRes.json() as { reviews?: Array<{ updateTime: string }> };
   const reviews = reviewsData.reviews ?? [];
 
+  // Check if any review was posted in the last 10 minutes
   const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000);
   const recentReview = reviews.find((r) => new Date(r.updateTime) > tenMinAgo);
 
   if (recentReview) {
-    console.log("[lottery/verify-review] ✅ Recent review found for lottery", lotteryId);
+    console.log("[spin/verify-review] ✅ Recent review found for business", businessId);
     return NextResponse.json({ verified: true });
   }
 

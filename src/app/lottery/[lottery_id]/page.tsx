@@ -38,7 +38,9 @@ export default function LotteryPublicPage() {
   const [resendTimer, setResendTimer] = useState(0);
 
   // Google review mode
-  const [reviewOpened, setReviewOpened] = useState(false);
+  const [reviewOpened,    setReviewOpened]    = useState(false);
+  const [reviewVerifying, setReviewVerifying] = useState(false);
+  const [reviewError,     setReviewError]     = useState<string | null>(null);
 
   useEffect(() => {
     const sb = createAnonClient();
@@ -162,8 +164,30 @@ export default function LotteryPublicPage() {
     if (ok) setStep("done");
   };
 
-  // Called when user confirms they left a review (Mode 2)
+  // Called when user confirms they left a review (Mode 2) — real Google API verification
   const handleReviewConfirmed = async () => {
+    if (!lottery) return;
+    setReviewVerifying(true);
+    setReviewError(null);
+    try {
+      const res = await fetch("/api/lottery/verify-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lotteryId: lottery.id }),
+      });
+      const data = await res.json() as { verified: boolean; message?: string };
+      if (!data.verified) {
+        setReviewError(data.message ?? "Avis non trouvé. Réessayez.");
+        setReviewVerifying(false);
+        return;
+      }
+    } catch {
+      setReviewError("Erreur réseau. Réessayez.");
+      setReviewVerifying(false);
+      return;
+    }
+    setReviewVerifying(false);
+    // Review verified — now register participant
     setSubmitting(true);
     const ok = await insertParticipant();
     setSubmitting(false);
@@ -337,7 +361,7 @@ export default function LotteryPublicPage() {
           </>
         )}
 
-        {/* ── Step: review (Mode 2 — Google review required) ── */}
+        {/* ── Step: review (Mode 2 — Google review verified before registration) ── */}
         {step === "review" && (
           <div className="flex flex-col items-center text-center gap-6 py-4">
             <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-md"
@@ -354,12 +378,13 @@ export default function LotteryPublicPage() {
             </div>
 
             <div className="w-full space-y-3">
+              {/* 1 — Open review URL */}
               {googleReviewUrl && (
                 <a
                   href={googleReviewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setReviewOpened(true)}
+                  onClick={() => { setReviewOpened(true); setReviewError(null); }}
                   className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-white text-base shadow-lg transition-all active:scale-95"
                   style={{ background: primaryColor }}
                 >
@@ -367,28 +392,32 @@ export default function LotteryPublicPage() {
                 </a>
               )}
 
+              {/* 2 — Confirm + verify */}
               <button
                 onClick={handleReviewConfirmed}
-                disabled={submitting}
+                disabled={reviewVerifying || submitting}
                 className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 ${
                   reviewOpened
                     ? "bg-green-600 text-white shadow-md"
                     : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                 }`}
               >
-                {submitting
+                {reviewVerifying
+                  ? "Vérification en cours…"
+                  : submitting
                   ? "Enregistrement…"
                   : reviewOpened
-                  ? "✓ J'ai laissé mon avis → Confirmer ma participation !"
+                  ? "✓ J'ai laissé mon avis → Vérifier"
                   : "J'ai déjà laissé un avis"}
               </button>
-            </div>
 
-            {error && (
-              <div className="w-full bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600">
-                {error}
-              </div>
-            )}
+              {/* Error message */}
+              {reviewError && (
+                <div className="w-full bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-600 font-medium">
+                  {reviewError}
+                </div>
+              )}
+            </div>
 
             <p className="text-xs text-gray-400 leading-relaxed">
               Merci pour votre soutien ! Votre avis aide {business?.business_name} à se faire connaître.

@@ -246,7 +246,9 @@ export default function SpinPage() {
   const [resendTimer, setResendTimer] = useState(0);
 
   // Google review mode
-  const [reviewOpened, setReviewOpened] = useState(false);
+  const [reviewOpened,   setReviewOpened]   = useState(false);
+  const [reviewVerifying, setReviewVerifying] = useState(false);
+  const [reviewError,    setReviewError]    = useState<string | null>(null);
 
   // Animation
   const [rotation, setRotation] = useState(0);
@@ -397,10 +399,28 @@ export default function SpinPage() {
     }
   };
 
-  // After user confirms they left a review (Mode 2)
-  const handleReviewConfirmed = () => {
-    setStep("wheel");
-    setTimeout(startSpin, 600);
+  // After user confirms they left a review (Mode 2) — real Google API verification
+  const handleReviewConfirmed = async () => {
+    setReviewVerifying(true);
+    setReviewError(null);
+    try {
+      const res = await fetch("/api/spin/verify-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId }),
+      });
+      const data = await res.json() as { verified: boolean; message?: string };
+      if (data.verified) {
+        setStep("wheel");
+        setTimeout(startSpin, 600);
+      } else {
+        setReviewError(data.message ?? "Avis non trouvé. Réessayez.");
+      }
+    } catch {
+      setReviewError("Erreur réseau. Réessayez.");
+    } finally {
+      setReviewVerifying(false);
+    }
   };
 
   // Replay — server check then spin directly (no new SMS needed)
@@ -582,7 +602,7 @@ export default function SpinPage() {
             </>
           )}
 
-          {/* ── Step: review (Mode 2 — Google review required before spinning) ── */}
+          {/* ── Step: review (Mode 2 — Google review verified before spinning) ── */}
           {step === "review" && (
             <div className="flex flex-col items-center text-center gap-6 py-4">
               <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-md"
@@ -599,56 +619,43 @@ export default function SpinPage() {
               </div>
 
               <div className="w-full space-y-3">
+                {/* 1 — Open review URL */}
+                {googleReviewUrl && (
+                  <a
+                    href={googleReviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => { setReviewOpened(true); setReviewError(null); }}
+                    className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-base shadow-lg transition-all active:scale-95"
+                    style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)", color: "#fff" }}
+                  >
+                    ⭐ Laisser mon avis Google
+                  </a>
+                )}
 
-                {/* Option A — trust-based */}
-                <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Option A · Laisser un avis</p>
+                {/* 2 — Confirm + verify */}
+                <button
+                  onClick={handleReviewConfirmed}
+                  disabled={reviewVerifying}
+                  className={`w-full py-3.5 rounded-2xl font-black text-sm shadow-md transition-all active:scale-95 disabled:opacity-60 ${
+                    reviewOpened
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}
+                >
+                  {reviewVerifying
+                    ? "Vérification en cours…"
+                    : reviewOpened
+                    ? "✓ J'ai laissé mon avis → Vérifier"
+                    : "J'ai déjà laissé un avis"}
+                </button>
 
-                  {googleMapsUrl && (
-                    <a
-                      href={googleMapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setReviewOpened(true)}
-                      className={`flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-black text-base shadow-lg transition-all active:scale-95 ${
-                        reviewOpened
-                          ? "opacity-80 cursor-default"
-                          : ""
-                      }`}
-                      style={{ background: "linear-gradient(135deg, #3E1F0A, #6B3A2A)", color: "#fff" }}
-                    >
-                      ⭐ Laisser mon avis Google
-                    </a>
-                  )}
-
-                  {reviewOpened && (
-                    <button
-                      onClick={handleReviewConfirmed}
-                      className="w-full py-3.5 rounded-2xl font-black text-white text-sm bg-green-600 hover:bg-green-700 shadow-md transition-all active:scale-95"
-                    >
-                      ✓ J&apos;ai laissé mon avis → Continuer
-                    </button>
-                  )}
-
-                  {!reviewOpened && (
-                    <button
-                      onClick={handleReviewConfirmed}
-                      className="w-full py-2.5 rounded-2xl text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      J&apos;ai déjà laissé un avis →
-                    </button>
-                  )}
-                </div>
-
-                {/* Option B — coming soon */}
-                <div className="bg-gray-50 rounded-2xl p-4 opacity-50 select-none">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Option B · Vérification automatique</p>
-                  <div className="flex items-center gap-2 py-2.5 px-3 rounded-xl border border-dashed border-gray-300">
-                    <span className="text-sm">🔒</span>
-                    <p className="text-xs text-gray-400 font-medium">Vérification automatique via Google (bientôt disponible)</p>
+                {/* Error message */}
+                {reviewError && (
+                  <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 font-medium">
+                    {reviewError}
                   </div>
-                </div>
-
+                )}
               </div>
 
               <p className="text-xs text-gray-400 leading-relaxed">
