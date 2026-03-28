@@ -197,10 +197,15 @@ export default function DashboardNav() {
           <div className="flex items-center gap-5">
             <Link
               href="/dashboard"
-              className="text-base font-bold hover:opacity-80 transition-opacity shrink-0"
-              style={{ color: "#534AB7" }}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
             >
-              Stampify
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <rect width="28" height="28" rx="8" fill="#534AB7"/>
+                <path d="M8 10C8 8.34 9.34 7 11 7H17C18.66 7 20 8.34 20 10V16C20 17.66 18.66 19 17 19H15.5L14 21.5L12.5 19H11C9.34 19 8 17.66 8 16V10Z" fill="white"/>
+                <circle cx="14" cy="12" r="2.5" fill="#534AB7"/>
+                <path d="M10.5 17C10.5 15.07 12.07 13.5 14 13.5C15.93 13.5 17.5 15.07 17.5 17" stroke="#534AB7" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <span className="text-base font-bold" style={{ color: "#534AB7" }}>Stampify</span>
             </Link>
             <nav className="flex items-center gap-1">
               {desktopLinks.map((link) => {
