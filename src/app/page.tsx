@@ -316,6 +316,7 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isCH, setIsCH] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [demosOpen, setDemosOpen] = useState(false);
 
   useEffect(() => {
     setIsCH(detectCountry() === "CH");
@@ -324,7 +325,16 @@ export default function LandingPage() {
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
+    setDemosOpen(false);
   };
+
+  const demoLinks = [
+    { href: "/demo/cafe", label: "☕ Café Lumière", sub: "Lyon 2" },
+    { href: "/demo/boulangerie", label: "🥐 Boulangerie Martin", sub: "Lyon 6" },
+    { href: "/demo/barbershop", label: "✂️ Black Scissors", sub: "Lyon 1" },
+    { href: "/demo/restaurant", label: "🍽️ Le Bistrot du Coin", sub: "Lyon 3" },
+    { href: "/demo/manucure", label: "💅 Nail Studio", sub: "Lyon 2" },
+  ];
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -342,7 +352,35 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <button onClick={() => scrollTo("features")} className="hover:text-indigo-600 transition-colors">Fonctionnalités</button>
             <button onClick={() => scrollTo("pricing")} className="hover:text-indigo-600 transition-colors">Tarifs</button>
+            <Link href="/services" className="hover:text-indigo-600 transition-colors font-semibold text-indigo-600">Services Web & SEO</Link>
             <button onClick={() => scrollTo("faq")} className="hover:text-indigo-600 transition-colors">FAQ</button>
+            {/* ── Démos dropdown ── */}
+            <div className="relative">
+              <button
+                onClick={() => setDemosOpen(!demosOpen)}
+                onBlur={() => setTimeout(() => setDemosOpen(false), 150)}
+                className="flex items-center gap-1 hover:text-indigo-600 transition-colors"
+              >
+                Démos
+                <svg viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 transition-transform duration-200 ${demosOpen ? "rotate-180" : ""}`}>
+                  <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 011.06 0L10 11.94l3.72-3.72a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.22 9.28a.75.75 0 010-1.06z" clipRule="evenodd" />
+                </svg>
+              </button>
+              {demosOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-in">
+                  <Link href="/demo" className="flex items-center gap-2 px-4 py-2.5 text-xs font-black text-indigo-600 hover:bg-indigo-50 transition-colors border-b border-gray-50 mb-1">
+                    🎯 Toutes les démos
+                  </Link>
+                  {demoLinks.map((d) => (
+                    <Link key={d.href} href={d.href}
+                      className="flex items-start justify-between px-4 py-2 hover:bg-gray-50 transition-colors rounded-lg mx-1">
+                      <span className="text-sm font-medium text-gray-800">{d.label}</span>
+                      <span className="text-xs text-gray-400 ml-2 mt-0.5">{d.sub}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -364,7 +402,16 @@ export default function LandingPage() {
           <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3">
             <button onClick={() => scrollTo("features")} className="block w-full text-left text-sm font-medium text-gray-700 py-2">Fonctionnalités</button>
             <button onClick={() => scrollTo("pricing")} className="block w-full text-left text-sm font-medium text-gray-700 py-2">Tarifs</button>
+            <Link href="/services" className="block text-sm font-semibold text-indigo-600 py-2">Services Web & SEO</Link>
             <button onClick={() => scrollTo("faq")} className="block w-full text-left text-sm font-medium text-gray-700 py-2">FAQ</button>
+            {/* Démos mobile */}
+            <div className="border-t border-gray-50 pt-2">
+              <Link href="/demo" className="block text-sm font-black text-indigo-600 py-2">🎯 Toutes les démos</Link>
+              {demoLinks.map((d) => (
+                <Link key={d.href} href={d.href} onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm font-medium text-gray-600 py-1.5 pl-3">{d.label}</Link>
+              ))}
+            </div>
             <Link href="/login" className="block text-sm font-medium text-gray-700 py-2">Se connecter</Link>
           </div>
         )}
