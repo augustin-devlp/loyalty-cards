@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soins & Forfaits — L'Essence Spa Lausanne</title>
+<meta name="description" content="Découvrez tous les soins et forfaits de L'Essence Spa à Lausanne. Massages, soins visage, rituels corps, forfaits duo. Réservez votre moment de bien-être.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --beige: #F5F0E8;
+  --beige-dark: #E8E0D0;
+  --white: #FDFCFA;
+  --sage: #8FA882;
+  --sage-dark: #6B8A5E;
+  --gold: #C4A962;
+  --text: #2C2C2C;
+  --text-light: #6B6B6B;
+  --border: #E0D8CC;
+  --card: #FDFCFA;
+  --shadow: 0 2px 20px rgba(0,0,0,0.06);
+  --shadow-hover: 0 8px 30px rgba(0,0,0,0.10);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+.fade-section { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.fade-section.visible { opacity: 1; transform: translateY(0); }
+
+/* NAVBAR */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(253,252,250,0.92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border); transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 1px 12px rgba(0,0,0,0.08); }
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; color: var(--sage-dark); }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 13px; color: var(--text-light); transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); }
+.nav-cta { font-size: 12px; font-weight: 500; background: var(--sage); color: white !important; border-radius: 9999px; padding: 9px 22px; transition: background 0.2s; }
+.nav-cta:hover { background: var(--sage-dark) !important; }
+.hamburger { display: none; background: none; border: none; cursor: pointer; color: var(--text); }
+.mobile-menu { display: none; flex-direction: column; gap: 0; background: var(--white); border-top: 1px solid var(--border); padding: 8px 24px 16px; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { font-size: 14px; padding: 10px 0; border-bottom: 1px solid var(--beige); color: var(--text-light); }
+
+/* HERO PAGE */
+.page-hero {
+  margin-top: 64px; background: var(--beige);
+  padding: 80px 24px 64px; text-align: center;
+}
+.page-hero-inner { max-width: 700px; margin: 0 auto; }
+.page-hero .label { font-size: 11px; font-weight: 500; color: var(--sage); letter-spacing: 0.15em; display: block; margin-bottom: 16px; }
+.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); color: var(--text); margin-bottom: 20px; line-height: 1.2; }
+.page-hero p { font-size: 16px; color: var(--text-light); line-height: 1.8; max-width: 560px; margin: 0 auto 32px; }
+
+/* FILTRES CATÉGORIES */
+.filters { background: var(--white); padding: 24px; border-bottom: 1px solid var(--border); position: sticky; top: 64px; z-index: 40; }
+.filters-inner { max-width: 1280px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.filter-btn {
+  font-size: 12px; font-weight: 500; padding: 8px 20px; border-radius: 9999px;
+  border: 1.5px solid var(--border); background: transparent; color: var(--text-light);
+  cursor: pointer; transition: all 0.2s;
+}
+.filter-btn:hover { border-color: var(--sage); color: var(--sage); }
+.filter-btn.active { background: var(--sage); color: white; border-color: var(--sage); }
+
+/* SECTIONS */
+.section { padding: 80px 24px; }
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-header { margin-bottom: 48px; }
+.section-header .label { font-size: 11px; font-weight: 500; color: var(--sage); letter-spacing: 0.15em; display: block; margin-bottom: 12px; }
+.section-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 38px); color: var(--text); margin-bottom: 12px; }
+.section-header p { font-size: 14px; color: var(--text-light); max-width: 560px; line-height: 1.7; }
+
+/* GRILLE SOINS */
+.soins-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.soin-card {
+  background: var(--card); border-radius: 16px; overflow: hidden;
+  box-shadow: var(--shadow); transition: transform 0.3s, box-shadow 0.3s;
+  display: flex; flex-direction: column;
+}
+.soin-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+.soin-img { width: 100%; height: 200px; object-fit: cover; }
+.soin-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+.soin-badge { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 20px; background: var(--beige); color: var(--sage-dark); margin-bottom: 12px; }
+.soin-badge.gold { background: #FDF3DC; color: #8B6914; }
+.soin-badge.duo { background: #EDF5F0; color: #2D6A4F; }
+.soin-name { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--text); margin-bottom: 6px; }
+.soin-meta { font-size: 11px; color: var(--text-light); margin-bottom: 12px; display: flex; gap: 12px; }
+.soin-meta span { display: flex; align-items: center; gap: 4px; }
+.soin-desc { font-size: 13px; color: var(--text-light); line-height: 1.7; flex: 1; margin-bottom: 20px; }
+.soin-includes { list-style: none; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
+.soin-includes li { font-size: 12px; color: var(--text-light); display: flex; align-items: flex-start; gap: 7px; }
+.soin-includes li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--sage); flex-shrink: 0; margin-top: 5px; }
+.soin-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); margin-top: auto; }
+.soin-price { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); }
+.soin-price span { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-light); display: block; font-weight: 400; }
+.btn-reserver {
+  font-size: 12px; font-weight: 500; background: var(--sage); color: white;
+  border-radius: 9999px; padding: 9px 20px; border: none; cursor: pointer;
+  transition: background 0.2s; text-decoration: none; display: inline-block;
+}
+.btn-reserver:hover { background: var(--sage-dark); }
+.btn-outline-sm {
+  font-size: 12px; font-weight: 500; border: 1.5px solid var(--sage); color: var(--sage);
+  border-radius: 9999px; padding: 8px 18px; transition: all 0.2s; display: inline-block;
+}
+.btn-outline-sm:hover { background: var(--sage); color: white; }
+
+/* CARTE PHARE */
+.soin-card.featured { border: 2px solid var(--gold); }
+.soin-card.featured .soin-badge { background: #FDF3DC; color: #8B6914; }
+
+/* SECTION PROMESSE */
+.promesse { background: var(--sage-dark); padding: 80px 24px; }
+.promesse-inner { max-width: 1280px; margin: 0 auto; }
+.promesse h2 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 38px); color: white; text-align: center; margin-bottom: 16px; }
+.promesse-sub { font-size: 15px; color: rgba(255,255,255,0.7); text-align: center; max-width: 520px; margin: 0 auto 56px; line-height: 1.7; }
+.promesse-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.promesse-item { text-align: center; }
+.promesse-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.promesse-item h3 { font-size: 14px; font-weight: 500; color: white; margin-bottom: 8px; }
+.promesse-item p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+/* PROCESSUS */
+.processus-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.processus-step { text-align: center; }
+.step-num { width: 44px; height: 44px; border-radius: 50%; background: var(--sage); color: white; font-size: 16px; font-weight: 500; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-family: 'Playfair Display', serif; }
+.processus-step h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+.processus-step p { font-size: 12px; color: var(--text-light); line-height: 1.6; }
+
+/* FAQ */
+.faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.faq-q { padding: 18px 24px; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+.faq-q:hover { background: var(--beige); }
+.faq-chevron { font-size: 12px; color: var(--sage); transition: transform 0.2s; }
+.faq-chevron.open { transform: rotate(180deg); }
+.faq-a { display: none; padding: 0 24px 18px; font-size: 13px; color: var(--text-light); line-height: 1.7; }
+.faq-a.open { display: block; }
+
+/* CTA FINAL */
+.cta-section { background: var(--beige-dark); padding: 80px 24px; text-align: center; }
+.cta-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.5vw, 38px); color: var(--text); margin-bottom: 16px; }
+.cta-section p { font-size: 15px; color: var(--text-light); margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+.cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { font-size: 13px; font-weight: 500; background: var(--sage); color: white; border-radius: 9999px; padding: 14px 32px; transition: background 0.2s; }
+.btn-primary:hover { background: var(--sage-dark); }
+.btn-secondary { font-size: 13px; font-weight: 500; border: 1.5px solid var(--sage); color: var(--sage); border-radius: 9999px; padding: 13px 32px; transition: all 0.2s; }
+.btn-secondary:hover { background: var(--sage); color: white; }
+
+/* FOOTER */
+footer { background: var(--sage-dark); padding: 48px 24px; text-align: center; }
+.footer-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; color: white; display: block; margin-bottom: 6px; }
+.footer-tag { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
+.footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
+.footer-links a { font-size: 12px; color: rgba(255,255,255,0.6); transition: color 0.2s; }
+.footer-links a:hover { color: white; }
+.footer-copy { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+.footer-stamp { font-size: 10px; color: rgba(255,255,255,0.2); }
+
+@media (max-width: 900px) { .soins-grid { grid-template-columns: 1fr 1fr; } .promesse-grid { grid-template-columns: 1fr 1fr; } .processus-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .soins-grid { grid-template-columns: 1fr; } .promesse-grid { grid-template-columns: 1fr 1fr; } .processus-grid { grid-template-columns: 1fr 1fr; } .nav-links { display: none; } .hamburger { display: block; } }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">L'Essence</a>
+    <div class="nav-links">
+      <a href="index.html#soins">Soins</a>
+      <a href="forfaits.html" class="active">Forfaits</a>
+      <a href="index.html#fidelite">Carte fidélité</a>
+      <a href="index.html#reserver" class="nav-cta">Réserver</a>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Accueil</a>
+    <a href="index.html#soins">Soins</a>
+    <a href="forfaits.html">Forfaits</a>
+    <a href="index.html#fidelite">Carte fidélité</a>
+    <a href="index.html#reserver">Réserver</a>
+  </div>
+</nav>
+
+<!-- HERO PAGE -->
+<div class="page-hero">
+  <div class="page-hero-inner fade-section">
+    <span class="label">SOINS & FORFAITS</span>
+    <h1>Des soins pensés pour vous, de A à Z</h1>
+    <p>Chaque soin de L'Essence est conçu pour vous offrir une expérience unique. Produits naturels, techniques expertes, ambiance zen. Prenez le temps de choisir ce dont vous avez besoin.</p>
+    <a href="index.html#reserver" class="btn-primary">Réserver maintenant</a>
+  </div>
+</div>
+
+<!-- FILTRES -->
+<div class="filters">
+  <div class="filters-inner">
+    <button class="filter-btn active" onclick="filterSoins('all', this)">Tout voir</button>
+    <button class="filter-btn" onclick="filterSoins('massage', this)">Massages</button>
+    <button class="filter-btn" onclick="filterSoins('visage', this)">Soins Visage</button>
+    <button class="filter-btn" onclick="filterSoins('corps', this)">Rituels Corps</button>
+    <button class="filter-btn" onclick="filterSoins('duo', this)">Forfaits Duo</button>
+    <button class="filter-btn" onclick="filterSoins('signature', this)">Signatures</button>
+  </div>
+</div>
+
+<!-- ═══ MASSAGES ═══ -->
+<section class="section" id="massage-section" style="background: var(--white);">
+  <div class="section-inner">
+    <div class="fade-section section-header">
+      <span class="label">MASSAGES</span>
+      <h2>L'art du massage, revisité</h2>
+      <p>Nos thérapeutes certifiés combinent les meilleures techniques du monde pour libérer vos tensions et vous offrir une détente absolue.</p>
+    </div>
+    <div class="soins-grid">
+
+      <div class="fade-section soin-card" data-cat="massage">
+        <img class="soin-img" src="https://images.pexels.com/photos/3764568/pexels-photo-3764568.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Massage Suédois">
+        <div class="soin-body">
+          <span class="soin-badge">Massage</span>
+          <h3 class="soin-name">Massage Suédois Classique</h3>
+          <div class="soin-meta">
+            <span>⏱ 60 min</span>
+            <span>★ Idéal débutants</span>
+          </div>
+          <p class="soin-desc">Le massage suédois est le fondement de tout soin corporel. Des effleurages longs et enveloppants aux pétrisssages profonds, cette technique millénaire libère les tensions musculaires, améliore la circulation sanguine et induit un état de relaxation profonde.</p>
+          <ul class="soin-includes">
+            <li>Accueil tisane et bilan personnalisé</li>
+            <li>Massage corps complet huile chaude</li>
+            <li>Travail ciblé dos, épaules, nuque</li>
+            <li>Enveloppement final chaleureux</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 120 <span>60 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card featured" data-cat="massage signature">
+        <img class="soin-img" src="https://images.pexels.com/photos/6560266/pexels-photo-6560266.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Massage Pierres Chaudes">
+        <div class="soin-body">
+          <span class="soin-badge gold">✦ Signature</span>
+          <h3 class="soin-name">Rituel Pierres de Basalte</h3>
+          <div class="soin-meta">
+            <span>⏱ 90 min</span>
+            <span>★ Notre best-seller</span>
+          </div>
+          <p class="soin-desc">Les pierres volcaniques de basalte noir, chauffées à la température idéale, pénètrent en profondeur les muscles pour libérer des tensions que les mains seules ne peuvent atteindre. Un voyage thermique entre chaud et froid qui éveille tous vos sens.</p>
+          <ul class="soin-includes">
+            <li>Accueil rituel infusion volcanique</li>
+            <li>Placement de 18 pierres de basalte</li>
+            <li>Massage corps avec pierres et huile</li>
+            <li>Soin du visage aux pierres froides</li>
+            <li>Relaxation en espace cocooning</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 175 <span>90 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="massage">
+        <img class="soin-img" src="https://images.pexels.com/photos/19641835/pexels-photo-19641835.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Massage Thérapeutique">
+        <div class="soin-body">
+          <span class="soin-badge">Massage</span>
+          <h3 class="soin-name">Massage Thérapeutique Profond</h3>
+          <div class="soin-meta">
+            <span>⏱ 75 min</span>
+            <span>★ Tensions chroniques</span>
+          </div>
+          <p class="soin-desc">Pour ceux qui vivent avec des tensions persistantes ou des douleurs musculaires chroniques, ce massage à pression profonde cible directement les nœuds de tension et les zones contractées. Notre thérapeute travaille couche par couche pour une libération durable.</p>
+          <ul class="soin-includes">
+            <li>Bilan postural et zones cibles identifiées</li>
+            <li>Techniques de friction transversale</li>
+            <li>Trigger points et points d'acupression</li>
+            <li>Étirements thérapeutiques assistés</li>
+            <li>Conseils posturaux personnalisés</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 145 <span>75 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOINS VISAGE ═══ -->
+<section class="section" id="visage-section" style="background: var(--beige);">
+  <div class="section-inner">
+    <div class="fade-section section-header">
+      <span class="label">SOINS VISAGE</span>
+      <h2>La science au service de votre peau</h2>
+      <p>Chaque soin visage commence par un diagnostic cutané approfondi. Nos esthéticiennes certifiées adaptent chaque protocole à votre type de peau et vos préoccupations du moment.</p>
+    </div>
+    <div class="soins-grid">
+
+      <div class="fade-section soin-card featured" data-cat="visage signature">
+        <img class="soin-img" src="https://images.pexels.com/photos/7446671/pexels-photo-7446671.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Soin Visage Signature">
+        <div class="soin-body">
+          <span class="soin-badge gold">✦ Signature</span>
+          <h3 class="soin-name">Soin Visage Signature L'Essence</h3>
+          <div class="soin-meta">
+            <span>⏱ 75 min</span>
+            <span>★ Éclat garanti</span>
+          </div>
+          <p class="soin-desc">Notre protocole phare, développé exclusivement par notre équipe. Ce soin combine les bienfaits des actifs naturels suisses — edelweiss, gentiane des Alpes, eau de source — avec des techniques de massage facial japonaises pour un résultat visible dès la première séance.</p>
+          <ul class="soin-includes">
+            <li>Diagnostic cutané complet</li>
+            <li>Double nettoyage et gommage enzymatique</li>
+            <li>Masque sur mesure selon votre peau</li>
+            <li>Sérum aux actifs alpins concentrés</li>
+            <li>Massage facial Kobido (lissant)</li>
+            <li>Protection solaire offerte</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 155 <span>75 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="visage">
+        <img class="soin-img" src="https://images.pexels.com/photos/5069494/pexels-photo-5069494.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Soin Anti-Âge">
+        <div class="soin-body">
+          <span class="soin-badge">Soin Visage</span>
+          <h3 class="soin-name">Soin Anti-Âge Régénérant</h3>
+          <div class="soin-meta">
+            <span>⏱ 90 min</span>
+            <span>★ 35 ans et plus</span>
+          </div>
+          <p class="soin-desc">Ce soin intensif cible les premiers signes du temps : rides d'expression, perte de fermeté, teint terne. Notre protocole à l'acide hyaluronique végétal et au rétinol naturel redensifie la peau en profondeur et restaure son éclat naturel.</p>
+          <ul class="soin-includes">
+            <li>Gommage mécanique doux</li>
+            <li>Peeling enzymatique papaye</li>
+            <li>Application masque liftant froid</li>
+            <li>Mésoporation d'actifs anti-âge</li>
+            <li>Massage drainant sculptant</li>
+            <li>Crème de nuit premium offerte</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 185 <span>90 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="visage">
+        <img class="soin-img" src="https://images.pexels.com/photos/4586741/pexels-photo-4586741.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Soin Express">
+        <div class="soin-body">
+          <span class="soin-badge">Soin Visage</span>
+          <h3 class="soin-name">Soin Express Éclat Minute</h3>
+          <div class="soin-meta">
+            <span>⏱ 45 min</span>
+            <span>★ Avant événement</span>
+          </div>
+          <p class="soin-desc">Parfait avant un événement important ou pour redonner de l'éclat à votre peau en peu de temps. Ce soin ciblé nettoie, hydrate et illumine le teint en 45 minutes. Vous ressortez rayonnante, comme si vous aviez dormi 10 heures.</p>
+          <ul class="soin-includes">
+            <li>Nettoyage profond et gommage flash</li>
+            <li>Masque vitamine C illuminant</li>
+            <li>Sérum booster d'éclat</li>
+            <li>Massage crânien déstressant offert</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 85 <span>45 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RITUELS CORPS ═══ -->
+<section class="section" id="corps-section" style="background: var(--white);">
+  <div class="section-inner">
+    <div class="fade-section section-header">
+      <span class="label">RITUELS CORPS</span>
+      <h2>Des cérémonies pour votre corps</h2>
+      <p>Nos rituels corps s'inspirent des grandes traditions de bien-être du monde — hammam marocain, bain de lait japonais, onctions ayurvédiques — revisitées avec les produits naturels de nos régions alpines.</p>
+    </div>
+    <div class="soins-grid">
+
+      <div class="fade-section soin-card featured" data-cat="corps signature">
+        <img class="soin-img" src="https://images.pexels.com/photos/3997980/pexels-photo-3997980.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Rituel Corps Complet">
+        <div class="soin-body">
+          <span class="soin-badge gold">✦ Signature</span>
+          <h3 class="soin-name">Grand Rituel Corps L'Essence</h3>
+          <div class="soin-meta">
+            <span>⏱ 120 min</span>
+            <span>★ L'expérience totale</span>
+          </div>
+          <p class="soin-desc">Notre rituel le plus complet, celui que nos clientes réservent pour les grandes occasions ou pour se offrir un moment de luxe absolu. Deux heures de pur bien-être qui combinent gommage, enveloppement, massage et soin du visage en une seule expérience fluide et cohérente.</p>
+          <ul class="soin-includes">
+            <li>Gommage corps aux sels de la Mer Morte</li>
+            <li>Enveloppement argile blanche et huiles</li>
+            <li>Massage corps complet aux huiles chaudes</li>
+            <li>Soin visage éclat 30 minutes</li>
+            <li>Infusions et collation légère offertes</li>
+            <li>Accès espace détente illimité</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 280 <span>120 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="corps">
+        <img class="soin-img" src="https://images.pexels.com/photos/5240623/pexels-photo-5240623.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Gommage Corps">
+        <div class="soin-body">
+          <span class="soin-badge">Rituel Corps</span>
+          <h3 class="soin-name">Gommage & Enveloppement Miel-Amande</h3>
+          <div class="soin-meta">
+            <span>⏱ 75 min</span>
+            <span>★ Peau soyeuse</span>
+          </div>
+          <p class="soin-desc">Un rituel douceur inspiré des traditions orientales. Le gommage au sucre de canne et à l'amande douce exfolie en profondeur les cellules mortes, tandis que l'enveloppement au miel bio nourrit et régénère l'épiderme. Votre peau retrouve toute sa douceur et son éclat.</p>
+          <ul class="soin-includes">
+            <li>Gommage intégral au sucre de canne</li>
+            <li>Enveloppement chaud miel et argile rose</li>
+            <li>Rinçage hydromassant</li>
+            <li>Application beurre de karité corps</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 145 <span>75 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="corps">
+        <img class="soin-img" src="https://images.pexels.com/photos/6663371/pexels-photo-6663371.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drainage Lymphatique">
+        <div class="soin-body">
+          <span class="soin-badge">Rituel Corps</span>
+          <h3 class="soin-name">Drainage Lymphatique Manuel</h3>
+          <div class="soin-meta">
+            <span>⏱ 60 min</span>
+            <span>★ Légèreté & détox</span>
+          </div>
+          <p class="soin-desc">Le drainage lymphatique manuel est le soin détox par excellence. Ces mouvements doux et rythmiques stimulent le système lymphatique, élimine les toxines, réduit les œdèmes et donne à la peau une sensation de légèreté incomparable. Idéal en cure ou après une période de stress.</p>
+          <ul class="soin-includes">
+            <li>Brossage à sec stimulant</li>
+            <li>Drainage lymphatique méthode Vodder</li>
+            <li>Enveloppement drainant argile verte</li>
+            <li>Infusion détox offerte</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 130 <span>60 minutes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FORFAITS DUO ═══ -->
+<section class="section" id="duo-section" style="background: var(--beige);">
+  <div class="section-inner">
+    <div class="fade-section section-header">
+      <span class="label">FORFAITS DUO</span>
+      <h2>Partagez l'expérience</h2>
+      <p>Offrez-vous un moment de complicité dans notre cabine duo. Parfait pour un anniversaire, la Saint-Valentin, ou simplement parce que certaines expériences méritent d'être vécues à deux.</p>
+    </div>
+    <div class="soins-grid">
+
+      <div class="fade-section soin-card" data-cat="duo">
+        <img class="soin-img" src="https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Forfait Duo Évasion">
+        <div class="soin-body">
+          <span class="soin-badge duo">Forfait Duo</span>
+          <h3 class="soin-name">Duo Évasion — Escapade à Deux</h3>
+          <div class="soin-meta">
+            <span>⏱ 90 min</span>
+            <span>★ Idéal couple</span>
+          </div>
+          <p class="soin-desc">Un moment suspendu pour deux. Dans notre cabine duo face au jardin intérieur, vivez en simultané un massage suédois personnalisé. Chaque thérapeute adapte la pression et le protocole aux besoins de chacun. Un moment de partage et de lâcher-prise.</p>
+          <ul class="soin-includes">
+            <li>Accueil champagne ou jus frais</li>
+            <li>Massage suédois 60 min pour chacun</li>
+            <li>Accès espace détente privatif 30 min</li>
+            <li>Plateau fruits et chocolats offert</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 320 <span>pour 2 personnes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card featured" data-cat="duo signature">
+        <img class="soin-img" src="https://images.pexels.com/photos/12956558/pexels-photo-12956558.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Duo Signature">
+        <div class="soin-body">
+          <span class="soin-badge gold">✦ Best-seller Duo</span>
+          <h3 class="soin-name">Duo Signature — L'Expérience Totale</h3>
+          <div class="soin-meta">
+            <span>⏱ 150 min</span>
+            <span>★ La plus prisée</span>
+          </div>
+          <p class="soin-desc">Notre forfait duo le plus complet, celui que nos clients plébiscitent pour les grandes occasions. Deux heures et demie d'immersion totale dans le bien-être — rituels, massages, soins visage, espace détente — pour une expérience mémorable partagée à deux.</p>
+          <ul class="soin-includes">
+            <li>Accueil rituel et présentation des soins</li>
+            <li>Gommage corps synchronisé</li>
+            <li>Massages pierres chaudes 90 min chacun</li>
+            <li>Soin visage express 30 min chacun</li>
+            <li>Accès espace privatif 45 min</li>
+            <li>Dîner léger gastronomique offert</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 560 <span>pour 2 personnes</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-section soin-card" data-cat="duo">
+        <img class="soin-img" src="https://images.pexels.com/photos/6667430/pexels-photo-6667430.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Duo Bien-être">
+        <div class="soin-body">
+          <span class="soin-badge duo">Forfait Duo</span>
+          <h3 class="soin-name">Duo Bien-être — Journée Complète</h3>
+          <div class="soin-meta">
+            <span>⏱ 4 heures</span>
+            <span>★ Journée entière</span>
+          </div>
+          <p class="soin-desc">Pour ceux qui veulent vraiment décrocher. Une journée entière au spa, à votre rythme. Accès illimité aux espaces, deux soins au choix par personne, déjeuner végétarien inclus. Le luxe ultime, c'est le temps.</p>
+          <ul class="soin-includes">
+            <li>Accueil et visite des espaces</li>
+            <li>Accès illimité hammam, sauna, bassins</li>
+            <li>2 soins au choix par personne</li>
+            <li>Déjeuner biologique complet</li>
+            <li>Infusions et collations toute la journée</li>
+            <li>Peignoirs et sandales fournis</li>
+          </ul>
+          <div class="soin-footer">
+            <div class="soin-price">CHF 680 <span>pour 2 personnes / journée</span></div>
+            <a href="index.html#reserver" class="btn-reserver">Réserver</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROMESSE -->
+<section class="promesse">
+  <div class="promesse-inner">
+    <h2 class="fade-section">Notre promesse L'Essence</h2>
+    <p class="fade-section promesse-sub">Chaque détail est pensé pour que vous viviez la meilleure version possible de chaque soin.</p>
+    <div class="promesse-grid">
+      <div class="fade-section promesse-item">
+        <div class="promesse-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3>Ponctualité garantie</h3>
+        <p>Votre soin commence à l'heure et dure exactement le temps annoncé. Pas de compromis sur votre moment.</p>
+      </div>
+      <div class="fade-section promesse-item">
+        <div class="promesse-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3>Produits 100% naturels</h3>
+        <p>Toutes nos formulations sont certifiées bio, sans parabène, sans silicone. Ce qui touche votre peau doit être irréprochable.</p>
+      </div>
+      <div class="fade-section promesse-item">
+        <div class="promesse-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Thérapeutes certifiés</h3>
+        <p>Tous nos praticiens sont diplômés d'état et formés en continu aux dernières techniques. Votre sécurité prime.</p>
+      </div>
+      <div class="fade-section promesse-item">
+        <div class="promesse-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Satisfaction garantie</h3>
+        <p>Si votre soin ne vous a pas pleinement satisfait, nous le refaisons ou vous remboursons. Sans condition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSUS -->
+<section class="section" style="background: var(--beige);">
+  <div class="section-inner">
+    <div class="fade-section section-header" style="text-align:center">
+      <span class="label">COMMENT ÇA SE PASSE</span>
+      <h2>Votre visite, étape par étape</h2>
+    </div>
+    <div class="processus-grid">
+      <div class="fade-section processus-step">
+        <div class="step-num">1</div>
+        <h3>Réservation</h3>
+        <p>Choisissez votre soin et réservez en ligne ou par WhatsApp. Confirmation immédiate.</p>
+      </div>
+      <div class="fade-section processus-step">
+        <div class="step-num">2</div>
+        <h3>Arrivée</h3>
+        <p>Arrivez 10 min avant pour vous installer, déguster une tisane et remplir votre fiche santé.</p>
+      </div>
+      <div class="fade-section processus-step">
+        <div class="step-num">3</div>
+        <h3>Votre soin</h3>
+        <p>Votre thérapeute adapte chaque protocole à vos besoins du moment. Vous êtes entre de bonnes mains.</p>
+      </div>
+      <div class="fade-section processus-step">
+        <div class="step-num">4</div>
+        <h3>Après le soin</h3>
+        <p>Profitez de l'espace détente, d'une infusion et de nos conseils personnalisés pour prolonger les bienfaits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="background: var(--white);">
+  <div class="section-inner">
+    <div class="fade-section section-header" style="text-align:center; margin-bottom:40px;">
+      <span class="label">FAQ</span>
+      <h2>Questions fréquentes</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">Faut-il arriver à l'avance pour son soin ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Nous vous recommandons d'arriver 10 à 15 minutes avant votre soin. Ce temps vous permet de vous installer, déguster une tisane de bienvenue, remplir votre fiche santé et commencer à vous détendre avant même d'entrer en cabine.</div>
+      </div>
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">Que mettre (ou ne pas mettre) pendant les soins ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Nous fournissons peignoirs, serviettes et sandales. Pour les massages corps, vous serez dévêtu(e) sous un drap. Seules les zones travaillées sont découvertes. Pour les soins visage uniquement, gardez vos vêtements. Nous vous conseillons de retirer bijoux et lentilles de contact.</div>
+      </div>
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">Y a-t-il des contre-indications à certains soins ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Certains soins sont déconseillés en cas de grossesse, problèmes cardiovasculaires, allergies cutanées ou pathologies spécifiques. Notre questionnaire santé permet à votre thérapeute d'identifier les contre-indications et d'adapter le soin si nécessaire. En cas de doute, consultez votre médecin avant la réservation.</div>
+      </div>
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">Comment annuler ou modifier ma réservation ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Vous pouvez annuler ou modifier gratuitement jusqu'à 24h avant votre rendez-vous via WhatsApp ou par email. En dessous de 24h, 50% du montant du soin vous sera facturé. En cas de no-show, le soin est intégralement dû.</div>
+      </div>
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">Proposez-vous des cartes cadeaux ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Oui ! Nos cartes cadeaux sont disponibles pour n'importe quel montant ou pour un soin spécifique. Elles sont valables 12 mois et peuvent être envoyées par email ou récupérées en boutique dans une jolie pochette. Écrivez-nous sur WhatsApp pour commander la vôtre.</div>
+      </div>
+      <div class="faq-item fade-section">
+        <div class="faq-q" onclick="toggleFaq(this)">La carte fidélité est-elle valable sur tous les soins ? <span class="faq-chevron">▼</span></div>
+        <div class="faq-a">Oui, chaque visite pour un soin d'au moins 45 minutes donne droit à un tampon. Les forfaits duo comptent pour un tampon par personne. Après 8 tampons, vous choisissez un soin offert parmi notre carte (valeur jusqu'à CHF 130). Les tampons sont cumulables et n'expirent pas.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-section">
+  <h2 class="fade-section">Prêt à vous offrir ce moment ?</h2>
+  <p class="fade-section">Réservez votre soin en ligne ou contactez-nous sur WhatsApp. Réponse garantie sous 2h.</p>
+  <div class="cta-btns fade-section">
+    <a href="index.html#reserver" class="btn-primary">Réserver en ligne</a>
+    <a href="https://wa.me/41210000000" class="btn-secondary">WhatsApp</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="index.html" class="footer-logo">L'Essence</a>
+  <p class="footer-tag">Spa & Bien-être · Lausanne</p>
+  <div class="footer-links">
+    <a href="index.html">Accueil</a>
+    <a href="forfaits.html">Forfaits</a>
+    <a href="index.html#fidelite">Carte fidélité</a>
+    <a href="index.html#reserver">Réserver</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <p class="footer-copy">© 2026 L'Essence — Tous droits réservés</p>
+  <p class="footer-stamp">Site vitrine créé par Stampify</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-section').forEach(el => observer.observe(el));
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  });
+});
+
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const chevron = el.querySelector('.faq-chevron');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-chevron').forEach(c => c.classList.remove('open'));
+  if (!isOpen) { answer.classList.add('open'); chevron.classList.add('open'); }
+}
+
+function filterSoins(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.soin-card').forEach(card => {
+    if (cat === 'all' || (card.dataset.cat && card.dataset.cat.includes(cat))) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
