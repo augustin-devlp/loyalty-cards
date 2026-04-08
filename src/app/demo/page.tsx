@@ -2,182 +2,352 @@
 
 import Link from "next/link";
 
+const WHATSAPP_URL =
+  "https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify.";
+
+function Navbar() {
+  return (
+    <nav className="sticky top-0 z-50 bg-white border-b border-[#E8E4DC]">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 28 28"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="28" height="28" rx="8" fill="#534AB7" />
+            <path
+              d="M8 14C8 10.686 10.686 8 14 8s6 2.686 6 6-2.686 6-6 6-6-2.686-6-6z"
+              fill="white"
+            />
+            <circle cx="14" cy="14" r="2.5" fill="#534AB7" />
+          </svg>
+          <span className="font-bold text-[#1A1714] text-lg">Stampify</span>
+        </Link>
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="/demo" className="text-[#1A1714] text-sm font-medium">
+            Démos
+          </Link>
+          <Link
+            href="/services"
+            className="text-[#6B6560] hover:text-[#1A1714] text-sm font-medium transition-colors"
+          >
+            Services
+          </Link>
+        </div>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-[#534AB7] text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#4339a8] transition-colors"
+        >
+          Nous contacter
+        </a>
+      </div>
+    </nav>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-[#111009] text-white py-16">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-10 mb-12">
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="28" height="28" rx="8" fill="#534AB7" />
+                <path
+                  d="M8 14C8 10.686 10.686 8 14 8s6 2.686 6 6-2.686 6-6 6-6-2.686-6-6z"
+                  fill="white"
+                />
+                <circle cx="14" cy="14" r="2.5" fill="#534AB7" />
+              </svg>
+              <span className="font-bold text-white text-lg">Stampify</span>
+            </div>
+            <p className="text-white/50 text-sm leading-relaxed">
+              La fidélisation digitale pour les commerces de proximité.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-white mb-4 text-sm">
+              Navigation
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/demo"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  Démos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/services"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  Services
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-white mb-4 text-sm">Contact</h4>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  WhatsApp
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:augustindom999@gmail.com"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  augustindom999@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-white mb-4 text-sm">Légal</h4>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/mentions-legales"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  Mentions légales
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/politique-de-confidentialite"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  Politique de confidentialité
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/conditions-utilisation"
+                  className="text-white/50 hover:text-white text-sm transition-colors"
+                >
+                  Conditions d&apos;utilisation
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-white/10 pt-8">
+          <p className="text-white/30 text-sm text-center">
+            © 2026 Stampify. Tous droits réservés.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 const demos = [
   {
-    slug: "cafe",
+    name: "L'Essence Spa",
+    city: "Lausanne, Suisse",
+    sector: "Spa & Institut",
+    description:
+      "Site vitrine luxe + carte fidélité digitale pour ce spa premium lausannois.",
+    reward: "🎁 Soin offert à la 8e visite",
+    image:
+      "https://images.pexels.com/photos/6667430/pexels-photo-6667430.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: true,
+    isExternal: true,
+    href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
+  },
+  {
     name: "Café Lumière",
-    subtitle: "Lyon 2",
-    emoji: "☕",
-    niche: "Café",
-    description: "Carte fidélité, roue des récompenses & site vitrine pour votre café.",
-    bg: "#3E1F0A",
-    accent: "#C9A84C",
-    light: "#F5F0E8",
-    tagline: "1 café offert tous les 10",
+    city: "Lyon 2",
+    sector: "Café",
+    description:
+      "Carte fidélité, roue des récompenses & site vitrine.",
+    reward: "🎁 1 café offert tous les 10",
+    image:
+      "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: false,
+    isExternal: false,
+    href: "/demo/cafe",
   },
   {
-    slug: "boulangerie",
     name: "Boulangerie Martin",
-    subtitle: "Lyon 6",
-    emoji: "🥐",
-    niche: "Boulangerie",
-    description: "Fidélisez vos habitués avec des tampons et des lots gourmands.",
-    bg: "#5C3D11",
-    accent: "#C8960C",
-    light: "#FFF8E7",
-    tagline: "1 viennoiserie offerte tous les 8",
+    city: "Lyon 6",
+    sector: "Boulangerie",
+    description:
+      "Fidélisez vos habitués avec des tampons et des lots gourmands.",
+    reward: "🎁 1 viennoiserie tous les 8",
+    image:
+      "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: false,
+    isExternal: false,
+    href: "/demo/boulangerie",
   },
   {
-    slug: "barbershop",
     name: "Black Scissors",
-    subtitle: "Lyon 1",
-    emoji: "✂️",
-    niche: "Barbershop",
-    description: "Programme VIP pour votre barbershop avec récompenses exclusives.",
-    bg: "#1A1A1A",
-    accent: "#C41E3A",
-    light: "#F8F8F8",
-    tagline: "1 coupe offerte à la 6e",
+    city: "Lyon 1",
+    sector: "Barbershop",
+    description: "Programme VIP pour votre barbershop.",
+    reward: "🎁 1 coupe offerte à la 6e",
+    image:
+      "https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: false,
+    isExternal: false,
+    href: "/demo/barbershop",
   },
   {
-    slug: "restaurant",
     name: "Le Bistrot du Coin",
-    subtitle: "Lyon 3",
-    emoji: "🍽️",
-    niche: "Restaurant",
-    description: "Récompensez la fidélité de vos clients avec des offres exclusives.",
-    bg: "#722F37",
-    accent: "#B8960C",
-    light: "#F5F0E8",
-    tagline: "1 dessert offert tous les 5 repas",
+    city: "Lyon 3",
+    sector: "Restaurant",
+    description: "Récompensez la fidélité de vos clients.",
+    reward: "🎁 1 dessert tous les 5 repas",
+    image:
+      "https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: false,
+    isExternal: false,
+    href: "/demo/restaurant",
   },
   {
-    slug: "manucure",
     name: "Nail Studio",
-    subtitle: "Lyon 2",
-    emoji: "💅",
-    niche: "Manucure",
-    description: "Fidélisez votre clientèle avec une carte beauté digitale.",
-    bg: "#D4AF37",
-    accent: "#D4AF37",
-    light: "#FFF5F7",
-    tagline: "1 soin offert à la 6e visite",
+    city: "Lyon 2",
+    sector: "Manucure",
+    description: "Carte beauté digitale pour votre clientèle.",
+    reward: "🎁 1 soin offert à la 6e visite",
+    image:
+      "https://images.pexels.com/photos/3997989/pexels-photo-3997989.jpeg?auto=compress&cs=tinysrgb&w=600",
+    isNew: false,
+    isExternal: false,
+    href: "/demo/manucure",
   },
 ];
 
-export default function DemoIndex() {
+export default function DemoPage() {
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-sm">S</span>
-            </div>
-            <span className="font-black text-xl text-gray-900">Stampify</span>
-          </Link>
-          <Link
-            href="/signup"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors shadow-sm"
-          >
-            Commencer gratuitement
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F8F6F1]">
+      <Navbar />
 
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full mb-6">
-          <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
-          5 démos interactives disponibles
+      {/* HERO */}
+      <section className="bg-[#F8F6F1] py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-white border border-[#E8E4DC] rounded-full px-4 py-2 mb-8">
+            <span className="w-2 h-2 bg-[#534AB7] rounded-full"></span>
+            <span className="text-sm text-[#6B6560] font-medium">
+              7 démos disponibles
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#1A1714] mb-6 leading-tight">
+            Voyez ce qu&apos;on livre pour votre commerce
+          </h1>
+          <p className="text-lg text-[#6B6560] leading-relaxed">
+            Des démos réelles dans votre secteur. Ce que vous voyez est
+            exactement ce que vous recevrez.
+          </p>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4">
-          Découvrez Stampify
-          <br />
-          <span className="text-indigo-600">par secteur d&apos;activité</span>
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
-          Explorez des démos complètes et interactives adaptées à votre commerce. Carte fidélité, roue de la fortune, site vitrine — tout est là.
-        </p>
-        <p className="text-sm text-indigo-600 font-semibold">
-          🎯 Votre version sera entièrement personnalisée à votre image
-        </p>
       </section>
 
-      {/* Cards Grid */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {demos.map((demo) => (
-            <Link
-              key={demo.slug}
-              href={`/demo/${demo.slug}`}
-              className="group block rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              {/* Card top — colored */}
+      {/* GRILLE DÉMOS */}
+      <section className="pb-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            {demos.map((demo) => (
               <div
-                className="relative h-40 flex flex-col items-center justify-center p-6"
-                style={{ backgroundColor: demo.bg }}
+                key={demo.name}
+                className="bg-white rounded-2xl border border-[#E8E4DC] overflow-hidden hover:shadow-md transition-shadow"
               >
-                <span className="text-5xl mb-2 drop-shadow-lg">{demo.emoji}</span>
-                <span
-                  className="text-xs font-bold px-3 py-1 rounded-full"
-                  style={{ backgroundColor: demo.accent, color: demo.bg === "#1A1A1A" ? "#fff" : "#1a1a1a" }}
-                >
-                  {demo.niche}
-                </span>
-                {/* Hover arrow */}
-                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg viewBox="0 0 20 20" fill="white" className="w-4 h-4">
-                    <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
-                  </svg>
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={demo.image}
+                    alt={demo.name}
+                    style={{ height: "200px", width: "100%", objectFit: "cover" }}
+                  />
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    {demo.isNew && (
+                      <span className="bg-[#D1FAE5] text-[#059669] text-xs font-bold px-2 py-1 rounded-full">
+                        Nouveau
+                      </span>
+                    )}
+                    <span className="bg-white/90 text-[#1A1714] text-xs font-semibold px-2 py-1 rounded-full">
+                      {demo.sector}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-bold text-[#1A1714] mb-1">{demo.name}</h3>
+                  <p className="text-xs text-[#6B6560] mb-3">{demo.city}</p>
+                  <p className="text-sm text-[#6B6560] mb-3 leading-relaxed">
+                    {demo.description}
+                  </p>
+                  <p className="text-sm font-medium text-[#1A1714] mb-4">
+                    {demo.reward}
+                  </p>
+                  {demo.isExternal ? (
+                    <a
+                      href={demo.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#534AB7] font-semibold text-sm hover:underline"
+                    >
+                      Voir la démo →
+                    </a>
+                  ) : (
+                    <Link
+                      href={demo.href}
+                      className="text-[#534AB7] font-semibold text-sm hover:underline"
+                    >
+                      Voir la démo →
+                    </Link>
+                  )}
                 </div>
               </div>
-
-              {/* Card bottom — white */}
-              <div className="bg-white p-5">
-                <h2 className="font-black text-gray-900 text-lg leading-tight">
-                  {demo.name}
-                </h2>
-                <p className="text-xs text-gray-500 mb-2">{demo.subtitle}</p>
-                <p className="text-sm text-gray-600 mb-3">{demo.description}</p>
-                <div
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                  style={{ backgroundColor: demo.light, color: demo.bg }}
-                >
-                  <span>🎁</span> {demo.tagline}
-                </div>
-                <div className="mt-4 flex items-center gap-1 text-indigo-600 text-sm font-bold group-hover:gap-2 transition-all">
-                  Voir la démo
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                    <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
-          ))}
-
-          {/* CTA Card */}
-          <div className="rounded-2xl overflow-hidden shadow-md bg-gradient-to-br from-indigo-600 to-purple-600 flex flex-col items-center justify-center p-8 text-center text-white">
-            <div className="text-4xl mb-4">🚀</div>
-            <h3 className="font-black text-xl mb-2">Votre commerce</h3>
-            <p className="text-indigo-100 text-sm mb-6">
-              Créez votre propre programme fidélité en moins de 5 minutes.
-            </p>
-            <Link
-              href="/signup"
-              className="bg-white text-indigo-600 font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-indigo-50 transition-colors"
-            >
-              Démarrer gratuitement
-            </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-8 text-center text-sm text-gray-400">
-        <p>© 2025 Stampify — La fidélité digitale pour les commerçants</p>
-      </footer>
+      {/* CTA BAS */}
+      <section className="pb-24 px-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-[#534AB7] rounded-2xl p-10 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Votre commerce n&apos;est pas dans la liste ?
+            </h2>
+            <p className="text-white/60 mb-8">
+              Contactez-nous et on vous montre ce qu&apos;on ferait pour vous.
+            </p>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-white text-[#534AB7] font-semibold px-8 py-4 rounded-full hover:bg-white/90 transition-colors"
+            >
+              Nous contacter sur WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }
