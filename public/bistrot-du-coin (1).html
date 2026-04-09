@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Bistrot du Coin — Restaurant Lyon 3 | Cuisine de marché</title>
+  <meta name="description" content="Le Bistrot du Coin, restaurant gastronomique à Lyon 3. Cuisine de marché, produits locaux, cave à vins soignée. Réservez votre table au 7 Cours Lafayette.">
+  <meta property="og:title" content="Le Bistrot du Coin | Restaurant Lyon 3 – Cuisine de Marché">
+<meta property="og:description" content="Cuisine de marché, produits locaux Auvergne-Rhône-Alpes et cave à vins soignée au cœur de Lyon 3.">
+<meta property="og:image" content="https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?w=1200">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<link rel="canonical" href="https://www.bistrotducoin-lyon.fr/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══ RESET & CUSTOM PROPERTIES ═══ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bordeaux: #6B1F2A;
+      --bordeaux-dark: #4E1620;
+      --ivoire: #F9F4ED;
+      --or: #C4883A;
+      --or-light: #D4A05A;
+      --noir: #1A1410;
+      --blanc-lin: #FEFCF8;
+      --gris-ardoise: #4A4540;
+      --noir-footer: #0E0A08;
+      --font-display: 'Libre Baskerville', Georgia, serif;
+      --font-body: 'Lato', Helvetica, Arial, sans-serif;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--noir);
+      background: var(--blanc-lin);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
+
+    /* ═══ UTILITY ═══ */
+    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+    .gold-line { width: 40px; height: 2px; background: var(--or); margin: 0 auto; }
+    .gold-line-left { width: 40px; height: 2px; background: var(--or); }
+    .section-pad { padding: 100px 0; }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid transparent;
+    }
+    .btn-bordeaux {
+      background: var(--bordeaux);
+      color: var(--blanc-lin);
+      border-color: var(--bordeaux);
+    }
+    .btn-bordeaux:hover {
+      background: var(--bordeaux-dark);
+      border-color: var(--bordeaux-dark);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--ivoire);
+      border-color: var(--ivoire);
+    }
+    .btn-outline:hover {
+      background: rgba(249,244,237,0.15);
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      color: #fff;
+      border-color: #25D366;
+    }
+    .btn-whatsapp:hover { background: #1EBE57; border-color: #1EBE57; }
+
+    /* ═══ 1. NAVBAR ═══ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 18px 0;
+      transition: var(--transition);
+    }
+    .navbar.scrolled {
+      background: var(--noir);
+      padding: 12px 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar-logo {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--bordeaux);
+      transition: var(--transition);
+    }
+    .navbar.scrolled .navbar-logo { color: var(--or); }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .navbar-links a {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--blanc-lin);
+      opacity: 0.85;
+      transition: var(--transition);
+    }
+    .navbar-links a:hover { opacity: 1; color: var(--or); }
+    .navbar-links .btn { padding: 10px 24px; font-size: 0.8rem; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      width: 24px; height: 2px;
+      background: var(--blanc-lin);
+      transition: var(--transition);
+    }
+
+    /* ═══ 2. HERO ═══ */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1920') center/cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(107,31,42,0.6) 0%, rgba(26,20,16,0.7) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 750px;
+      padding: 0 20px;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: var(--blanc-lin);
+      line-height: 1.25;
+      margin: 24px 0;
+    }
+    .hero-sub {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(254,252,248,0.8);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ═══ 3. CHIFFRES ═══ */
+    .chiffres {
+      background: var(--noir);
+      padding: 60px 0;
+    }
+    .chiffres-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      text-align: center;
+    }
+    .chiffre-item h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--or);
+      margin-bottom: 6px;
+    }
+    .chiffre-item p {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: rgba(254,252,248,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══ 4. NOTRE CUISINE ═══ */
+    .notre-cuisine { background: var(--blanc-lin); }
+    .cuisine-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .cuisine-img {
+      border-radius: 6px;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+    .cuisine-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .cuisine-text h2 {
+      font-size: 2.2rem;
+      font-style: italic;
+      color: var(--noir);
+      margin-bottom: 12px;
+    }
+    .cuisine-text p {
+      color: var(--gris-ardoise);
+      font-size: 1rem;
+      font-weight: 300;
+      margin-bottom: 16px;
+    }
+
+    /* ═══ 5. MENU DU JOUR (ARDOISE) ═══ */
+    .ardoise {
+      background: var(--noir);
+      position: relative;
+      overflow: hidden;
+    }
+    .ardoise::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 28px,
+        rgba(255,255,255,0.02) 28px,
+        rgba(255,255,255,0.02) 29px
+      );
+      pointer-events: none;
+    }
+    .ardoise-inner {
+      position: relative; z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .ardoise h2 {
+      font-style: italic;
+      font-size: 2rem;
+      color: var(--blanc-lin);
+      margin-bottom: 8px;
+    }
+    .ardoise-date {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--or);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    .ardoise-cat {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--or);
+      margin-bottom: 8px;
+      margin-top: 30px;
+    }
+    .ardoise-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px dotted rgba(196,136,58,0.25);
+    }
+    .ardoise-item span:first-child {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--blanc-lin);
+    }
+    .ardoise-item span:last-child {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--or);
+      white-space: nowrap;
+      margin-left: 16px;
+    }
+    .ardoise-formules {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(196,136,58,0.3);
+    }
+    .ardoise-formules h3 {
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--blanc-lin);
+      margin-bottom: 16px;
+    }
+    .formule-line {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: rgba(254,252,248,0.75);
+      margin-bottom: 6px;
+    }
+    .formule-line strong { color: var(--or); font-weight: 700; }
+
+    /* ═══ 6. LA CARTE ═══ */
+    .la-carte { background: var(--ivoire); }
+    .la-carte h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    .carte-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+    .carte-tab {
+      padding: 10px 28px;
+      border: 1px solid var(--or);
+      background: transparent;
+      color: var(--gris-ardoise);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+    .carte-tab.active, .carte-tab:hover {
+      background: var(--bordeaux);
+      border-color: var(--bordeaux);
+      color: var(--blanc-lin);
+    }
+    .carte-panel { display: none; }
+    .carte-panel.active { display: block; }
+    .carte-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(196,136,58,0.2);
+    }
+    .carte-item-info h4 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--noir);
+      margin-bottom: 4px;
+    }
+    .carte-item-info p {
+      font-size: 0.85rem;
+      color: var(--gris-ardoise);
+      font-weight: 300;
+    }
+    .carte-item-price {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--or);
+      white-space: nowrap;
+      margin-left: 20px;
+    }
+
+    /* ═══ 7. CARTE FIDÉLITÉ ═══ */
+    .fidelite { background: var(--blanc-lin); }
+    .fidelite h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    .fidelite-card {
+      max-width: 440px;
+      margin: 40px auto 0;
+      border: 1px solid var(--bordeaux);
+      border-radius: 12px;
+      padding: 36px 32px;
+      text-align: center;
+      background: var(--blanc-lin);
+    }
+    .fidelite-card h3 {
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--bordeaux);
+      margin-bottom: 6px;
+    }
+    .fidelite-card .reward-text {
+      font-size: 0.85rem;
+      color: var(--gris-ardoise);
+      margin-bottom: 24px;
+    }
+    .stamps {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stamp {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      border: 2px dashed var(--or);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .stamp.filled {
+      background: var(--bordeaux);
+      border-style: solid;
+      border-color: var(--bordeaux);
+    }
+    .stamp svg { width: 22px; height: 22px; }
+    .stamp.filled svg { fill: var(--or); }
+    .stamp:not(.filled) svg { fill: rgba(196,136,58,0.3); }
+    .stampify-badge {
+      font-size: 0.7rem;
+      color: var(--gris-ardoise);
+      opacity: 0.6;
+      margin-top: 8px;
+    }
+
+    /* ═══ 8. AVIS ═══ */
+    .avis { background: var(--ivoire); }
+    .avis h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    .avis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 50px;
+    }
+    .avis-card {
+      background: var(--blanc-lin);
+      border-radius: 8px;
+      padding: 32px 28px;
+      box-shadow: 0 4px 20px rgba(26,20,16,0.06);
+    }
+    .avis-stars {
+      color: var(--or);
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    .avis-card p {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--gris-ardoise);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .avis-author {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--noir);
+    }
+
+    /* ═══ 9. RÉSERVATION ═══ */
+    .reservation { background: var(--ivoire); }
+    .reservation h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+    .reservation-sub {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--gris-ardoise);
+      font-weight: 300;
+      margin-bottom: 50px;
+    }
+    .resa-form {
+      max-width: 640px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .resa-form .full { grid-column: 1 / -1; }
+    .resa-form label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gris-ardoise);
+      margin-bottom: 6px;
+    }
+    .resa-form input,
+    .resa-form select,
+    .resa-form textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(196,136,58,0.3);
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      background: var(--blanc-lin);
+      color: var(--noir);
+      transition: var(--transition);
+    }
+    .resa-form input:focus,
+    .resa-form select:focus,
+    .resa-form textarea:focus {
+      outline: none;
+      border-color: var(--or);
+      box-shadow: 0 0 0 3px rgba(196,136,58,0.1);
+    }
+    .resa-form textarea { resize: vertical; min-height: 100px; }
+    .resa-buttons {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ═══ 10. FOOTER ═══ */
+    .footer {
+      background: var(--noir-footer);
+      padding: 60px 0 30px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--or);
+      margin-bottom: 16px;
+    }
+    .footer p, .footer a {
+      font-size: 0.85rem;
+      color: rgba(254,252,248,0.55);
+      line-height: 1.8;
+    }
+    .footer a:hover { color: var(--or); }
+    .footer h4 {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--or);
+      margin-bottom: 16px;
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(254,252,248,0.08);
+      padding-top: 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(254,252,248,0.35);
+    }
+    .footer-bottom a { color: var(--or); opacity: 0.7; }
+    .footer-bottom a:hover { opacity: 1; }
+
+    /* ═══ ANIMATIONS ═══ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 900px) {
+      .chiffres-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .cuisine-grid { grid-template-columns: 1fr; gap: 40px; }
+      .avis-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; text-align: center; }
+    }
+    @media (max-width: 768px) {
+      .navbar-links { 
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--noir);
+        flex-direction: column;
+        padding: 20px;
+        gap: 16px;
+      }
+      .navbar-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .hero h1 { font-size: 2rem; }
+      .resa-form { grid-template-columns: 1fr; }
+      .stamps { gap: 10px; }
+      .stamp { width: 42px; height: 42px; }
+    }
+  </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Le Bistrot du Coin",
+  "description": "Cuisine de marché, produits locaux et cave à vins soignée au cœur de Lyon 3.",
+  "telephone": "+33 4 78 00 00 03",
+  "email": "reservation@bistrotducoin.fr",
+  "address": {"@type": "PostalAddress","streetAddress": "7 Cours Lafayette","addressLocality": "Lyon","postalCode": "69003","addressCountry": "FR"},
+  "geo": {"@type": "GeoCoordinates","latitude": 45.7604,"longitude": 4.8419},
+  "openingHoursSpecification": [
+    {"@type": "OpeningHoursSpecification","dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens": "12:00","closes": "22:30"}
+  ],
+  "priceRange": "€€",
+  "servesCuisine": "Cuisine française de marché",
+  "aggregateRating": {"@type": "AggregateRating","ratingValue": "4.8","bestRating": "5","ratingCount": "521"},
+  "hasMenu": "https://www.bistrotducoin-lyon.fr/#carte"
+}
+</script>
+</head>
+<body>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="navbar-logo">Le Bistrot du Coin</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="navbar-links" id="navLinks">
+        <a href="#carte">La Carte</a>
+        <a href="#ardoise">Menu du Jour</a>
+        <a href="#cave">Notre Cave</a>
+        <a href="#reservation" class="btn btn-bordeaux">Réserver</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content fade-up">
+      <span class="hero-badge">Cuisine de marché · Lyon 3 · Depuis 2015</span>
+      <div class="gold-line" style="margin-bottom:0"></div>
+      <h1>La cuisine française<br>comme vous l'aimez.</h1>
+      <p class="hero-sub">Produits locaux, recettes du terroir réinterprétées et cave à vins soignée. Réservez votre table.</p>
+      <div class="hero-buttons">
+        <a href="#reservation" class="btn btn-bordeaux">Réserver une table</a>
+        <a href="#carte" class="btn btn-outline">Voir la carte</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CHIFFRES ═══ -->
+  <section class="chiffres">
+    <div class="container">
+      <div class="chiffres-grid">
+        <div class="chiffre-item fade-up">
+          <h3>2015</h3>
+          <p>Depuis</p>
+        </div>
+        <div class="chiffre-item fade-up">
+          <h3>100%</h3>
+          <p>Produits locaux</p>
+        </div>
+        <div class="chiffre-item fade-up">
+          <h3>4.8★</h3>
+          <p>521 avis</p>
+        </div>
+        <div class="chiffre-item fade-up">
+          <h3>40+</h3>
+          <p>Vins sélectionnés</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NOTRE CUISINE ═══ -->
+  <section class="notre-cuisine section-pad" id="cuisine">
+    <div class="container">
+      <div class="cuisine-grid">
+        <div class="cuisine-img fade-up">
+          <img src="https://images.pexels.com/photos/3338681/pexels-photo-3338681.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Chef Thomas Martin en cuisine" loading="lazy">
+        </div>
+        <div class="cuisine-text fade-up">
+          <div class="gold-line-left" style="margin-bottom:20px"></div>
+          <h2>Une cuisine de marché</h2>
+          <p>Chaque matin, le chef Thomas Martin sélectionne les meilleurs produits auprès de producteurs locaux d'Auvergne-Rhône-Alpes. Viandes de races locales, légumes de saison et poissons de la criée composent une carte qui change au fil des arrivages.</p>
+          <p>Sa philosophie : des recettes du terroir réinterprétées avec justesse, des cuissons maîtrisées et des assaisonnements précis. Une cuisine généreuse, authentique et sans artifice.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ MENU DU JOUR ═══ -->
+  <section class="ardoise section-pad" id="ardoise">
+    <div class="container">
+      <div class="ardoise-inner fade-up">
+        <h2>L'ardoise du jour</h2>
+        <div class="gold-line" style="margin:12px auto 0"></div>
+        <p class="ardoise-date">Carte du marché · Mise à jour quotidienne</p>
+
+        <div class="ardoise-cat">Entrée</div>
+        <div class="ardoise-item">
+          <span>Velouté de potimarron, crème fraîche</span>
+          <span>9€</span>
+        </div>
+
+        <div class="ardoise-cat">Plat</div>
+        <div class="ardoise-item">
+          <span>Pavé de saumon, écrasée pommes de terre, beurre blanc</span>
+          <span>22€</span>
+        </div>
+
+        <div class="ardoise-cat">Dessert</div>
+        <div class="ardoise-item">
+          <span>Tarte tatin maison, crème anglaise</span>
+          <span>8€</span>
+        </div>
+
+        <div class="ardoise-formules">
+          <h3>Les formules</h3>
+          <p class="formule-line">Entrée + Plat + Dessert — <strong>34€</strong></p>
+          <p class="formule-line">Entrée + Plat ou Plat + Dessert — <strong>26€</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LA CARTE ═══ -->
+  <section class="la-carte section-pad" id="carte">
+    <div class="container">
+      <div class="fade-up">
+        <h2>La Carte</h2>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="carte-tabs fade-up">
+        <button class="carte-tab active" data-tab="entrees">Entrées</button>
+        <button class="carte-tab" data-tab="plats">Plats</button>
+        <button class="carte-tab" data-tab="desserts">Desserts</button>
+        <button class="carte-tab" data-tab="cave" id="cave">Cave à vins</button>
+      </div>
+
+      <div class="carte-panel active" id="panel-entrees">
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Burrata, tomates confites, basilic</h4><p>Burrata crémeuse des Pouilles, tomates confites maison</p></div>
+          <span class="carte-item-price">14€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Tartare de bœuf, câpres, cornichons</h4><p>Bœuf haché au couteau, assaisonnement classique</p></div>
+          <span class="carte-item-price">16€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Soupe à l'oignon gratinée</h4><p>Oignons caramélisés, bouillon maison, gruyère fondu</p></div>
+          <span class="carte-item-price">11€</span>
+        </div>
+      </div>
+
+      <div class="carte-panel" id="panel-plats">
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Entrecôte maturée 250g, sauce bordelaise</h4><p>Frites maison, salade verte</p></div>
+          <span class="carte-item-price">28€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Risotto aux champignons des bois, parmesan</h4><p>Champignons de saison, parmesan 24 mois</p></div>
+          <span class="carte-item-price">18€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Filet de canette rôti, purée truffe</h4><p>Canette fermière, purée truffée maison</p></div>
+          <span class="carte-item-price">24€</span>
+        </div>
+      </div>
+
+      <div class="carte-panel" id="panel-desserts">
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Crème brûlée à la vanille</h4><p>Vanille de Madagascar, caramel craquant</p></div>
+          <span class="carte-item-price">8€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Fondant au chocolat, glace vanille</h4><p>Chocolat Valrhona 70%, cœur coulant</p></div>
+          <span class="carte-item-price">9€</span>
+        </div>
+        <div class="carte-item">
+          <div class="carte-item-info"><h4>Assiette de fromages affinés</h4><p>Sélection de 5 fromages fermiers</p></div>
+          <span class="carte-item-price">14€</span>
+        </div>
+      </div>
+
+      <div class="carte-panel" id="panel-cave">
+        <div style="text-align:center; padding:40px 0;">
+          <h3 style="font-style:italic; font-size:1.3rem; color:var(--noir); margin-bottom:12px;">Notre cave à vins</h3>
+          <p style="color:var(--gris-ardoise); font-weight:300; max-width:500px; margin:0 auto; line-height:1.8;">Plus de 40 références soigneusement sélectionnées : vins naturels et conventionnels, du Beaujolais aux Côtes du Rhône en passant par la Bourgogne. Notre sommelier vous guidera avec plaisir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CARTE FIDÉLITÉ ═══ -->
+  <section class="fidelite section-pad" id="fidelite">
+    <div class="container">
+      <div class="fade-up">
+        <h2>Carte de fidélité</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="fidelite-card fade-up">
+        <h3>Le Bistrot du Coin</h3>
+        <p class="reward-text">1 dessert offert après 5 repas</p>
+        <div class="stamps">
+          <div class="stamp filled">
+            <svg viewBox="0 0 24 24"><path d="M11 2a3 3 0 0 0-3 3v1H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3h-2zm0 2h2a1 1 0 0 1 1 1v1H10V5a1 1 0 0 1 1-1zM7 12l2.5 2.5L15 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stamp">
+            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stamp">
+            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stamp">
+            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stamp">
+            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <p class="stampify-badge">Propulsé par Stampify</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ AVIS ═══ -->
+  <section class="avis section-pad" id="avis">
+    <div class="container">
+      <div class="fade-up">
+        <h2>Ce qu'en disent nos clients</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="avis-grid">
+        <div class="avis-card fade-up">
+          <div class="avis-stars">★★★★★</div>
+          <p>«&nbsp;Dîner parfait pour notre anniversaire. L'entrecôte était cuite exactement comme demandé et la cave à vins est remarquable. Service aux petits oignons.&nbsp;»</p>
+          <span class="avis-author">— Christine D.</span>
+        </div>
+        <div class="avis-card fade-up">
+          <div class="avis-stars">★★★★★</div>
+          <p>«&nbsp;Le menu du jour à 34€ est un rapport qualité-prix imbattable à Lyon. Produits frais, cuisine soignée, ambiance bistrot comme on aime. On revient chaque mois.&nbsp;»</p>
+          <span class="avis-author">— Marc A.</span>
+        </div>
+        <div class="avis-card fade-up">
+          <div class="avis-stars">★★★★★</div>
+          <p>«&nbsp;Enfin un vrai bistrot gastronomique à Lyon. Le risotto aux champignons était divin et la crème brûlée parfaite. Carte fidélité très bien pensée.&nbsp;»</p>
+          <span class="avis-author">— Sophie L.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RÉSERVATION ═══ -->
+  <section class="reservation section-pad" id="reservation">
+    <div class="container">
+      <div class="fade-up">
+        <h2>Réservez votre table</h2>
+        <div class="gold-line" style="margin-bottom:12px"></div>
+        <p class="reservation-sub">Mar–Sam · 12h–14h30 & 19h–22h30 · Fermé dimanche et lundi</p>
+      </div>
+      <form class="resa-form fade-up" onsubmit="event.preventDefault(); alert('Merci ! Votre demande de réservation a bien été envoyée. Nous vous confirmerons par email.');">
+        <div>
+          <label for="prenom">Prénom</label>
+          <input type="text" id="prenom" placeholder="Votre prénom" required>
+        </div>
+        <div>
+          <label for="date">Date</label>
+          <input type="date" id="date" required>
+        </div>
+        <div>
+          <label for="heure">Heure</label>
+          <select id="heure">
+            <option>12h00</option><option>12h30</option><option>13h00</option><option>13h30</option><option>14h00</option>
+            <option>19h00</option><option selected>19h30</option><option>20h00</option><option>20h30</option><option>21h00</option><option>21h30</option>
+          </select>
+        </div>
+        <div>
+          <label for="couverts">Couverts</label>
+          <select id="couverts">
+            <option>1 personne</option><option selected>2 personnes</option><option>3 personnes</option><option>4 personnes</option><option>5 personnes</option><option>6 personnes</option><option>7+ personnes</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="message">Message (optionnel)</label>
+          <textarea id="message" placeholder="Allergies, occasion spéciale, demande particulière…"></textarea>
+        </div>
+        <div class="resa-buttons">
+          <button type="submit" class="btn btn-bordeaux">Confirmer ma réservation</button>
+          <a href="https://wa.me/33478000003" class="btn btn-whatsapp" target="_blank">WhatsApp</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Le Bistrot du Coin</div>
+          <p>Cuisine de marché<br>Lyon 3 · Depuis 2015</p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>7 Cours Lafayette, Lyon 3<br>
+          <a href="tel:+33478000003">04 78 00 00 03</a><br>
+          <a href="/cdn-cgi/l/email-protection#a9dbccdaccdbdfc8ddc0c6c7e9cbc0dadddbc6ddcddccac6c0c787cfdb"><span class="__cf_email__" data-cfemail="b8caddcbddcaced9ccd1d7d6f8dad1cbcccad7ccdccddbd7d1d696deca">[email&#160;protected]</span></a></p>
+        </div>
+        <div>
+          <h4>Horaires</h4>
+          <p>Mar – Sam<br>12h–14h30 &amp; 19h–22h30<br>Dimanche &amp; Lundi : fermé</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Le Bistrot du Coin · Site vitrine créé par <a href="https://stampify.ch" target="_blank">Stampify</a> · stampify.ch</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Hamburger
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('.navbar-links a').forEach(a => {
+      a.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('open');
+      });
+    });
+
+    // Carte tabs
+    document.querySelectorAll('.carte-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.carte-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.carte-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Fade-up on scroll
+    const observer = new In

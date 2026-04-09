@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nail Studio — Salon de manucure premium · Lyon 2</title>
+<meta name="description" content="Nail Studio, salon de manucure premium à Lyon 2. Pose gel, nail art, soins mains et pieds par des techniciennes certifiées. Réservez votre moment beauté.">
+<meta property="og:title" content="Nail Studio | Salon Manucure Premium Lyon 2 – Pose Gel & Nail Art">
+<meta property="og:description" content="Salon de manucure premium à Lyon 2. Pose gel, nail art, soins mains et pieds par des techniciennes certifiées.">
+<meta property="og:image" content="https://images.pexels.com/photos/3997989/pexels-photo-3997989.jpeg?w=1200">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<link rel="canonical" href="https://www.nailstudio-lyon.fr/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   DESIGN SYSTEM
+   ═══════════════════════════════════ */
+:root {
+  --rose-poudre: #F2D7D5;
+  --nude-champagne: #EDE0D4;
+  --or-rose: #C9956A;
+  --blanc: #FFFFFF;
+  --taupe: #7D6258;
+  --gris-rose: #F7F0EE;
+  --fond-hero: #F9EDED;
+  --fond-reservation: #FBF4F3;
+  --footer-bg: #5A4540;
+  --footer-text: #E8DDD9;
+  --text-dark: #3A2E29;
+  --text-body: #5C4F4A;
+  --text-light: #9B8E88;
+  --border-rose: #E8C4C0;
+  --font-display: 'Josefin Sans', sans-serif;
+  --font-body: 'Raleway', sans-serif;
+  --radius: 6px;
+  --transition: 0.3s ease;
+}
+
+/* ═══════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-body);
+  background: var(--blanc);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
+
+.container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ═══════════════════════════════════
+   1. NAVBAR
+   ═══════════════════════════════════ */
+.navbar-top-line {
+  height: 3px;
+  background: var(--border-rose);
+}
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--blanc);
+  border-bottom: 1px solid var(--gris-rose);
+}
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+.navbar-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.navbar-logo-name {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  letter-spacing: 1px;
+}
+.navbar-logo-sub {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-style: italic;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.navbar-links a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--text-body);
+  letter-spacing: 0.3px;
+  transition: color var(--transition);
+}
+.navbar-links a:hover { color: var(--or-rose); }
+.btn-rdv {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  background: var(--rose-poudre);
+  color: var(--taupe);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+.btn-rdv:hover { background: #ECCBC8; transform: scale(1.02); }
+
+/* Mobile menu */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px;
+}
+.navbar-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--taupe);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+/* ═══════════════════════════════════
+   2. HERO
+   ═══════════════════════════════════ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 85vh;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 56px 60px 0;
+  padding-left: calc((100vw - 1140px) / 2 + 24px);
+  background: var(--fond-hero);
+}
+.hero-badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--or-rose);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.15;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+.hero-subtitle {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--text-body);
+  max-width: 420px;
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
+.btn-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: var(--nude-champagne);
+  color: var(--taupe);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  width: fit-content;
+}
+.btn-hero:hover { background: #E2D1C3; transform: scale(1.02); }
+.btn-hero svg { width: 16px; height: 16px; }
+.hero-note {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  letter-spacing: 0.3px;
+}
+.hero-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 0 40px;
+}
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ═══════════════════════════════════
+   3. STATS
+   ═══════════════════════════════════ */
+.stats {
+  background: var(--nude-champagne);
+  padding: 40px 0;
+}
+.stats .container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  text-align: center;
+}
+.stat-item {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--taupe);
+  letter-spacing: 0.5px;
+}
+.stat-item strong {
+  display: block;
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════
+   4. SERVICES
+   ═══════════════════════════════════ */
+.services { padding: 80px 0; }
+.section-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.section-header h2 {
+  font-weight: 300;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.section-divider {
+  width: 40px;
+  height: 2px;
+  background: var(--or-rose);
+  margin: 0 auto;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.service-category h3 {
+  font-weight: 300;
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--or-rose);
+}
+.service-card {
+  background: var(--gris-rose);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.service-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(201, 149, 106, 0.1);
+}
+.service-name {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: var(--text-dark);
+}
+.service-duration {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.service-price {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--or-rose);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════
+   5. EQUIPE
+   ═══════════════════════════════════ */
+.equipe {
+  background: var(--fond-hero);
+  padding: 80px 0;
+}
+.equipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  text-align: center;
+}
+.equipe-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.equipe-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--nude-champagne);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.4rem;
+  color: var(--taupe);
+  margin-bottom: 16px;
+}
+.equipe-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+.equipe-role {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.equipe-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--or-rose);
+  color: var(--blanc);
+  font-size: 0.72rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  letter-spacing: 0.3px;
+}
+
+/* ═══════════════════════════════════
+   6. GALERIE
+   ═══════════════════════════════════ */
+.galerie { padding: 80px 0; }
+.galerie-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.galerie-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  aspect-ratio: 4/3;
+}
+.galerie-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition);
+}
+.galerie-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(242, 215, 213, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.galerie-overlay svg {
+  width: 32px;
+  height: 32px;
+  color: var(--blanc);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+.galerie-item:hover .galerie-overlay { opacity: 1; }
+.galerie-item:hover img { transform: scale(1.05); }
+
+/* ═══════════════════════════════════
+   7. CARTE FIDELITE
+   ═══════════════════════════════════ */
+.fidelite { padding: 80px 0; }
+.fidelite-card {
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--gris-rose);
+  border: 1px solid var(--or-rose);
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: center;
+}
+.fidelite-qr {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  background: var(--blanc);
+  border: 2px dashed var(--or-rose);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+.fidelite-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+.fidelite-hearts {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.fidelite-hearts svg { width: 28px; height: 28px; }
+.fidelite-reward {
+  font-size: 0.88rem;
+  color: var(--taupe);
+  margin-bottom: 20px;
+}
+.fidelite-powered {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════
+   8. AVIS
+   ═══════════════════════════════════ */
+.avis {
+  background: var(--gris-rose);
+  padding: 80px 0;
+}
+.avis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.avis-card {
+  background: var(--blanc);
+  border-radius: 8px;
+  padding: 28px 24px;
+  transition: transform var(--transition);
+}
+.avis-card:hover { transform: scale(1.02); }
+.avis-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+.avis-stars svg { width: 16px; height: 16px; color: var(--or-rose); fill: var(--or-rose); }
+.avis-text {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text-body);
+  margin-bottom: 16px;
+}
+.avis-author {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+/* ═══════════════════════════════════
+   9. RESERVATION
+   ═══════════════════════════════════ */
+.reservation {
+  background: var(--fond-reservation);
+  padding: 80px 0;
+  text-align: center;
+}
+.reservation h2 {
+  font-weight: 300;
+  font-size: 2rem;
+  margin-bottom: 32px;
+}
+.reservation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.btn-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid var(--or-rose);
+  background: var(--blanc);
+  color: var(--taupe);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+.btn-contact:hover { background: var(--nude-champagne); transform: scale(1.02); }
+.btn-contact svg { width: 18px; height: 18px; }
+.reservation-note {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+/* ═══════════════════════════════════
+   10. FOOTER
+   ═══════════════════════════════════ */
+.footer {
+  background: var(--footer-bg);
+  padding: 48px 0 32px;
+  text-align: center;
+  color: var(--footer-text);
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.4rem;
+  color: var(--blanc);
+  margin-bottom: 16px;
+}
+.footer p {
+  font-size: 0.82rem;
+  line-height: 1.8;
+  margin-bottom: 4px;
+}
+.footer-credit {
+  margin-top: 24px;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .hero-content {
+    padding: 48px 24px;
+    order: 2;
+  }
+  .hero-image {
+    order: 1;
+    max-height: 50vh;
+    border-radius: 0;
+  }
+  .stats .container { grid-template-columns: repeat(2, 1fr); }
+  .services-grid { grid-template-columns: 1fr; }
+  .equipe-grid { grid-template-columns: 1fr; gap: 40px; }
+  .avis-grid { grid-template-columns: 1fr; }
+  .navbar-links { display: none; }
+  .navbar-toggle { display: flex; }
+  .navbar-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: var(--blanc);
+    padding: 24px;
+    gap: 20px;
+    border-bottom: 1px solid var(--gris-rose);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+}
+@media (max-width: 540px) {
+  .stats .container { grid-template-columns: 1fr; gap: 16px; }
+  .galerie-grid { grid-template-columns: 1fr; }
+  .reservation-buttons { flex-direction: column; align-items: center; }
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BeautySalon",
+  "name": "Nail Studio",
+  "description": "Salon de manucure premium à Lyon 2. Pose gel, nail art et soins mains par des techniciennes certifiées.",
+  "telephone": "+33 4 78 00 00 04",
+  "address": {"@type": "PostalAddress","streetAddress": "23 Rue Victor Hugo","addressLocality": "Lyon","postalCode": "69002","addressCountry": "FR"},
+  "geo": {"@type": "GeoCoordinates","latitude": 45.7579,"longitude": 4.8303},
+  "openingHoursSpecification": [
+    {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens": "10:00","closes": "19:30"},
+    {"@type": "OpeningHoursSpecification","dayOfWeek": "Sunday","opens": "11:00","closes": "17:00"}
+  ],
+  "priceRange": "€25 – €65",
+  "aggregateRating": {"@type": "AggregateRating","ratingValue": "4.9","bestRating": "5","ratingCount": "284"}
+}
+</script>
+</head>
+<body>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<div class="navbar-top-line"></div>
+<nav class="navbar">
+  <div class="container">
+    <a href="#" class="navbar-logo">
+      <span class="navbar-logo-name">Nail Studio</span>
+      <span class="navbar-logo-sub">by Léa</span>
+    </a>
+    <button class="navbar-toggle" onclick="document.querySelector('.navbar-links').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="navbar-links">
+      <a href="#services">Services</a>
+      <a href="#equipe">L'équipe</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#reservation">Réserver</a>
+      <a href="#reservation" class="btn-rdv">Prendre RDV</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-badge">Nail art & soins premium · Lyon 2</span>
+    <h1>L'art de vos<br>mains, sublimé.</h1>
+    <p class="hero-subtitle">Pose gel, nail art et soins mains premium par des techniciennes certifiées à Lyon 2.</p>
+    <a href="#reservation" class="btn-hero">
+      Prendre rendez-vous
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+    <p class="hero-note">Sans attente · Disponibilités 7j/7</p>
+  </div>
+  <div class="hero-image">
+    <img src="https://images.pexels.com/photos/3997989/pexels-photo-3997989.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="Nail Studio Lyon — manucure premium" loading="eager">
+  </div>
+</section>
+
+<!-- ═══════════ STATS ═══════════ -->
+<section class="stats">
+  <div class="container">
+    <div class="stat-item"><strong>6 ans</strong>d'expérience</div>
+    <div class="stat-item"><strong>500+</strong>designs créés</div>
+    <div class="stat-item"><strong>4.9★</strong>284 avis</div>
+    <div class="stat-item"><strong>Gel</strong>non-toxique</div>
+  </div>
+</section>
+
+<!-- ═══════════ SERVICES ═══════════ -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-header">
+      <h2>Nos prestations</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-category">
+        <h3>Mains</h3>
+        <div class="service-card">
+          <div><div class="service-name">Pose gel couleur</div><div class="service-duration">60 min</div></div>
+          <div class="service-price">45€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Pose gel french</div><div class="service-duration">75 min</div></div>
+          <div class="service-price">55€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Dépose + repose</div><div class="service-duration">90 min</div></div>
+          <div class="service-price">65€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Vernis semi-permanent</div><div class="service-duration">45 min</div></div>
+          <div class="service-price">35€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Manucure express</div><div class="service-duration">30 min</div></div>
+          <div class="service-price">25€</div>
+        </div>
+      </div>
+      <div class="service-category">
+        <h3>Pieds</h3>
+        <div class="service-card">
+          <div><div class="service-name">Pédicure gel</div><div class="service-duration">60 min</div></div>
+          <div class="service-price">55€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Pédicure classique</div><div class="service-duration">45 min</div></div>
+          <div class="service-price">35€</div>
+        </div>
+        <h3 style="margin-top: 24px;">Soins & extras</h3>
+        <div class="service-card">
+          <div><div class="service-name">Nail art (par ongle)</div><div class="service-duration"></div></div>
+          <div class="service-price">+5€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Soin mains paraffine</div><div class="service-duration">30 min</div></div>
+          <div class="service-price">30€</div>
+        </div>
+        <div class="service-card">
+          <div><div class="service-name">Soin cuticules</div><div class="service-duration">20 min</div></div>
+          <div class="service-price">15€</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ EQUIPE ═══════════ -->
+<section class="equipe" id="equipe">
+  <div class="container">
+    <div class="section-header">
+      <h2>Notre équipe</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="equipe-grid">
+      <div class="equipe-member">
+        <div class="equipe-avatar">L</div>
+        <div class="equipe-name">Léa</div>
+        <div class="equipe-role">Technicienne principale · 6 ans</div>
+        <span class="equipe-badge">Nail art & gel</span>
+      </div>
+      <div class="equipe-member">
+        <div class="equipe-avatar">C</div>
+        <div class="equipe-name">Camille</div>
+        <div class="equipe-role">Technicienne · 4 ans</div>
+        <span class="equipe-badge">French & dégradés</span>
+      </div>
+      <div class="equipe-member">
+        <div class="equipe-avatar">S</div>
+        <div class="equipe-name">Sofia</div>
+        <div class="equipe-role">Technicienne · 3 ans</div>
+        <span class="equipe-badge">Soins & pédicure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ GALERIE ═══════════ -->
+<section class="galerie" id="galerie">
+  <div class="container">
+    <div class="section-header">
+      <h2>Galerie</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="galerie-grid">
+      <div class="galerie-item">
+        <img src="https://images.pexels.com/photos/3997989/pexels-photo-3997989.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Nail art premium" loading="lazy">
+        <div class="galerie-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+      </div>
+      <div class="galerie-item">
+        <img src="https://images.pexels.com/photos/3997991/pexels-photo-3997991.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Soin mains" loading="lazy">
+        <div class="galerie-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+      </div>
+      <div class="galerie-item">
+        <img src="https://images.pexels.com/photos/704815/pexels-photo-704815.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Vernis couleur" loading="lazy">
+        <div class="galerie-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+      </div>
+      <div class="galerie-item">
+        <img src="https://images.pexels.com/photos/3997986/pexels-photo-3997986.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Résultat nail art" loading="lazy">
+        <div class="galerie-overlay">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FIDELITE ═══════════ -->
+<section class="fidelite">
+  <div class="container">
+    <div class="section-header">
+      <h2>Carte fidélité</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="fidelite-card">
+      <div class="fidelite-qr">QR Code</div>
+      <div class="fidelite-title">Nail Studio</div>
+      <div class="fidelite-hearts">
+        <!-- 1 filled -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#F2D7D5" stroke="#F2D7D5" stroke-width="1"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <!-- 5 empty -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9B8E88" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9B8E88" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9B8E88" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9B8E88" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9B8E88" stroke-width="1.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <p class="fidelite-reward">1 soin offert à votre 6<sup>e</sup> visite</p>
+      <p class="fidelite-powered">Propulsé par Stampify</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ AVIS ═══════════ -->
+<section class="avis">
+  <div class="container">
+    <div class="section-header">
+      <h2>Ce qu'elles en disent</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="avis-grid">
+      <div class="avis-card">
+        <div class="avis-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="avis-text">"Léa est une artiste. Mon nail art était exactement ce que j'avais demandé et la pose gel tient parfaitement. L'ambiance du salon est super cosy."</p>
+        <div class="avis-author">Emma R.</div>
+      </div>
+      <div class="avis-card">
+        <div class="avis-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="avis-text">"Le meilleur salon de manucure de Lyon pour moi. Produits de qualité, techniciennes attentionnées et résultats impeccables. La carte fidélité est un vrai plus."</p>
+        <div class="avis-author">Chloé M.</div>
+      </div>
+      <div class="avis-card">
+        <div class="avis-stars">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="avis-text">"Pédicure gel parfaite, Camille est très professionnelle. Le salon est magnifique et très propre. Je recommande les yeux fermés à toutes mes amies."</p>
+        <div class="avis-author">Inès B.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ RESERVATION ═══════════ -->
+<section class="reservation" id="reservation">
+  <div class="container">
+    <h2>Réservez votre moment</h2>
+    <div class="reservation-buttons">
+      <a href="tel:+33478000004" class="btn-contact">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Appeler
+      </a>
+      <a href="https://instagram.com/nailstudio.lyon" target="_blank" class="btn-contact">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Instagram DM
+      </a>
+      <a href="https://wa.me/33478000004" target="_blank" class="btn-contact">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+    <p class="reservation-note">Réponse garantie sous 2h · 7j/7</p>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-logo">Nail Studio</div>
+    <p>23 Rue Victor Hugo, Lyon 2</p>
+    <p>+33 4 78 00 00 04 · @nailstudio.lyon</p>
+    <p>Lun–Sam 10h–19h30 · Dim 11h–17h</p>
+    <p class="footer-credit">Site vitrine créé par Stampify · stampify.ch</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Café Lumière | Café de Spécialité à Lyon 2 – Torréfaction Artisanale & Brunch</title>
+<meta name="description" content="Café Lumière, café de spécialité au cœur de Lyon 2. Espressos de torréfaction maison, pâtisseries artisanales et brunchs du weekend. Place Bellecour, Lyon.">
+<link rel="canonical" href="https://www.cafe-lumiere-lyon.fr/">
+<meta property="og:title" content="Café Lumière | Café de Spécialité à Lyon 2">
+<meta property="og:description" content="Espressos de torréfaction maison, pâtisseries artisanales et brunchs du weekend au cœur de Lyon 2.">
+<meta property="og:image" content="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?w=1200">
+<meta property="og:url" content="https://www.cafe-lumiere-lyon.fr/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CafeOrCoffeeShop",
+  "name": "Café Lumière",
+  "url": "https://www.cafe-lumiere-lyon.fr",
+  "image": ["https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg"],
+  "description": "Café de spécialité avec torréfaction artisanale maison, pâtisseries fraîches et brunchs du weekend au cœur de Lyon 2.",
+  "telephone": "+33 4 78 00 00 00",
+  "email": "contact@cafe-lumiere.fr",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "12 Place Bellecour",
+    "addressLocality": "Lyon",
+    "addressRegion": "Auvergne-Rhône-Alpes",
+    "postalCode": "69002",
+    "addressCountry": "FR"
+  },
+  "geo": {"@type": "GeoCoordinates","latitude": 45.7575,"longitude": 4.8323},
+  "openingHoursSpecification": [
+    {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens": "07:30","closes": "19:00"},
+    {"@type": "OpeningHoursSpecification","dayOfWeek": "Saturday","opens": "08:00","closes": "19:00"},
+    {"@type": "OpeningHoursSpecification","dayOfWeek": "Sunday","opens": "09:00","closes": "17:00"}
+  ],
+  "priceRange": "€2 – €18",
+  "currenciesAccepted": "EUR",
+  "servesCuisine": "Café de spécialité, Pâtisserie, Brunch",
+  "aggregateRating": {"@type": "AggregateRating","ratingValue": "4.9","bestRating": "5","ratingCount": "437"}
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brown: #2C1810;
+  --brown-light: #4A3228;
+  --cream: #F5EFE6;
+  --cream-dark: #EDE5D8;
+  --cream-deeper: #E2D8C8;
+  --white: #FDFAF6;
+  --gold: #C9A84C;
+  --gold-light: #DFC070;
+  --warm-gray: #8B7355;
+  --text-muted: #7A6B58;
+  --border: rgba(44,24,16,0.12);
+  --border-light: rgba(44,24,16,0.07);
+  --shadow-sm: 0 2px 16px rgba(44,24,16,0.06);
+  --shadow-md: 0 8px 32px rgba(44,24,16,0.10);
+  --shadow-lg: 0 20px 60px rgba(44,24,16,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Jost',sans-serif;color:var(--brown);background:var(--white);line-height:1.75;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:400;line-height:1.2}
+h1{font-size:clamp(2.4rem,6vw,4.5rem);font-weight:300;letter-spacing:0.02em}
+h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:300;letter-spacing:0.02em}
+h3{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:400}
+.label-upper{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;font-weight:500;color:var(--gold);display:block;margin-bottom:16px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+.btn{display:inline-block;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;border-radius:0;padding:14px 36px;transition:all 0.3s ease;cursor:pointer}
+.btn-primary{background:var(--brown);color:var(--white);border:1px solid var(--brown)}
+.btn-primary:hover{background:var(--brown-light)}
+.btn-outline{background:transparent;color:var(--brown);border:1px solid var(--brown)}
+.btn-outline:hover{background:var(--brown);color:var(--white)}
+.btn-white{background:transparent;color:white;border:1px solid rgba(255,255,255,0.6)}
+.btn-white:hover{background:white;color:var(--brown)}
+.btn-gold{background:var(--gold);color:var(--brown);border:1px solid var(--gold)}
+.btn-gold:hover{background:var(--gold-light)}
+
+/* NAVBAR */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 48px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s ease,box-shadow 0.4s ease;background:transparent}
+#nav.scrolled{background:rgba(253,250,246,0.97);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--border);height:64px}
+.nav-logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.5rem;font-weight:400;color:white;letter-spacing:0.04em;transition:color 0.4s}
+#nav.scrolled .nav-logo{color:var(--brown)}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.15em;font-weight:500;color:rgba(255,255,255,0.85);transition:color 0.3s}
+#nav.scrolled .nav-links a{color:var(--text-muted)}
+.nav-links a:hover{color:white}
+#nav.scrolled .nav-links a:hover{color:var(--brown)}
+.nav-cta{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:500;padding:10px 24px;border:1px solid rgba(255,255,255,0.5);color:white;background:transparent;transition:all 0.3s}
+.nav-cta:hover{background:white;color:var(--brown)}
+#nav.scrolled .nav-cta{border-color:var(--brown);color:var(--brown)}
+#nav.scrolled .nav-cta:hover{background:var(--brown);color:white}
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.nav-hamburger span{display:block;width:22px;height:1px;background:white;margin:5px 0;transition:all 0.3s}
+#nav.scrolled .nav-hamburger span{background:var(--brown)}
+#mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--white);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+#mobile-nav.open{display:flex}
+#mobile-nav a{font-size:1.6rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--brown)}
+#mobile-nav .close-btn{position:absolute;top:24px;right:32px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--brown)}
+
+/* HERO */
+#hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#hero-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;transform:scale(1.04);transition:transform 8s ease-out}
+#hero-bg.loaded{transform:scale(1)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(44,24,16,0.52) 0%,rgba(44,24,16,0.38) 60%,rgba(44,24,16,0.58) 100%)}
+.hero-content{position:relative;z-index:10;text-align:center;padding:0 32px;max-width:860px}
+.hero-badge{display:inline-block;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.22em;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.25);padding:7px 20px;margin-bottom:32px;font-weight:500}
+.hero-content h1{color:white;margin-bottom:20px;font-style:italic}
+.hero-content .hero-sub{font-size:0.95rem;color:rgba(255,255,255,0.75);letter-spacing:0.06em;margin-bottom:44px;font-weight:300}
+.hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.5);z-index:10}
+.scroll-line{width:1px;height:40px;background:rgba(255,255,255,0.3);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:0.3}50%{opacity:0.8}}
+
+/* STATS */
+#stats-bar{background:var(--brown);display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,0.06)}
+.stat-item{padding:32px 24px;text-align:center;border-right:1px solid rgba(255,255,255,0.06)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:300;color:var(--gold-light);display:block;margin-bottom:4px}
+.stat-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.16em;color:rgba(255,255,255,0.45);font-weight:500}
+
+/* HISTOIRE */
+#histoire{background:var(--white);padding:120px 48px}
+.histoire-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.histoire-text h2{margin-bottom:28px}
+.histoire-text p{font-size:0.95rem;color:var(--text-muted);line-height:1.85;margin-bottom:20px;max-width:480px}
+.histoire-text .signature{font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;color:var(--gold);margin-top:32px;display:block}
+.histoire-img{position:relative}
+.histoire-img img{width:100%;height:560px;object-fit:cover}
+.histoire-caption{position:absolute;bottom:-20px;right:-20px;background:var(--cream);padding:20px 24px;border-left:2px solid var(--gold)}
+.histoire-caption span{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--text-muted);display:block;margin-bottom:4px}
+.histoire-caption strong{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;color:var(--brown)}
+
+/* CARTE */
+#carte{background:var(--cream);padding:120px 48px}
+.carte-inner{max-width:1280px;margin:0 auto}
+.carte-header{text-align:center;margin-bottom:72px}
+.carte-header h2{margin-bottom:12px}
+.carte-header p{font-size:0.9rem;color:var(--text-muted)}
+.carte-categories{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+.carte-cat-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;color:var(--brown);margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.carte-cat-title::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold)}
+.carte-ligne{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--border-light)}
+.carte-ligne:last-child{border-bottom:none}
+.carte-item-name{font-size:0.85rem;color:var(--brown)}
+.carte-item-desc{font-size:0.75rem;color:var(--text-muted);margin-left:8px;font-style:italic}
+.carte-item-price{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--brown);white-space:nowrap}
+
+/* PHOTO PARALLAX */
+#parallax-1{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#parallax-1-bg{position:absolute;inset:-60px 0;background-image:url('https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center;background-attachment:fixed}
+.parallax-overlay{position:absolute;inset:0;background:rgba(44,24,16,0.62)}
+.parallax-content{position:relative;z-index:10;text-align:center;padding:0 48px;max-width:800px}
+.parallax-content blockquote{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:300;color:white;line-height:1.5;margin-bottom:24px}
+.parallax-content cite{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--gold-light);font-style:normal;font-weight:500}
+
+/* GALERIE */
+#galerie{background:var(--white)}
+.galerie-intro{padding:120px 48px 0;text-align:center;max-width:700px;margin:0 auto}
+.galerie-intro h2{margin-bottom:20px}
+.galerie-intro p{font-size:0.9rem;color:var(--text-muted);margin-bottom:64px}
+.galerie-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:320px 280px;gap:4px}
+.galerie-item{overflow:hidden}
+.galerie-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease}
+.galerie-item:hover img{transform:scale(1.04)}
+.galerie-item:nth-child(1){grid-row:span 2}
+
+/* FIDELITE */
+#fidelite{background:var(--cream);padding:120px 48px}
+.fidelite-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.fidelite-text h2{margin-bottom:20px}
+.fidelite-text p{font-size:0.9rem;color:var(--text-muted);line-height:1.8;margin-bottom:32px;max-width:440px}
+.fidelite-list{list-style:none;margin-bottom:40px;display:flex;flex-direction:column;gap:14px}
+.fidelite-list li{display:flex;align-items:flex-start;gap:12px;font-size:0.85rem;color:var(--brown)}
+.fidelite-list li::before{content:'';width:20px;height:1px;background:var(--gold);flex-shrink:0;margin-top:11px}
+.loyalty-widget{background:white;box-shadow:var(--shadow-lg)}
+.loyalty-header{background:var(--brown);padding:24px 32px}
+.loyalty-header-title{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;color:white;display:block}
+.loyalty-header-sub{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.65);margin-top:4px;display:block}
+.loyalty-body{padding:32px}
+.qr-placeholder{width:140px;height:140px;margin:0 auto 28px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--text-muted);text-align:center;letter-spacing:0.08em}
+.stamps-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.stamp-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border)}
+.stamp-dot.filled{background:var(--gold);border-color:var(--gold)}
+.stamps-count{text-align:center;font-size:0.82rem;color:var(--text-muted);margin-bottom:8px}
+.stamps-brand{text-align:center;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(44,24,16,0.25)}
+
+/* AVIS */
+#avis{background:var(--white);padding:120px 48px}
+.avis-inner{max-width:1280px;margin:0 auto}
+.avis-header{text-align:center;margin-bottom:72px}
+.stars-row{display:flex;justify-content:center;gap:4px;margin-bottom:8px}
+.star{color:var(--gold);font-size:14px}
+.rating-text{font-size:0.75rem;color:var(--text-muted)}
+.avis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.avis-card{background:var(--cream);padding:36px 32px}
+.avis-stars{display:flex;gap:3px;margin-bottom:20px}
+.avis-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;line-height:1.7;color:var(--brown);margin-bottom:24px}
+.avis-author{display:flex;align-items:center;gap:12px}
+.avis-avatar{width:36px;height:36px;border-radius:50%;background:var(--cream-deeper);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--gold)}
+.avis-name{font-size:0.78rem;font-weight:500;color:var(--brown)}
+.avis-date{font-size:0.7rem;color:var(--text-muted)}
+
+/* HORAIRES */
+#horaires{background:var(--cream-dark);padding:120px 48px}
+.horaires-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px}
+.horaires-info h2{margin-bottom:28px}
+.contact-details{display:flex;flex-direction:column;gap:20px;margin-bottom:40px}
+.contact-row{display:flex;align-items:flex-start;gap:16px}
+.contact-icon{width:32px;height:32px;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-icon svg{width:14px;height:14px;stroke:var(--gold)}
+.contact-row-text{font-size:0.85rem;color:var(--text-muted);line-height:1.7}
+.contact-row-text strong{display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--brown);margin-bottom:2px;font-weight:500}
+.horaires-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 24px;font-size:0.82rem;color:var(--text-muted)}
+.horaires-grid .jour{font-weight:500;color:var(--brown)}
+.contact-form h3{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:32px}
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.form-field label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:500;color:var(--text-muted)}
+.form-field input,.form-field select,.form-field textarea{background:var(--white);border:1px solid var(--border);padding:12px 16px;font-size:0.85rem;color:var(--brown);font-family:'Jost',sans-serif;outline:none;transition:border-color 0.2s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--gold)}
+.form-field textarea{resize:none;height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
+
+/* CTA FINAL */
+#cta-final{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:380px;text-align:center}
+#cta-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center;background-attachment:fixed}
+.cta-overlay{position:absolute;inset:0;background:rgba(44,24,16,0.72)}
+.cta-content{position:relative;z-index:10;padding:80px 48px;max-width:700px}
+.cta-content h2{color:white;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:16px}
+.cta-content p{color:rgba(255,255,255,0.65);font-size:0.9rem;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--brown)}
+.footer-top{padding:64px 48px;max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px}
+.footer-brand-logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.6rem;color:white;display:block;margin-bottom:14px}
+.footer-brand-tagline{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.8;max-width:220px}
+.footer-col-title{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.18em;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:20px;display:block}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-links li a{font-size:0.8rem;color:rgba(255,255,255,0.4);transition:color 0.2s}
+.footer-links li a:hover{color:white}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.06);padding:20px 48px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:0.7rem}
+.footer-legal{display:flex;gap:24px}
+.footer-legal a{color:rgba(255,255,255,0.3);transition:color 0.2s}
+.footer-legal a:hover{color:rgba(255,255,255,0.6)}
+.footer-stamp{font-size:0.65rem;color:rgba(255,255,255,0.2)}
+
+@media(max-width:1024px){
+  #histoire{padding:80px 32px}
+  .histoire-inner{grid-template-columns:1fr;gap:48px}
+  .histoire-caption{right:0;bottom:0}
+  .fidelite-inner{grid-template-columns:1fr}
+  .horaires-inner{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px}
+  .carte-categories{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  #nav{padding:0 24px}
+  .nav-links{display:none}
+  .nav-hamburger{display:block}
+  #histoire,#carte,#galerie,#fidelite,#avis,#horaires{padding:80px 24px}
+  .avis-grid{grid-template-columns:1fr}
+  .galerie-grid{grid-template-columns:1fr 1fr;grid-template-rows:240px 240px 240px}
+  .galerie-item:nth-child(1){grid-column:span 2;grid-row:span 1}
+  #stats-bar{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div id="mobile-nav">
+  <button class="close-btn" onclick="closeMobile()">✕</button>
+  <a href="#histoire" onclick="closeMobile()">Notre histoire</a>
+  <a href="#carte" onclick="closeMobile()">La carte</a>
+  <a href="#fidelite" onclick="closeMobile()">Carte fidélité</a>
+  <a href="#horaires" onclick="closeMobile()">Nous trouver</a>
+</div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">Café Lumière</a>
+  <div class="nav-links">
+    <a href="#histoire">Notre histoire</a>
+    <a href="#carte">La carte</a>
+    <a href="#fidelite">Carte fidélité</a>
+    <a href="#horaires">Nous trouver</a>
+  </div>
+  <a href="#horaires" class="nav-cta">Réserver</a>
+  <button class="nav-hamburger" onclick="openMobile()"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-badge">Torréfaction artisanale · Lyon 2 · Place Bellecour</span>
+    <h1 class="serif">Le goût du café,<br>enfin révélé.</h1>
+    <p class="hero-sub">Espressos de spécialité torréfiés sur place · Pâtisseries maison · Brunchs du weekend</p>
+    <div class="hero-ctas">
+      <a href="#carte" class="btn btn-gold">Voir la carte</a>
+      <a href="#histoire" class="btn btn-white">Notre histoire</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div><span>Découvrir</span></div>
+</section>
+
+<div id="stats-bar">
+  <div class="stat-item reveal"><span class="stat-num">2019</span><span class="stat-label">Fondé à Lyon</span></div>
+  <div class="stat-item reveal reveal-delay-1"><span class="stat-num">12</span><span class="stat-label">Origines de café</span></div>
+  <div class="stat-item reveal reveal-delay-2"><span class="stat-num">4.9</span><span class="stat-label">Note · 437 avis</span></div>
+  <div class="stat-item reveal reveal-delay-3"><span class="stat-num">100%</span><span class="stat-label">Torréfaction maison</span></div>
+</div>
+
+<section id="histoire">
+  <div class="histoire-inner">
+    <div class="histoire-text reveal">
+      <span class="label-upper">Notre histoire</span>
+      <h2>Une passion,<br>une adresse.</h2>
+      <p>Café Lumière est né en 2019 d'une conviction simple : Lyon méritait un lieu où le café serait traité avec autant de soin qu'un grand cru. Deux passionnés, formés entre Melbourne et Milan, ont posé leurs valises Place Bellecour pour créer cet espace chaleureux.</p>
+      <p>Chaque semaine, nous sélectionnons des grains d'exception en provenance d'Éthiopie, du Brésil et de Colombie, auprès de producteurs que nous connaissons personnellement. Du grain vert à la tasse, chaque étape est maîtrisée pour vous offrir une expérience incomparable.</p>
+      <p>Notre atelier de torréfaction est visible depuis la salle, derrière une cloison vitrée. Le parfum du café frais torréfié accueille chaque client dès l'entrée.</p>
+      <span class="signature">— Fondé à Lyon en 2019 · Torréfaction artisanale maison</span>
+    </div>
+    <div class="histoire-img reveal reveal-delay-2">
+      <img src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Intérieur Café Lumière Lyon" loading="lazy">
+      <div class="histoire-caption">
+        <span>Reconnu</span>
+        <strong>Meilleur café de<br>spécialité Lyon 2024</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="carte">
+  <div class="carte-inner">
+    <div class="carte-header reveal">
+      <span class="label-upper">À déguster</span>
+      <h2>Notre carte</h2>
+      <p>Des produits frais, préparés chaque matin avec amour. Nos pâtisseries changent selon les saisons.</p>
+    </div>
+    <div class="carte-categories">
+      <div class="reveal">
+        <h3 class="carte-cat-title">Cafés de spécialité</h3>
+        <div class="carte-ligne"><span class="carte-item-name">Espresso <span class="carte-item-desc">Corsé et aromatique</span></span><span class="carte-item-price">2,80€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Flat white <span class="carte-item-desc">Doux et velouté</span></span><span class="carte-item-price">3,50€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Latte art signature <span class="carte-item-desc">Notre création maison</span></span><span class="carte-item-price">4,20€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Cappuccino <span class="carte-item-desc">Mousse onctueuse</span></span><span class="carte-item-price">3,80€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Cold brew <span class="carte-item-desc">Infusion lente 18h</span></span><span class="carte-item-price">4,50€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Matcha latte <span class="carte-item-desc">Matcha cérémonial, lait d'avoine</span></span><span class="carte-item-price">4,80€</span></div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <h3 class="carte-cat-title">Pâtisseries maison</h3>
+        <div class="carte-ligne"><span class="carte-item-name">Croissant pur beurre</span><span class="carte-item-price">2,20€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Pain au chocolat <span class="carte-item-desc">Chocolat noir 70%</span></span><span class="carte-item-price">2,40€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Carrot cake <span class="carte-item-desc">Glaçage cream cheese</span></span><span class="carte-item-price">4,50€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Muffin myrtille <span class="carte-item-desc">Fruits frais de saison</span></span><span class="carte-item-price">3,80€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Banana bread <span class="carte-item-desc">Noix, miel de Provence</span></span><span class="carte-item-price">4,00€</span></div>
+      </div>
+      <div class="reveal">
+        <h3 class="carte-cat-title">Brunch du weekend</h3>
+        <div class="carte-ligne"><span class="carte-item-name">Brunch complet <span class="carte-item-desc">Salé, sucré, boisson chaude</span></span><span class="carte-item-price">18€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Granola bowl <span class="carte-item-desc">Granola maison, fruits, yaourt</span></span><span class="carte-item-price">9€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Avocado toast <span class="carte-item-desc">Avocat, œuf poché, graines</span></span><span class="carte-item-price">11€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Pancakes <span class="carte-item-desc">Sirop d'érable, fruits rouges</span></span><span class="carte-item-price">10€</span></div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <h3 class="carte-cat-title">Boissons fraîches</h3>
+        <div class="carte-ligne"><span class="carte-item-name">Jus pressé du jour</span><span class="carte-item-price">5,00€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Limonade maison <span class="carte-item-desc">Citron, menthe, miel</span></span><span class="carte-item-price">4,20€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Kombucha <span class="carte-item-desc">Gingembre-citron</span></span><span class="carte-item-price">5,50€</span></div>
+        <div class="carte-ligne"><span class="carte-item-name">Eau infusée <span class="carte-item-desc">Concombre-menthe</span></span><span class="carte-item-price">3,00€</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="parallax-1">
+  <div id="parallax-1-bg"></div>
+  <div class="parallax-overlay"></div>
+  <div class="parallax-content reveal">
+    <blockquote>"Le café n'est pas une boisson. C'est une conversation qui dure toute la journée."</blockquote>
+    <cite>— L'équipe Café Lumière, Lyon</cite>
+  </div>
+</section>
+
+<section id="galerie">
+  <div class="galerie-intro reveal">
+    <span class="label-upper">L'espace</span>
+    <h2>Un endroit pour prendre le temps</h2>
+    <p>Un écrin chaleureux de 120m² au cœur de Lyon 2. Comptoir en chêne, lumière dorée, atelier de torréfaction visible. Un lieu conçu pour ralentir.</p>
+  </div>
+  <div class="galerie-grid">
+    <div class="galerie-item"><img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Café Lumière Lyon intérieur" loading="lazy"></div>
+    <div class="galerie-item"><img src="https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Latte art Café Lumière" loading="lazy"></div>
+    <div class="galerie-item"><img src="https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Pâtisseries maison" loading="lazy"></div>
+    <div class="galerie-item"><img src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Salle Café Lumière" loading="lazy"></div>
+    <div class="galerie-item"><img src="https://images.pexels.com/photos/374885/pexels-photo-374885.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Grains de café torréfiés" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="fidelite">
+  <div class="fidelite-inner">
+    <div class="fidelite-text reveal">
+      <span class="label-upper">Programme fidélité</span>
+      <h2>Revenez,<br>vous êtes attendus</h2>
+      <p>Cumulez un tampon à chaque visite et recevez votre café offert après 10 passages. Votre carte est sur votre téléphone — aucune app à installer, jamais de carte à perdre.</p>
+      <ul class="fidelite-list">
+        <li>Aucune application à télécharger</li>
+        <li>Valable sur tous nos cafés sans exception</li>
+        <li>1 café offert après 10 tampons</li>
+        <li>Les tampons n'expirent jamais</li>
+      </ul>
+      <a href="#horaires" class="btn btn-outline">Obtenir ma carte fidélité</a>
+    </div>
+    <div class="loyalty-widget reveal reveal-delay-2">
+      <div class="loyalty-header">
+        <span class="loyalty-header-title">Café Lumière</span>
+        <span class="loyalty-header-sub">Carte Fidélité · Lyon 2</span>
+      </div>
+      <div class="loyalty-body">
+        <div class="qr-placeholder">QR Code<br>Stampify</div>
+        <div class="stamps-row">
+          <div class="stamp-dot filled"></div><div class="stamp-dot filled"></div><div class="stamp-dot filled"></div>
+          <div class="stamp-dot"></div><div class="stamp-dot"></div><div class="stamp-dot"></div>
+          <div class="stamp-dot"></div><div class="stamp-dot"></div><div class="stamp-dot"></div><div class="stamp-dot"></div>
+        </div>
+        <p class="stamps-count">3 / 10 visites — encore 7 pour votre café offert</p>
+        <p class="stamps-brand">PROPULSÉ PAR STAMPIFY</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="avis">
+  <div class="avis-inner">
+    <div class="avis-header reveal">
+      <span class="label-upper">Avis clients</span>
+      <h2>Ce qu'ils en disent</h2>
+      <div class="stars-row"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+      <p class="rating-text">4.9 / 5 — 437 avis vérifiés Google</p>
+    </div>
+    <div class="avis-grid">
+      <div class="avis-card reveal">
+        <div class="avis-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="avis-text">"Le meilleur flat white de Lyon, sans hésitation. L'ambiance est parfaite pour travailler le matin. Je reviens chaque semaine sans exception."</p>
+        <div class="avis-author"><div class="avis-avatar">SM</div><div><p class="avis-name">Sophie M.</p><p class="avis-date">Cliente fidèle depuis 2 ans</p></div></div>
+      </div>
+      <div class="avis-card reveal reveal-delay-1">
+        <div class="avis-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="avis-text">"Torréfaction maison de qualité exceptionnelle. On sent vraiment la différence avec les cafés classiques. Le carrot cake est divin. Une adresse incontournable."</p>
+        <div class="avis-author"><div class="avis-avatar">TR</div><div><p class="avis-name">Thomas R.</p><p class="avis-date">Client depuis 1 an</p></div></div>
+      </div>
+      <div class="avis-card reveal reveal-delay-2">
+        <div class="avis-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="avis-text">"Brunch du dimanche incontournable à Lyon. Service attentionné, produits frais, cadre magnifique. La carte fidélité est un vrai plus !"</p>
+        <div class="avis-author"><div class="avis-avatar">ML</div><div><p class="avis-name">Marie L.</p><p class="avis-date">Cliente depuis 6 mois</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="horaires">
+  <div class="horaires-inner">
+    <div class="horaires-info reveal">
+      <span class="label-upper">Nous trouver</span>
+      <h2>Réservez votre moment</h2>
+      <div class="contact-details">
+        <div class="contact-row">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+          <div class="contact-row-text"><strong>Adresse</strong>12 Place Bellecour, 69002 Lyon<br>Métro A — Bellecour</div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.82 19a19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-2.93-8.81A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="contact-row-text"><strong>Téléphone</strong>+33 4 78 00 00 00<br>Réponse 7j/7</div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+          <div class="contact-row-text"><strong>Email</strong>contact@cafe-lumiere.fr</div>
+        </div>
+      </div>
+      <div class="horaires-grid">
+        <span class="jour">Lun – Ven</span><span>07h30 – 19h00</span>
+        <span class="jour">Samedi</span><span>08h00 – 19h00</span>
+        <span class="jour">Dimanche</span><span>09h00 – 17h00</span>
+      </div>
+    </div>
+    <div class="contact-form reveal reveal-delay-1">
+      <h3>Privatiser l'espace</h3>
+      <form onsubmit="handleForm(event)">
+        <div class="form-row">
+          <div class="form-field"><label>Prénom</label><input type="text" placeholder="Sophie" required></div>
+          <div class="form-field"><label>Nom</label><input type="text" placeholder="Martin" required></div>
+        </div>
+        <div class="form-field" style="margin-top:16px"><label>Email</label><input type="email" placeholder="sophie@email.fr" required></div>
+        <div class="form-field"><label>Type d'événement</label>
+          <select required>
+            <option value="">Choisir...</option>
+            <option>Brunch privatif</option>
+            <option>Événement professionnel</option>
+            <option>Anniversaire</option>
+            <option>Séminaire</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Message</label><textarea placeholder="Précisions, nombre de personnes..."></textarea></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px">Envoyer ma demande</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="cta-final">
+  <div id="cta-bg"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content reveal">
+    <span class="label-upper" style="color:var(--gold-light)">Venez nous voir</span>
+    <h2>Votre prochain café vous attend</h2>
+    <p>12 Place Bellecour, Lyon 2 · Ouvert 7j/7 · Torréfaction artisanale maison</p>
+    <div class="cta-btns">
+      <a href="#horaires" class="btn btn-white">Nous contacter</a>
+      <a href="https://maps.google.com/?q=12+Place+Bellecour+Lyon" target="_blank" class="btn" style="color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.3)">Itinéraire →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="footer-brand-logo">Café Lumière</span>
+      <p class="footer-brand-tagline">Café de spécialité avec torréfaction artisanale maison au cœur de Lyon 2.</p>
+    </div>
+    <div>
+      <span class="footer-col-title">Navigation</span>
+      <ul class="footer-links">
+        <li><a href="#histoire">Notre histoire</a></li>
+        <li><a href="#carte">La carte</a></li>
+        <li><a href="#galerie">L'espace</a></li>
+        <li><a href="#fidelite">Carte fidélité</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-title">Informations</span>
+      <ul class="footer-links">
+        <li><a href="#horaires">Horaires</a></li>
+        <li><a href="#horaires">Accès & contact</a></li>
+        <li><a href="#avis">Avis clients</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-title">Contact</span>
+      <ul class="footer-links">
+        <li><a href="tel:+33478000000">+33 4 78 00 00 00</a></li>
+        <li><a href="mailto:contact@cafe-lumiere.fr">contact@cafe-lumiere.fr</a></li>
+        <li style="margin-top:12px"><span style="font-size:0.75rem;color:rgba(255,255,255,0.3)">12 Place Bellecour<br>69002 Lyon, France</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">
+      <a href="#">Mentions légales</a>
+      <a href="#">Confidentialité</a>
+    </div>
+    <p>© 2026 Café Lumière · <span class="footer-stamp">Site vitrine créé par Stampify</span></p>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.08});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('hero-bg').classList.add('loaded'), 100);
+});
+function openMobile(){document.getElementById('mobile-nav').classList.add('open');document.body.style.overflow='hidden'}
+function closeMobile(){document.getElementById('mobile-nav').classList.remove('open');document.body.style.overflow=''}
+function handleForm(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('button[type="submit"]');
+  btn.textContent='Demande envoyée ✓';btn.style.background='#4A6741';
+  setTimeout(()=>{btn.textContent='Envoyer ma demande';btn.style.background='';e.target.reset();},3000);
+}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const href=a.getAttribute('href');if(href==='#')return;
+    const target=document.querySelector(href);
+    if(target){e.preventDefault();window.scrollTo({top:target.getBoundingClientRect().top+window.scrollY-72,behavior:'smooth'});}
+  });
+});
+</script>
+</body>
+</html>
