@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import DemoBanner from "@/components/DemoBanner";
 
 const THEME = {
   primary: "#722F37",
@@ -187,9 +188,7 @@ export default function RestaurantDemo() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <div className="bg-indigo-600 text-white text-center py-2.5 px-4 text-sm font-semibold sticky top-0 z-50">
-        🎯 Ceci est une démo — votre version sera personnalisée à votre image
-      </div>
+      <DemoBanner />
 
       <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">

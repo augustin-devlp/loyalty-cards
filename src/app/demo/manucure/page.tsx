@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import DemoBanner from "@/components/DemoBanner";
 
 const THEME = {
   primary: "#D4AF37",
@@ -189,9 +190,7 @@ export default function ManucureDemo() {
 
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: THEME.light }}>
-      <div className="bg-indigo-600 text-white text-center py-2.5 px-4 text-sm font-semibold sticky top-0 z-50">
-        🎯 Ceci est une démo — votre version sera personnalisée à votre image
-      </div>
+      <DemoBanner />
 
       <header className="bg-white/95 backdrop-blur-md border-b border-pink-100 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">

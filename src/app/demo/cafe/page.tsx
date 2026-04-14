@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import DemoBanner from "@/components/DemoBanner";
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const THEME = {
@@ -224,10 +225,7 @@ export default function CafeDemo() {
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
 
-      {/* ── DEMO BANNER ──────────────────────────────────────────────────── */}
-      <div className="bg-indigo-600 text-white text-center py-2.5 px-4 text-sm font-semibold sticky top-0 z-50">
-        🎯 Ceci est une démo — votre version sera personnalisée à votre image
-      </div>
+      <DemoBanner />
 
       {/* ── HEADER ──────────────────────────────────────────────────────── */}
       <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
