@@ -9,7 +9,7 @@ const THEME = {
   accent: "#C8960C",
   light: "#FFF8E7",
   name: "Boulangerie Martin",
-  subtitle: "Lyon 6",
+  subtitle: "Lausanne",
   emoji: "🥐",
   whatsapp: "Bonjour, je suis intéressé par Stampify pour ma boulangerie. Pouvez-vous me contacter ?",
   stamps: 8,
@@ -247,7 +247,7 @@ export default function BoulangerieDemo() {
               <div className="p-6">
                 <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 45 av. Foch, Lyon 6e</p>
+                  <p>📍 45 Rue du Midi 45, Lausanne</p>
                   <p>🕐 Mar–Sam : 6h30–19h30</p>
                   <p>🕐 Dim : 6h30–13h</p>
                   <p>📞 04 78 XX XX XX</p>
@@ -368,7 +368,7 @@ export default function BoulangerieDemo() {
               <h2 className="text-3xl font-black text-white mb-3">Vous voulez ça<br />pour votre commerce ?</h2>
               <p className="text-white/70 mb-8 max-w-md mx-auto">Carte fidélité, roue de la fortune, site vitrine — tout en un. Prêt en moins de 5 minutes, sans application.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                <a href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
                   style={{ backgroundColor: "#25D366", color: "#fff" }}>
@@ -411,7 +411,7 @@ export default function BoulangerieDemo() {
               <span className="text-8xl mb-6 drop-shadow-2xl">{THEME.emoji}</span>
               <h1 className="text-5xl font-black text-white mb-3">{THEME.name}</h1>
               <p className="text-lg mb-2" style={{ color: THEME.accent }}>Artisan boulanger depuis 1987 · {THEME.subtitle}</p>
-              <p className="text-white/60 text-sm max-w-md">Pain au levain, viennoiseries maison et pâtisseries de saison. La boulangerie de quartier qui fait le bonheur des Lyonnais depuis près de 40 ans.</p>
+              <p className="text-white/60 text-sm max-w-md">Pain au levain, viennoiseries maison et pâtisseries de saison. La boulangerie de quartier qui fait le bonheur des Lausannois depuis près de 40 ans.</p>
               <div className="flex gap-3 mt-6">
                 <span className="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 text-white">⭐ 4.8/5 (241 avis)</span>
                 <span className="px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ backgroundColor: THEME.accent }}>Ouvert maintenant</span>
@@ -442,7 +442,7 @@ export default function BoulangerieDemo() {
             </div>
             <div className="py-10 px-6 text-center" style={{ backgroundColor: THEME.light }}>
               <p className="font-black text-gray-900 text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-600 text-sm">45 av. Foch, Lyon 6e · 04 78 XX XX XX</p>
+              <p className="text-gray-600 text-sm">45 Rue du Midi 45, Lausanne · 04 78 XX XX XX</p>
               <p className="text-gray-400 text-xs mt-2">Mar–Sam 6h30–19h30 · Dim 6h30–13h · Lun fermé</p>
             </div>
           </div>

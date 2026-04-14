@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { blogPosts, getPost } from "../posts";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface Props {
   params: { slug: string };
@@ -37,51 +39,9 @@ export default function BlogPostPage({ params }: Props) {
 
   return (
     <div className="min-h-screen" style={{ background: "#F5F0E8" }}>
-      {/* Navbar */}
-      <nav
-        style={{
-          background: "#F5F0E8",
-          borderBottom: "1px solid #E2D9CC",
-          padding: "0 24px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1152,
-            margin: "0 auto",
-            height: 64,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                background: "#3D31B0",
-                borderRadius: 8,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="1.8" />
-                <circle cx="12" cy="9" r="3" stroke="white" strokeWidth="1.8" />
-                <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </div>
-            <span style={{ color: "#1A1410", fontWeight: 600, fontSize: 18 }}>Stampify</span>
-          </Link>
-          <Link href="/blog" style={{ color: "#3D31B0", fontSize: 14, fontWeight: 500, textDecoration: "none" }}>
-            ← Tous les articles
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
-      <div style={{ maxWidth: 1152, margin: "0 auto", padding: "60px 24px" }}>
+      <div style={{ maxWidth: 1152, margin: "0 auto", padding: "100px 24px 60px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 48, alignItems: "start" }}>
           {/* Main content */}
           <article>
@@ -236,7 +196,7 @@ export default function BlogPostPage({ params }: Props) {
                 Obtenez votre site web + carte fidélité + plaquette NFC pour 990 CHF, livré en 48h.
               </p>
               <a
-                href="https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify."
+                href="https://wa.me/41791342997?text=Bonjour%2C%20j%27ai%20une%20question%20pour%20l%27%C3%A9quipe%20Stampify."
                 style={{
                   display: "inline-block",
                   background: "white",
@@ -414,6 +374,7 @@ export default function BlogPostPage({ params }: Props) {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

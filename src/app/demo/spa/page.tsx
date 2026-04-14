@@ -577,7 +577,7 @@ export default function SpaDemo() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                  href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"

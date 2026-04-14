@@ -10,7 +10,7 @@ const THEME = {
   accent: "#C9A84C",
   light: "#F5F0E8",
   name: "Café Lumière",
-  subtitle: "Lyon 2",
+  subtitle: "Genève",
   emoji: "☕",
   whatsapp: "Bonjour, je suis intéressé par Stampify pour mon café. Pouvez-vous me contacter ?",
   stamps: 10,
@@ -282,7 +282,7 @@ export default function CafeDemo() {
               <div className="p-6 border-b sm:border-b-0 sm:border-r border-gray-100">
                 <h4 className="font-black text-gray-900 mb-2">Notre histoire</h4>
                 <p className="text-sm text-gray-600">
-                  Depuis 2018, Café Lumière accueille les Lyonnais dans une ambiance chaleureuse. Nos cafés sont issus de torréfaction artisanale, sélectionnés avec soin.
+                  Depuis 2018, Café Lumière accueille les Genevois dans une ambiance chaleureuse. Nos cafés sont issus de torréfaction artisanale, sélectionnés avec soin.
                 </p>
               </div>
               <div className="p-6 border-b sm:border-b-0 sm:border-r border-gray-100">
@@ -298,7 +298,7 @@ export default function CafeDemo() {
               <div className="p-6">
                 <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 12 rue Mercière, Lyon 2e</p>
+                  <p>📍 12 Rue de Rive 12, Genève</p>
                   <p>🕐 Lun–Ven : 7h–19h</p>
                   <p>🕐 Sam–Dim : 8h–18h</p>
                   <p>📞 04 72 XX XX XX</p>
@@ -456,7 +456,7 @@ export default function CafeDemo() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                  href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
@@ -547,7 +547,7 @@ export default function CafeDemo() {
             {/* Footer */}
             <div className="py-10 px-6 text-center" style={{ backgroundColor: THEME.light }}>
               <p className="font-black text-gray-900 text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-600 text-sm">12 rue Mercière, Lyon 2e · 04 72 XX XX XX</p>
+              <p className="text-gray-600 text-sm">12 Rue de Rive 12, Genève · 04 72 XX XX XX</p>
               <p className="text-gray-400 text-xs mt-2">Lun–Ven 7h–19h · Sam–Dim 8h–18h</p>
             </div>
           </div>

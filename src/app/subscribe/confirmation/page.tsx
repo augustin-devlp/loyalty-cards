@@ -33,10 +33,10 @@ export default function ConfirmationPage() {
               <span>✉️</span> augustin-domenget@stampify.ch
             </a>
             <a
-              href="https://wa.me/33676549599"
+              href="https://wa.me/41791342997?text=Bonjour%2C%20j%27ai%20besoin%20d%27aide%20avec%20mon%20site%20Stampify."
               className="flex items-center gap-2 text-indigo-700 text-sm hover:underline"
             >
-              <span>💬</span> WhatsApp : +33 6 76 54 95 99
+              <span>💬</span> WhatsApp : +41 79 134 29 97
             </a>
           </div>
 

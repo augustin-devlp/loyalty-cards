@@ -27,6 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "fidelisation-clients-cafe-coffee-shop",
   ];
 
+  const staticPages = [
+    { path: "/fonctionnalites", priority: 0.9 },
+    { path: "/tarif", priority: 0.9 },
+    { path: "/demos", priority: 0.85 },
+  ];
+
   return [
     {
       url: BASE,
@@ -40,6 +46,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    ...staticPages.map((p) => ({
+      url: `${BASE}${p.path}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: p.priority,
+    })),
     ...demoPaths.map((p) => ({
       url: `${BASE}${p}`,
       lastModified: now,

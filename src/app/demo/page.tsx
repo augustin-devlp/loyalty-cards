@@ -97,7 +97,7 @@ export default function DemoPage() {
             <Link href="/demo" className="text-sm text-[#534AB7] font-medium">Démos</Link>
             <Link href="/services" className="text-sm text-[#6B6560] hover:text-[#1A1714] transition-colors">Services</Link>
           </div>
-          <a href="https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify." className="bg-[#534AB7] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#4238A0] transition-colors font-medium">Nous contacter</a>
+          <a href="https://wa.me/41791342997?text=Bonjour%2C%20j%27ai%20une%20question%20pour%20l%27%C3%A9quipe%20Stampify." className="bg-[#534AB7] text-white text-sm px-4 py-2 rounded-lg hover:bg-[#4238A0] transition-colors font-medium">Nous contacter</a>
         </div>
       </nav>
       <section className="pt-16 pb-12 px-6 bg-[#F8F6F1]">
@@ -140,7 +140,7 @@ export default function DemoPage() {
         <div className="bg-[#534AB7] rounded-2xl p-10 text-center max-w-2xl mx-auto">
           <h2 className="text-2xl font-bold text-white mb-4">Votre commerce n&apos;est pas dans la liste ?</h2>
           <p className="text-white/60 mb-8">Contactez-nous et on vous montre ce qu&apos;on ferait pour vous spécifiquement.</p>
-          <a href="https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20une%20d%C3%A9mo%20personnalis%C3%A9e%20pour%20mon%20commerce." className="inline-block bg-white text-[#534AB7] px-8 py-3 rounded-xl font-bold hover:bg-[#F0EDE6] transition-colors">Demander une démo personnalisée</a>
+          <a href="https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20une%20d%C3%A9mo%20personnalis%C3%A9e%20pour%20mon%20commerce." className="inline-block bg-white text-[#534AB7] px-8 py-3 rounded-xl font-bold hover:bg-[#F0EDE6] transition-colors">Demander une démo personnalisée</a>
         </div>
       </section>
       <footer className="bg-[#111009] py-12 px-6">
@@ -168,7 +168,7 @@ export default function DemoPage() {
               </div>
               <div>
                 <div className="text-white font-semibold text-sm mb-3">Contact</div>
-                <a href="https://wa.me/33XXXXXXXXX" className="text-[#6B6560] text-sm hover:text-white transition-colors block mb-2">WhatsApp</a>
+                <a href="https://wa.me/41791342997" className="text-[#6B6560] text-sm hover:text-white transition-colors block mb-2">WhatsApp</a>
                 <a href="mailto:contact@stampify.ch" className="text-[#6B6560] text-sm hover:text-white transition-colors block">contact@stampify.ch</a>
               </div>
               <div>

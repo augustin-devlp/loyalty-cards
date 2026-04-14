@@ -9,7 +9,7 @@ const THEME = {
   accent: "#B8960C",
   light: "#F5F0E8",
   name: "Le Bistrot du Coin",
-  subtitle: "Lyon 3",
+  subtitle: "Neuchâtel",
   emoji: "🍽️",
   whatsapp: "Bonjour, je suis intéressé par Stampify pour mon restaurant. Pouvez-vous me contacter ?",
   stamps: 5,
@@ -247,7 +247,7 @@ export default function RestaurantDemo() {
               <div className="p-6">
                 <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 27 rue Garibaldi, Lyon 3e</p>
+                  <p>📍 27 Rue des Moulins 27, Neuchâtel</p>
                   <p>🕐 Mar–Sam : 12h–14h & 19h–22h</p>
                   <p>🕐 Dim : 12h–14h</p>
                   <p>📞 04 78 XX XX XX</p>
@@ -368,7 +368,7 @@ export default function RestaurantDemo() {
               <h2 className="text-3xl font-black text-white mb-3">Vous voulez ça<br />pour votre commerce ?</h2>
               <p className="text-white/70 mb-8 max-w-md mx-auto">Carte fidélité, roue de la fortune, site vitrine — tout en un. Prêt en moins de 5 minutes, sans application.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                <a href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
                   style={{ backgroundColor: "#25D366", color: "#fff" }}>
@@ -442,7 +442,7 @@ export default function RestaurantDemo() {
             </div>
             <div className="py-10 px-6 text-center" style={{ backgroundColor: THEME.light }}>
               <p className="font-black text-gray-900 text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-600 text-sm">27 rue Garibaldi, Lyon 3e · 04 78 XX XX XX</p>
+              <p className="text-gray-600 text-sm">27 Rue des Moulins 27, Neuchâtel · 04 78 XX XX XX</p>
               <p className="text-gray-400 text-xs mt-2">Mar–Sam 12h–14h & 19h–22h · Dim 12h–14h · Lun fermé</p>
             </div>
           </div>

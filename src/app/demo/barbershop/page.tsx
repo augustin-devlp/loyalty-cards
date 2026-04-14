@@ -9,7 +9,7 @@ const THEME = {
   accent: "#C41E3A",
   light: "#F8F8F8",
   name: "Black Scissors",
-  subtitle: "Lyon 1",
+  subtitle: "Fribourg",
   emoji: "✂️",
   whatsapp: "Bonjour, je suis intéressé par Stampify pour mon barbershop. Pouvez-vous me contacter ?",
   stamps: 6,
@@ -247,7 +247,7 @@ export default function BarbershopDemo() {
               <div className="p-6">
                 <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 8 rue de la République, Lyon 1er</p>
+                  <p>📍 8 Rue de Lausanne 8, Fribourg</p>
                   <p>🕐 Lun–Sam : 9h–20h</p>
                   <p>🕐 Dim : 10h–17h</p>
                   <p>📞 04 69 XX XX XX</p>
@@ -367,7 +367,7 @@ export default function BarbershopDemo() {
               <h2 className="text-3xl font-black text-white mb-3">Vous voulez ça<br />pour votre commerce ?</h2>
               <p className="text-white/60 mb-8 max-w-md mx-auto">Carte fidélité, roue de la fortune, site vitrine — tout en un. Prêt en moins de 5 minutes, sans application.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                <a href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
                   style={{ backgroundColor: "#25D366", color: "#fff" }}>
@@ -441,7 +441,7 @@ export default function BarbershopDemo() {
             </div>
             <div className="py-10 px-6 text-center border-t border-white/10">
               <p className="font-black text-white text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-400 text-sm">8 rue de la République, Lyon 1er · 04 69 XX XX XX</p>
+              <p className="text-gray-400 text-sm">8 Rue de Lausanne 8, Fribourg · 04 69 XX XX XX</p>
               <p className="text-gray-600 text-xs mt-2">Lun–Sam 9h–20h · Dim 10h–17h</p>
             </div>
           </div>

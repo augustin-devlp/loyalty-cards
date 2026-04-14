@@ -11,7 +11,7 @@ const THEME = {
   light: "#FFF5F7",
   card: "#FFF0F3",
   name: "Nail Studio",
-  subtitle: "Lyon 2",
+  subtitle: "Genève",
   emoji: "💅",
   whatsapp: "Bonjour, je suis intéressée par Stampify pour mon salon de manucure. Pouvez-vous me contacter ?",
   stamps: 6,
@@ -249,7 +249,7 @@ export default function ManucureDemo() {
               <div className="p-6">
                 <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 18 rue Victor Hugo, Lyon 2e</p>
+                  <p>📍 18 Rue du Stand 18, Genève</p>
                   <p>🕐 Mar–Sam : 9h–19h</p>
                   <p>🕐 Dim : 10h–17h</p>
                   <p>📞 04 72 XX XX XX</p>
@@ -372,7 +372,7 @@ export default function ManucureDemo() {
               </h2>
               <p className="text-white/80 mb-8 max-w-md mx-auto">Carte fidélité, roue de la fortune, site vitrine — tout en un. Prêt en moins de 5 minutes, sans application.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href={`https://wa.me/41791234567?text=${encodeURIComponent(THEME.whatsapp)}`}
+                <a href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
                   style={{ backgroundColor: "#25D366", color: "#fff" }}>
@@ -446,7 +446,7 @@ export default function ManucureDemo() {
             </div>
             <div className="py-10 px-6 text-center" style={{ backgroundColor: THEME.light }}>
               <p className="font-black text-gray-900 text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-600 text-sm">18 rue Victor Hugo, Lyon 2e · 04 72 XX XX XX</p>
+              <p className="text-gray-600 text-sm">18 Rue du Stand 18, Genève · 04 72 XX XX XX</p>
               <p className="text-gray-400 text-xs mt-2">Mar–Sam 9h–19h · Dim 10h–17h · Lun fermé</p>
             </div>
           </div>

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const WA = "https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify.";
-const WA_STD = "https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20Pack%20Standard%20Stampify.";
-const WA_PRE = "https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20Pack%20Premium%20Stampify.";
+const WA = "https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify.";
+const WA_STD = "https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
+const WA_PRE = "https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
 function Logo() {
   return (
@@ -84,7 +84,7 @@ function Footer() {
             </div>
             <div>
               <div className="text-white font-semibold text-sm mb-3">Contact</div>
-              <a href="https://wa.me/33XXXXXXXXX" className="text-[#6B6560] text-sm hover:text-white block mb-2">WhatsApp</a>
+              <a href="https://wa.me/41791342997" className="text-[#6B6560] text-sm hover:text-white block mb-2">WhatsApp</a>
               <a href="mailto:contact@stampify.ch" className="text-[#6B6560] text-sm hover:text-white block">contact@stampify.ch</a>
             </div>
             <div>

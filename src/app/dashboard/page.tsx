@@ -36,8 +36,8 @@ export default async function DashboardPage() {
               <a href="mailto:augustin-domenget@stampify.ch" className="flex items-center gap-2 text-amber-700 text-sm hover:underline">
                 <span>✉️</span> augustin-domenget@stampify.ch
               </a>
-              <a href="https://wa.me/33676549599" className="flex items-center gap-2 text-amber-700 text-sm hover:underline">
-                <span>💬</span> WhatsApp : +33 6 76 54 95 99
+              <a href="https://wa.me/41791342997?text=Bonjour%2C%20j%27ai%20besoin%20d%27aide%20avec%20mon%20site%20Stampify." className="flex items-center gap-2 text-amber-700 text-sm hover:underline">
+                <span>💬</span> WhatsApp : +41 79 134 29 97
               </a>
             </div>
             <Link href="/activate" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-colors">
