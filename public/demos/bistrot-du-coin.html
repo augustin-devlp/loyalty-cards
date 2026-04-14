@@ -431,19 +431,22 @@
     }
     .stamps {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
     .stamp {
-      width: 50px; height: 50px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       border: 2px dashed var(--or);
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      transition: transform 0.2s ease;
     }
+    .stamp:hover { transform: scale(1.08); }
     .stamp.filled {
       background: var(--bordeaux);
       border-style: solid;
@@ -947,6 +950,7 @@
       </button>
       <div class="navbar-links" id="navLinks">
         <a href="#carte">La Carte</a>
+        <a href="bistrot-du-coin-carte.html">Carte &amp; Vins</a>
         <a href="#ardoise">Menu du Jour</a>
         <a href="#cave">Notre Cave</a>
         <a href="#reservation" class="btn btn-bordeaux">Réserver</a>
@@ -1142,23 +1146,13 @@
       </div>
       <div class="fidelite-card fade-up">
         <h3>Le Bistrot du Coin</h3>
-        <p class="reward-text">1 dessert offert après 5 repas</p>
-        <div class="stamps">
-          <div class="stamp filled">
-            <svg viewBox="0 0 24 24"><path d="M11 2a3 3 0 0 0-3 3v1H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3V5a3 3 0 0 0-3-3h-2zm0 2h2a1 1 0 0 1 1 1v1H10V5a1 1 0 0 1 1-1zM7 12l2.5 2.5L15 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="stamp">
-            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="stamp">
-            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="stamp">
-            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="stamp">
-            <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
+        <p class="reward-text">Dessert offert après 8 visites</p>
+        <div class="stamps" id="stamp-grid"></div>
+        <p style="font-size:0.8rem;color:var(--gris-ardoise);margin-bottom:16px;" id="stamp-count-text">0 / 10 tampons</p>
+        <button onclick="addStamp()" style="background:var(--bordeaux);color:var(--blanc-lin);border:none;padding:9px 22px;border-radius:4px;font-family:var(--font-body);font-size:0.8rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;margin-bottom:18px;transition:background 0.3s;" onmouseover="this.style.background='#4E1620'" onmouseout="this.style.background='#6B1F2A'">Ajouter un tampon</button>
+        <div style="margin-bottom:16px;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://stampify.ch/join/bistrot-du-coin" alt="QR code carte fidélité Le Bistrot du Coin" width="120" height="120" style="margin:0 auto;border-radius:6px;display:block;" loading="lazy">
+          <p style="font-size:0.72rem;color:var(--gris-ardoise);margin-top:6px;">Scanner pour rejoindre</p>
         </div>
         <p class="stampify-badge">Propulsé par Stampify</p>
       </div>
@@ -1386,7 +1380,7 @@
     // ═══ RESERVATION — 3-STEP SYSTEM ═══
 
     const SUPABASE_URL = 'https://curduiiydfpwiwbimypu.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1cmR1aWl5ZGZwd2l3YmlteXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTY1ODUsImV4cCI6MjA4OTE3MjU4NX0.n_qIRZgvbwzqRoi8dor561_GqsuZE7CNQpxdKADlXKE';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1cmR1aWl5ZGZwd2l3YmltYXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxOTQxNzEsImV4cCI6MjA2MTc3MDE3MX0.DfTKe1lCFTuTMFQPbQy40bOABVGbwMr_oZa6cflg0Y8';
     const COMMERCE_ID = 'bistrot-du-coin';
     const SLOT_DURATION = 30;
 
@@ -1537,8 +1531,8 @@
       const svc = RESA_SERVICES[resaState.serviceIdx];
       const payload = {
         commerce_id: COMMERCE_ID,
+        type: 'reservation_table',
         service_name: svc.name,
-        service_price: svc.price,
         date: resaState.date,
         slot: resaState.slot,
         guests: parseInt(document.getElementById('resa-guests').value),
@@ -1578,6 +1572,63 @@
       document.querySelectorAll('.resa-step-tab').forEach(t => { t.classList.remove('active'); t.classList.add('done'); });
       document.getElementById('panel-confirm').classList.add('active');
     }
+
+    // ═══ STAMP SYSTEM ═══
+    const STAMP_KEY = 'bistrot-du-coin-stamps';
+    const STAMP_TOTAL = 10;
+    const STAMP_REWARD_AT = 8;
+
+    function getStampCount() {
+      return parseInt(localStorage.getItem(STAMP_KEY) || '0', 10);
+    }
+
+    function saveStampCount(n) {
+      localStorage.setItem(STAMP_KEY, Math.min(n, STAMP_TOTAL).toString());
+    }
+
+    function renderStamps() {
+      const grid = document.getElementById('stamp-grid');
+      if (!grid) return;
+      const count = getStampCount();
+      grid.innerHTML = '';
+      for (let i = 0; i < STAMP_TOTAL; i++) {
+        const filled = i < count;
+        const div = document.createElement('div');
+        div.className = 'stamp' + (filled ? ' filled' : '');
+        div.title = filled ? 'Tampon ' + (i + 1) : 'Emplacement libre';
+        if (filled) {
+          div.innerHTML = '<svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:none;stroke:#C4883A;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else {
+          div.innerHTML = '<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:rgba(196,136,58,0.3);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="8"/></svg>';
+        }
+        grid.appendChild(div);
+      }
+      const countText = document.getElementById('stamp-count-text');
+      if (countText) {
+        if (count >= STAMP_REWARD_AT) {
+          countText.textContent = count + ' / ' + STAMP_TOTAL + ' tampons — Dessert offert disponible !';
+          countText.style.color = '#6B1F2A';
+          countText.style.fontWeight = '700';
+        } else {
+          countText.textContent = count + ' / ' + STAMP_TOTAL + ' tampons — encore ' + (STAMP_REWARD_AT - count) + ' pour votre dessert offert';
+          countText.style.color = '';
+          countText.style.fontWeight = '';
+        }
+      }
+    }
+
+    function addStamp() {
+      const current = getStampCount();
+      if (current >= STAMP_TOTAL) {
+        saveStampCount(0);
+      } else {
+        saveStampCount(current + 1);
+      }
+      renderStamps();
+    }
+
+    // Init stamps on load
+    renderStamps();
   </script>
 </body>
 </html>

@@ -295,6 +295,95 @@ footer{background:var(--brown)}
 
 @media(max-width:1024px){#histoire{padding:80px 32px}.histoire-inner{grid-template-columns:1fr;gap:48px}.histoire-caption{right:0;bottom:0}.fidelite-inner{grid-template-columns:1fr}.contact-inner{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr 1fr}.produits-cats{grid-template-columns:1fr}.resa-services-grid{grid-template-columns:1fr}}
 @media(max-width:768px){#nav{padding:0 24px}.nav-links{display:none}.nav-hamburger{display:block}.avis-grid{grid-template-columns:1fr}.galerie-grid{grid-template-columns:1fr 1fr;grid-template-rows:240px 240px 240px}.galerie-item:nth-child(1){grid-column:span 2;grid-row:span 1}#stats-bar{grid-template-columns:1fr 1fr}.footer-top{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:12px;text-align:center}.resa-body{padding:24px}.resa-form-row{grid-template-columns:1fr}.resa-slots-grid{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== COMMANDE EN LIGNE ===== */
+#commande{background:var(--cream);padding:120px 48px}
+.commande-inner{max-width:1280px;margin:0 auto}
+.commande-header{text-align:center;margin-bottom:56px}
+.commande-header p{font-size:0.9rem;color:var(--text-muted);margin-top:8px}
+
+/* Category filter tabs */
+.cmd-cat-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:48px;flex-wrap:wrap}
+.cmd-cat-tab{font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;padding:10px 24px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.2s;border-radius:2px}
+.cmd-cat-tab:hover{border-color:var(--gold);color:var(--brown)}
+.cmd-cat-tab.active{background:var(--brown);color:var(--linen);border-color:var(--brown)}
+
+/* Product grid */
+.cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.cmd-card{background:white;box-shadow:var(--shadow-md);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow 0.3s}
+.cmd-card:hover{box-shadow:var(--shadow-lg)}
+.cmd-card-img{width:100%;height:180px;object-fit:cover;display:block}
+.cmd-card-img-placeholder{width:100%;height:180px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.cmd-card-body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column}
+.cmd-card-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--brown);margin-bottom:6px}
+.cmd-card-price{font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;flex:1}
+.cmd-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.cmd-price-tag{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--brown)}
+.cmd-qty-ctrl{display:flex;align-items:center;gap:0}
+.cmd-qty-btn{width:32px;height:32px;border:1.5px solid var(--border);background:var(--cream);color:var(--brown);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:'Nunito',sans-serif;flex-shrink:0;line-height:1}
+.cmd-qty-btn:hover{border-color:var(--gold);background:rgba(212,148,58,0.1)}
+.cmd-qty-val{width:36px;height:32px;border-top:1.5px solid var(--border);border-bottom:1.5px solid var(--border);border-left:none;border-right:none;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:var(--brown);background:white;user-select:none}
+.cmd-qty-val.has-qty{background:var(--brown);color:white;border-color:var(--brown)}
+
+/* Sticky cart bar */
+#cmd-cart-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--brown);color:white;padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 -4px 24px rgba(61,43,31,0.25)}
+#cmd-cart-bar.visible{transform:translateY(0)}
+.cart-bar-info{display:flex;align-items:center;gap:16px}
+.cart-bar-count{background:var(--gold);color:var(--brown);font-size:0.7rem;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cart-bar-label{font-size:0.78rem;color:rgba(255,255,255,0.8)}
+.cart-bar-total{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold-light)}
+.cart-bar-btn{font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;padding:12px 28px;background:var(--gold);color:var(--brown);border:none;cursor:pointer;transition:background 0.2s}
+.cart-bar-btn:hover{background:var(--gold-light)}
+
+/* Cart modal */
+#cmd-cart-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;opacity:0;transition:opacity 0.3s}
+#cmd-cart-modal.open{pointer-events:auto;opacity:1}
+.cart-modal-backdrop{position:absolute;inset:0;background:rgba(61,43,31,0.55);cursor:pointer}
+.cart-modal-panel{position:relative;background:var(--linen);width:100%;max-width:560px;max-height:85vh;overflow-y:auto;padding:40px;transform:translateY(40px);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
+#cmd-cart-modal.open .cart-modal-panel{transform:translateY(0)}
+.cart-modal-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--brown);margin-bottom:28px}
+.cart-item-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light)}
+.cart-item-row:last-of-type{border-bottom:none}
+.cart-item-name{font-size:0.88rem;color:var(--brown);flex:1}
+.cart-item-qty{font-size:0.78rem;color:var(--text-muted);margin:0 16px;white-space:nowrap}
+.cart-item-sub{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--brown);white-space:nowrap}
+.cart-item-remove{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px 8px;margin-left:8px;transition:color 0.2s}
+.cart-item-remove:hover{color:var(--brown)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;padding-top:16px;border-top:1.5px solid var(--border)}
+.cart-total-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:600;color:var(--text-muted)}
+.cart-total-amount{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--brown)}
+.cart-modal-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.cart-modal-actions button{flex:1}
+
+/* Order form */
+#cmd-order-form-wrap{display:none}
+.cmd-order-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--brown);margin-bottom:24px}
+.cmd-field{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.cmd-field label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:600;color:var(--text-muted)}
+.cmd-field select{background:var(--cream);border:1px solid var(--border);padding:12px 16px;font-size:0.85rem;color:var(--brown);font-family:'Nunito',sans-serif;outline:none;transition:border-color 0.2s;border-radius:2px;appearance:none;cursor:pointer}
+.cmd-field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,148,58,0.1)}
+.cmd-radio-group{display:flex;flex-direction:column;gap:10px}
+.cmd-radio-option{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--brown)}
+.cmd-radio-option input[type="radio"]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer}
+.cmd-livraison-note{background:rgba(212,148,58,0.1);border-left:2px solid var(--gold);padding:10px 16px;font-size:0.8rem;color:var(--text-muted);margin-top:8px;display:none}
+.cmd-livraison-note.visible{display:block}
+.cmd-confirm-btn{background:var(--gold);color:var(--brown);border:none;width:100%;padding:16px;font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;cursor:pointer;transition:background 0.2s;border-radius:2px;margin-top:8px}
+.cmd-confirm-btn:hover{background:var(--gold-light)}
+.cmd-confirm-btn:disabled{opacity:0.6;cursor:not-allowed}
+
+/* Confirmation */
+#cmd-confirmation-wrap{display:none;text-align:center;padding:16px 0}
+.cmd-confirm-icon{font-size:2.5rem;margin-bottom:12px}
+.cmd-confirm-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--brown);margin-bottom:12px}
+.cmd-confirm-msg{font-size:0.85rem;color:var(--text-muted);margin-bottom:24px}
+.cmd-qr-wrap{margin:0 auto 24px;width:200px;height:200px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.cmd-qr-wrap img{width:200px;height:200px}
+.cmd-new-order-btn{background:var(--brown);color:var(--linen);border:none;padding:12px 32px;font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;cursor:pointer;transition:background 0.2s;margin-top:8px;border-radius:2px}
+.cmd-new-order-btn:hover{background:var(--brown-light)}
+
+@media(max-width:1024px){.cmd-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.cmd-grid{grid-template-columns:repeat(2,1fr)}#commande{padding:80px 24px}.cmd-cat-tabs{gap:6px}.cmd-cat-tab{padding:8px 16px}#cmd-cart-bar{padding:0 20px}}
+@media(max-width:480px){.cmd-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -309,7 +398,8 @@ footer{background:var(--brown)}
   <a href="#histoire" onclick="closeMobile()">Notre histoire</a>
   <a href="#produits" onclick="closeMobile()">Nos créations</a>
   <a href="#fidelite" onclick="closeMobile()">Carte fidélité</a>
-  <a href="#reservation" onclick="closeMobile()">Commander</a>
+  <a href="#commande" onclick="closeMobile()">Commander</a>
+  <a href="#reservation" onclick="closeMobile()">Réservation</a>
   <a href="#contact" onclick="closeMobile()">Nous trouver</a>
 </div>
 <nav id="nav">
@@ -318,10 +408,10 @@ footer{background:var(--brown)}
     <a href="#histoire">Notre histoire</a>
     <a href="#produits">Nos créations</a>
     <a href="#fidelite">Carte fidélité</a>
-    <a href="#reservation">Commander</a>
+    <a href="#commande">Commander</a>
     <a href="#contact">Nous trouver</a>
   </div>
-  <a href="#reservation" class="nav-cta">Pré-commander</a>
+  <a href="#commande" class="nav-cta">Commander en ligne</a>
   <button class="nav-hamburger" onclick="openMobile()"><span></span><span></span><span></span></button>
 </nav>
 <section id="hero">
@@ -490,6 +580,86 @@ footer{background:var(--brown)}
     </div>
   </div>
 </section>
+
+<!-- COMMANDE EN LIGNE -->
+<section id="commande">
+  <div class="commande-inner">
+    <div class="commande-header reveal">
+      <span class="label-upper">Commander en ligne</span>
+      <h2>Vos produits, prêts à l'heure</h2>
+      <p>Choisissez vos articles, payez en ligne ou sur place, et venez récupérer votre commande sans attendre.</p>
+    </div>
+    <div class="cmd-cat-tabs reveal">
+      <button class="cmd-cat-tab active" onclick="cmdFilterCat('all')">Tout</button>
+      <button class="cmd-cat-tab" onclick="cmdFilterCat('pains')">Pains</button>
+      <button class="cmd-cat-tab" onclick="cmdFilterCat('viennoiseries')">Viennoiseries</button>
+      <button class="cmd-cat-tab" onclick="cmdFilterCat('patisseries')">Pâtisseries</button>
+      <button class="cmd-cat-tab" onclick="cmdFilterCat('boissons')">Boissons</button>
+    </div>
+    <div class="cmd-grid reveal" id="cmd-product-grid"></div>
+  </div>
+</section>
+
+<!-- Sticky cart bar -->
+<div id="cmd-cart-bar">
+  <div class="cart-bar-info">
+    <div class="cart-bar-count" id="cart-bar-count">0</div>
+    <span class="cart-bar-label">article(s) dans votre panier</span>
+  </div>
+  <div class="cart-bar-total" id="cart-bar-total">CHF 0.00</div>
+  <button class="cart-bar-btn" onclick="cmdOpenCart()">Voir mon panier</button>
+</div>
+
+<!-- Cart modal -->
+<div id="cmd-cart-modal" role="dialog" aria-modal="true" aria-label="Votre panier">
+  <div class="cart-modal-backdrop" onclick="cmdCloseCart()"></div>
+  <div class="cart-modal-panel">
+    <div id="cmd-cart-items-view">
+      <h2 class="cart-modal-title">Votre panier</h2>
+      <div id="cmd-cart-items-list"></div>
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-amount" id="cmd-cart-modal-total">CHF 0.00</span>
+      </div>
+      <div class="cart-modal-actions">
+        <button class="btn btn-outline" onclick="cmdCloseCart()">Continuer mes achats</button>
+        <button class="btn btn-primary" onclick="cmdGoToOrderForm()">Commander →</button>
+      </div>
+    </div>
+
+    <div id="cmd-order-form-wrap">
+      <h2 class="cmd-order-title">Finaliser ma commande</h2>
+      <div class="cmd-field">
+        <label>Heure de retrait</label>
+        <select id="cmd-heure-retrait">
+          <option value="">-- Choisir une heure --</option>
+        </select>
+      </div>
+      <div class="cmd-field">
+        <label>Mode de paiement</label>
+        <div class="cmd-radio-group">
+          <label class="cmd-radio-option"><input type="radio" name="cmd-paiement" value="sur_place" checked onchange="cmdHandlePaiement(this.value)"> Payer sur place</label>
+          <label class="cmd-radio-option"><input type="radio" name="cmd-paiement" value="en_ligne" onchange="cmdHandlePaiement(this.value)"> Payer en ligne</label>
+          <label class="cmd-radio-option"><input type="radio" name="cmd-paiement" value="livraison" onchange="cmdHandlePaiement(this.value)"> Livraison à domicile</label>
+        </div>
+        <div class="cmd-livraison-note" id="cmd-livraison-note">Zone de livraison : Lausanne centre · +3 CHF</div>
+      </div>
+      <button class="cmd-confirm-btn" id="cmd-confirm-btn" onclick="cmdConfirmOrder()">Confirmer ma commande</button>
+      <div style="margin-top:12px">
+        <button class="btn btn-outline" style="font-size:0.68rem;padding:10px 20px" onclick="cmdBackToCart()">← Retour au panier</button>
+      </div>
+    </div>
+
+    <div id="cmd-confirmation-wrap">
+      <div class="cmd-confirm-icon">🥐</div>
+      <h2 class="cmd-confirm-title">Votre commande est confirmée !</h2>
+      <p class="cmd-confirm-msg">Présentez ce QR code à notre comptoir.</p>
+      <div class="cmd-qr-wrap"><img id="cmd-qr-img" src="" alt="QR Code commande"></div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:16px" id="cmd-order-ref"></p>
+      <button class="cmd-new-order-btn" onclick="cmdReset()">Nouvelle commande</button>
+    </div>
+  </div>
+</div>
 
 <!-- RESERVATION SECTION -->
 <section id="reservation">
@@ -897,6 +1067,260 @@ function preselectService(idx) {
 }
 
 window.addEventListener('DOMContentLoaded', resaInit);
+
+// ===== COMMANDE EN LIGNE =====
+const CMD_SUPABASE_URL = 'https://curduiiydfpwiwbimypu.supabase.co';
+const CMD_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1cmR1aWl5ZGZwd2l3YmltYXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxOTQxNzEsImV4cCI6MjA2MTc3MDE3MX0.DfTKe1lCFTuTMFQPbQy40bOABVGbwMr_oZa6cflg0Y8';
+
+const CMD_PRODUCTS = [
+  {id:'pain-campagne',cat:'pains',name:'Pain de campagne (500g)',price:5.90,photo:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80'},
+  {id:'pain-complet',cat:'pains',name:'Pain complet aux graines',price:6.50,photo:null},
+  {id:'baguette-tradition',cat:'pains',name:'Baguette tradition',price:2.80,photo:null},
+  {id:'pain-seigle',cat:'pains',name:'Pain de seigle',price:5.50,photo:null},
+  {id:'pain-noix',cat:'pains',name:'Pain aux noix',price:7.20,photo:null},
+  {id:'croissant',cat:'viennoiseries',name:'Croissant au beurre',price:3.20,photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=300&q=80'},
+  {id:'pain-choc',cat:'viennoiseries',name:'Pain au chocolat',price:3.50,photo:null},
+  {id:'chausson-pommes',cat:'viennoiseries',name:'Chausson aux pommes',price:3.80,photo:null},
+  {id:'brioche',cat:'viennoiseries',name:'Brioche tressée (individuelle)',price:4.50,photo:null},
+  {id:'kouign',cat:'viennoiseries',name:'Kouign-amann',price:4.20,photo:null},
+  {id:'tarte-fraises',cat:'patisseries',name:'Tarte aux fraises',price:7.50,photo:'https://images.unsplash.com/photo-1488477181228-c84ade13e8d3?w=300&q=80'},
+  {id:'eclair-choc',cat:'patisseries',name:'Éclair au chocolat',price:5.50,photo:null},
+  {id:'mille-feuille',cat:'patisseries',name:'Mille-feuille',price:6.80,photo:null},
+  {id:'paris-brest',cat:'patisseries',name:'Paris-Brest',price:6.50,photo:null},
+  {id:'opera',cat:'patisseries',name:'Opéra',price:7.20,photo:null},
+  {id:'cafe',cat:'boissons',name:'Café allongé',price:3.50,photo:null},
+  {id:'cappuccino',cat:'boissons',name:'Cappuccino',price:5.00,photo:null},
+  {id:'jus-orange',cat:'boissons',name:"Jus d'orange frais",price:4.50,photo:null},
+  {id:'eau',cat:'boissons',name:'Eau minérale (50cl)',price:2.50,photo:null},
+];
+
+const CMD_CAT_EMOJI = {pains:'🍞',viennoiseries:'🥐',patisseries:'🍰',boissons:'☕'};
+
+let cmdCart = {}; // {productId: qty}
+let cmdActiveCat = 'all';
+
+function cmdFilterCat(cat) {
+  cmdActiveCat = cat;
+  document.querySelectorAll('.cmd-cat-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().replace(/é/g,'e').replace(/â/g,'a').replace(/î/g,'i') === (cat === 'all' ? 'tout' : cat === 'patisseries' ? 'patisseries' : cat));
+  });
+  // simpler: match by onclick attribute
+  document.querySelectorAll('.cmd-cat-tab').forEach(btn => {
+    const onc = btn.getAttribute('onclick') || '';
+    btn.classList.toggle('active', onc.includes("'" + cat + "'"));
+  });
+  cmdRenderProducts();
+}
+
+function cmdRenderProducts() {
+  const grid = document.getElementById('cmd-product-grid');
+  if (!grid) return;
+  const products = cmdActiveCat === 'all' ? CMD_PRODUCTS : CMD_PRODUCTS.filter(p => p.cat === cmdActiveCat);
+  grid.innerHTML = products.map(p => {
+    const qty = cmdCart[p.id] || 0;
+    const imgHtml = p.photo
+      ? `<img class="cmd-card-img" src="${p.photo}" alt="${p.name}" loading="lazy">`
+      : `<div class="cmd-card-img-placeholder">${CMD_CAT_EMOJI[p.cat] || '🍴'}</div>`;
+    return `<div class="cmd-card">
+      ${imgHtml}
+      <div class="cmd-card-body">
+        <div class="cmd-card-name">${p.name}</div>
+        <div class="cmd-card-price">CHF ${p.price.toFixed(2)}</div>
+        <div class="cmd-card-footer">
+          <span class="cmd-price-tag">CHF ${p.price.toFixed(2)}</span>
+          <div class="cmd-qty-ctrl">
+            <button class="cmd-qty-btn" onclick="cmdSetQty('${p.id}',-1)" aria-label="Diminuer">−</button>
+            <div class="cmd-qty-val${qty > 0 ? ' has-qty' : ''}" id="cmdqty-${p.id}">${qty}</div>
+            <button class="cmd-qty-btn" onclick="cmdSetQty('${p.id}',1)" aria-label="Augmenter">+</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cmdSetQty(productId, delta) {
+  const current = cmdCart[productId] || 0;
+  const newQty = Math.max(0, current + delta);
+  if (newQty === 0) delete cmdCart[productId];
+  else cmdCart[productId] = newQty;
+  // Update qty display in grid without full re-render
+  const qtyEl = document.getElementById('cmdqty-' + productId);
+  if (qtyEl) {
+    qtyEl.textContent = newQty;
+    qtyEl.classList.toggle('has-qty', newQty > 0);
+  }
+  cmdUpdateCartBar();
+}
+
+function cmdCartTotal() {
+  return Object.entries(cmdCart).reduce((sum, [id, qty]) => {
+    const p = CMD_PRODUCTS.find(x => x.id === id);
+    return sum + (p ? p.price * qty : 0);
+  }, 0);
+}
+
+function cmdCartCount() {
+  return Object.values(cmdCart).reduce((s, q) => s + q, 0);
+}
+
+function cmdUpdateCartBar() {
+  const count = cmdCartCount();
+  const total = cmdCartTotal();
+  const bar = document.getElementById('cmd-cart-bar');
+  document.getElementById('cart-bar-count').textContent = count;
+  document.getElementById('cart-bar-total').textContent = 'CHF ' + total.toFixed(2);
+  bar.classList.toggle('visible', count > 0);
+}
+
+function cmdOpenCart() {
+  const modal = document.getElementById('cmd-cart-modal');
+  cmdRenderCartItems();
+  document.getElementById('cmd-cart-items-view').style.display = '';
+  document.getElementById('cmd-order-form-wrap').style.display = 'none';
+  document.getElementById('cmd-confirmation-wrap').style.display = 'none';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cmdCloseCart() {
+  document.getElementById('cmd-cart-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function cmdRenderCartItems() {
+  const list = document.getElementById('cmd-cart-items-list');
+  const totalEl = document.getElementById('cmd-cart-modal-total');
+  const items = Object.entries(cmdCart);
+  if (items.length === 0) {
+    list.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);padding:16px 0;">Votre panier est vide.</p>';
+  } else {
+    list.innerHTML = items.map(([id, qty]) => {
+      const p = CMD_PRODUCTS.find(x => x.id === id);
+      if (!p) return '';
+      return `<div class="cart-item-row">
+        <span class="cart-item-name">${p.name}</span>
+        <span class="cart-item-qty">× ${qty}</span>
+        <span class="cart-item-sub">CHF ${(p.price * qty).toFixed(2)}</span>
+        <button class="cart-item-remove" onclick="cmdRemoveItem('${id}')" aria-label="Supprimer">✕</button>
+      </div>`;
+    }).join('');
+  }
+  totalEl.textContent = 'CHF ' + cmdCartTotal().toFixed(2);
+}
+
+function cmdRemoveItem(productId) {
+  delete cmdCart[productId];
+  cmdRenderCartItems();
+  cmdUpdateCartBar();
+  cmdRenderProducts();
+  if (cmdCartCount() === 0) cmdCloseCart();
+}
+
+function cmdGoToOrderForm() {
+  if (cmdCartCount() === 0) return;
+  // Build time slots
+  const sel = document.getElementById('cmd-heure-retrait');
+  if (sel.options.length <= 1) {
+    let cur = 7 * 60;
+    const end = 13 * 60;
+    while (cur <= end) {
+      const hh = String(Math.floor(cur / 60)).padStart(2, '0');
+      const mm = String(cur % 60).padStart(2, '0');
+      const opt = document.createElement('option');
+      opt.value = hh + ':' + mm;
+      opt.textContent = hh + 'h' + mm;
+      sel.appendChild(opt);
+      cur += 15;
+    }
+  }
+  document.getElementById('cmd-cart-items-view').style.display = 'none';
+  document.getElementById('cmd-order-form-wrap').style.display = '';
+  document.getElementById('cmd-confirmation-wrap').style.display = 'none';
+}
+
+function cmdBackToCart() {
+  cmdRenderCartItems();
+  document.getElementById('cmd-cart-items-view').style.display = '';
+  document.getElementById('cmd-order-form-wrap').style.display = 'none';
+}
+
+function cmdHandlePaiement(val) {
+  const note = document.getElementById('cmd-livraison-note');
+  note.classList.toggle('visible', val === 'livraison');
+}
+
+async function cmdConfirmOrder() {
+  const heureEl = document.getElementById('cmd-heure-retrait');
+  const heure = heureEl.value;
+  if (!heure) { alert('Veuillez choisir une heure de retrait.'); return; }
+  const paiementEl = document.querySelector('input[name="cmd-paiement"]:checked');
+  const paiement = paiementEl ? paiementEl.value : 'sur_place';
+  const btn = document.getElementById('cmd-confirm-btn');
+  btn.textContent = 'Confirmation en cours...';
+  btn.disabled = true;
+
+  const items = Object.entries(cmdCart).map(([id, qty]) => {
+    const p = CMD_PRODUCTS.find(x => x.id === id);
+    return {name: p.name, qty, price: p.price};
+  });
+  const total = cmdCartTotal();
+  const refNum = Math.floor(10000 + Math.random() * 90000);
+  const orderRef = 'COMMANDE-' + refNum;
+
+  // Insert to Supabase
+  try {
+    await fetch(CMD_SUPABASE_URL + '/rest/v1/commandes', {
+      method: 'POST',
+      headers: {
+        'apikey': CMD_SUPABASE_KEY,
+        'Authorization': 'Bearer ' + CMD_SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        items: items,
+        total: total,
+        heure_retrait: heure,
+        mode_paiement: paiement,
+        statut: 'pending',
+        commerce_id: 'boulangerie-martin'
+      })
+    });
+  } catch(e) { /* fail silently – still show confirmation */ }
+
+  // Show confirmation
+  document.getElementById('cmd-order-form-wrap').style.display = 'none';
+  document.getElementById('cmd-confirmation-wrap').style.display = '';
+  const qrImg = document.getElementById('cmd-qr-img');
+  qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(orderRef);
+  document.getElementById('cmd-order-ref').textContent = 'Référence : ' + orderRef + ' · Retrait à ' + heure;
+  btn.textContent = 'Confirmer ma commande';
+  btn.disabled = false;
+}
+
+function cmdReset() {
+  cmdCart = {};
+  cmdActiveCat = 'all';
+  document.querySelectorAll('.cmd-cat-tab').forEach(btn => {
+    const onc = btn.getAttribute('onclick') || '';
+    btn.classList.toggle('active', onc.includes("'all'"));
+  });
+  cmdRenderProducts();
+  cmdUpdateCartBar();
+  cmdCloseCart();
+  // Reset form
+  const sel = document.getElementById('cmd-heure-retrait');
+  sel.value = '';
+  const radio = document.querySelector('input[name="cmd-paiement"][value="sur_place"]');
+  if (radio) radio.checked = true;
+  document.getElementById('cmd-livraison-note').classList.remove('visible');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  cmdRenderProducts();
+  cmdUpdateCartBar();
+});
 </script>
 </body>
 </html>

@@ -53,6 +53,9 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#3D31B0" />
         <link rel="apple-touch-icon" href="/icon-192.svg" />
+        <link rel="alternate" hrefLang="fr-CH" href="https://www.stampify.ch/" />
+        <link rel="alternate" hrefLang="de-CH" href="https://www.stampify.ch/" />
+        <link rel="alternate" hrefLang="x-default" href="https://www.stampify.ch/" />
         <link
           rel="preconnect"
           href="https://fonts.googleapis.com"

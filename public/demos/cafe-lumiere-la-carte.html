@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notre Carte — Café Lumière Genève</title>
+<meta name="description" content="Découvrez la carte complète du Café Lumière : petit-déjeuner, brunch, cafés de spécialité, pâtisseries maison et snacks. Commandez pour plus tard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brown: #2C1810;
+  --brown-light: #4A3228;
+  --cream: #F5EFE6;
+  --cream-dark: #EDE5D8;
+  --cream-deeper: #E2D8C8;
+  --white: #FDFAF6;
+  --gold: #C9A84C;
+  --gold-light: #DFC070;
+  --warm-gray: #8B7355;
+  --text-muted: #7A6B58;
+  --border: rgba(44,24,16,0.12);
+  --border-light: rgba(44,24,16,0.07);
+  --shadow-sm: 0 2px 16px rgba(44,24,16,0.06);
+  --shadow-md: 0 8px 32px rgba(44,24,16,0.10);
+  --shadow-lg: 0 20px 60px rgba(44,24,16,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Jost',sans-serif;color:var(--brown);background:var(--white);line-height:1.75;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:400;line-height:1.2}
+h1{font-size:clamp(2.4rem,6vw,4.5rem);font-weight:300;letter-spacing:0.02em}
+h2{font-size:clamp(1.9rem,4vw,3rem);font-weight:300;letter-spacing:0.02em}
+h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:400}
+.label-upper{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.2em;font-weight:500;color:var(--gold);display:block;margin-bottom:16px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.btn{display:inline-block;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;border-radius:0;padding:14px 36px;transition:all 0.3s ease;cursor:pointer}
+.btn-primary{background:var(--brown);color:var(--white);border:1px solid var(--brown)}
+.btn-primary:hover{background:var(--brown-light)}
+.btn-outline{background:transparent;color:var(--brown);border:1px solid var(--brown)}
+.btn-outline:hover{background:var(--brown);color:var(--white)}
+.btn-white{background:transparent;color:white;border:1px solid rgba(255,255,255,0.6)}
+.btn-white:hover{background:white;color:var(--brown)}
+.btn-gold{background:var(--gold);color:var(--brown);border:1px solid var(--gold)}
+.btn-gold:hover{background:var(--gold-light)}
+
+/* NAVBAR */
+#nav{position:fixed;top:46px;left:0;right:0;z-index:100;padding:0 48px;height:72px;display:flex;align-items:center;justify-content:space-between;transition:background 0.4s ease,box-shadow 0.4s ease,top 0.4s ease;background:rgba(44,24,16,0.85);backdrop-filter:blur(12px)}
+#nav.scrolled{background:rgba(253,250,246,0.97);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--border);height:64px}
+.nav-logo{font-family:'Playfair Display',serif;font-style:italic;font-size:1.5rem;font-weight:400;color:white;letter-spacing:0.04em;transition:color 0.4s}
+#nav.scrolled .nav-logo{color:var(--brown)}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.15em;font-weight:500;color:rgba(255,255,255,0.85);transition:color 0.3s}
+#nav.scrolled .nav-links a{color:var(--text-muted)}
+.nav-links a:hover{color:white}
+#nav.scrolled .nav-links a:hover{color:var(--brown)}
+.nav-links a.active{color:var(--gold-light) !important}
+.nav-cta{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:500;padding:10px 24px;border:1px solid rgba(255,255,255,0.5);color:white;background:transparent;transition:all 0.3s}
+.nav-cta:hover{background:white;color:var(--brown)}
+#nav.scrolled .nav-cta{border-color:var(--brown);color:var(--brown)}
+#nav.scrolled .nav-cta:hover{background:var(--brown);color:white}
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.nav-hamburger span{display:block;width:22px;height:1px;background:white;margin:5px 0;transition:all 0.3s}
+#nav.scrolled .nav-hamburger span{background:var(--brown)}
+#mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--white);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+#mobile-nav.open{display:flex}
+#mobile-nav a{font-size:1.6rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--brown)}
+#mobile-nav .close-btn{position:absolute;top:24px;right:32px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--brown)}
+
+/* PAGE HERO */
+#page-hero{background:var(--brown);padding:180px 48px 80px;text-align:center;position:relative;overflow:hidden}
+#page-hero::before{content:'';position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=1080');background-size:cover;background-position:center;opacity:0.18}
+.page-hero-content{position:relative;z-index:2}
+.page-hero-content h1{color:white;font-style:italic;margin-bottom:16px}
+.page-hero-content p{color:rgba(255,255,255,0.65);font-size:1rem;font-weight:300;letter-spacing:0.06em;max-width:520px;margin:0 auto}
+
+/* MENU SECTIONS */
+#menu{padding:80px 48px 120px;background:var(--white)}
+.menu-inner{max-width:1200px;margin:0 auto}
+.menu-section{margin-bottom:80px}
+.menu-section-header{display:flex;align-items:center;gap:20px;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.menu-section-header h2{font-size:clamp(1.4rem,3vw,2rem);color:var(--brown)}
+.menu-section-line{flex:1;height:1px;background:var(--border)}
+.menu-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+
+/* MENU CARD */
+.menu-card{background:var(--white);border:1px solid var(--border);transition:box-shadow 0.3s ease,transform 0.3s ease;cursor:pointer;overflow:hidden}
+.menu-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px)}
+.menu-card-img{width:100%;height:180px;object-fit:cover;background:var(--cream)}
+.menu-card-body{padding:20px 22px 22px}
+.menu-card-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--brown);margin-bottom:4px}
+.menu-card-desc{font-size:0.8rem;color:var(--text-muted);font-style:italic;margin-bottom:14px;line-height:1.6}
+.menu-card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.menu-card-price{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--brown);font-weight:400}
+.menu-card-price span{font-family:'Jost',sans-serif;font-size:0.7rem;color:var(--text-muted);font-weight:500}
+.menu-card-btn{font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:9px 16px;background:transparent;border:1px solid var(--brown);color:var(--brown);cursor:pointer;transition:all 0.25s;white-space:nowrap}
+.menu-card-btn:hover{background:var(--brown);color:white}
+
+/* MODAL */
+#item-modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(44,24,16,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
+#item-modal.open{display:flex}
+.modal-box{background:var(--white);max-width:540px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-muted);z-index:2;line-height:1;padding:4px 8px}
+.modal-close:hover{color:var(--brown)}
+.modal-img{width:100%;height:240px;object-fit:cover}
+.modal-body{padding:28px 32px 32px}
+.modal-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--brown);margin-bottom:6px}
+.modal-price{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:14px}
+.modal-desc{font-size:0.88rem;color:var(--text-muted);line-height:1.75;margin-bottom:28px}
+.modal-action-btn{display:inline-block;width:100%;text-align:center;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:16px 32px;background:var(--brown);color:white;border:none;cursor:pointer;transition:background 0.3s}
+.modal-action-btn:hover{background:var(--brown-light)}
+
+/* FOOTER (minimal) */
+footer{background:var(--brown)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.06);padding:24px 48px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:0.7rem}
+.footer-legal{display:flex;gap:24px}
+.footer-legal a{color:rgba(255,255,255,0.3);transition:color 0.2s}
+.footer-legal a:hover{color:rgba(255,255,255,0.6)}
+.footer-stamp{font-size:0.65rem;color:rgba(255,255,255,0.2)}
+
+@media(max-width:768px){
+  #nav{padding:0 24px}
+  .nav-links{display:none}
+  .nav-hamburger{display:block}
+  #page-hero{padding:160px 24px 64px}
+  #menu{padding:48px 24px 80px}
+  .menu-cards{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- STAMPIFY DEMO BANNER -->
+<div id="stampify-banner" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#3D31B0;color:white;text-align:center;padding:10px 20px;font-size:13px;font-family:sans-serif;display:flex;align-items:center;justify-content:center;gap:16px;">
+  <span>✨ Ceci est un exemple de site livré par Stampify en 48h</span>
+  <a href="https://www.stampify.ch" target="_blank" rel="noopener" style="background:white;color:#3D31B0;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;">Obtenir le mien →</a>
+</div>
+
+<div id="mobile-nav">
+  <button class="close-btn" onclick="closeMobile()">✕</button>
+  <a href="cafe-lumiere.html" onclick="closeMobile()">Accueil</a>
+  <a href="cafe-lumiere.html#carte" onclick="closeMobile()">Notre Café</a>
+  <a href="cafe-lumiere-la-carte.html" onclick="closeMobile()">La Carte</a>
+  <a href="cafe-lumiere.html#reservation" onclick="closeMobile()">Réservation</a>
+</div>
+
+<nav id="nav">
+  <a href="cafe-lumiere.html" class="nav-logo">Café Lumière</a>
+  <div class="nav-links">
+    <a href="cafe-lumiere.html">Accueil</a>
+    <a href="cafe-lumiere.html#carte">Notre Café</a>
+    <a href="cafe-lumiere-la-carte.html" class="active">La Carte</a>
+    <a href="cafe-lumiere.html#reservation">Réservation</a>
+  </div>
+  <a href="cafe-lumiere.html#reservation" class="nav-cta">Réserver</a>
+  <button class="nav-hamburger" onclick="openMobile()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- PAGE HERO -->
+<section id="page-hero">
+  <div class="page-hero-content reveal">
+    <span class="label-upper">Café Lumière · Genève</span>
+    <h1>Notre Carte</h1>
+    <p>Produits frais, préparés chaque matin avec soin. Pâtisseries maison, cafés de spécialité et brunchs généreux.</p>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-inner">
+
+    <!-- BREAKFAST & BRUNCH -->
+    <div class="menu-section reveal">
+      <div class="menu-section-header">
+        <span class="label-upper" style="margin-bottom:0">Breakfast &amp; Brunch</span>
+        <div class="menu-section-line"></div>
+      </div>
+      <div class="menu-cards">
+        <div class="menu-card" onclick="openModal('Granola maison au lait d\'avoine','Granola artisanal croustillant, lait d\'avoine froid, fruits frais de saison et miel des Alpes.','8 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Granola maison" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Granola maison au lait d'avoine</p>
+            <p class="menu-card-desc">Granola artisanal, fruits frais, miel des Alpes</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">8 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Granola maison au lait d\'avoine','Granola artisanal croustillant, lait d\'avoine froid, fruits frais de saison et miel des Alpes.','8 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Tartines beurre &amp; confiture maison','Pain de campagne grillé, beurre de qualité et confitures préparées maison chaque semaine selon les saisons.','6 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Tartines beurre confiture" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Tartines beurre &amp; confiture maison</p>
+            <p class="menu-card-desc">Pain de campagne grillé, confitures de saison</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">6 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Tartines beurre &amp; confiture maison','Pain de campagne grillé, beurre de qualité et confitures préparées maison chaque semaine selon les saisons.','6 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Avocado toast sur pain sourdough','Avocat écrasé à la main, œuf poché, graines de courge, piment d\'Espelette, sur pain au levain maison.','14 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Avocado toast" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Avocado toast sur pain sourdough</p>
+            <p class="menu-card-desc">Avocat, œuf poché, graines, piment d'Espelette</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">14 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Avocado toast sur pain sourdough','Avocat écrasé à la main, œuf poché, graines de courge, piment d\'Espelette, sur pain au levain maison.','14 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Œufs bénédictine','Œufs pochés sur muffin anglais, jambon de qualité, sauce hollandaise maison. Notre grand classique du brunch.','16 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Œufs bénédictine" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Œufs bénédictine</p>
+            <p class="menu-card-desc">Œufs pochés, muffin anglais, sauce hollandaise</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">16 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Œufs bénédictine','Œufs pochés sur muffin anglais, jambon de qualité, sauce hollandaise maison. Notre grand classique du brunch.','16 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Pancakes au sirop d\'érable','Pancakes moelleux à la vanille, sirop d\'érable canadien pur, fruits rouges frais et beurre noisette.','13 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Pancakes sirop d'érable" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Pancakes au sirop d'érable</p>
+            <p class="menu-card-desc">Pancakes vanille, sirop d'érable, fruits rouges</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">13 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Pancakes au sirop d\'érable','Pancakes moelleux à la vanille, sirop d\'érable canadien pur, fruits rouges frais et beurre noisette.','13 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAFÉS & BOISSONS -->
+    <div class="menu-section reveal reveal-delay-1">
+      <div class="menu-section-header">
+        <span class="label-upper" style="margin-bottom:0">Cafés &amp; Boissons</span>
+        <div class="menu-section-line"></div>
+      </div>
+      <div class="menu-cards">
+        <div class="menu-card" onclick="openModal('Espresso','Un shot d\'espresso issu de notre torréfaction artisanale maison. Corsé, aromatique, avec une belle crema dorée.','4 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Espresso" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Espresso</p>
+            <p class="menu-card-desc">Torréfaction artisanale maison, crema dorée</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">4 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Espresso','Un shot d\'espresso issu de notre torréfaction artisanale maison. Corsé, aromatique, avec une belle crema dorée.','4 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Cappuccino','Espresso maison, lait entier vaporisé, mousse onctueuse. Equilibre parfait entre intensité du café et douceur lactée.','5.50 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Cappuccino" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Cappuccino</p>
+            <p class="menu-card-desc">Espresso, mousse onctueuse, ratio classique</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">5.50 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Cappuccino','Espresso maison, lait entier vaporisé, mousse onctueuse. Equilibre parfait entre intensité du café et douceur lactée.','5.50 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Flat white','Double ristretto sur lait micromoussé velouté. Café concentré et lait soyeux — la signature australienne.','6 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Flat white" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Flat white</p>
+            <p class="menu-card-desc">Double ristretto, lait micromoussé velouté</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">6 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Flat white','Double ristretto sur lait micromoussé velouté. Café concentré et lait soyeux — la signature australienne.','6 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Café latte','Espresso doux allongé dans un grand verre de lait chaud vaporisé. Doux et réconfortant.','5.50 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Café latte" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Café latte</p>
+            <p class="menu-card-desc">Espresso allongé, grand verre de lait chaud</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">5.50 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Café latte','Espresso doux allongé dans un grand verre de lait chaud vaporisé. Doux et réconfortant.','5.50 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Matcha latte','Matcha cérémonial japonais de première qualité fouetté au lait d\'avoine chaud. Doux, végétal et apaisant.','7 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Matcha latte" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Matcha latte</p>
+            <p class="menu-card-desc">Matcha cérémonial, lait d'avoine, douceur végétale</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">7 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Matcha latte','Matcha cérémonial japonais de première qualité fouetté au lait d\'avoine chaud. Doux, végétal et apaisant.','7 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Chai latte','Thé chai épicé infusé à chaud avec cardamome, cannelle et gingembre, allongé au lait d\'avoine mousseux.','6.50 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Chai latte" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Chai latte</p>
+            <p class="menu-card-desc">Épices chai, cardamome, lait d'avoine mousseux</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">6.50 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Chai latte','Thé chai épicé infusé à chaud avec cardamome, cannelle et gingembre, allongé au lait d\'avoine mousseux.','6.50 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Jus d\'orange frais','Oranges sanguines pressées à la commande. Fraîcheur pure, aucun ajout de sucre, riche en vitamine C.','6 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Jus d'orange frais" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Jus d'orange frais</p>
+            <p class="menu-card-desc">Oranges pressées à la commande, sans sucre ajouté</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">6 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Jus d\'orange frais','Oranges sanguines pressées à la commande. Fraîcheur pure, aucun ajout de sucre, riche en vitamine C.','6 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Smoothie du jour','Préparé chaque matin selon les arrivages : fruits frais, banane, lait d\'avoine, graines de chia. Demandez la composition du jour.','8 CHF','coffee')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=600" alt="Smoothie du jour" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Smoothie du jour</p>
+            <p class="menu-card-desc">Fruits frais, lait d'avoine, chia — composition du jour</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">8 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Smoothie du jour','Préparé chaque matin selon les arrivages : fruits frais, banane, lait d\'avoine, graines de chia. Demandez la composition du jour.','8 CHF','coffee')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PÂTISSERIES -->
+    <div class="menu-section reveal">
+      <div class="menu-section-header">
+        <span class="label-upper" style="margin-bottom:0">Pâtisseries</span>
+        <div class="menu-section-line"></div>
+      </div>
+      <div class="menu-cards">
+        <div class="menu-card" onclick="openModal('Croissant au beurre','Feuilletage pur beurre AOP, cuit chaque matin à 6h. Croustillant dehors, moelleux dedans. L\'incontournable.','4 CHF','pastry')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=600" alt="Croissant au beurre" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Croissant au beurre</p>
+            <p class="menu-card-desc">Feuilletage pur beurre AOP, cuit chaque matin</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">4 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Croissant au beurre','Feuilletage pur beurre AOP, cuit chaque matin à 6h. Croustillant dehors, moelleux dedans. L\'incontournable.','4 CHF','pastry')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Pain au chocolat','Pâte feuilletée beurre, deux bâtons de chocolat noir 70% Ecuador. Chaud à la sortie du four.','4.50 CHF','pastry')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=600" alt="Pain au chocolat" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Pain au chocolat</p>
+            <p class="menu-card-desc">Chocolat noir 70% Ecuador, pâte feuilletée beurre</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">4.50 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Pain au chocolat','Pâte feuilletée beurre, deux bâtons de chocolat noir 70% Ecuador. Chaud à la sortie du four.','4.50 CHF','pastry')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Tarte citron meringuée','Crème de citron frais sur pâte sablée dorée, meringue italienne légère dorée au chalumeau.','7 CHF','pastry')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=600" alt="Tarte citron meringuée" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Tarte citron meringuée</p>
+            <p class="menu-card-desc">Crème citron, pâte sablée, meringue italienne</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">7 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Tarte citron meringuée','Crème de citron frais sur pâte sablée dorée, meringue italienne légère dorée au chalumeau.','7 CHF','pastry')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Mille-feuille','Feuilletage caramélisé, crème pâtissière vanille Bourbon, fondant glacé. Un classique revisité avec soin.','7.50 CHF','pastry')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=600" alt="Mille-feuille" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Mille-feuille</p>
+            <p class="menu-card-desc">Feuilletage caramélisé, crème vanille Bourbon</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">7.50 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Mille-feuille','Feuilletage caramélisé, crème pâtissière vanille Bourbon, fondant glacé. Un classique revisité avec soin.','7.50 CHF','pastry')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Brownie chocolat noir','Brownie intense au chocolat noir 72% Venezuela, cœur fondant, noix de pécan, fleur de sel.','6 CHF','pastry')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=600" alt="Brownie chocolat noir" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Brownie chocolat noir</p>
+            <p class="menu-card-desc">Chocolat 72%, cœur fondant, noix de pécan</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">6 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Brownie chocolat noir','Brownie intense au chocolat noir 72% Venezuela, cœur fondant, noix de pécan, fleur de sel.','6 CHF','pastry')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SNACKS & SALADES -->
+    <div class="menu-section reveal reveal-delay-1">
+      <div class="menu-section-header">
+        <span class="label-upper" style="margin-bottom:0">Snacks &amp; Salades</span>
+        <div class="menu-section-line"></div>
+      </div>
+      <div class="menu-cards">
+        <div class="menu-card" onclick="openModal('Salade composée du jour','Salade fraîche préparée selon le marché : légumes de saison, protéine, vinaigrette maison. Demandez la composition du jour.','16 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Salade composée" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Salade composée du jour</p>
+            <p class="menu-card-desc">Légumes de saison, protéine, vinaigrette maison</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">16 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Salade composée du jour','Salade fraîche préparée selon le marché : légumes de saison, protéine, vinaigrette maison. Demandez la composition du jour.','16 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Club sandwich','Pain de mie grillé, poulet rôti tranché, bacon, tomate, laitue, mayo maison. Servi avec chips artisanales.','15 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Club sandwich" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Club sandwich</p>
+            <p class="menu-card-desc">Poulet rôti, bacon, tomate, mayo maison, chips</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">15 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Club sandwich','Pain de mie grillé, poulet rôti tranché, bacon, tomate, laitue, mayo maison. Servi avec chips artisanales.','15 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Soupe du jour','Soupe maison mijotée chaque matin avec les légumes du marché. Servie avec une tranche de pain au levain.','9 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Soupe du jour" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Soupe du jour</p>
+            <p class="menu-card-desc">Mijotée chaque matin, légumes du marché, pain levain</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">9 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Soupe du jour','Soupe maison mijotée chaque matin avec les légumes du marché. Servie avec une tranche de pain au levain.','9 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" onclick="openModal('Quiche lorraine','Quiche maison à pâte brisée pur beurre, garniture lardons-crème-œufs. Cuite au four chaque matin.','12 CHF','breakfast')">
+          <img class="menu-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=600" alt="Quiche lorraine" loading="lazy">
+          <div class="menu-card-body">
+            <p class="menu-card-name">Quiche lorraine</p>
+            <p class="menu-card-desc">Pâte brisée beurre, lardons, crème, cuite chaque matin</p>
+            <div class="menu-card-footer">
+              <p class="menu-card-price">12 <span>CHF</span></p>
+              <button class="menu-card-btn" onclick="event.stopPropagation();openModal('Quiche lorraine','Quiche maison à pâte brisée pur beurre, garniture lardons-crème-œufs. Cuite au four chaque matin.','12 CHF','breakfast')">Commander pour plus tard →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ITEM MODAL -->
+<div id="item-modal" role="dialog" aria-modal="true" aria-labelledby="modal-item-name" onclick="handleModalBackdrop(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()" aria-label="Fermer">✕</button>
+    <img id="modal-img" class="modal-img" src="" alt="">
+    <div class="modal-body">
+      <h2 class="modal-name" id="modal-item-name"></h2>
+      <p class="modal-price" id="modal-item-price"></p>
+      <p class="modal-desc" id="modal-item-desc"></p>
+      <button class="modal-action-btn" onclick="goToReservation()">Commander pour plus tard →</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <div class="footer-legal">
+      <a href="#">Mentions légales</a>
+      <a href="#">Confidentialité</a>
+    </div>
+    <p style="color:rgba(255,255,255,0.35);">© 2026 Café Lumière · <span class="footer-stamp">Site vitrine créé par Stampify</span></p>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.08});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll state
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Mobile nav
+function openMobile(){ document.getElementById('mobile-nav').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMobile(){ document.getElementById('mobile-nav').classList.remove('open'); document.body.style.overflow=''; }
+
+// Photo map
+const PHOTOS = {
+  breakfast: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?fit=max&fm=jpg&q=80&w=800',
+  coffee:    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?fit=max&fm=jpg&q=80&w=800',
+  pastry:    'https://images.unsplash.com/photo-1509440159596-0249088772ff?fit=max&fm=jpg&q=80&w=800'
+};
+
+// Modal
+function openModal(name, desc, price, photoKey) {
+  document.getElementById('modal-item-name').textContent = name;
+  document.getElementById('modal-item-price').textContent = price;
+  document.getElementById('modal-item-desc').textContent = desc;
+  const img = document.getElementById('modal-img');
+  img.src = PHOTOS[photoKey] || PHOTOS.breakfast;
+  img.alt = name;
+  const modal = document.getElementById('item-modal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('item-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleModalBackdrop(e) {
+  if (e.target === document.getElementById('item-modal')) closeModal();
+}
+
+function goToReservation() {
+  closeModal();
+  window.open('cafe-lumiere.html#reservation', '_blank');
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

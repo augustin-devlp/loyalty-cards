@@ -297,6 +297,7 @@ footer{background:var(--brown)}
   <button class="close-btn" onclick="closeMobile()">✕</button>
   <a href="#histoire" onclick="closeMobile()">Notre histoire</a>
   <a href="#carte" onclick="closeMobile()">La carte</a>
+  <a href="cafe-lumiere-la-carte.html">La Carte complète</a>
   <a href="#fidelite" onclick="closeMobile()">Carte fidélité</a>
   <a href="#reservation" onclick="closeMobile()">Réserver</a>
 </div>
@@ -306,6 +307,7 @@ footer{background:var(--brown)}
   <div class="nav-links">
     <a href="#histoire">Notre histoire</a>
     <a href="#carte">La carte</a>
+    <a href="cafe-lumiere-la-carte.html">La Carte complète</a>
     <a href="#fidelite">Carte fidélité</a>
     <a href="#reservation">Réserver</a>
   </div>
@@ -577,6 +579,39 @@ footer{background:var(--brown)}
           <div style="grid-column:1/-1;">
             <label style="font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:6px;">Note (optionnel)</label>
             <textarea id="resa-note" rows="2" style="width:100%;padding:12px 14px;border:1px solid #E2D9CC;border-radius:8px;font-family:'Jost',sans-serif;font-size:14px;outline:none;resize:vertical;" placeholder="Allergie, demande spéciale..."></textarea>
+          </div>
+          <!-- PRÉ-COMMANDER -->
+          <div style="grid-column:1/-1;border:1px solid #E2D9CC;border-radius:12px;padding:16px 20px;background:var(--cream);">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;color:var(--brown);">
+              <input type="checkbox" id="preorder-toggle" style="width:18px;height:18px;cursor:pointer;accent-color:var(--brown);" onchange="togglePreorder(this.checked)">
+              Je souhaite pré-commander
+            </label>
+            <div id="preorder-fields" style="display:none;margin-top:16px;grid-template-columns:1fr 1fr;gap:16px;">
+              <div>
+                <label style="font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:6px;">Heure d'arrivée</label>
+                <select id="preorder-time" style="width:100%;padding:12px 14px;border:1px solid #E2D9CC;border-radius:8px;font-family:'Jost',sans-serif;font-size:14px;outline:none;background:white;">
+                  <option value="">-- Choisir --</option>
+                  <option>07:00</option><option>07:30</option><option>08:00</option><option>08:30</option>
+                  <option>09:00</option><option>09:30</option><option>10:00</option><option>10:30</option>
+                  <option>11:00</option><option>11:30</option><option>12:00</option><option>12:30</option>
+                  <option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option>
+                  <option>15:00</option><option>15:30</option><option>16:00</option><option>16:30</option>
+                  <option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option>
+                  <option>19:00</option><option>19:30</option><option>20:00</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:6px;">Nb de personnes</label>
+                <select id="preorder-guests" style="width:100%;padding:12px 14px;border:1px solid #E2D9CC;border-radius:8px;font-family:'Jost',sans-serif;font-size:14px;outline:none;background:white;">
+                  <option>1</option><option>2</option><option>3</option><option>4</option>
+                  <option>5</option><option>6</option><option>7</option><option>8</option>
+                </select>
+              </div>
+              <div style="grid-column:1/-1;">
+                <label style="font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--brown);display:block;margin-bottom:6px;">Produits souhaités</label>
+                <textarea id="preorder-products" rows="3" style="width:100%;padding:12px 14px;border:1px solid #E2D9CC;border-radius:8px;font-family:'Jost',sans-serif;font-size:14px;outline:none;resize:vertical;" placeholder="Ex: 2 cappuccinos, 1 croissant, 1 granola"></textarea>
+              </div>
+            </div>
           </div>
           <div style="grid-column:1/-1;display:flex;gap:12px;justify-content:center;margin-top:8px;">
             <button type="button" onclick="resaGoStep(2)" style="background:none;border:1px solid #E2D9CC;padding:12px 20px;border-radius:8px;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;color:#6B5B4E;">← Retour</button>
@@ -852,12 +887,18 @@ function pickDate(dateStr) {
   loadSlots(dateStr);
 }
 
+function togglePreorder(checked) {
+  const fields = document.getElementById('preorder-fields');
+  fields.style.display = checked ? 'grid' : 'none';
+}
+
 document.getElementById('resa-form')?.addEventListener('submit', async function(e) {
   e.preventDefault();
   if(resaState.service===null || !resaState.date || !resaState.time) return;
   const btn = document.getElementById('resa-submit');
   btn.textContent = 'Envoi...'; btn.disabled = true;
   const s = RESA_SERVICES[resaState.service];
+  const isPreorder = document.getElementById('preorder-toggle')?.checked || false;
   const payload = {
     commerce_id: RESA_COMMERCE_ID,
     service_name: s.name,
@@ -869,7 +910,11 @@ document.getElementById('resa-form')?.addEventListener('submit', async function(
     reservation_date: resaState.date,
     reservation_time: resaState.time+':00',
     note: document.getElementById('resa-note').value || null,
-    status: 'pending'
+    status: 'pending',
+    type: isPreorder ? 'precommande' : 'reservation',
+    preorder_arrival_time: isPreorder ? (document.getElementById('preorder-time').value || null) : null,
+    preorder_guests: isPreorder ? parseInt(document.getElementById('preorder-guests').value) : null,
+    preorder_products: isPreorder ? (document.getElementById('preorder-products').value || null) : null
   };
   try {
     const resp = await fetch(`${RESA_SUPABASE_URL}/rest/v1/reservations`, {

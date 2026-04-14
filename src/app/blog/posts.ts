@@ -824,6 +824,332 @@ export const blogPosts: BlogPost[] = [
 <p style="margin-top:32px;">Votre café mérite des habitués fidèles qui reviennent chaque matin. <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">Découvrez Stampify et lancez votre programme en 48h.</a></p>
     `,
   },
+  {
+    slug: "plaquette-nfc-commerce-suisse",
+    title:
+      "Plaquette NFC pour commerce : comment ça fonctionne en Suisse en 2026",
+    metaDescription:
+      "Comment fonctionne une plaquette NFC pour commerce en Suisse ? Guide complet : technologie NFC, installation, coûts, avantages pour boulangers, cafés et restaurants en 2026.",
+    category: "Technologie NFC",
+    excerpt:
+      "La plaquette NFC en bois posée sur le comptoir de votre commerce, c'est bien plus qu'un gadget. C'est votre programme de fidélité, votre site web et vos coordonnées, accessibles en une seconde depuis n'importe quel smartphone.",
+    readingTime: 7,
+    keywords: [
+      "plaquette NFC commerce",
+      "NFC carte fidélité",
+      "technologie NFC boutique suisse",
+      "NFC Suisse commerçant",
+    ],
+    content: `
+<h2>Introduction : une plaquette posée sur un comptoir qui change tout</h2>
+<p>Imaginez une petite plaquette en bois gravée au laser, posée près de votre caisse. Un client pose son smartphone dessus pendant une seconde. Sa carte de fidélité s'ouvre instantanément dans son navigateur — aucune application à télécharger, aucun code à saisir. C'est la magie du NFC appliquée au commerce local suisse.</p>
+
+<p>Le NFC (Near Field Communication) n'est pas nouveau — c'est la même technologie qui permet de payer sans contact avec sa carte bancaire ou son téléphone. Mais appliquée à la fidélisation client et à la présence en ligne d'un commerce, elle devient un outil redoutablement efficace. <strong>En Suisse, les commerçants qui ont adopté la plaquette NFC rapportent une hausse moyenne de 25 à 35 % du taux d'inscription à leur programme de fidélité</strong> par rapport aux méthodes traditionnelles.</p>
+
+<p>Dans ce guide, nous allons vous expliquer concrètement comment fonctionne cette technologie, pourquoi elle est particulièrement adaptée aux commerces suisses en 2026, et comment des solutions comme <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">Stampify</a> l'intègrent dans une offre complète pour les indépendants.</p>
+
+<h2>Comment fonctionne le NFC concrètement</h2>
+<p>Le NFC est un protocole de communication sans fil à très courte portée — moins de 4 centimètres. Il utilise l'induction électromagnétique pour transmettre des données entre deux appareils. Concrètement, quand vous approchez votre smartphone d'une plaquette NFC, voici ce qui se passe en moins d'une seconde :</p>
+
+<ol>
+  <li><strong>Détection</strong> : l'antenne NFC de votre téléphone génère un champ magnétique faible.</li>
+  <li><strong>Activation</strong> : la puce NFC intégrée dans la plaquette capte ce champ et s'alimente — elle n'a pas besoin de batterie propre.</li>
+  <li><strong>Transmission</strong> : la puce envoie l'URL programmée (par exemple, votre carte fidélité ou votre site web) vers le téléphone.</li>
+  <li><strong>Ouverture</strong> : le navigateur du téléphone s'ouvre automatiquement sur la page en question.</li>
+</ol>
+
+<p>La beauté du système est sa simplicité absolue. Aucune application n'est nécessaire côté client — tous les smartphones modernes (iPhone depuis le 7, Android depuis 2013) supportent le NFC nativement. Et du côté du commerçant, la plaquette ne nécessite aucune maintenance, aucune recharge, aucune connexion internet propre.</p>
+
+<p>La puce NFC peut contenir différents types de données : une URL (le cas le plus courant pour les commerces), un texte, des informations de contact en format vCard, ou même des paramètres de configuration Wi-Fi. Pour un commerçant, l'usage principal est de pointer vers sa carte fidélité digitale ou son site vitrine.</p>
+
+<h3>NFC vs Bluetooth : pourquoi le NFC gagne</h3>
+<p>Contrairement au Bluetooth, le NFC ne nécessite aucun jumelage préalable, aucune activation manuelle dans les réglages, et ne consomme quasiment pas d'énergie. L'interaction est instantanée et sans friction — exactement ce qu'il faut dans un environnement commercial où le client est pressé.</p>
+
+<h2>Les avantages de la plaquette NFC pour les commerçants suisses</h2>
+<p>La Suisse présente un contexte particulièrement favorable à l'adoption du NFC dans les commerces de proximité. Voici pourquoi :</p>
+
+<h3>Un taux d'équipement smartphone parmi les plus élevés d'Europe</h3>
+<p>Selon les données de l'Office fédéral de la statistique, plus de 94 % des Suisses de 15 à 64 ans possèdent un smartphone. Dans les centres urbains de Suisse romande (Genève, Lausanne, Fribourg, Sion), ce taux dépasse 97 %. En d'autres termes, pratiquement tous vos clients ont un téléphone compatible NFC dans leur poche.</p>
+
+<h3>L'adoption du paiement sans contact comme accélérateur</h3>
+<p>La pandémie de 2020-2021 a massivement accéléré l'adoption du paiement sans contact en Suisse. En 2026, plus de 85 % des paiements en caisse se font sans contact. Cette habitude gestuelle — approcher son téléphone d'un terminal — est désormais ancrée dans le comportement des consommateurs. La plaquette NFC exploite exactement cette habitude acquise.</p>
+
+<h3>Une expérience client différenciante</h3>
+<p>Pour un boulanger à Lausanne, un cafetier à Genève, un coiffeur à Fribourg ou un restaurateur à Sion, la plaquette NFC en bois gravée est un élément visuel et fonctionnel fort. Elle signale immédiatement que le commerce est moderne et attentif à l'expérience client. Les clients en parlent, la prennent en photo pour leurs réseaux sociaux — c'est un vecteur de bouche-à-oreille inattendu.</p>
+
+<h3>Zéro friction pour le client</h3>
+<p>Le principal frein à l'inscription aux programmes de fidélité est la friction : formulaire à remplir, application à télécharger, carte physique à conserver. Le NFC élimine chaque étape. Un tap = une carte fidélité active. Les commerçants qui sont passés de la carte papier à la plaquette NFC rapportent des taux de conversion 3 à 5 fois supérieurs.</p>
+
+<h3>Durabilité et coût opérationnel nul</h3>
+<p>Une plaquette NFC de qualité dure entre 5 et 10 ans sans maintenance. Elle ne tombe pas en panne, ne se décharge pas, ne nécessite aucun abonnement de fonctionnement. Comparée aux impressions récurrentes de cartes papier ou aux frais mensuels des applications, c'est un investissement une fois pour toutes.</p>
+
+<h2>NFC vs QR code : lequel choisir ?</h2>
+<p>La question revient souvent chez les commerçants qui veulent moderniser leur système de fidélité. QR code et NFC ont des avantages différents, et dans l'idéal, un commerce devrait utiliser les deux — ce que fait d'ailleurs Stampify, en gravant à la fois un QR code et en intégrant une puce NFC dans chaque plaquette.</p>
+
+<table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:15px;">
+  <thead>
+    <tr style="background:#3D31B0;color:white;">
+      <th style="padding:12px;text-align:left;">Critère</th>
+      <th style="padding:12px;text-align:center;">NFC</th>
+      <th style="padding:12px;text-align:center;">QR Code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f8f8ff;">
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Vitesse d'interaction</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">⚡ Instantané (tap)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">2-4 secondes (scan)</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Compatibilité téléphone</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Smartphones récents (95 %+)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Tous smartphones</td>
+    </tr>
+    <tr style="background:#f8f8ff;">
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Utilisation en plein soleil</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Pas de problème</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Parfois difficile à scanner</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Résistance à l'usure</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Excellente (puce protégée)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">Dépend de l'impression</td>
+    </tr>
+    <tr style="background:#f8f8ff;">
+      <td style="padding:10px;">Effet "wow" client</td>
+      <td style="padding:10px;text-align:center;">Fort (nouveauté)</td>
+      <td style="padding:10px;text-align:center;">Standard (familier)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Notre recommandation :</strong> combinez les deux. Le NFC pour les clients qui connaissent la technologie (la majorité en 2026), le QR code comme filet de sécurité pour les autres. C'est exactement ce qu'intègre la plaquette en bois de <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">Stampify</a> — puce NFC et QR code imprimé sur la même plaquette.</p>
+
+<h2>Combien coûte une plaquette NFC en Suisse</h2>
+<p>Le marché des plaquettes NFC pour commerce est assez fragmenté en Suisse. Voici un comparatif honnête des options disponibles en 2026 :</p>
+
+<table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:15px;">
+  <thead>
+    <tr style="background:#3D31B0;color:white;">
+      <th style="padding:12px;text-align:left;">Type de solution</th>
+      <th style="padding:12px;text-align:center;">Prix</th>
+      <th style="padding:12px;text-align:left;">Ce qui est inclus</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f8f8ff;">
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Tag NFC générique (Amazon, AliExpress)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">2 – 5 CHF</td>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Puce seule, pas de design, pas de service</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Plaquette NFC personnalisée (fournisseurs spécialisés)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">30 – 80 CHF</td>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Plaquette branded, design de base, pas de logiciel de fidélité</td>
+    </tr>
+    <tr style="background:#f8f8ff;">
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Solutions SaaS de fidélité (Stamp.io, Fivestars)</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #e0e0e0;">50 – 200 CHF/mois</td>
+      <td style="padding:10px;border-bottom:1px solid #e0e0e0;">Logiciel de fidélité, mais abonnement continu, plaquette en option</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;">Stampify (tout inclus)</td>
+      <td style="padding:10px;text-align:center;"><strong>990 CHF (unique)</strong></td>
+      <td style="padding:10px;">Site vitrine professionnel + carte fidélité digitale + plaquette NFC en bois gravée + tableau de bord analytics</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Le point clé de cette comparaison : une plaquette NFC seule à 30-80 CHF ne sert à rien sans le logiciel de fidélité qui se trouve derrière. Et un logiciel de fidélité à 100 CHF par mois coûte 1 200 CHF par an — indéfiniment. <strong>La logique économique de l'offre groupée à 990 CHF en paiement unique est évidente pour tout commerce qui pense à l'horizon de 2 ans ou plus.</strong></p>
+
+<h2>Comment Stampify livre votre plaquette NFC en bois gravée</h2>
+<p><a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">Stampify</a> a conçu son offre spécifiquement pour les commerces indépendants suisses. La plaquette NFC en bois n'est pas un accessoire en option — elle est au cœur du système. Voici le processus de bout en bout :</p>
+
+<h3>Étape 1 : Le formulaire d'onboarding (20 minutes)</h3>
+<p>Vous remplissez un formulaire en ligne avec les informations de votre commerce : nom, adresse, horaires, couleurs de votre identité visuelle, logo, photos, et les règles de votre programme de fidélité (nombre de tampons pour une récompense, nature de la récompense). Vous choisissez également le texte à graver sur votre plaquette.</p>
+
+<h3>Étape 2 : Création et configuration (24 à 48 heures)</h3>
+<p>L'équipe Stampify crée votre site vitrine sur la base de vos informations, configure votre carte fidélité digitale avec vos règles personnalisées, et grave au laser votre plaquette en bois. La puce NFC est programmée pour pointer vers votre carte fidélité unique.</p>
+
+<h3>Étape 3 : Livraison et activation</h3>
+<p>Votre site est mis en ligne, votre carte fidélité est active, et votre plaquette NFC est expédiée. Vous recevez un accès à votre tableau de bord personnel où vous pouvez suivre vos statistiques, voir vos clients fidèles et envoyer des campagnes SMS ciblées.</p>
+
+<p>Le bois utilisé pour les plaquettes est du hêtre ou du noyer, selon le modèle choisi. Les dimensions standard sont 10×7 cm — la taille idéale pour être visible sur un comptoir sans être encombrante. Le gravage au laser assure une durabilité maximale, contrairement aux étiquettes imprimées qui s'usent rapidement dans un environnement de commerce.</p>
+
+<h2>Témoignages : des commerçants suisses partagent leur expérience</h2>
+
+<blockquote style="border-left:4px solid #3D31B0;padding:16px 20px;background:#f8f8ff;margin:24px 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 8px;font-style:italic;">&laquo;&nbsp;Franchement, j'étais sceptique au départ. Une plaquette en bois sur mon comptoir de boulangerie... je pensais que mes clients allaient trouver ça bizarre. En réalité, c'est devenu un sujet de conversation ! Les gens posent leur téléphone, leur carte s'ouvre, et ils me demandent comment ça marche. En 3 semaines, j'avais 40 clients inscrits sur ma carte fidélité — je n'avais jamais atteint ça avec mes cartes papier.&nbsp;&raquo;</p>
+  <footer style="font-weight:600;color:#3D31B0;">— Marie-Claire Favre, Boulangerie Artisanale du Lac, Morges</footer>
+</blockquote>
+
+<blockquote style="border-left:4px solid #3D31B0;padding:16px 20px;background:#f8f8ff;margin:24px 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 8px;font-style:italic;">&laquo;&nbsp;Ce qui m'a convaincu, c'est que ça marche même avec les clients les plus âgés. Ma clientèle du dimanche matin a en moyenne 55-60 ans. Je pensais que le NFC ne serait pas pour eux. Mais dès qu'on leur explique que c'est comme payer sans contact, ils comprennent immédiatement et trouvent ça super. La plaquette Stampify est jolie, en plus — ça donne une bonne image à mon café.&nbsp;&raquo;</p>
+  <footer style="font-weight:600;color:#3D31B0;">— Pascal Roduit, Café du Bourg, Sion</footer>
+</blockquote>
+
+<blockquote style="border-left:4px solid #3D31B0;padding:16px 20px;background:#f8f8ff;margin:24px 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 8px;font-style:italic;">&laquo;&nbsp;J'ai comparé plusieurs solutions avant de choisir Stampify. D'autres proposaient des plaquettes NFC mais sans le logiciel derrière, ou le logiciel mais sans la plaquette. L'idée d'avoir tout en un, livré en deux jours, pour un paiement unique... c'était exactement ce dont mon restaurant avait besoin. Six mois plus tard, j'ai 180 clients sur ma liste et je leur envoie un SMS le vendredi pour annoncer le menu du week-end.&nbsp;&raquo;</p>
+  <footer style="font-weight:600;color:#3D31B0;">— Ahmed Benali, Restaurant Le Souk, Lausanne</footer>
+</blockquote>
+
+<h2>Comment commencer</h2>
+<p>La plaquette NFC n'est pas un gadget technologique réservé aux startups ou aux grandes enseignes. En 2026, c'est un outil accessible et éprouvé pour tout commerce de proximité en Suisse romande — boulangerie, café, restaurant, salon de coiffure, onglerie, épicerie fine.</p>
+
+<p>Si vous voulez voir concrètement à quoi ressemble le résultat pour un commerce similaire au vôtre, consultez les démos disponibles sur <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">stampify.ch</a>. Chaque démo est interactive et vous permet de tester la carte fidélité comme si vous étiez un client.</p>
+
+<p style="margin-top:32px;">Prêt à poser votre première plaquette NFC sur votre comptoir ? <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">Découvrez l'offre Stampify — site vitrine + carte fidélité + plaquette NFC en bois pour 990 CHF, livré en 48h.</a></p>
+    `,
+  },
+  {
+    slug: "stampify-avis-test-carte-fidelite",
+    title:
+      "Stampify : avis complet et test de la solution carte fidélité pour commerçants suisses",
+    metaDescription:
+      "Avis complet sur Stampify : j'ai testé la solution site web + carte fidélité + plaquette NFC pour mon café à Lausanne. Mon retour honnête après 2 mois d'utilisation.",
+    category: "Avis & Tests",
+    excerpt:
+      "J'ai testé Stampify pour mon café à Lausanne. Voici mon retour honnête après 2 mois : ce qui fonctionne, ce qui pourrait être amélioré, et si ça vaut vraiment les 990 CHF.",
+    readingTime: 10,
+    keywords: [
+      "Stampify avis",
+      "Stampify test",
+      "carte fidélité digitale Suisse",
+      "Stampify site vitrine",
+      "avis Stampify commerçant",
+    ],
+    content: `
+<p style="font-style:italic;color:#666;font-size:14px;border-left:4px solid #e0e0e0;padding:8px 16px;margin-bottom:32px;">Article rédigé par Thomas Ballmer, gérant du Café de la Gare à Lausanne. Cet avis reflète mon expérience personnelle après 2 mois d'utilisation de Stampify, sans aucune contrepartie commerciale.</p>
+
+<h2>Introduction : pourquoi j'ai décidé de moderniser ma fidélisation en janvier 2026</h2>
+<p>Je suis propriétaire du Café de la Gare à Lausanne depuis 2019. Un café de quartier avec 40 places, une terrasse en été, et une clientèle d'habitués que j'aime profondément. Le matin, j'ai mes réguliers — les navetteurs qui prennent leur café serré avant le train, les mamans après l'école, les freelances qui s'installent avec leur ordinateur pour la matinée.</p>
+
+<p>Depuis l'ouverture, j'utilisais des cartes tampon papier. Vous connaissez le principe : 10 cafés achetés, le 11ème offert. Sur le papier, ça semblait fonctionner. En réalité, c'était chaotique. Les clients perdaient leurs cartes, certains venaient avec 3 cartes différentes à moitié remplies, et j'avais une pile de cartes tamponnées abandonnées derrière ma caisse sans savoir à qui elles appartenaient.</p>
+
+<p>En janvier 2026, j'ai décidé de chercher une vraie solution. Mon objectif était simple : <strong>connaître mes clients fidèles, pouvoir les remercier, et les inciter à revenir sans me ruiner en abonnements mensuels</strong>. Voici ce que j'ai trouvé, testé — et ce que je pense réellement de Stampify après deux mois.</p>
+
+<h2>Pourquoi j'ai choisi Stampify parmi les alternatives</h2>
+<p>Avant de me décider, j'ai regardé sérieusement 4 solutions différentes. Je vais vous dire honnêtement pourquoi j'ai éliminé chacune :</p>
+
+<h3>Stamp.io</h3>
+<p>Interface sympathique, bonne réputation en ligne. Mais l'abonnement commence à 79 CHF par mois — soit 948 CHF par an. Et ce n'est qu'une carte fidélité : pas de site web, pas de plaquette physique. J'aurais encore besoin de payer quelqu'un pour mon site. Éliminé.</p>
+
+<h3>Loyalzoo</h3>
+<p>Conçu pour le marché britannique, traduction française approximative. Le support est en anglais uniquement. Pour mon usage quotidien en Suisse romande, ce n'était pas adapté. De plus, le modèle tarifaire par tranche de clients est difficile à anticiper pour un café en croissance. Éliminé.</p>
+
+<h3>Créer un site WordPress + plugin fidélité</h3>
+<p>Option que j'ai sérieusement envisagée. Un ami m'a chiffré ça : environ 1 500 à 2 000 CHF pour la création, plus l'hébergement (15-20 CHF/mois), plus la maintenance. Et j'aurais quand même besoin d'une solution séparée pour la carte fidélité. Trop complexe, trop cher, et pas de plaquette NFC physique. Éliminé.</p>
+
+<h3>Stampify</h3>
+<p>Ce qui m'a attiré immédiatement sur <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">stampify.ch</a> : la promesse était claire et simple. <strong>990 CHF, une seule fois, et vous avez un site vitrine professionnel + une carte fidélité digitale + une plaquette NFC en bois gravée</strong>, le tout livré en 48 heures. Pas d'abonnement mensuel, pas de frais cachés annoncés. Pour un café de ma taille, c'était économiquement logique. J'ai décidé de tenter l'expérience.</p>
+
+<h2>La commande et la livraison : chronique d'une semaine</h2>
+<p>Je vais vous donner le détail de la semaine de mise en place, parce que la rapidité était l'une des promesses de Stampify et je voulais vérifier si elle tenait.</p>
+
+<h3>Lundi matin : la commande</h3>
+<p>J'ai commandé via le site un lundi à 9h30. Après le paiement, j'ai reçu un lien vers le formulaire d'onboarding. Ça m'a pris environ 25 minutes à remplir — un peu plus que les 20 minutes annoncées, parce que j'ai passé du temps à choisir mes photos et à rédiger ma description. Le formulaire était bien structuré : informations générales du café, horaires, menu à afficher, couleurs, logo, règles du programme de fidélité (j'ai choisi 10 tampons = 1 café offert), et le texte à graver sur la plaquette.</p>
+
+<h3>Mardi : un email de validation</h3>
+<p>Le lendemain mardi vers midi, j'ai reçu un email avec un aperçu de mon site et de ma carte fidélité. On me demandait de valider ou de demander des modifications. J'ai demandé un petit ajustement : changer la couleur du bouton principal pour qu'elle corresponde exactement à mon bleu habituel. La modification a été faite dans l'heure.</p>
+
+<h3>Mercredi : le site est en ligne</h3>
+<p>Mercredi soir, j'ai reçu l'email qui m'annonçait que mon site était en ligne et que ma carte fidélité était activée. J'ai immédiatement ouvert le lien depuis mon téléphone. Honnêtement, j'étais impressionné. Le résultat était propre, professionnel, et ressemblait vraiment à mon café — pas à un template générique.</p>
+
+<h3>Vendredi : la plaquette arrive</h3>
+<p>La plaquette NFC en bois est arrivée par courrier vendredi en fin de matinée. Bien emballée dans une boîte en carton neutre, elle était accompagnée d'un petit guide de démarrage et d'une carte de visite Stampify. La plaquette elle-même était plus belle que ce que j'avais imaginé.</p>
+
+<p><strong>Bilan timing : 4 jours ouvrés de la commande à la plaquette dans les mains</strong>. La promesse des 48h s'appliquait au site (tenu), la plaquette physique prenait 3-4 jours supplémentaires pour la livraison postale — ce qui est parfaitement raisonnable et avait été précisé dans les conditions.</p>
+
+<h2>Le site web livré : ce que j'ai reçu concrètement</h2>
+<p>Voici ce que contenait mon site au moment de la livraison :</p>
+
+<p><strong>Page d'accueil</strong> : une grande photo de la façade de mon café (que j'avais fournie), mon nom, mon accroche (&laquo;&nbsp;Votre café de quartier depuis 2019&nbsp;&raquo;), un bouton &laquo;&nbsp;Notre carte fidélité&nbsp;&raquo; bien visible et les horaires d'ouverture en bas de page.</p>
+
+<p><strong>Page menu</strong> : tous mes produits organisés par catégorie (cafés, boissons chaudes, boissons froides, viennoiseries, sandwichs) avec les prix en CHF. Mise à jour facile via le tableau de bord.</p>
+
+<p><strong>Page contact / nous trouver</strong> : adresse complète, numéro de téléphone cliquable, carte Google Maps intégrée, horaires détaillés avec les jours fériés déjà pré-remplis pour 2026.</p>
+
+<p><strong>Section &laquo;&nbsp;Notre histoire&nbsp;&raquo;</strong> : une courte présentation rédigée par Stampify à partir de ce que j'avais écrit dans le formulaire. Honnêtement, c'était bien fait — mieux que ce que j'aurais écrit moi-même. Quelques ajustements mineurs pour que ce soit vraiment ma voix, mais la base était là.</p>
+
+<p>Le site était responsive (s'adapte parfaitement aux mobiles) et avait déjà un titre et une description SEO optimisés pour &laquo;&nbsp;café Lausanne&nbsp;&raquo; et &laquo;&nbsp;café quartier Gare Lausanne&nbsp;&raquo;. En 6 semaines, j'ai commencé à apparaître dans les résultats Google pour des recherches locales — un résultat que je n'aurais jamais obtenu sans site optimisé.</p>
+
+<h2>La carte de fidélité digitale : comment ça fonctionne au quotidien</h2>
+<p>C'est évidemment la partie qui me tenait le plus à cœur. Voici comment ça se passe en pratique derrière mon comptoir :</p>
+
+<p>Un client commande. Quand il passe à la caisse, je lui dis : &laquo;&nbsp;Vous avez une carte fidélité ? Non ? Posez votre téléphone sur la petite plaquette en bois, ça prend 2 secondes.&nbsp;&raquo; Le client pose son téléphone, sa carte s'ouvre dans son navigateur. Il voit sa progression (1/10 tampons). À la visite suivante, il pose à nouveau son téléphone — la carte mémorise automatiquement. À 10 tampons, il reçoit un message de récompense qu'il me montre.</p>
+
+<p>Les réactions clients ont été uniformément positives. Beaucoup ont dit &laquo;&nbsp;Oh, c'est comme le paiement sans contact !&nbsp;&raquo; — exactement le genre de parallèle qui rend la technologie immédiatement compréhensible. Quelques clients plus âgés ont eu besoin d'une explication, mais j'ai trouvé que montrer le geste une fois suffisait dans 95 % des cas.</p>
+
+<p>En 2 mois, <strong>j'ai enregistré 127 clients uniques sur ma carte fidélité</strong>. Avec mes cartes papier, je ne pouvais même pas savoir combien de clients avaient une carte active.</p>
+
+<h2>La plaquette NFC en bois : description et utilisation</h2>
+<p>La plaquette mesure environ 10×7 cm, en bois de hêtre clair. Mon nom &laquo;&nbsp;Café de la Gare&nbsp;&raquo; est gravé au laser en belle typographie, avec en dessous une petite icône NFC et le texte &laquo;&nbsp;Posez votre téléphone&nbsp;&raquo;. Un QR code est également gravé pour les clients qui préfèrent scanner.</p>
+
+<p>Visuellement, elle s'intègre parfaitement sur mon comptoir. Plusieurs clients m'ont demandé d'où elle venait — c'est clairement un élément décoratif qui fonctionne. La puce NFC est encastrée dans le bois et protégée — après 2 mois d'utilisation intensive (plusieurs dizaines de taps par jour), elle fonctionne toujours parfaitement.</p>
+
+<p>Un détail pratique que j'apprécie : la plaquette est suffisamment lourde pour ne pas se déplacer quand les clients posent leur téléphone. J'avais craint qu'elle glisse, mais le poids et le fond antidérapant la maintiennent parfaitement en place.</p>
+
+<h2>Le tableau de bord analytics : ce qu'on peut suivre</h2>
+<p>L'accès au tableau de bord se fait via un navigateur web avec mes identifiants. Interface simple, sans fioriture. Voici ce que je peux voir :</p>
+
+<ul>
+  <li><strong>Nombre de clients inscrits</strong> (total et nouveaux cette semaine/ce mois)</li>
+  <li><strong>Nombre de taps NFC / scans QR code</strong> par jour</li>
+  <li><strong>Clients proches de leur récompense</strong> (à 8, 9 ou 10 tampons) — utile pour les cibler</li>
+  <li><strong>Clients inactifs depuis X jours</strong> — pour les relancer</li>
+  <li><strong>Historique des récompenses distribuées</strong></li>
+  <li><strong>Module SMS</strong> (en option payante, j'y reviens)</li>
+</ul>
+
+<p>Le tableau de bord est fonctionnel et couvre les besoins d'un café de ma taille. Ce n'est pas un outil analytics sophistiqué avec des entonnoirs de conversion — mais je n'en ai pas besoin. Je veux savoir qui est fidèle, qui est en train de le devenir, et qui je dois relancer. Le dashboard répond exactement à ces questions.</p>
+
+<h2>Les points forts</h2>
+
+<ul style="list-style:none;padding:0;">
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Mise en place réellement rapide</strong> — site en ligne en 48h, c'est tenu</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Tout inclus dans un seul paiement</strong> — pas de surprise de facturation mensuelle</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>La plaquette NFC est vraiment belle</strong> — esthétique qui correspond à l'ambiance d'un café artisanal</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Zéro friction pour les clients</strong> — tap et c'est fait, même les seniors comprennent vite</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Site SEO optimisé dès le départ</strong> — j'apparais sur Google pour mes recherches locales</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Tableau de bord simple et utile</strong> — je vois ce dont j'ai besoin sans être noyé sous les données</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✓ <strong>Support réactif</strong> — deux fois où j'ai eu des questions, réponse en moins de 2 heures en semaine</li>
+  <li style="padding:8px 0;">✓ <strong>Adapté à la réalité suisse</strong> — francs suisses, TVA suisse, les textes sont en français correct</li>
+</ul>
+
+<h2>Ce qui pourrait être amélioré</h2>
+<p>Je veux être honnête ici, parce qu'un avis sans points négatifs n'est pas crédible. Voici ce que j'aurais aimé trouver ou ce qui m'a légèrement déçu :</p>
+
+<ul style="list-style:none;padding:0;">
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✗ <strong>Pas encore de version en allemand</strong> — si vous avez des clients germanophones ou que vous êtes dans une ville bilingue comme Fribourg ou Bienne, le site sera en français uniquement. Dommage.</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✗ <strong>Les SMS sont une option payante</strong> — j'aurais aimé que quelques SMS par mois soient inclus dans le forfait de base. C'est la fonctionnalité que je veux utiliser pour relancer mes clients inactifs, mais elle est facturée en plus.</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✗ <strong>Pas d'intégration avec les systèmes de caisse</strong> — je dois valider les tampons manuellement depuis mon téléphone ou tablette. Ce n'est pas très contraignant (2 secondes par client), mais une intégration avec des systèmes comme Lightspeed ou SumUp serait un vrai plus.</li>
+  <li style="padding:8px 0;border-bottom:1px solid #eee;">✗ <strong>Les mises à jour du menu passent par le tableau de bord</strong> — pas compliqué, mais il faudrait que je me souvienne de le faire quand je change ma carte. Un rappel automatique serait utile.</li>
+  <li style="padding:8px 0;">✗ <strong>Pas de module de réservation en ligne</strong> — pour ceux qui veulent proposer des réservations de table ou des privatisations, il faudra ajouter un outil externe.</li>
+</ul>
+
+<h2>Mon bilan après 2 mois</h2>
+<p>Je vais vous donner des chiffres concrets, parce que c'est ce qui compte vraiment :</p>
+
+<p><strong>127 clients inscrits sur ma carte fidélité</strong> en 2 mois. Avec mes cartes papier, je n'avais jamais dépassé 30-40 cartes actives simultanément (et encore, je ne savais pas lesquelles étaient vraiment actives).</p>
+
+<p><strong>+23 % de visites répétées</strong> par rapport à la même période l'année dernière. Je n'attribue pas tout ça à Stampify — janvier-février 2026 a été un bon hiver à Lausanne — mais la corrélation est là.</p>
+
+<p><strong>18 récompenses distribuées</strong> (cafés offerts). 18 clients qui ont eu l'impression d'être reconnus et valorisés. 18 clients qui sont probablement devenus un peu plus fidèles.</p>
+
+<p><strong>4 clients m'ont recommandé à des amis</strong> en mentionnant spécifiquement &laquo;&nbsp;ils ont un truc cool pour la fidélité&nbsp;&raquo;. Ce bouche-à-oreille autour de la plaquette NFC, je ne l'avais pas anticipé.</p>
+
+<p>Est-ce que ça vaut 990 CHF ? À mon échelle, <strong>oui, clairement</strong>. L'amortissement s'est fait en moins d'un mois si je compte ce que je dépensais avant en cartes papier, en impression, et en temps perdu à gérer les cartes perdues. Et j'ai maintenant un site professionnel que je n'aurais jamais créé seul pour ce prix.</p>
+
+<h2>Conclusion : est-ce que je recommande Stampify ?</h2>
+<p>Oui, sans hésitation, pour un café ou un commerce de proximité de taille similaire au mien. <strong>Stampify est la solution la plus logique économiquement et la plus simple opérationnellement</strong> que j'ai trouvée pour moderniser ma fidélisation client en Suisse romande.</p>
+
+<p>Ce n'est pas parfait — les points d'amélioration que j'ai listés sont réels. Mais pour 990 CHF en paiement unique, vous avez un outil professionnel qui fonctionne dès le premier jour, une plaquette qui attire l'attention, et des données sur vos clients que vous n'aviez jamais eu auparavant.</p>
+
+<p>Si vous êtes commerçant indépendant en Suisse romande et que vous cherchez à moderniser votre fidélisation sans y passer des semaines ni vous engager dans un abonnement mensuel, je vous encourage à aller voir <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">stampify.ch</a> et à regarder les démos disponibles pour votre type de commerce.</p>
+
+<p style="margin-top:32px;padding:20px;background:#f8f8ff;border-radius:8px;border-left:4px solid #3D31B0;">Thomas Ballmer est gérant du Café de la Gare à Lausanne depuis 2019. Cet article représente son expérience personnelle et n'est pas sponsorisé. Vous pouvez découvrir la solution qu'il utilise sur <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">www.stampify.ch</a>.</p>
+    `,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

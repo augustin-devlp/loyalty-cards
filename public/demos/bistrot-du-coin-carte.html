@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carte &amp; Vins — Le Bistrot du Coin Fribourg</title>
+  <meta name="description" content="La carte complète et la sélection de vins du Bistrot du Coin à Fribourg. Entrées, plats principaux, desserts et cave à vins.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1A0A0A;
+      --bg-card: rgba(255,255,255,0.05);
+      --text: #F5EFE0;
+      --text-muted: rgba(245,239,224,0.6);
+      --accent: #C9A84C;
+      --accent-dim: rgba(201,168,76,0.2);
+      --accent-border: rgba(201,168,76,0.3);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Lato', Helvetica, Arial, sans-serif;
+      --transition: 0.3s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; }
+
+    /* ═══ UTILITY ═══ */
+    .container { width: 90%; max-width: 900px; margin: 0 auto; }
+    .gold-line { width: 40px; height: 1px; background: var(--accent); margin: 0 auto; }
+    .section-pad { padding: 80px 0; }
+
+    /* ═══ STAMPIFY BANNER ═══ */
+    #stampify-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: #3D31B0; color: white; text-align: center;
+      padding: 10px 20px; font-size: 13px; font-family: sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+    }
+
+    /* ═══ NAVBAR ═══ */
+    .navbar {
+      position: fixed; top: 46px; left: 0; right: 0; z-index: 1000;
+      padding: 16px 0;
+      background: rgba(26,10,10,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--accent-border);
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .navbar-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.85;
+      transition: var(--transition);
+    }
+    .navbar-back:hover { opacity: 1; }
+    .navbar-back svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .navbar-logo {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--accent);
+      text-align: center;
+      flex: 1;
+    }
+    .navbar-spacer { width: 120px; }
+
+    /* ═══ PAGE HEADER ═══ */
+    .page-header {
+      padding: 140px 0 70px;
+      text-align: center;
+      border-bottom: 1px solid var(--accent-border);
+    }
+    .page-header .overline {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--text);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .page-header p {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+
+    /* ═══ SECTION HEADERS ═══ */
+    .section-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-title .cat-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title h2 {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.9rem;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    /* ═══ MENU ITEMS ═══ */
+    .menu-section {
+      border-top: 1px solid var(--accent-border);
+      padding: 70px 0;
+    }
+    .menu-items {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 18px 24px;
+      background: var(--bg-card);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      transition: var(--transition);
+      gap: 20px;
+    }
+    .menu-item:hover {
+      border-color: var(--accent-dim);
+      background: rgba(201,168,76,0.05);
+    }
+    .menu-item-name {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text);
+      flex: 1;
+      line-height: 1.4;
+    }
+    .menu-item-price {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--accent);
+      white-space: nowrap;
+      font-style: normal;
+    }
+
+    /* ═══ WINE SECTION ═══ */
+    .vins-section {
+      border-top: 1px solid var(--accent-border);
+      padding: 70px 0;
+    }
+    .vins-category {
+      margin-bottom: 50px;
+    }
+    .vins-category:last-child { margin-bottom: 0; }
+    .vins-cat-title {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--accent-dim);
+    }
+    .wine-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      transition: var(--transition);
+      gap: 20px;
+      margin-bottom: 2px;
+    }
+    .wine-item:hover {
+      border-color: var(--accent-dim);
+      background: rgba(201,168,76,0.05);
+    }
+    .wine-item-info { flex: 1; }
+    .wine-item-name {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .wine-item-detail {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+    .wine-item-price {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      color: var(--accent);
+      white-space: nowrap;
+      text-align: right;
+      line-height: 1.5;
+    }
+    .wine-item-price .price-secondary {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(201,168,76,0.65);
+      font-style: normal;
+    }
+
+    /* ═══ DIVIDER ORNAMENT ═══ */
+    .ornament {
+      text-align: center;
+      padding: 30px 0;
+      color: var(--accent);
+      opacity: 0.4;
+      font-size: 1.2rem;
+      letter-spacing: 12px;
+    }
+
+    /* ═══ FOOTER ═══ */
+    .footer {
+      background: #0E0806;
+      padding: 50px 0 28px;
+      border-top: 1px solid var(--accent-border);
+    }
+    .footer-inner {
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .footer p {
+      font-size: 0.82rem;
+      color: rgba(245,239,224,0.45);
+      line-height: 1.9;
+    }
+    .footer a { color: var(--accent); opacity: 0.7; }
+    .footer a:hover { opacity: 1; }
+    .footer-bottom {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(201,168,76,0.1);
+      font-size: 0.75rem;
+      color: rgba(245,239,224,0.3);
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 600px) {
+      .navbar-spacer { display: none; }
+      .menu-item { flex-direction: column; gap: 6px; }
+      .menu-item-price { align-self: flex-end; }
+      .wine-item { flex-direction: column; gap: 8px; }
+      .wine-item-price { align-self: flex-end; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ STAMPIFY BANNER ═══ -->
+  <div id="stampify-banner">
+    <span>✨ Ceci est un exemple de site livré par Stampify en 48h</span>
+    <a href="https://www.stampify.ch" target="_blank" rel="noopener" style="background:white;color:#3D31B0;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;">Obtenir le mien →</a>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="bistrot-du-coin.html" class="navbar-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Retour
+      </a>
+      <span class="navbar-logo">Le Bistrot du Coin</span>
+      <div class="navbar-spacer"></div>
+    </div>
+  </nav>
+
+  <!-- ═══ PAGE HEADER ═══ -->
+  <header class="page-header">
+    <div class="container">
+      <p class="overline">Le Bistrot du Coin · Fribourg</p>
+      <h1>Carte &amp; Vins</h1>
+      <div class="gold-line" style="margin-bottom:20px;"></div>
+      <p>Une cuisine de marché aux produits soigneusement sélectionnés, accompagnée d'une cave à vins choisie avec passion.</p>
+      <p style="font-size:0.8rem;color:rgba(245,239,224,0.4);margin-top:8px;">Tous les prix s'entendent en francs suisses (CHF), service compris.</p>
+    </div>
+  </header>
+
+  <!-- ═══ ENTRÉES ═══ -->
+  <section class="menu-section" id="entrees">
+    <div class="container">
+      <div class="section-title">
+        <p class="cat-label">Première assiette</p>
+        <h2>Entrées</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="menu-items">
+        <div class="menu-item">
+          <span class="menu-item-name">Carpaccio de bœuf, câpres &amp; parmesan</span>
+          <span class="menu-item-price">18 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Velouté de butternut, crème de truffe</span>
+          <span class="menu-item-price">14 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Terrine de foie gras, brioche maison</span>
+          <span class="menu-item-price">24 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Salade de chèvre chaud, noix &amp; miel</span>
+          <span class="menu-item-price">16 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Tartare de saumon, avocat, citron vert</span>
+          <span class="menu-item-price">19 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Plancha de gambas, ail &amp; persil</span>
+          <span class="menu-item-price">22 CHF</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament container">· · ·</div>
+
+  <!-- ═══ PLATS PRINCIPAUX ═══ -->
+  <section class="menu-section" id="plats">
+    <div class="container">
+      <div class="section-title">
+        <p class="cat-label">Le cœur du repas</p>
+        <h2>Plats Principaux</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="menu-items">
+        <div class="menu-item">
+          <span class="menu-item-name">Entrecôte Black Angus, sauce béarnaise, frites</span>
+          <span class="menu-item-price">38 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Filet de bar, beurre blanc, légumes du moment</span>
+          <span class="menu-item-price">34 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Magret de canard, sauce aux cerises, pommes dauphines</span>
+          <span class="menu-item-price">32 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Risotto de saison, parmesan affiné 24 mois</span>
+          <span class="menu-item-price">26 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Dos de cabillaud, vierge de tomates, fenouil</span>
+          <span class="menu-item-price">29 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Côte de veau rôtie, jus corsé, gratin dauphinois</span>
+          <span class="menu-item-price">42 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Tartare de bœuf haché minute, frites maison</span>
+          <span class="menu-item-price">28 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Plat végétarien du marché <em style="font-size:0.85rem;color:rgba(245,239,224,0.5);">(selon arrivage)</em></span>
+          <span class="menu-item-price">23 CHF</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament container">· · ·</div>
+
+  <!-- ═══ DESSERTS ═══ -->
+  <section class="menu-section" id="desserts">
+    <div class="container">
+      <div class="section-title">
+        <p class="cat-label">Pour finir en beauté</p>
+        <h2>Desserts</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="menu-items">
+        <div class="menu-item">
+          <span class="menu-item-name">Crème brûlée à la vanille de Madagascar</span>
+          <span class="menu-item-price">9 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Fondant au chocolat noir, glace vanille</span>
+          <span class="menu-item-price">11 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Tarte Tatin, crème fraîche normande</span>
+          <span class="menu-item-price">10 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Fromages affinés, pain grillé, confiture</span>
+          <span class="menu-item-price">14 CHF</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-name">Profiteroles sauce chocolat chaud</span>
+          <span class="menu-item-price">12 CHF</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament container">· · ·</div>
+
+  <!-- ═══ VINS ═══ -->
+  <section class="vins-section" id="vins">
+    <div class="container">
+      <div class="section-title">
+        <p class="cat-label">Notre sélection</p>
+        <h2>Carte des Vins</h2>
+        <div class="gold-line" style="margin-bottom:14px;"></div>
+        <p style="font-size:0.88rem;font-weight:300;color:rgba(245,239,224,0.55);margin-top:10px;">Toutes les bouteilles sauf indication contraire. Notre sommelier se fera un plaisir de vous guider.</p>
+      </div>
+
+      <!-- Vins rouges -->
+      <div class="vins-category">
+        <p class="vins-cat-title">Vins Rouges</p>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Château Margaux 2018</span>
+            <span class="wine-item-detail">Bordeaux, France</span>
+          </div>
+          <div class="wine-item-price">95 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Côtes du Rhône «&thinsp;Clos des Papes&thinsp;» 2020</span>
+            <span class="wine-item-detail">Vallée du Rhône, France</span>
+          </div>
+          <div class="wine-item-price">58 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Pinot Noir de Neuchâtel, Domaine de la Maison Carrée 2021</span>
+            <span class="wine-item-detail">Neuchâtel, Suisse</span>
+          </div>
+          <div class="wine-item-price">52 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Chianti Classico Riserva DOCG 2019</span>
+            <span class="wine-item-detail">Toscane, Italie</span>
+          </div>
+          <div class="wine-item-price">48 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Malbec Gran Reserva, Mendoza 2020</span>
+            <span class="wine-item-detail">Mendoza, Argentine</span>
+          </div>
+          <div class="wine-item-price">44 CHF</div>
+        </div>
+      </div>
+
+      <!-- Vins blancs -->
+      <div class="vins-category">
+        <p class="vins-cat-title">Vins Blancs</p>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Chablis Premier Cru «&thinsp;Montée de Tonnerre&thinsp;» 2021</span>
+            <span class="wine-item-detail">Bourgogne, France</span>
+          </div>
+          <div class="wine-item-price">72 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Fendant du Valais, Domaine Rouvinez 2022</span>
+            <span class="wine-item-detail">Valais, Suisse</span>
+          </div>
+          <div class="wine-item-price">46 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Sancerre Blanc, Henri Bourgeois 2022</span>
+            <span class="wine-item-detail">Loire, France</span>
+          </div>
+          <div class="wine-item-price">64 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Chardonnay de Bourgogne «&thinsp;Les Chaumes&thinsp;» 2020</span>
+            <span class="wine-item-detail">Bourgogne, France</span>
+          </div>
+          <div class="wine-item-price">54 CHF</div>
+        </div>
+      </div>
+
+      <!-- Vins rosés -->
+      <div class="vins-category">
+        <p class="vins-cat-title">Vins Rosés</p>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Bandol Rosé, Domaine Tempier 2022</span>
+            <span class="wine-item-detail">Provence, France</span>
+          </div>
+          <div class="wine-item-price">49 CHF</div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Provence Rosé «&thinsp;Whispering Angel&thinsp;» 2022</span>
+            <span class="wine-item-detail">Provence, France</span>
+          </div>
+          <div class="wine-item-price">42 CHF</div>
+        </div>
+      </div>
+
+      <!-- Champagnes -->
+      <div class="vins-category">
+        <p class="vins-cat-title">Champagnes</p>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Veuve Clicquot Brut</span>
+            <span class="wine-item-detail">Champagne, France</span>
+          </div>
+          <div class="wine-item-price">
+            92 CHF / bouteille
+            <span class="price-secondary">24 CHF / coupe</span>
+          </div>
+        </div>
+        <div class="wine-item">
+          <div class="wine-item-info">
+            <span class="wine-item-name">Champagne Billecart-Salmon Blanc de Blancs</span>
+            <span class="wine-item-detail">Champagne, France</span>
+          </div>
+          <div class="wine-item-price">115 CHF / bouteille</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">Le Bistrot du Coin</div>
+        <p>5 Rue de Lausanne, 1700 Fribourg<br>
+        <a href="tel:+41260000000">+41 26 000 00 00</a> · <a href="mailto:reservation@bistrot-du-coin.ch">reservation@bistrot-du-coin.ch</a><br>
+        Mar – Dim · 12h–14h30 &amp; 19h–22h · Lundi fermé</p>
+        <div class="footer-bottom">
+          <p>© 2026 Le Bistrot du Coin · Site vitrine créé par <a href="https://stampify.ch" target="_blank" rel="noopener">Stampify</a> · <a href="bistrot-du-coin.html">Retour à l'accueil</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

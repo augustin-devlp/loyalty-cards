@@ -379,6 +379,69 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
 }
 
 /* ═══════════════════════════════════
+   BOOK SERVICE BUTTON
+   ═══════════════════════════════════ */
+.btn-book-service {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--or-rose);
+  color: var(--blanc);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.78rem;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  white-space: nowrap;
+}
+.btn-book-service:hover {
+  background: #b5834f;
+  transform: scale(1.03);
+}
+
+/* ═══════════════════════════════════
+   INSTAGRAM GALLERY
+   ═══════════════════════════════════ */
+.insta-galerie { padding: 80px 0; }
+.insta-galerie-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 32px;
+}
+.insta-galerie-item {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+}
+.insta-galerie-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.insta-galerie-item:hover img {
+  transform: scale(1.06);
+}
+.insta-galerie-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(201, 149, 106, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 2rem;
+}
+.insta-galerie-item:hover .insta-galerie-overlay {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════
    6. GALERIE
    ═══════════════════════════════════ */
 .galerie { padding: 80px 0; }
@@ -587,6 +650,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
 @media (max-width: 540px) {
   .stats .container { grid-template-columns: 1fr; gap: 16px; }
   .galerie-grid { grid-template-columns: 1fr; }
+  .insta-galerie-grid { grid-template-columns: repeat(2, 1fr); }
   #resa-cal-slots { flex-direction: column; }
 }
 </style>
@@ -692,49 +756,79 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
     <div class="services-grid">
       <div class="service-category">
         <h3>Mains</h3>
-        <div class="service-card" onclick="preselectService('Manucure classique')">
+        <div class="service-card">
           <div><div class="service-name">Manucure classique</div><div class="service-duration">60 min</div></div>
-          <div class="service-price">CHF 45</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 45</div>
+            <button class="btn-book-service" onclick="bookService('Manucure classique', 45)">Prendre RDV →</button>
+          </div>
         </div>
-        <div class="service-card" onclick="preselectService('Pose gel complète')">
+        <div class="service-card">
           <div><div class="service-name">Pose gel complète</div><div class="service-duration">90 min</div></div>
-          <div class="service-price">CHF 85</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 85</div>
+            <button class="btn-book-service" onclick="bookService('Pose gel complète', 85)">Prendre RDV →</button>
+          </div>
         </div>
-        <div class="service-card" onclick="preselectService('Nail art personnalisé')">
+        <div class="service-card">
           <div><div class="service-name">Nail art personnalisé</div><div class="service-duration">120 min</div></div>
-          <div class="service-price">CHF 120</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 120</div>
+            <button class="btn-book-service" onclick="bookService('Nail art personnalisé', 120)">Prendre RDV →</button>
+          </div>
         </div>
-        <div class="service-card" onclick="preselectService('Remplissage gel')">
+        <div class="service-card">
           <div><div class="service-name">Remplissage gel</div><div class="service-duration">60 min</div></div>
-          <div class="service-price">CHF 65</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 65</div>
+            <button class="btn-book-service" onclick="bookService('Remplissage gel', 65)">Prendre RDV →</button>
+          </div>
         </div>
-        <div class="service-card" onclick="preselectService('Dépose gel')">
+        <div class="service-card">
           <div><div class="service-name">Dépose gel</div><div class="service-duration">45 min</div></div>
-          <div class="service-price">CHF 35</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 35</div>
+            <button class="btn-book-service" onclick="bookService('Dépose gel', 35)">Prendre RDV →</button>
+          </div>
         </div>
       </div>
       <div class="service-category">
         <h3>Pieds</h3>
-        <div class="service-card" onclick="preselectService('Pédicure complète')">
+        <div class="service-card">
           <div><div class="service-name">Pédicure complète</div><div class="service-duration">60 min</div></div>
-          <div class="service-price">CHF 55</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 55</div>
+            <button class="btn-book-service" onclick="bookService('Pédicure complète', 55)">Prendre RDV →</button>
+          </div>
         </div>
         <div class="service-card">
           <div><div class="service-name">Pédicure classique</div><div class="service-duration">45 min</div></div>
-          <div class="service-price">CHF 35</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 35</div>
+            <button class="btn-book-service" onclick="bookService('Pédicure classique', 35)">Prendre RDV →</button>
+          </div>
         </div>
         <h3 style="margin-top: 24px;">Soins &amp; extras</h3>
         <div class="service-card">
           <div><div class="service-name">Nail art (par ongle)</div><div class="service-duration"></div></div>
-          <div class="service-price">+CHF 5</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">+CHF 5</div>
+            <button class="btn-book-service" onclick="bookService('Nail art personnalisé', 120)">Prendre RDV →</button>
+          </div>
         </div>
         <div class="service-card">
           <div><div class="service-name">Soin mains paraffine</div><div class="service-duration">30 min</div></div>
-          <div class="service-price">CHF 30</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 30</div>
+            <button class="btn-book-service" onclick="bookService('Manucure classique', 45)">Prendre RDV →</button>
+          </div>
         </div>
         <div class="service-card">
           <div><div class="service-name">Soin cuticules</div><div class="service-duration">20 min</div></div>
-          <div class="service-price">CHF 15</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="service-price">CHF 15</div>
+            <button class="btn-book-service" onclick="bookService('Manucure classique', 45)">Prendre RDV →</button>
+          </div>
         </div>
       </div>
     </div>
@@ -772,34 +866,61 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
 </section>
 
 <!-- ═══════════ GALERIE ═══════════ -->
-<section class="galerie" id="galerie">
+<section class="insta-galerie" id="galerie">
   <div class="container">
     <div class="section-header">
       <h2>Galerie</h2>
       <div class="section-divider"></div>
     </div>
-    <div class="galerie-grid">
-      <div class="galerie-item">
-        <img src="https://images.unsplash.com/photo-1666226398826-5b7ae0111e9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwyfHxuYWlsJTIwc2Fsb24lMjBtYW5pY3VyZSUyMGx1eHVyeXxlbnwwfDB8fHwxNzc2MTk1ODgzfDA&ixlib=rb-4.1.0&q=80&w=1080" alt="Pose d'ongles gel Nail Studio Lausanne" loading="lazy">
-        <div class="galerie-overlay">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </div>
-      </div>
-      <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@ejagumbay?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Ej Agumbay</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>
-      <div class="galerie-item">
-        <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwzfHxuYWlsJTIwc2Fsb24lMjBtYW5pY3VyZSUyMGx1eHVyeXxlbnwwfDB8fHwxNzc2MTk1ODgzfDA&ixlib=rb-4.1.0&q=80&w=1080" alt="Nail art créatif Nail Studio" loading="lazy">
-        <div class="galerie-overlay">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </div>
-      </div>
-      <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@giorgiotrovato?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Giorgio Trovato</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>
-      <div class="galerie-item">
-        <img src="https://images.unsplash.com/photo-1667207229735-266c430cca15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHw0fHxuYWlsJTIwc2Fsb24lMjBtYW5pY3VyZSUyMGx1eHVyeXxlbnwwfDB8fHwxNzc2MTk1ODgzfDA&ixlib=rb-4.1.0&q=80&w=1080" alt="Manucure semi-permanent Lausanne" loading="lazy">
-        <div class="galerie-overlay">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </div>
-      </div>
-      <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@yosuke_ota?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Yosuke Ota</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>
+  </div>
+  <div class="insta-galerie-grid">
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80" alt="Nail art Nail Studio Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655855547-a08695ef1acd?w=400&q=80" alt="Pose gel ongles Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655919329-1b1eb9716a23?w=400&q=80" alt="Manucure premium Nail Studio" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655960130-ef7d1d79be51?w=400&q=80" alt="Nail art créatif Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655856379-2b0e84ab9a56?w=400&q=80" alt="Semi-permanent ongles Nail Studio" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80" alt="Pose ongles gel Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655855547-a08695ef1acd?w=400&q=80" alt="Nail art design Nail Studio" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655919329-1b1eb9716a23?w=400&q=80" alt="Manucure gel Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655960130-ef7d1d79be51?w=400&q=80" alt="Ongles nail art créatif" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655856379-2b0e84ab9a56?w=400&q=80" alt="Pose gel premium Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80" alt="Nail Studio manucure design" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
+    </div>
+    <div class="insta-galerie-item">
+      <img src="https://images.unsplash.com/photo-1604655855547-a08695ef1acd?w=400&q=80" alt="Beauté ongles Lausanne" loading="lazy">
+      <div class="insta-galerie-overlay">💅</div>
     </div>
   </div>
 </section>
@@ -904,6 +1025,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-dark); }
 
       <!-- Panel 1: Services -->
       <div id="resa-panel-1" style="display:block;padding:28px 24px;">
+        <div id="nail-service-preselected" style="display:none;background:rgba(201,149,106,0.12);border:1px solid rgba(201,149,106,0.45);border-radius:8px;padding:12px 18px;margin-bottom:16px;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span style="font-family:var(--font-display);font-size:11px;letter-spacing:0.08em;color:var(--or-rose);white-space:nowrap;">SERVICE PRÉ-SÉLECTIONNÉ</span>
+          <span id="nail-service-preselected-val" style="font-family:var(--font-body);font-size:14px;color:var(--text-dark);font-weight:500;">—</span>
+        </div>
         <p style="font-family:var(--font-display);font-size:13px;letter-spacing:0.05em;color:var(--text-light);margin-bottom:16px;">CHOISISSEZ VOTRE PRESTATION</p>
         <div id="resa-services-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
       </div>
@@ -1144,6 +1269,25 @@ function preselectService(name) {
     document.getElementById('reservation').scrollIntoView({behavior:'smooth'});
     setTimeout(()=>{renderServices();resaGoStep(2);},400);
   }
+}
+
+function bookService(name, price) {
+  const idx = RESA_SERVICES.findIndex(s=>s.name===name);
+  if(idx>=0){
+    resaState.service=idx;
+  }
+  document.getElementById('reservation').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>{
+    renderServices();
+    // Show pre-selected service indicator
+    const display = document.getElementById('nail-service-preselected');
+    const val = document.getElementById('nail-service-preselected-val');
+    if(display && val){
+      val.textContent = name + ' — CHF ' + price;
+      display.style.display = 'flex';
+    }
+    if(idx>=0) setTimeout(()=>resaGoStep(2), 300);
+  }, 400);
 }
 
 document.getElementById('resa-form').addEventListener('submit',async function(e){

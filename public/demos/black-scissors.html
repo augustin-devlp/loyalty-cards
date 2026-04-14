@@ -397,44 +397,44 @@ footer{background:var(--gray1);border-top:1px solid var(--border-dark)}
       <p>Chaque service est réalisé avec des produits professionnels haut de gamme. Réservation conseillée.</p>
     </div>
     <div class="services-grid">
-      <div class="service-card reveal" onclick="preselectService('Coupe homme classique')">
+      <div class="service-card reveal">
         <span class="service-card-badge">✦ Le plus populaire</span>
         <h3>Coupe homme classique</h3>
         <div class="service-card-dur">30 min · Ciseaux ou tondeuse</div>
         <span class="service-card-price">CHF 35</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Coupe homme classique', 35)">Réserver ce service →</button>
       </div>
-      <div class="service-card reveal reveal-delay-1" onclick="preselectService('Coupe + barbe')">
+      <div class="service-card reveal reveal-delay-1">
         <span class="service-card-badge">✦ Signature</span>
         <h3>Coupe + Barbe</h3>
         <div class="service-card-dur">60 min · Formule complète</div>
         <span class="service-card-price">CHF 55</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Coupe + barbe', 55)">Réserver ce service →</button>
       </div>
-      <div class="service-card reveal reveal-delay-2" onclick="preselectService('Rasage rasoir droit')">
+      <div class="service-card reveal reveal-delay-2">
         <span class="service-card-badge">Experience</span>
         <h3>Rasage rasoir droit</h3>
         <div class="service-card-dur">45 min · Serviette chaude</div>
         <span class="service-card-price">CHF 45</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Rasage rasoir droit', 45)">Réserver ce service →</button>
       </div>
-      <div class="service-card reveal" onclick="preselectService('Taille de barbe')">
+      <div class="service-card reveal">
         <h3>Taille de barbe</h3>
         <div class="service-card-dur">30 min</div>
         <span class="service-card-price">CHF 25</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Taille de barbe', 25)">Réserver ce service →</button>
       </div>
-      <div class="service-card reveal reveal-delay-1" onclick="preselectService('Coupe enfant')">
+      <div class="service-card reveal reveal-delay-1">
         <h3>Coupe enfant</h3>
         <div class="service-card-dur">30 min · Moins de 12 ans</div>
         <span class="service-card-price">CHF 25</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Coupe enfant (-12 ans)', 25)">Réserver ce service →</button>
       </div>
-      <div class="service-card reveal reveal-delay-2" onclick="preselectService('Coupe + shampoing')">
+      <div class="service-card reveal reveal-delay-2">
         <h3>Coupe + shampoing</h3>
         <div class="service-card-dur">45 min · Shampoing inclus</div>
         <span class="service-card-price">CHF 45</span>
-        <a href="#reservation" class="btn btn-outline-red">Réserver</a>
+        <button class="btn btn-outline-red" onclick="bookService('Coupe + shampoing', 45)">Réserver ce service →</button>
       </div>
     </div>
   </div>
@@ -587,6 +587,10 @@ footer{background:var(--gray1);border-top:1px solid var(--border-dark)}
         <!-- Step 3 -->
         <div class="resa-panel" id="panel-3">
           <div class="resa-summary-bar" id="resa-summary-bar"></div>
+          <div id="resa-service-selected-display" style="display:none;background:rgba(196,30,58,0.08);border:1px solid rgba(196,30,58,0.35);padding:14px 20px;margin-bottom:20px;align-items:center;gap:12px;">
+            <span style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.18em;color:var(--red);font-weight:600;flex-shrink:0;">Service sélectionné</span>
+            <span id="resa-service-selected-val" style="font-size:0.88rem;color:white;font-weight:500;">—</span>
+          </div>
           <form onsubmit="resaSubmit(event)">
             <div class="resa-form-grid">
               <div class="resa-field">
@@ -867,6 +871,13 @@ function updateSummary() {
       <span class="resa-summary-val">${svc ? 'CHF ' + svc.price : '—'}</span>
     </div>
   `;
+  // Also update the service selected display
+  const display = document.getElementById('resa-service-selected-display');
+  const val = document.getElementById('resa-service-selected-val');
+  if (display && val && svc) {
+    val.textContent = svc.name + ' — CHF ' + svc.price;
+    display.style.display = 'flex';
+  }
 }
 
 function renderCalendar() {
@@ -999,6 +1010,22 @@ function preselectService(name) {
     selectService(idx);
     const el = document.getElementById('reservation');
     if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 114, behavior:'smooth'});
+  }
+}
+
+function bookService(name, price) {
+  const idx = RESA_SERVICES.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+  if (idx >= 0) {
+    selectService(idx);
+  }
+  const el = document.getElementById('reservation');
+  if (el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 114, behavior:'smooth'});
+  // Update the service selected display in step 3
+  const display = document.getElementById('resa-service-selected-display');
+  const val = document.getElementById('resa-service-selected-val');
+  if (display && val) {
+    val.textContent = name + ' — CHF ' + price;
+    display.style.display = 'flex';
   }
 }
 

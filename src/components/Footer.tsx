@@ -78,6 +78,22 @@ export default function Footer() {
               {l}
             </Link>
           ))}
+          <a
+            href="https://www.local.ch/fr/d/suisse/stampify"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textDecoration: "none", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            local.ch
+          </a>
+          <a
+            href="https://www.search.ch/tel/stampify"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textDecoration: "none", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            search.ch
+          </a>
         </div>
         <span
           style={{

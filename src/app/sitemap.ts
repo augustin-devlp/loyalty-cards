@@ -25,6 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "campagne-sms-fidelisation-commercants",
     "combien-coute-site-web-commercant-suisse",
     "fidelisation-clients-cafe-coffee-shop",
+    "plaquette-nfc-commerce-suisse",
+    "stampify-avis-test-carte-fidelite",
   ];
 
   const staticPages = [
