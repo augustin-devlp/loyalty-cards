@@ -381,6 +381,10 @@ footer{background:var(--brown)}
 .cmd-new-order-btn{background:var(--brown);color:var(--linen);border:none;padding:12px 32px;font-family:'Nunito',sans-serif;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;cursor:pointer;transition:background 0.2s;margin-top:8px;border-radius:2px}
 .cmd-new-order-btn:hover{background:var(--brown-light)}
 
+/* Photo credit inside product cards */
+.cmd-card-img-wrap{position:relative;overflow:hidden}
+.cmd-card-img-wrap .photo-credit{position:absolute;bottom:4px;right:6px;font-size:9px;color:rgba(255,255,255,0.75);background:rgba(0,0,0,0.35);padding:1px 5px;border-radius:2px;pointer-events:none}
+
 @media(max-width:1024px){.cmd-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.cmd-grid{grid-template-columns:repeat(2,1fr)}#commande{padding:80px 24px}.cmd-cat-tabs{gap:6px}.cmd-cat-tab{padding:8px 16px}#cmd-cart-bar{padding:0 20px}}
 @media(max-width:480px){.cmd-grid{grid-template-columns:1fr}}
@@ -594,6 +598,7 @@ footer{background:var(--brown)}
       <button class="cmd-cat-tab" onclick="cmdFilterCat('pains')">Pains</button>
       <button class="cmd-cat-tab" onclick="cmdFilterCat('viennoiseries')">Viennoiseries</button>
       <button class="cmd-cat-tab" onclick="cmdFilterCat('patisseries')">Pâtisseries</button>
+      <button class="cmd-cat-tab" onclick="cmdFilterCat('sandwichs')">Sandwichs</button>
       <button class="cmd-cat-tab" onclick="cmdFilterCat('boissons')">Boissons</button>
     </div>
     <div class="cmd-grid reveal" id="cmd-product-grid"></div>
@@ -1073,28 +1078,51 @@ const CMD_SUPABASE_URL = 'https://curduiiydfpwiwbimypu.supabase.co';
 const CMD_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1cmR1aWl5ZGZwd2l3YmltYXB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxOTQxNzEsImV4cCI6MjA2MTc3MDE3MX0.DfTKe1lCFTuTMFQPbQy40bOABVGbwMr_oZa6cflg0Y8';
 
 const CMD_PRODUCTS = [
-  {id:'pain-campagne',cat:'pains',name:'Pain de campagne (500g)',price:5.90,photo:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80'},
-  {id:'pain-complet',cat:'pains',name:'Pain complet aux graines',price:6.50,photo:null},
-  {id:'baguette-tradition',cat:'pains',name:'Baguette tradition',price:2.80,photo:null},
-  {id:'pain-seigle',cat:'pains',name:'Pain de seigle',price:5.50,photo:null},
-  {id:'pain-noix',cat:'pains',name:'Pain aux noix',price:7.20,photo:null},
-  {id:'croissant',cat:'viennoiseries',name:'Croissant au beurre',price:3.20,photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=300&q=80'},
-  {id:'pain-choc',cat:'viennoiseries',name:'Pain au chocolat',price:3.50,photo:null},
-  {id:'chausson-pommes',cat:'viennoiseries',name:'Chausson aux pommes',price:3.80,photo:null},
-  {id:'brioche',cat:'viennoiseries',name:'Brioche tressée (individuelle)',price:4.50,photo:null},
-  {id:'kouign',cat:'viennoiseries',name:'Kouign-amann',price:4.20,photo:null},
-  {id:'tarte-fraises',cat:'patisseries',name:'Tarte aux fraises',price:7.50,photo:'https://images.unsplash.com/photo-1488477181228-c84ade13e8d3?w=300&q=80'},
-  {id:'eclair-choc',cat:'patisseries',name:'Éclair au chocolat',price:5.50,photo:null},
-  {id:'mille-feuille',cat:'patisseries',name:'Mille-feuille',price:6.80,photo:null},
-  {id:'paris-brest',cat:'patisseries',name:'Paris-Brest',price:6.50,photo:null},
-  {id:'opera',cat:'patisseries',name:'Opéra',price:7.20,photo:null},
-  {id:'cafe',cat:'boissons',name:'Café allongé',price:3.50,photo:null},
-  {id:'cappuccino',cat:'boissons',name:'Cappuccino',price:5.00,photo:null},
-  {id:'jus-orange',cat:'boissons',name:"Jus d'orange frais",price:4.50,photo:null},
-  {id:'eau',cat:'boissons',name:'Eau minérale (50cl)',price:2.50,photo:null},
+  // Pains
+  {id:'baguette-tradition',cat:'pains',name:'Baguette tradition',price:2.80,photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80'},
+  {id:'pain-campagne',cat:'pains',name:'Pain de campagne (500g)',price:5.90,photo:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'},
+  {id:'pain-noix',cat:'pains',name:'Pain aux noix',price:7.20,photo:'https://images.unsplash.com/photo-1549931319-a545dcf3bc7c?w=400&q=80'},
+  {id:'pain-complet',cat:'pains',name:'Pain complet aux graines',price:6.50,photo:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'},
+  {id:'pain-seigle',cat:'pains',name:'Pain de seigle',price:5.50,photo:'https://images.unsplash.com/photo-1549931319-a545dcf3bc7c?w=400&q=80'},
+  {id:'pain-graines',cat:'pains',name:'Pain aux graines',price:5.00,photo:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'},
+  {id:'baguette-cereales',cat:'pains',name:'Baguette céréales',price:3.00,photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80'},
+  {id:'pain-viennois',cat:'pains',name:'Pain viennois',price:4.00,photo:'https://images.unsplash.com/photo-1549931319-a545dcf3bc7c?w=400&q=80'},
+  // Viennoiseries
+  {id:'croissant',cat:'viennoiseries',name:'Croissant au beurre',price:3.20,photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'},
+  {id:'pain-choc',cat:'viennoiseries',name:'Pain au chocolat',price:3.50,photo:'https://images.unsplash.com/photo-1623334044303-241021148842?w=400&q=80'},
+  {id:'chausson-pommes',cat:'viennoiseries',name:'Chausson aux pommes',price:3.80,photo:'https://images.unsplash.com/photo-1621743478914-cc8a86d7e7b5?w=400&q=80'},
+  {id:'kouign',cat:'viennoiseries',name:'Kouign-amann',price:4.20,photo:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&q=80'},
+  {id:'brioche',cat:'viennoiseries',name:'Brioche tressée (individuelle)',price:4.50,photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'},
+  {id:'palmier',cat:'viennoiseries',name:'Palmier feuilleté',price:2.50,photo:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400&q=80'},
+  {id:'croissant-amandes',cat:'viennoiseries',name:'Croissant aux amandes',price:3.80,photo:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'},
+  {id:'pain-raisins',cat:'viennoiseries',name:'Pain aux raisins',price:3.20,photo:'https://images.unsplash.com/photo-1623334044303-241021148842?w=400&q=80'},
+  // Pâtisseries
+  {id:'eclair-choc',cat:'patisseries',name:'Éclair chocolat',price:5.50,photo:'https://images.unsplash.com/photo-1519869325930-281384150729?w=400&q=80'},
+  {id:'tarte-fraises',cat:'patisseries',name:'Tarte aux fraises',price:7.50,photo:'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=400&q=80'},
+  {id:'mille-feuille',cat:'patisseries',name:'Millefeuille',price:6.80,photo:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80'},
+  {id:'paris-brest',cat:'patisseries',name:'Paris-Brest',price:6.50,photo:'https://images.unsplash.com/photo-1530648672449-81f6c723e2f1?w=400&q=80'},
+  {id:'macaron',cat:'patisseries',name:'Macaron',price:2.50,photo:'https://images.unsplash.com/photo-1558326567-98ae2405596b?w=400&q=80'},
+  {id:'opera',cat:'patisseries',name:'Opéra',price:7.20,photo:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80'},
+  {id:'tarte-citron',cat:'patisseries',name:'Tarte citron meringuée',price:6.50,photo:'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=400&q=80'},
+  {id:'fondant-choc',cat:'patisseries',name:'Fondant au chocolat',price:5.50,photo:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80'},
+  {id:'financier',cat:'patisseries',name:'Financier',price:3.00,photo:'https://images.unsplash.com/photo-1519869325930-281384150729?w=400&q=80'},
+  {id:'baba-rhum',cat:'patisseries',name:'Baba au rhum',price:6.00,photo:'https://images.unsplash.com/photo-1530648672449-81f6c723e2f1?w=400&q=80'},
+  // Sandwichs
+  {id:'jambon-beurre',cat:'sandwichs',name:'Jambon-beurre baguette',price:7.50,photo:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80'},
+  {id:'poulet-crudites',cat:'sandwichs',name:'Poulet-crudités',price:8.00,photo:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80'},
+  {id:'saumon-avocat',cat:'sandwichs',name:'Saumon-avocat',price:9.00,photo:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80'},
+  {id:'chevre-miel',cat:'sandwichs',name:'Chèvre-miel',price:8.50,photo:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80'},
+  // Boissons
+  {id:'cafe-espresso',cat:'boissons',name:'Café espresso',price:3.50,photo:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&q=80'},
+  {id:'cappuccino',cat:'boissons',name:'Cappuccino',price:5.00,photo:'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&q=80'},
+  {id:'jus-orange',cat:'boissons',name:"Jus d'orange frais",price:4.50,photo:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80'},
+  {id:'eau',cat:'boissons',name:'Eau minérale (50cl)',price:2.50,photo:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80'},
+  {id:'chocolat-chaud',cat:'boissons',name:'Chocolat chaud',price:4.50,photo:'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400&q=80'},
+  {id:'lait-chaud',cat:'boissons',name:'Lait chaud',price:3.50,photo:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80'},
+  {id:'eau-minerale',cat:'boissons',name:'Eau minérale (33cl)',price:2.00,photo:'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80'},
 ];
 
-const CMD_CAT_EMOJI = {pains:'🍞',viennoiseries:'🥐',patisseries:'🍰',boissons:'☕'};
+const CMD_CAT_EMOJI = {pains:'🍞',viennoiseries:'🥐',patisseries:'🍰',sandwichs:'🥖',boissons:'☕'};
 
 let cmdCart = {}; // {productId: qty}
 let cmdActiveCat = 'all';
@@ -1119,7 +1147,7 @@ function cmdRenderProducts() {
   grid.innerHTML = products.map(p => {
     const qty = cmdCart[p.id] || 0;
     const imgHtml = p.photo
-      ? `<img class="cmd-card-img" src="${p.photo}" alt="${p.name}" loading="lazy">`
+      ? `<div class="cmd-card-img-wrap"><img class="cmd-card-img" src="${p.photo}" alt="${p.name}" loading="lazy"><span class="photo-credit">Photo: Unsplash</span></div>`
       : `<div class="cmd-card-img-placeholder">${CMD_CAT_EMOJI[p.cat] || '🍴'}</div>`;
     return `<div class="cmd-card">
       ${imgHtml}
