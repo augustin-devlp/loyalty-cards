@@ -113,6 +113,9 @@ export default function BlogPage() {
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
                   color: "#3D31B0",
+                  background: "#EEF0FC",
+                  padding: "3px 8px",
+                  borderRadius: 4,
                 }}
               >
                 {post.category}

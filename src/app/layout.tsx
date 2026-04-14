@@ -2,20 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Stampify — Site web + carte fidelite pour commercants | Suisse romande",
+  title: "Stampify — Site web + carte fidélité pour commerçants | Suisse romande",
   description:
     "Site vitrine professionnel + carte de fidélité digitale + plaquette NFC en bois. Livraison 48h, 990 CHF tout inclus, domaine .ch + hébergement offerts. Pour boulangers, cafés, restaurants et salons en Suisse romande.",
   keywords: [
-    "carte fidelite digitale Suisse",
-    "site web boulangerie Geneve",
-    "site vitrine commercant Lausanne",
-    "carte fidelite sans application",
-    "fidelisation clients commerce local Suisse romande",
+    "carte fidélité digitale Suisse",
+    "site web boulangerie Genève",
+    "site vitrine commerçant Lausanne",
+    "carte fidélité sans application",
+    "fidélisation clients commerce local Suisse romande",
     "site web restaurant Fribourg",
-    "carte fidelite cafe Suisse",
-    "creation site web 48h Suisse",
-    "carte fidelite digitale commercant",
-    "site vitrine boulangerie Suisse",
+    "carte fidélité café Suisse",
+    "création site web 48h Suisse",
   ],
   manifest: "/manifest.json",
   alternates: {
@@ -27,9 +25,9 @@ export const metadata: Metadata = {
     title: "Stampify",
   },
   openGraph: {
-    title: "Stampify — Fidelisez vos clients en 48h | 990 CHF",
+    title: "Stampify — Fidélisez vos clients en 48h | 990 CHF",
     description:
-      "Site web + carte fidelite + plaquette NFC. 990 CHF, livraison 48h, zero abonnement.",
+      "Site web + carte fidélité + plaquette NFC. 990 CHF, livraison 48h, zéro abonnement.",
     url: "https://www.stampify.ch",
     siteName: "Stampify",
     locale: "fr_CH",
@@ -38,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Stampify — Fidelisez vos clients en 48h | 990 CHF",
+    title: "Stampify — Fidélisez vos clients en 48h | 990 CHF",
     description:
-      "Site web + carte fidelite + plaquette NFC. 990 CHF, livraison 48h, zero abonnement.",
+      "Site web + carte fidélité + plaquette NFC. 990 CHF, livraison 48h, zéro abonnement.",
     images: ["/icon-512.svg"],
   },
 };
@@ -55,6 +53,19 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#3D31B0" />
         <link rel="apple-touch-icon" href="/icon-192.svg" />
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=DM+Sans:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="antialiased">{children}</body>
     </html>

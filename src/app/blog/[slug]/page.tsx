@@ -127,13 +127,97 @@ export default function BlogPostPage({ params }: Props) {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
+            {/* Voir la démo */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #E2D9CC",
+                borderRadius: 12,
+                padding: "24px 32px",
+                marginTop: 48,
+              }}
+            >
+              <h3
+                style={{
+                  fontFamily: "Fraunces, Georgia, serif",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#1A1410",
+                  margin: "0 0 12px 0",
+                }}
+              >
+                Voir la démo
+              </h3>
+              <p style={{ color: "#6B6259", fontSize: 15, margin: "0 0 16px 0", lineHeight: 1.6 }}>
+                Découvrez des exemples concrets de sites et cartes fidélité créés pour des commerces locaux :
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                <Link
+                  href="/demo/boulangerie"
+                  style={{
+                    color: "#3D31B0",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textDecoration: "none",
+                    background: "#EEF0FC",
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                  }}
+                >
+                  Démo boulangerie →
+                </Link>
+                <Link
+                  href="/demo/cafe"
+                  style={{
+                    color: "#3D31B0",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textDecoration: "none",
+                    background: "#EEF0FC",
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                  }}
+                >
+                  Démo café →
+                </Link>
+                <Link
+                  href="/demo/restaurant"
+                  style={{
+                    color: "#3D31B0",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textDecoration: "none",
+                    background: "#EEF0FC",
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                  }}
+                >
+                  Démo restaurant →
+                </Link>
+                <Link
+                  href="/demo/barbershop"
+                  style={{
+                    color: "#3D31B0",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textDecoration: "none",
+                    background: "#EEF0FC",
+                    padding: "8px 16px",
+                    borderRadius: 6,
+                  }}
+                >
+                  Démo barbershop →
+                </Link>
+              </div>
+            </div>
+
             {/* End CTA */}
             <div
               style={{
                 background: "#3D31B0",
                 borderRadius: 16,
                 padding: "32px 40px",
-                marginTop: 48,
+                marginTop: 32,
                 textAlign: "center",
               }}
             >
@@ -143,29 +227,29 @@ export default function BlogPostPage({ params }: Props) {
                   fontSize: 22,
                   fontWeight: 700,
                   color: "white",
-                  margin: "0 0 8px 0",
+                  margin: "0 0 12px 0",
                 }}
               >
                 Prêt à fidéliser vos clients ?
               </h3>
-              <p style={{ color: "rgba(255,255,255,0.8)", margin: "0 0 20px 0", fontSize: 15 }}>
-                990 CHF tout inclus · Site + carte fidélité + plaquette NFC · Livraison 48h
+              <p style={{ color: "rgba(255,255,255,0.85)", margin: "0 0 24px 0", fontSize: 16, lineHeight: 1.6 }}>
+                Obtenez votre site web + carte fidélité + plaquette NFC pour 990 CHF, livré en 48h.
               </p>
-              <Link
-                href="/"
+              <a
+                href="https://wa.me/33XXXXXXXXX?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20Stampify."
                 style={{
                   display: "inline-block",
                   background: "white",
                   color: "#3D31B0",
-                  padding: "12px 28px",
+                  padding: "14px 32px",
                   borderRadius: 8,
                   fontWeight: 700,
                   fontSize: 15,
                   textDecoration: "none",
                 }}
               >
-                Découvrir Stampify →
-              </Link>
+                Nous contacter sur WhatsApp →
+              </a>
             </div>
           </article>
 

@@ -42,3 +42,9 @@ next-env.d.ts
 dev-solstice-490917-m5-f44e8e466f06.json
 *-credentials.json
 *-service-account.json
+
+# graphify
+graphify-out/
+.graphify_*
+INSTRUCTIONS.md
+*.graphify*
