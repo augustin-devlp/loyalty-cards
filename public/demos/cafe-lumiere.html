@@ -3,43 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Café Lumière | Café de Spécialité à Genève – Torréfaction Artisanale & Brunch</title>
-<meta name="description" content="Café Lumière, café de spécialité au cœur de Genève. Espressos de torréfaction maison, pâtisseries artisanales et brunchs. 14 Rue du Rhône, 1204 Genève.">
-<link rel="canonical" href="https://www.cafe-lumiere.ch/">
-<meta property="og:title" content="Café Lumière | Café de Spécialité à Genève">
-<meta property="og:description" content="Espressos de torréfaction maison, pâtisseries artisanales et brunchs au cœur de Genève.">
-<meta property="og:image" content="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?w=1200">
-<meta property="og:url" content="https://www.cafe-lumiere.ch/">
+<title>Café Lumière Genève — Café spécialité & brunch au cœur de Genève</title>
+<meta name="description" content="Café Lumière, votre café de spécialité au 14 Rue du Rhône, Genève. Brunchs, cafés d'exception, pâtisseries maison. Réservez en ligne. Carte fidélité digitale Stampify.">
+<meta property="og:title" content="Café Lumière Genève — Café spécialité & brunch">
+<meta property="og:description" content="Café de spécialité au cœur de Genève. Brunchs, menus du jour, pâtisseries maison. Réservez votre table en ligne.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1580089344217-eb88badb9492?w=1200&q=80">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CH">
+<link rel="canonical" href="https://www.stampify.ch/demos/cafe-lumiere.html">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "CafeOrCoffeeShop",
   "name": "Café Lumière",
-  "url": "https://www.cafe-lumiere.ch",
-  "image": ["https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg"],
-  "description": "Café de spécialité avec torréfaction artisanale maison, pâtisseries fraîches et brunchs au cœur de Genève.",
-  "telephone": "+41 22 000 00 00",
+  "description": "Café de spécialité au cœur de Genève. Brunchs, cafés d'exception et pâtisseries maison.",
+  "url": "https://www.stampify.ch/demos/cafe-lumiere.html",
+  "telephone": "+41220000000",
   "email": "contact@cafe-lumiere.ch",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "14 Rue du Rhône",
     "addressLocality": "Genève",
-    "addressRegion": "Genève",
     "postalCode": "1204",
     "addressCountry": "CH"
   },
-  "geo": {"@type": "GeoCoordinates","latitude": 46.2044,"longitude": 6.1432},
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 46.2044,
+    "longitude": 6.1432
+  },
   "openingHoursSpecification": [
-    {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens": "07:00","closes": "20:00"},
-    {"@type": "OpeningHoursSpecification","dayOfWeek": "Saturday","opens": "07:00","closes": "20:00"}
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+      "opens": "07:00",
+      "closes": "20:00"
+    }
   ],
-  "priceRange": "CHF 3 – CHF 28",
+  "priceRange": "CHF 4–18",
+  "servesCuisine": ["Café", "Brunch", "Pâtisserie"],
+  "image": "https://images.unsplash.com/photo-1580089344217-eb88badb9492?w=1200&q=80",
   "currenciesAccepted": "CHF",
-  "servesCuisine": "Café de spécialité, Pâtisserie, Brunch",
-  "aggregateRating": {"@type": "AggregateRating","ratingValue": "4.9","bestRating": "5","ratingCount": "437"}
+  "paymentAccepted": "Cash, Credit Card"
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,7 +119,7 @@ h3{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:400}
 
 /* HERO */
 #hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#hero-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;transform:scale(1.04);transition:transform 8s ease-out}
+#hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1580089344217-eb88badb9492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwxfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080');background-size:cover;background-position:center;transform:scale(1.04);transition:transform 8s ease-out}
 #hero-bg.loaded{transform:scale(1)}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(44,24,16,0.52) 0%,rgba(44,24,16,0.38) 60%,rgba(44,24,16,0.58) 100%)}
 .hero-content{position:relative;z-index:10;text-align:center;padding:0 32px;max-width:860px}
@@ -162,7 +168,7 @@ h3{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:400}
 
 /* PHOTO PARALLAX */
 #parallax-1{position:relative;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#parallax-1-bg{position:absolute;inset:-60px 0;background-image:url('https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center;background-attachment:fixed}
+#parallax-1-bg{position:absolute;inset:-60px 0;background-image:url('https://images.unsplash.com/photo-1580563716633-f96ff1f01737?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwyfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080');background-size:cover;background-position:center;background-attachment:fixed}
 .parallax-overlay{position:absolute;inset:0;background:rgba(44,24,16,0.62)}
 .parallax-content{position:relative;z-index:10;text-align:center;padding:0 48px;max-width:800px}
 .parallax-content blockquote{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:300;color:white;line-height:1.5;margin-bottom:24px}
@@ -227,7 +233,7 @@ h3{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:400}
 
 /* CTA FINAL */
 #cta-final{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:380px;text-align:center}
-#cta-bg{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center;background-attachment:fixed}
+#cta-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1429681601148-75510b2cef43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwzfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080');background-size:cover;background-position:center;background-attachment:fixed}
 .cta-overlay{position:absolute;inset:0;background:rgba(44,24,16,0.72)}
 .cta-content{position:relative;z-index:10;padding:80px 48px;max-width:700px}
 .cta-content h2{color:white;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:16px}
@@ -282,9 +288,9 @@ footer{background:var(--brown)}
 <body>
 
 <!-- STAMPIFY DEMO BANNER -->
-<div id="stampify-banner" style="position:sticky;top:0;z-index:999;background:#3D31B0;color:white;text-align:center;padding:10px 24px;font-size:13px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:16px;">
-  <span>Ceci est un exemple de site livré par <strong>Stampify</strong> en 48h</span>
-  <a href="https://www.stampify.ch" style="background:white;color:#3D31B0;padding:6px 14px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;">Obtenir le mien →</a>
+<div id="stampify-banner" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#3D31B0;color:white;text-align:center;padding:10px 20px;font-size:13px;font-family:sans-serif;display:flex;align-items:center;justify-content:center;gap:16px;">
+  <span>✨ Ceci est un exemple de site livré par Stampify en 48h</span>
+  <a href="https://www.stampify.ch" target="_blank" rel="noopener" style="background:white;color:#3D31B0;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;">Obtenir le mien →</a>
 </div>
 
 <div id="mobile-nav">
@@ -340,7 +346,7 @@ footer{background:var(--brown)}
       <span class="signature">— Fondé à Genève en 2019 · Torréfaction artisanale maison</span>
     </div>
     <div class="histoire-img reveal reveal-delay-2">
-      <img src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Intérieur Café Lumière Genève" loading="lazy">
+      <img src="https://images.unsplash.com/photo-1580563716633-f96ff1f01737?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwyfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Intérieur chaleureux du Café Lumière, café de spécialité à Genève" loading="lazy">
       <div class="histoire-caption">
         <span>Reconnu</span>
         <strong>Meilleur café de<br>spécialité Genève 2024</strong>
@@ -408,11 +414,16 @@ footer{background:var(--brown)}
     <p>Un écrin chaleureux de 120m² au cœur de Genève. Comptoir en chêne, lumière dorée, atelier de torréfaction visible. Un lieu conçu pour ralentir.</p>
   </div>
   <div class="galerie-grid">
-    <div class="galerie-item"><img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Café Lumière Genève intérieur" loading="lazy"></div>
-    <div class="galerie-item"><img src="https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Latte art Café Lumière" loading="lazy"></div>
-    <div class="galerie-item"><img src="https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Pâtisseries maison" loading="lazy"></div>
-    <div class="galerie-item"><img src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Salle Café Lumière" loading="lazy"></div>
-    <div class="galerie-item"><img src="https://images.pexels.com/photos/374885/pexels-photo-374885.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Grains de café torréfiés" loading="lazy"></div>
+    <div class="galerie-item"><img src="https://images.unsplash.com/photo-1580089344217-eb88badb9492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwxfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Intérieur chaleureux du Café Lumière, café de spécialité à Genève" loading="lazy">
+    <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@thevoncomplex?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Mike Von</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p></div>
+    <div class="galerie-item"><img src="https://images.unsplash.com/photo-1580563716633-f96ff1f01737?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwyfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Café Lumière Genève - spécialités café" loading="lazy">
+    <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@mastiniven?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Iven Mastin</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p></div>
+    <div class="galerie-item"><img src="https://images.unsplash.com/photo-1429681601148-75510b2cef43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwzfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Brunch au Café Lumière Genève" loading="lazy">
+    <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@seemisamuel?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Seemi Samuel</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p></div>
+    <div class="galerie-item"><img src="https://images.unsplash.com/photo-1549488497-5a2119c98479?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHw0fHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Pâtisseries artisanales Café Lumière" loading="lazy">
+    <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@orlovamaria?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Maria Orlova</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p></div>
+    <div class="galerie-item"><img src="https://images.unsplash.com/photo-1580563716633-f96ff1f01737?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5MjUwNDB8MHwxfHNlYXJjaHwyfHxmcmVuY2glMjBjYWZlJTIwaW50ZXJpb3IlMjBjb2ZmZWUlMjBzcGVjaWFsdHl8ZW58MHwwfHx8MTc3NjE5NTg4MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Café Lumière Genève - spécialités café" loading="lazy">
+    <p class="photo-credit" style="font-size:10px;color:#999;margin:2px 0 8px;text-align:right;">Photo by <a href="https://unsplash.com/@mastiniven?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Iven Mastin</a> on <a href="https://unsplash.com/?utm_source=stampify&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p></div>
   </div>
 </section>
 

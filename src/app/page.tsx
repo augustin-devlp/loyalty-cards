@@ -53,7 +53,7 @@ export default function Home() {
         @keyframes slideInPhone { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(10px); opacity: 1; } }
         @keyframes rippleAnim { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
         @keyframes stampBounce { 0% { transform: scale(0); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
-        @keyframes spinWheel { from { transform: rotate(0deg); } to { transform: rotate(1440deg); } }
+        @keyframes rewardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 60% { transform: scale(1.2) rotate(3deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         @keyframes typewriterAnim { from { width: 0; } to { width: 100%; } }
         @keyframes cursorBlink { 0%,100% { border-right-color: white; } 50% { border-right-color: transparent; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -130,28 +130,23 @@ export default function Home() {
                 <div style={{ background: "#3D31B0", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>✓ Tampon ajouté</div>
               </div>
 
-              {/* Step 2: Spin wheel */}
+              {/* Step 2: Reward unlocked */}
               <div style={{ position: "absolute", inset: 0, opacity: step === 2 ? 1 : 0, transition: "opacity 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ position: "relative" }}>
-                  <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderTop: "16px solid #1A1410", zIndex: 2 }} />
-                  <svg key={spinKey} width="200" height="200" viewBox="-105 -105 210 210" style={{ animation: step === 2 ? "spinWheel 2.5s cubic-bezier(0.1,0.8,0.2,1) forwards" : "none" }}>
-                    {[["Café offert","#3D31B0","white"],["−10%","#EEF0FC","#1A1410"],["Croissant 🥐","#3D31B0","white"],["−20%","#EEF0FC","#1A1410"],["Tampon x2","#3D31B0","white"],["Surprise ✨","#EEF0FC","#1A1410"]].map(([label, bg, fg], i) => {
-                      const sa = (i * 60 - 90) * Math.PI / 180;
-                      const ea = ((i + 1) * 60 - 90) * Math.PI / 180;
-                      const x1 = 95 * Math.cos(sa), y1 = 95 * Math.sin(sa);
-                      const x2 = 95 * Math.cos(ea), y2 = 95 * Math.sin(ea);
-                      const cx = 68 * Math.cos((sa + ea) / 2), cy = 68 * Math.sin((sa + ea) / 2);
-                      return (
-                        <g key={i}>
-                          <path d={`M 0 0 L ${x1} ${y1} A 95 95 0 0 1 ${x2} ${y2} Z`} fill={bg as string} stroke="white" strokeWidth="1.5"/>
-                          <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" fontSize="8.5" fontWeight="600" fill={fg as string} transform={`rotate(${i*60+30-90}, ${cx}, ${cy})`}>{label as string}</text>
-                        </g>
-                      );
-                    })}
-                    <circle cx="0" cy="0" r="16" fill="white" stroke="#E2D9CC" strokeWidth="2"/>
-                  </svg>
+                <div style={{ background: "white", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", padding: "24px 28px", width: 280 }}>
+                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 16, fontWeight: 700, color: "#1A1410", marginBottom: 12 }}>Boulangerie Martin</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 12 }}>
+                    {[0,1,2,3,4,5,6,7,8,9].map((i) => (
+                      <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", background: "#3D31B0", border: "1px solid #3D31B0", display: "flex", alignItems: "center", justifyContent: "center", animation: i === 9 && step === 2 ? "stampBounce 0.4s ease-out 0.4s both" : "none" }}>
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#6B6259", marginBottom: 8 }}>10 / 10 tampons — Récompense débloquée !</div>
+                  <div key={spinKey} style={{ background: "#EEF0FC", border: "1.5px solid #3D31B0", borderRadius: 8, padding: "8px 12px", textAlign: "center", fontSize: 13, fontWeight: 700, color: "#3D31B0", animation: step === 2 ? "rewardPop 0.5s ease-out 0.8s both" : "none", opacity: step === 2 ? undefined : 0 }}>
+                    🎁 Café offert — à récupérer !
+                  </div>
                 </div>
-                <div style={{ background: "#3D31B0", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>🎰 Café offert !</div>
+                <div style={{ background: "#3D31B0", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>✨ Récompense débloquée</div>
               </div>
 
               {/* Step 3: SMS typewriter */}
@@ -274,20 +269,33 @@ export default function Home() {
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF6057" }} />
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FEBC2E" }} />
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28C840" }} />
-                <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 12px", marginLeft: 8, fontSize: 11, color: "#6B6259" }}>spa-essence.ch</div>
+                <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 12px", marginLeft: 8, fontSize: 11, color: "#6B6259", display: "flex", alignItems: "center", gap: 4 }}>
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1z" stroke="#28C840" strokeWidth="1.5"/><path d="M5.5 8l1.5 1.5L10.5 6" stroke="#28C840" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  lessence-spa.stampify.ch
+                </div>
               </div>
-              <div style={{ background: "linear-gradient(135deg, #1B4332 0%, #2D5A4E 100%)", padding: "20px 24px 0" }}>
-                <div style={{ display: "inline-block", background: "rgba(143,191,159,0.25)", borderRadius: 999, padding: "3px 10px", fontSize: 10, fontWeight: 600, color: "#8FBF9F", marginBottom: 8 }}>⭐ Démo principale</div>
-                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 22, fontWeight: 700, color: "white", marginBottom: 4 }}>Spa Essence</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", marginBottom: 16 }}>6 Rue des Alpes, 1201 Genève</div>
+              <div style={{ position: "relative", height: 160, overflow: "hidden" }}>
+                <img
+                  src="https://images.unsplash.com/photo-1761470575018-135c213340eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800"
+                  alt="Spa Essence Genève - exemple de site créé par Stampify"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(27,67,50,0.5) 0%, rgba(27,67,50,0.8) 100%)" }} />
+                <div style={{ position: "absolute", inset: 0, padding: "16px 20px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                  <div style={{ display: "inline-block", background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", borderRadius: 999, padding: "3px 10px", fontSize: 10, fontWeight: 600, color: "white", marginBottom: 6, width: "fit-content" }}>✓ Exemple réel créé avec Stampify</div>
+                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 20, fontWeight: 700, color: "white", marginBottom: 2 }}>Spa Essence</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>6 Rue des Alpes, 1201 Genève</div>
+                </div>
               </div>
-              <div style={{ padding: "16px 24px 24px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+              <div style={{ padding: "16px 24px 20px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
                   {["🧖 Massages", "✨ Soins visage", "🌿 Enveloppements", "💆 Duo"].map((item) => (
                     <div key={item} style={{ background: "#F0F7F4", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontWeight: 500, color: "#1A1410", border: "1px solid #E2D9CC" }}>{item}</div>
                   ))}
                 </div>
-                <div style={{ background: "#2D5A4E", color: "white", borderRadius: 8, padding: "10px", textAlign: "center", fontSize: 13, fontWeight: 600 }}>Réserver un soin →</div>
+                <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer" style={{ display: "block", background: "#2D5A4E", color: "white", borderRadius: 8, padding: "10px", textAlign: "center", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                  Voir la démo complète →
+                </a>
               </div>
             </div>
           </div>
@@ -578,20 +586,37 @@ export default function Home() {
               { e: "✂️", n: "Barbershop", path: "/demos/black-scissors.html", desc: "Réservation en ligne, carte VIP" },
               { e: "🍽️", n: "Restaurant", path: "/demos/bistrot-du-coin.html", desc: "Menu digital, réservations, fidélité" },
               { e: "💅", n: "Manucure", path: "/demos/nail-studio.html", desc: "Prise de RDV, carte récompenses" },
-              { e: "🧖", n: "Spa", path: "https://loyalty-cards-rho.vercel.app/lessence-spa.html", desc: "Soins, carte fidélité, réservation" },
+              { e: "🧖", n: "Spa", path: "https://loyalty-cards-rho.vercel.app/lessence-spa.html", desc: "Soins, carte fidélité, réservation", external: true },
             ].map((d) => (
-              <Link
-                key={d.path}
-                href={d.path}
-                style={{ display: "block", background: "white", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", transition: "border-color 0.2s, transform 0.2s" }}
-                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#3D31B0"; el.style.transform = "translateY(-4px)"; }}
-                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#E2D9CC"; el.style.transform = "none"; }}
-              >
-                <div style={{ fontSize: 36 }}>{d.e}</div>
-                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#1A1410", marginTop: 10 }}>{d.n}</div>
-                <div style={{ fontSize: 13, color: "#6B6259", marginTop: 4 }}>{d.desc}</div>
-                <div style={{ fontSize: 13, color: "#3D31B0", marginTop: 12, fontWeight: 500 }}>Voir la démo →</div>
-              </Link>
+              d.external ? (
+                <a
+                  key={d.path}
+                  href={d.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "block", background: "white", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", transition: "border-color 0.2s, transform 0.2s" }}
+                  onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#3D31B0"; el.style.transform = "translateY(-4px)"; }}
+                  onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#E2D9CC"; el.style.transform = "none"; }}
+                >
+                  <div style={{ fontSize: 36 }}>{d.e}</div>
+                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#1A1410", marginTop: 10 }}>{d.n}</div>
+                  <div style={{ fontSize: 13, color: "#6B6259", marginTop: 4 }}>{d.desc}</div>
+                  <div style={{ fontSize: 13, color: "#3D31B0", marginTop: 12, fontWeight: 500 }}>Voir la démo →</div>
+                </a>
+              ) : (
+                <Link
+                  key={d.path}
+                  href={d.path}
+                  style={{ display: "block", background: "white", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", transition: "border-color 0.2s, transform 0.2s" }}
+                  onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#3D31B0"; el.style.transform = "translateY(-4px)"; }}
+                  onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#E2D9CC"; el.style.transform = "none"; }}
+                >
+                  <div style={{ fontSize: 36 }}>{d.e}</div>
+                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#1A1410", marginTop: 10 }}>{d.n}</div>
+                  <div style={{ fontSize: 13, color: "#6B6259", marginTop: 4 }}>{d.desc}</div>
+                  <div style={{ fontSize: 13, color: "#3D31B0", marginTop: 12, fontWeight: 500 }}>Voir la démo →</div>
+                </Link>
+              )
             ))}
           </div>
           <div style={{ textAlign: "center", marginTop: 40 }}>
