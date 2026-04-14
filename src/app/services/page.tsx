@@ -104,7 +104,7 @@ function Footer() {
 const faqs = [
   { q: "Combien de temps ?", a: "72h après réception de vos informations." },
   { q: "Je reste propriétaire ?", a: "Oui 100%. Code, domaine, hébergement — tout vous appartient." },
-  { q: "Standard vs Premium ?", a: "Standard = site + carte. Premium ajoute SMS, roue fortune, parrainage." },
+  { q: "Standard vs Premium ?", a: "Standard = site + carte fidélité. Premium ajoute SMS retargeting sur 3 mois et parrainage automatique." },
   { q: "Exemples ?", a: "Oui, stampify.ch/demo. Le spa L'Essence Lausanne est représentatif." },
   { q: "France et Suisse ?", a: "CHF 1200/1800 en Suisse, €900/1400 en France." },
 ];
@@ -223,7 +223,7 @@ export default function ServicesPage() {
                 {[
                   "Tout le Pack Standard",
                   "SMS retargeting (3 mois inclus)",
-                  "Roue de la fortune gamifiée",
+                  "Campagnes SMS retargeting avancées",
                   "Système de parrainage automatique",
                   "Support prioritaire 6 mois",
                 ].map((f) => (
@@ -257,7 +257,7 @@ export default function ServicesPage() {
               { icon: "🎟️", title: "Carte fidélité digitale", desc: "Vos clients cumulent des tampons depuis leur téléphone. Zéro app, juste un QR code.", badge: null },
               { icon: "🔍", title: "SEO local", desc: "Google Maps optimisé, 15 annuaires soumis. Vos clients vous trouvent avant la concurrence.", badge: null },
               { icon: "📩", title: "SMS retargeting", desc: "3 mois inclus dans le Premium. Relancez vos clients avec des offres ciblées.", badge: "Premium" },
-              { icon: "🎡", title: "Roue de la fortune", desc: "Gamifiez l'expérience client. Une raison de revenir et d'en parler.", badge: "Premium" },
+              { icon: "📊", title: "Analyses avancées", desc: "Rapports détaillés sur vos clients fidèles, taux de retour et performances de vos campagnes SMS.", badge: "Premium" },
               { icon: "👥", title: "Parrainage auto", desc: "Vos clients deviennent vos commerciaux. Système automatique.", badge: "Premium" },
             ].map((item) => (
               <div key={item.title} className="bg-white rounded-2xl p-6 border border-[#E8E4DC]">

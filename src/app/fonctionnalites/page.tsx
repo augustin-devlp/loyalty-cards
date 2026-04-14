@@ -55,7 +55,7 @@ const features = [
       "10 cases personnalisables (couleurs, icônes, récompense)",
       "Accès instantané : QR code ou NFC tap",
       "Aucune application à télécharger pour vos clients",
-      "Roue de la fortune incluse en bonus",
+      "Récompenses personnalisables (café offert, réduction, produit offert...)",
       "Notifications automatiques à la récompense",
     ],
     emoji: "🎟️",
@@ -191,7 +191,7 @@ export default function FonctionnalitesPage() {
           <p style={{ fontSize: 18, color: "#6B6259", lineHeight: 1.65, margin: "0 0 36px 0" }}>
             Site vitrine, carte fidélité, plaquette NFC, campagnes SMS, analytics. Un seul paiement. Livré en 48h.
           </p>
-          <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontSize: 16, fontWeight: 600, textDecoration: "none" }}>
+          <Link href="/subscribe" style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontSize: 16, fontWeight: 600, textDecoration: "none" }}>
             Obtenir mon site →
           </Link>
         </div>
@@ -242,7 +242,7 @@ export default function FonctionnalitesPage() {
           <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", margin: "0 0 32px 0" }}>
             Site + carte fidélité + NFC + SMS + analytics. Livré en 48h. Paiement unique.
           </p>
-          <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "white", color: "#3D31B0", padding: "16px 36px", borderRadius: 10, fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
+          <Link href="/subscribe" style={{ display: "inline-block", background: "white", color: "#3D31B0", padding: "16px 36px", borderRadius: 10, fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
             Obtenir mon site →
           </Link>
           <div style={{ marginTop: 16 }}>

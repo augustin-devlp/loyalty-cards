@@ -279,7 +279,7 @@ export default function DemosPage() {
             On fait des sites pour tous les commerces locaux en Suisse romande : fleuristes, pharmacies, boutiques, kinésithérapeutes, coiffeurs, tatoueurs... Contactez-nous et on vous montre ce qu&apos;on ferait pour vous spécifiquement.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
+            <Link href="/subscribe" style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
               Obtenir mon site → 990 CHF
             </Link>
             <Link href="/tarif" style={{ display: "inline-block", background: "transparent", border: "1.5px solid #3D31B0", color: "#3D31B0", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 15, textDecoration: "none" }}>

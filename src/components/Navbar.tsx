@@ -145,7 +145,7 @@ export default function Navbar() {
             Blog
           </Link>
           <Link
-            href={WA_OBTENIR}
+            href="/subscribe"
             style={{
               background: "#3D31B0",
               color: "white",
@@ -270,7 +270,8 @@ export default function Navbar() {
             Blog
           </Link>
           <Link
-            href={WA_OBTENIR}
+            href="/subscribe"
+            onClick={() => setMenuOpen(false)}
             style={{
               background: "#3D31B0",
               color: "white",

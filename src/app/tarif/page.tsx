@@ -55,8 +55,8 @@ const faqs = [
     a: "Le domaine .ch coûte environ 25 CHF/an à renouveler. L'hébergement est offert la 1ère année (environ 5 CHF/mois ensuite). La carte fidélité et le tableau de bord sont à vie. Aucun abonnement imposé.",
   },
   {
-    q: "C'est quoi l'add-on à 49 CHF/mois ?",
-    a: "Optionnel et sans engagement. Il inclut : campagnes SMS illimitées, mises à jour du site sur demande, et rapport mensuel détaillé par email. Vous pouvez l'activer ou l'arrêter quand vous voulez.",
+    q: "C'est quoi les add-ons à 49 et 79 CHF/mois ?",
+    a: "Deux options optionnelles et sans engagement. Essentiel (49 CHF/mois) : 1 campagne SMS/mois rédigée par nous, rapport mensuel, mises à jour mineures, support email prioritaire. Pro (79 CHF/mois) : tout l'Essentiel + SMS illimités, retargeting automatisé, parrainage client, rapport hebdomadaire et support téléphonique. Vous pouvez activer ou arrêter quand vous voulez.",
   },
   {
     q: "Est-ce que je dois payer avant de voir le résultat ?",
@@ -123,7 +123,7 @@ export default function TarifPage() {
             </div>
 
             <Link
-              href={WA_OBTENIR}
+              href="/subscribe"
               style={{ display: "block", background: "#3D31B0", color: "white", padding: "18px", borderRadius: 12, textAlign: "center", fontWeight: 600, fontSize: 17, textDecoration: "none" }}
             >
               Obtenir mon site maintenant →
@@ -133,23 +133,56 @@ export default function TarifPage() {
             </p>
           </div>
 
-          {/* Add-on */}
+          {/* Add-on Essentiel */}
           <div style={{ background: "white", border: "1px solid #E2D9CC", borderRadius: 16, padding: "28px 32px", marginTop: 20 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 16, color: "#1A1410", marginBottom: 4 }}>Add-on optionnel</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <div style={{ fontWeight: 700, fontSize: 16, color: "#1A1410" }}>Essentiel</div>
+                  <div style={{ background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600 }}>ADD-ON</div>
+                </div>
                 <div style={{ fontSize: 13, color: "#6B6259" }}>Sans engagement · résiliable à tout moment</div>
               </div>
               <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 28, fontWeight: 700, color: "#3D31B0" }}>49 CHF/mois</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {[
-                "Campagnes SMS illimitées",
-                "Mises à jour du site sur demande",
-                "Rapport mensuel détaillé par email",
+                "1 campagne SMS/mois rédigée par nous",
+                "Rapport mensuel des performances",
+                "Mises à jour mineures incluses",
+                "Support email prioritaire",
               ].map((item) => (
                 <div key={item} style={{ display: "flex", gap: 10 }}>
                   <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                  <span style={{ fontSize: 14, color: "#1A1410" }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Add-on Pro */}
+          <div style={{ background: "white", border: "2px solid #1A1410", borderRadius: 16, padding: "28px 32px", marginTop: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <div style={{ fontWeight: 700, fontSize: 16, color: "#1A1410" }}>Pro</div>
+                  <div style={{ background: "#1A1410", color: "white", borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600 }}>RECOMMANDÉ</div>
+                </div>
+                <div style={{ fontSize: 13, color: "#6B6259" }}>Sans engagement · résiliable à tout moment</div>
+              </div>
+              <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 28, fontWeight: 700, color: "#1A1410" }}>79 CHF/mois</div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                "Tout ce qui est dans Essentiel",
+                "Campagnes SMS illimitées",
+                "SMS retargeting automatisé sur 3 mois",
+                "Parrainage client automatique",
+                "Rapport hebdomadaire des performances",
+                "Support téléphonique prioritaire",
+              ].map((item) => (
+                <div key={item} style={{ display: "flex", gap: 10 }}>
+                  <span style={{ color: "#1A1410", fontWeight: 700, flexShrink: 0 }}>✓</span>
                   <span style={{ fontSize: 14, color: "#1A1410" }}>{item}</span>
                 </div>
               ))}
@@ -222,7 +255,7 @@ export default function TarifPage() {
             Envoyez-nous un message. On vous répond sous 2h, 7j/7.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
+            <Link href="/subscribe" style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
               Obtenir mon site →
             </Link>
             <Link href={WA_CONTACT} style={{ display: "inline-block", background: "transparent", color: "rgba(255,255,255,0.7)", padding: "16px 32px", borderRadius: 10, fontWeight: 600, fontSize: 16, textDecoration: "none", border: "1px solid rgba(255,255,255,0.2)" }}>

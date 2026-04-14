@@ -81,7 +81,7 @@ export default function Home() {
                 Site vitrine + carte fidélité digitale + plaquette NFC gravée. 990 CHF, livraison 48h.
               </p>
               <Link
-                href={WA_OBTENIR}
+                href="/subscribe"
                 style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontSize: 16, fontWeight: 600, textDecoration: "none", marginBottom: 20, transition: "background 0.2s, transform 0.15s, box-shadow 0.15s" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#2D2390"; (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 24px rgba(61,49,176,0.3)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#3D31B0"; (e.currentTarget as HTMLAnchorElement).style.transform = "none"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
@@ -478,7 +478,7 @@ export default function Home() {
             ))}
           </div>
           <div style={{ textAlign: "center", marginTop: 64 }}>
-            <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "white", color: "#3D31B0", padding: "16px 36px", borderRadius: 10, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
+            <Link href="/subscribe" style={{ display: "inline-block", background: "white", color: "#3D31B0", padding: "16px 36px", borderRadius: 10, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
               Commencer maintenant →
             </Link>
           </div>
@@ -563,7 +563,7 @@ export default function Home() {
             <div style={{ background: "#EEF0FC", borderRadius: 10, padding: 16, margin: "24px 0", fontSize: 14, fontStyle: "italic", color: "#3D31B0", lineHeight: 1.6 }}>
               Une agence suisse facture 1 500 à 5 000 CHF pour un site seul. Nous livrons site + carte + plaquette NFC + SEO. Pour 990 CHF. En 48h.
             </div>
-            <Link href={WA_OBTENIR} style={{ display: "block", background: "#3D31B0", color: "white", padding: "16px", borderRadius: 10, textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
+            <Link href="/subscribe" style={{ display: "block", background: "#3D31B0", color: "white", padding: "16px", borderRadius: 10, textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
               Obtenir mon site maintenant →
             </Link>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6B6259", textAlign: "center", marginTop: 12, marginBottom: 0 }}>2.71 CHF par jour. Moins que votre café du matin.</p>
@@ -656,7 +656,7 @@ export default function Home() {
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: "rgba(255,255,255,0.65)", margin: "0 0 40px 0", lineHeight: 1.65 }}>
             Envoyez-nous un message maintenant. On échange en 10 minutes. Votre site, carte fidélité et plaquette NFC sont livrés en moins de 48h.
           </p>
-          <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "20px 48px", borderRadius: 12, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, textDecoration: "none", boxShadow: "0 8px 32px rgba(61,49,176,0.4)" }}>
+          <Link href="/subscribe" style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "20px 48px", borderRadius: 12, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, textDecoration: "none", boxShadow: "0 8px 32px rgba(61,49,176,0.4)" }}>
             Obtenir mon site → 990 CHF
           </Link>
           <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 24, flexWrap: "wrap" }}>
