@@ -184,7 +184,7 @@ export default function Home() {
             { num: "48h", label: "Livraison garantie" },
             { num: "990 CHF", label: "Tout inclus" },
             { num: "100%", label: "Propriétaire du site" },
-            { num: "0€", label: "Abonnement mensuel" },
+            { num: "0 CHF", label: "Abonnement mensuel" },
           ].map((s, i) => (
             <div key={i} style={{ textAlign: "center", borderRight: i < 3 ? "1px solid rgba(255,255,255,0.1)" : "none", paddingRight: i < 3 ? 32 : 0, flex: 1, minWidth: 140 }}>
               <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 4vw, 52px)", fontWeight: 600, color: "white", lineHeight: 1 }}>{s.num}</div>
@@ -321,12 +321,12 @@ export default function Home() {
                 La carte papier finit à la poubelle. La digitale, jamais.
               </h2>
               <p style={{ fontSize: 16, color: "#6B6259", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                Vos clients ne perdent plus leur carte. Chaque passage est enregistré. Vous choisissez la récompense, le nombre de tampons, les couleurs. La roue de la fortune est offerte en bonus.
+                Vos clients ne perdent plus leur carte. Chaque passage est enregistré. Vous choisissez la récompense, le nombre de tampons, les couleurs. La carte s&apos;adapte à votre commerce.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {[
                   "10 tampons personnalisables (couleurs, icônes)",
-                  "Roue de la fortune incluse — tirage aléatoire",
+                  "Campagne SMS offerte à la livraison",
                   "Dashboard pour voir vos clients actifs",
                 ].map((item) => (
                   <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
@@ -573,12 +573,12 @@ export default function Home() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }} className="md:!grid-cols-3">
             {[
-              { e: "☕", n: "Café", path: "/demo/cafe", desc: "Tampons, roue de la fortune, réservation" },
-              { e: "🥐", n: "Boulangerie", path: "/demo/boulangerie", desc: "Carte fidélité, promotions SMS, menu" },
-              { e: "✂️", n: "Barbershop", path: "/demo/barbershop", desc: "Réservation en ligne, carte VIP" },
-              { e: "🍽️", n: "Restaurant", path: "/demo/restaurant", desc: "Menu digital, réservations, fidélité" },
-              { e: "💅", n: "Manucure", path: "/demo/manucure", desc: "Prise de RDV, carte récompenses" },
-              { e: "🧖", n: "Spa", path: "/demo/spa", desc: "Soins, carte fidélité, roue cadeaux" },
+              { e: "☕", n: "Café", path: "/demos/cafe-lumiere.html", desc: "Tampons, carte fidélité, réservation" },
+              { e: "🥐", n: "Boulangerie", path: "/demos/boulangerie-martin.html", desc: "Carte fidélité, commandes, menu" },
+              { e: "✂️", n: "Barbershop", path: "/demos/black-scissors.html", desc: "Réservation en ligne, carte VIP" },
+              { e: "🍽️", n: "Restaurant", path: "/demos/bistrot-du-coin.html", desc: "Menu digital, réservations, fidélité" },
+              { e: "💅", n: "Manucure", path: "/demos/nail-studio.html", desc: "Prise de RDV, carte récompenses" },
+              { e: "🧖", n: "Spa", path: "https://loyalty-cards-rho.vercel.app/lessence-spa.html", desc: "Soins, carte fidélité, réservation" },
             ].map((d) => (
               <Link
                 key={d.path}
@@ -626,10 +626,10 @@ export default function Home() {
         <div style={{ maxWidth: 720, margin: "0 auto" }}>
           <div style={{ display: "inline-block", background: "rgba(61,49,176,0.3)", color: "#A89CF0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>Prêt à vous lancer ?</div>
           <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 600, color: "white", margin: "0 0 20px 0", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-            Votre site en ligne<br /><em style={{ color: "#A89CF0" }}>avant lundi.</em>
+            Votre site en ligne<br /><em style={{ color: "#A89CF0" }}>en moins de 48h.</em>
           </h2>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: "rgba(255,255,255,0.65)", margin: "0 0 40px 0", lineHeight: 1.65 }}>
-            Envoyez-nous un message ce soir. On échange en 10 minutes. Votre site, carte fidélité et plaquette NFC sont livrés en 48h.
+            Envoyez-nous un message maintenant. On échange en 10 minutes. Votre site, carte fidélité et plaquette NFC sont livrés en moins de 48h.
           </p>
           <Link href={WA_OBTENIR} style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "20px 48px", borderRadius: 12, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, textDecoration: "none", boxShadow: "0 8px 32px rgba(61,49,176,0.4)" }}>
             Obtenir mon site → 990 CHF

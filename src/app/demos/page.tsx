@@ -16,11 +16,29 @@ const WA_OBTENIR =
 
 const demos = [
   {
+    emoji: "🧖",
+    name: "Spa Essence",
+    type: "Spa & bien-être",
+    city: "Genève",
+    slug: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
+    external: true,
+    primary: "#2D5A4E",
+    gradientFrom: "#1B4332",
+    gradientTo: "#2D5A4E",
+    urlBar: "spa-essence.ch",
+    features: ["Carte fidélité", "Réservation", "SMS promos"],
+    stampIcon: "🧖",
+    reward: "Soin visage offert après 10 visites",
+    rewardIcon: "✨",
+    badge: "⭐ Démo principale",
+  },
+  {
     emoji: "☕",
     name: "Café Lumière",
     type: "Café & brunch",
     city: "Genève",
-    slug: "/demo/cafe",
+    slug: "/demos/cafe-lumiere.html",
+    external: false,
     primary: "#6B3F2A",
     gradientFrom: "#3E1F0A",
     gradientTo: "#6B3F2A",
@@ -36,12 +54,13 @@ const demos = [
     name: "Boulangerie Martin",
     type: "Boulangerie artisanale",
     city: "Lausanne",
-    slug: "/demo/boulangerie",
+    slug: "/demos/boulangerie-martin.html",
+    external: false,
     primary: "#8B6914",
     gradientFrom: "#5C4309",
     gradientTo: "#8B6914",
     urlBar: "boulangerie-martin.ch",
-    features: ["Carte fidélité", "Menu digital", "SMS promos"],
+    features: ["Carte fidélité", "Menu digital", "Réservation"],
     stampIcon: "🥐",
     reward: "Viennoiserie offerte après 10 visites",
     rewardIcon: "🥐",
@@ -49,14 +68,15 @@ const demos = [
   },
   {
     emoji: "🍽️",
-    name: "Le Bistrot",
+    name: "Le Bistrot du Coin",
     type: "Restaurant gastronomique",
     city: "Fribourg",
-    slug: "/demo/restaurant",
-    primary: "#8B1A1A",
-    gradientFrom: "#5C0F0F",
-    gradientTo: "#8B1A1A",
-    urlBar: "le-bistrot.ch",
+    slug: "/demos/bistrot-du-coin.html",
+    external: false,
+    primary: "#6B1F2A",
+    gradientFrom: "#4E1620",
+    gradientTo: "#6B1F2A",
+    urlBar: "bistrot-du-coin.ch",
     features: ["Carte fidélité", "Menu QR", "Réservation"],
     stampIcon: "🍽️",
     reward: "Dessert offert après 10 visites",
@@ -65,14 +85,15 @@ const demos = [
   },
   {
     emoji: "✂️",
-    name: "Barber Shop 41",
+    name: "Black Scissors",
     type: "Barbershop premium",
     city: "Genève",
-    slug: "/demo/barbershop",
-    primary: "#2C2C2C",
-    gradientFrom: "#1A1A1A",
-    gradientTo: "#2C2C2C",
-    urlBar: "barbershop41.ch",
+    slug: "/demos/black-scissors.html",
+    external: false,
+    primary: "#0A0A0A",
+    gradientFrom: "#000000",
+    gradientTo: "#C41E3A",
+    urlBar: "black-scissors.ch",
     features: ["Carte fidélité", "Réservation", "Galerie"],
     stampIcon: "✂️",
     reward: "Coupe offerte après 10 visites",
@@ -84,7 +105,8 @@ const demos = [
     name: "Nail Studio",
     type: "Salon de manucure",
     city: "Lausanne",
-    slug: "/demo/manucure",
+    slug: "/demos/nail-studio.html",
+    external: false,
     primary: "#C2185B",
     gradientFrom: "#880E4F",
     gradientTo: "#C2185B",
@@ -94,22 +116,6 @@ const demos = [
     reward: "Pose offerte après 10 visites",
     rewardIcon: "💅",
     badge: null,
-  },
-  {
-    emoji: "🧖",
-    name: "Spa Essence",
-    type: "Spa & bien-être",
-    city: "Genève",
-    slug: "/demo/spa",
-    primary: "#2D5A4E",
-    gradientFrom: "#1B4332",
-    gradientTo: "#2D5A4E",
-    urlBar: "spa-essence.ch",
-    features: ["Carte fidélité", "Réservation", "Roue de la fortune"],
-    stampIcon: "🧖",
-    reward: "Soin visage offert après 10 visites",
-    rewardIcon: "✨",
-    badge: "⭐ Démo principale",
   },
 ];
 
@@ -234,8 +240,10 @@ export default function DemosPage() {
                   </div>
 
                   {/* CTA */}
-                  <Link
+                  <a
                     href={d.slug}
+                    target={d.external ? "_blank" : undefined}
+                    rel={d.external ? "noopener noreferrer" : undefined}
                     style={{
                       display: "block",
                       background: "#3D31B0",
@@ -250,7 +258,7 @@ export default function DemosPage() {
                     }}
                   >
                     Voir la démo interactive →
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}

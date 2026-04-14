@@ -119,11 +119,23 @@ function GiftIcon() {
   );
 }
 
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
 // ── Desktop nav links ─────────────────────────────────────────────────────────
 
 const OWNER_LINKS = [
   { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon className="w-4 h-4" /> },
   { href: "/dashboard/stats", label: "Statistiques", icon: <StatsIcon className="w-4 h-4" /> },
+  { href: "/dashboard/reservations", label: "Réservations", icon: <CalendarIcon /> },
   { href: "/dashboard/spin-wheel", label: "Roue", icon: <PromoIcon /> },
   { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
   { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
@@ -148,6 +160,7 @@ export default function DashboardNav() {
   const router = useRouter();
   const [isEmployee, setIsEmployee] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [pendingReservations, setPendingReservations] = useState(0);
 
   useEffect(() => {
     const supabase = createClient();
@@ -161,6 +174,28 @@ export default function DashboardNav() {
         .maybeSingle();
       setIsEmployee(!!data);
     });
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const fetchPending = async () => {
+      const today = new Date().toISOString().split("T")[0];
+      const next7 = new Date();
+      next7.setDate(next7.getDate() + 7);
+      const { count } = await supabase
+        .from("reservations")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending")
+        .gte("reservation_date", today)
+        .lte("reservation_date", next7.toISOString().split("T")[0]);
+      setPendingReservations(count ?? 0);
+    };
+    fetchPending();
+    const channel = supabase
+      .channel("nav-reservations")
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, fetchPending)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   // Close drawer on route change
@@ -210,6 +245,7 @@ export default function DashboardNav() {
             <nav className="flex items-center gap-1">
               {desktopLinks.map((link) => {
                 const active = pathname.startsWith(link.href);
+                const showBadge = link.href === "/dashboard/reservations" && pendingReservations > 0;
                 return (
                   <Link
                     key={link.href}
@@ -223,6 +259,11 @@ export default function DashboardNav() {
                   >
                     {link.icon}
                     {link.label}
+                    {showBadge && (
+                      <span className="ml-1 flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold" style={{ background: "#EF4444", color: "white" }}>
+                        {pendingReservations > 9 ? "9+" : pendingReservations}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -303,6 +344,7 @@ export default function DashboardNav() {
               </p>
               {desktopLinks.map((link) => {
                 const active = pathname.startsWith(link.href);
+                const showBadge = link.href === "/dashboard/reservations" && pendingReservations > 0;
                 return (
                   <Link
                     key={link.href}
@@ -316,6 +358,11 @@ export default function DashboardNav() {
                   >
                     {link.icon}
                     {link.label}
+                    {showBadge && (
+                      <span className="ml-auto flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-[10px] font-bold" style={{ background: "#EF4444", color: "white" }}>
+                        {pendingReservations > 9 ? "9+" : pendingReservations}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
