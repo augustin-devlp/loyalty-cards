@@ -274,17 +274,20 @@ export default function Home() {
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF6057" }} />
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FEBC2E" }} />
                 <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28C840" }} />
-                <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 12px", marginLeft: 8, fontSize: 11, color: "#6B6259" }}>boulangerie-martin.ch</div>
+                <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 12px", marginLeft: 8, fontSize: 11, color: "#6B6259" }}>spa-essence.ch</div>
               </div>
-              <div style={{ padding: 24 }}>
-                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 22, fontWeight: 700, color: "#1A1410", marginBottom: 8 }}>Boulangerie Martin</div>
-                <div style={{ fontSize: 13, color: "#6B6259", marginBottom: 16 }}>Rue du Marché 12, Genève · Lun–Sam 7h–19h</div>
+              <div style={{ background: "linear-gradient(135deg, #1B4332 0%, #2D5A4E 100%)", padding: "20px 24px 0" }}>
+                <div style={{ display: "inline-block", background: "rgba(143,191,159,0.25)", borderRadius: 999, padding: "3px 10px", fontSize: 10, fontWeight: 600, color: "#8FBF9F", marginBottom: 8 }}>⭐ Démo principale</div>
+                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 22, fontWeight: 700, color: "white", marginBottom: 4 }}>Spa Essence</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", marginBottom: 16 }}>6 Rue des Alpes, 1201 Genève</div>
+              </div>
+              <div style={{ padding: "16px 24px 24px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
-                  {["🥐 Croissants", "🍞 Pains", "🎂 Gâteaux", "☕ Café"].map((item) => (
-                    <div key={item} style={{ background: "white", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontWeight: 500, color: "#1A1410", border: "1px solid #E2D9CC" }}>{item}</div>
+                  {["🧖 Massages", "✨ Soins visage", "🌿 Enveloppements", "💆 Duo"].map((item) => (
+                    <div key={item} style={{ background: "#F0F7F4", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontWeight: 500, color: "#1A1410", border: "1px solid #E2D9CC" }}>{item}</div>
                   ))}
                 </div>
-                <div style={{ background: "#3D31B0", color: "white", borderRadius: 8, padding: "10px", textAlign: "center", fontSize: 13, fontWeight: 600 }}>Commander en ligne →</div>
+                <div style={{ background: "#2D5A4E", color: "white", borderRadius: 8, padding: "10px", textAlign: "center", fontSize: 13, fontWeight: 600 }}>Réserver un soin →</div>
               </div>
             </div>
           </div>

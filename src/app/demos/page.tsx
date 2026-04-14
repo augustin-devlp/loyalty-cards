@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DemoAnimation from "@/components/DemoAnimation";
 
 export const metadata: Metadata = {
   title: "Démos Stampify — Exemples de sites et cartes fidélité pour commerçants",
@@ -20,12 +21,15 @@ const demos = [
     type: "Café & brunch",
     city: "Genève",
     slug: "/demo/cafe",
-    color: "#3E1F0A",
-    accent: "#C9A84C",
-    reward: "1 café offert après 10 tampons",
-    features: ["Carte fidélité 10 cases", "Roue de la fortune", "Réservation en ligne"],
-    desc: "Un café moderne à Genève avec une carte fidélité digitale, une roue de la fortune et un système de réservation. Exactement ce que vous recevrez — à vos couleurs.",
-    stamps: 7,
+    primary: "#6B3F2A",
+    gradientFrom: "#3E1F0A",
+    gradientTo: "#6B3F2A",
+    urlBar: "cafe-lumiere.ch",
+    features: ["Carte fidélité", "Menu digital", "Réservation"],
+    stampIcon: "☕",
+    reward: "Café offert après 10 visites",
+    rewardIcon: "☕",
+    badge: null,
   },
   {
     emoji: "🥐",
@@ -33,64 +37,79 @@ const demos = [
     type: "Boulangerie artisanale",
     city: "Lausanne",
     slug: "/demo/boulangerie",
-    color: "#6B3A1F",
-    accent: "#E8A44A",
-    reward: "1 viennoiserie offerte après 8 tampons",
-    features: ["Carte fidélité 8 cases", "Menu digital", "Promotions SMS"],
-    desc: "Une boulangerie artisanale lausannoise avec son menu digital, sa carte fidélité et ses campagnes SMS pour rappeler les promotions du weekend.",
-    stamps: 5,
-  },
-  {
-    emoji: "✂️",
-    name: "The Barber Club",
-    type: "Barbershop premium",
-    city: "Fribourg",
-    slug: "/demo/barbershop",
-    color: "#1A2A3A",
-    accent: "#D4A853",
-    reward: "1 coupe offerte après 8 tampons",
-    features: ["Réservation en ligne", "Carte VIP fidélité", "Galerie de coupes"],
-    desc: "Un barbershop premium à Fribourg avec prise de rendez-vous intégrée, galerie de styles et carte VIP fidélité pour les habitués.",
-    stamps: 6,
+    primary: "#8B6914",
+    gradientFrom: "#5C4309",
+    gradientTo: "#8B6914",
+    urlBar: "boulangerie-martin.ch",
+    features: ["Carte fidélité", "Menu digital", "SMS promos"],
+    stampIcon: "🥐",
+    reward: "Viennoiserie offerte après 10 visites",
+    rewardIcon: "🥐",
+    badge: null,
   },
   {
     emoji: "🍽️",
-    name: "Chez Morel",
+    name: "Le Bistrot",
     type: "Restaurant gastronomique",
-    city: "Neuchâtel",
+    city: "Fribourg",
     slug: "/demo/restaurant",
-    color: "#2C1810",
-    accent: "#B8956A",
-    reward: "Dessert offert après 10 tampons",
-    features: ["Menu digital QR", "Réservations en ligne", "Carte fidélité"],
-    desc: "Un restaurant gastronomique à Neuchâtel avec menu digital QR, système de réservation et carte fidélité pour les clients réguliers.",
-    stamps: 8,
+    primary: "#8B1A1A",
+    gradientFrom: "#5C0F0F",
+    gradientTo: "#8B1A1A",
+    urlBar: "le-bistrot.ch",
+    features: ["Carte fidélité", "Menu QR", "Réservation"],
+    stampIcon: "🍽️",
+    reward: "Dessert offert après 10 visites",
+    rewardIcon: "🍮",
+    badge: null,
+  },
+  {
+    emoji: "✂️",
+    name: "Barber Shop 41",
+    type: "Barbershop premium",
+    city: "Genève",
+    slug: "/demo/barbershop",
+    primary: "#2C2C2C",
+    gradientFrom: "#1A1A1A",
+    gradientTo: "#2C2C2C",
+    urlBar: "barbershop41.ch",
+    features: ["Carte fidélité", "Réservation", "Galerie"],
+    stampIcon: "✂️",
+    reward: "Coupe offerte après 10 visites",
+    rewardIcon: "✂️",
+    badge: null,
   },
   {
     emoji: "💅",
-    name: "Studio Nails",
+    name: "Nail Studio",
     type: "Salon de manucure",
-    city: "Genève",
+    city: "Lausanne",
     slug: "/demo/manucure",
-    color: "#4A1530",
-    accent: "#E8A0B4",
-    reward: "Pose offerte après 10 tampons",
-    features: ["Prise de RDV en ligne", "Carte récompenses", "Galerie de créations"],
-    desc: "Un salon de manucure élégant avec prise de rendez-vous intégrée, galerie de créations et programme de récompenses pour fidéliser sa clientèle.",
-    stamps: 4,
+    primary: "#C2185B",
+    gradientFrom: "#880E4F",
+    gradientTo: "#C2185B",
+    urlBar: "nail-studio.ch",
+    features: ["Carte fidélité", "Prise de RDV", "Galerie"],
+    stampIcon: "💅",
+    reward: "Pose offerte après 10 visites",
+    rewardIcon: "💅",
+    badge: null,
   },
   {
     emoji: "🧖",
-    name: "Éclat Spa",
+    name: "Spa Essence",
     type: "Spa & bien-être",
-    city: "Lausanne",
+    city: "Genève",
     slug: "/demo/spa",
-    color: "#2C4A3E",
-    accent: "#8FBF9F",
-    reward: "Soin visage offert",
-    features: ["Roue de la fortune", "Carte fidélité soins", "Réservation en ligne"],
-    desc: "Un spa bien-être à Lausanne avec roue de la fortune (toujours gagnante), carte fidélité pour les soins et réservation en ligne intégrée.",
-    stamps: 6,
+    primary: "#2D5A4E",
+    gradientFrom: "#1B4332",
+    gradientTo: "#2D5A4E",
+    urlBar: "spa-essence.ch",
+    features: ["Carte fidélité", "Réservation", "Roue de la fortune"],
+    stampIcon: "🧖",
+    reward: "Soin visage offert après 10 visites",
+    rewardIcon: "✨",
+    badge: "⭐ Démo principale",
   },
 ];
 
@@ -108,7 +127,7 @@ export default function DemosPage() {
           <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 600, color: "#1A1410", margin: "0 0 20px 0", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
             Ce que vous voyez est<br /><em style={{ fontStyle: "italic" }}>exactement ce que vous recevrez.</em>
           </h1>
-          <p style={{ fontSize: 18, color: "#6B6259", lineHeight: 1.65, margin: "0 0 12px 0" }}>
+          <p style={{ fontSize: 18, color: "#6B6259", lineHeight: 1.65, margin: 0 }}>
             Des exemples réels livrés à des commerçants en Suisse romande. À vos couleurs, à votre nom, en 48h.
           </p>
         </div>
@@ -117,51 +136,118 @@ export default function DemosPage() {
       {/* Demo grid */}
       <section style={{ padding: "0 24px 80px" }}>
         <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 32 }}>
             {demos.map((d) => (
               <div
                 key={d.slug}
-                style={{ background: "white", border: "1px solid #E2D9CC", borderRadius: 20, overflow: "hidden", display: "flex", flexDirection: "column" }}
+                style={{
+                  background: "white",
+                  border: "1px solid #E2D9CC",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+                }}
               >
-                {/* Card header */}
-                <div style={{ background: d.color, padding: "28px 28px 24px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                    <div>
-                      <div style={{ fontSize: 36 }}>{d.emoji}</div>
-                      <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 20, fontWeight: 700, color: "white", marginTop: 8 }}>{d.name}</div>
-                      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{d.type} · {d.city}</div>
-                    </div>
-                    <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 8, padding: "6px 12px", fontSize: 12, color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
-                      Démo
-                    </div>
-                  </div>
-                  {/* Mini stamp card */}
-                  <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 12, padding: "12px 16px" }}>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginBottom: 8 }}>{d.reward}</div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {[...Array(10)].map((_, i) => (
-                        <div
-                          key={i}
-                          style={{ width: 22, height: 22, borderRadius: "50%", background: i < d.stamps ? d.accent : "rgba(255,255,255,0.15)", border: "1.5px solid " + (i < d.stamps ? d.accent : "rgba(255,255,255,0.2)"), display: "flex", alignItems: "center", justifyContent: "center" }}
-                        >
-                          {i < d.stamps && <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                        </div>
+                {/* Browser mockup */}
+                <div style={{ background: "#F0EDE8", padding: "10px 14px 0" }}>
+                  {/* Chrome bar */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <div style={{ display: "flex", gap: 5 }}>
+                      {["#FF5F57", "#FEBC2E", "#28C840"].map((c) => (
+                        <div key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />
                       ))}
                     </div>
+                    <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 10px", fontSize: 11, color: "#6B6259", display: "flex", alignItems: "center", gap: 6 }}>
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1z" stroke="#28C840" strokeWidth="1.5" />
+                        <path d="M5.5 8l1.5 1.5L10.5 6" stroke="#28C840" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {d.urlBar}
+                    </div>
+                  </div>
+                  {/* Mini site preview */}
+                  <div
+                    style={{
+                      background: `linear-gradient(135deg, ${d.gradientFrom}, ${d.gradientTo})`,
+                      borderRadius: "8px 8px 0 0",
+                      padding: "20px 16px",
+                      minHeight: 80,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      position: "relative",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.6)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 3 }}>
+                        {d.type}
+                      </div>
+                      <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 16, fontWeight: 700, color: "white", lineHeight: 1.2 }}>
+                        {d.name}
+                      </div>
+                      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>
+                        {d.city}, Suisse
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 28 }}>{d.emoji}</div>
+                    {d.badge && (
+                      <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(255,255,255,0.2)", borderRadius: 999, padding: "3px 8px", fontSize: 9, fontWeight: 700, color: "white" }}>
+                        {d.badge}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Card body */}
-                <div style={{ padding: "24px 28px", flex: 1, display: "flex", flexDirection: "column" }}>
-                  <p style={{ fontSize: 14, color: "#6B6259", lineHeight: 1.65, margin: "0 0 20px 0", flex: 1 }}>{d.desc}</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
-                    {d.features.map((f) => (
-                      <span key={f} style={{ background: "#EEF0FC", color: "#3D31B0", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999 }}>{f}</span>
-                    ))}
+                <div style={{ padding: "20px 24px", flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+                  {/* Sector info */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontSize: 20 }}>{d.emoji}</span>
+                      <div>
+                        <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 16, fontWeight: 700, color: "#1A1410" }}>
+                          {d.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#6B6259" }}>{d.type} · {d.city}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {d.features.map((f) => (
+                        <span key={f} style={{ background: "#EEF0FC", color: "#3D31B0", fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 999 }}>
+                          {f}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* DemoAnimation */}
+                  <div style={{ padding: "8px 0 28px" }}>
+                    <DemoAnimation
+                      primaryColor={d.primary}
+                      stampIcon={d.stampIcon}
+                      businessName={d.name}
+                      reward={d.reward}
+                      rewardIcon={d.rewardIcon}
+                    />
+                  </div>
+
+                  {/* CTA */}
                   <Link
                     href={d.slug}
-                    style={{ display: "block", background: "#3D31B0", color: "white", padding: "12px", borderRadius: 10, textAlign: "center", fontWeight: 600, fontSize: 14, textDecoration: "none" }}
+                    style={{
+                      display: "block",
+                      background: "#3D31B0",
+                      color: "white",
+                      padding: "12px",
+                      borderRadius: 10,
+                      textAlign: "center",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      textDecoration: "none",
+                      marginTop: "auto",
+                    }}
                   >
                     Voir la démo interactive →
                   </Link>
@@ -172,10 +258,12 @@ export default function DemosPage() {
         </div>
       </section>
 
-      {/* "Your business" CTA */}
+      {/* CTA section */}
       <section style={{ background: "white", padding: "80px 24px" }}>
         <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>Votre commerce</div>
+          <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
+            Votre commerce
+          </div>
           <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 600, color: "#1A1410", margin: "0 0 16px 0", letterSpacing: "-0.02em" }}>
             Votre commerce n&apos;est pas dans la liste ?
           </h2>

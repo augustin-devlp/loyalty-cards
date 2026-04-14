@@ -9,10 +9,10 @@ export default function DemoBanner() {
       {/* Desktop */}
       <div className="hidden md:flex justify-between items-center">
         <div>
-          <p className="text-sm" style={{ color: "#6B6259" }}>
-            Exemple de site livré en 48h par Stampify
-          </p>
           <p className="text-sm font-medium" style={{ color: "#1A1410" }}>
+            Ceci est un exemple de site livré par Stampify en 48h
+          </p>
+          <p className="text-sm" style={{ color: "#6B6259" }}>
             990 CHF · Site + carte fidélité + plaquette NFC · Paiement unique
           </p>
         </div>
@@ -20,17 +20,17 @@ export default function DemoBanner() {
           href={WA_LINK}
           className="bg-[#3D31B0] text-white px-5 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap"
         >
-          Obtenir mon site →
+          Obtenir le mien →
         </Link>
       </div>
 
       {/* Mobile */}
       <div className="flex md:hidden flex-col gap-3 text-center">
         <div>
-          <p className="text-sm" style={{ color: "#6B6259" }}>
-            Exemple de site livré en 48h par Stampify
-          </p>
           <p className="text-sm font-medium" style={{ color: "#1A1410" }}>
+            Ceci est un exemple de site livré par Stampify en 48h
+          </p>
+          <p className="text-sm" style={{ color: "#6B6259" }}>
             990 CHF · Site + carte fidélité + plaquette NFC · Paiement unique
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function DemoBanner() {
           href={WA_LINK}
           className="bg-[#3D31B0] text-white px-5 py-2.5 rounded-lg text-sm font-semibold w-full text-center block"
         >
-          Obtenir mon site →
+          Obtenir le mien →
         </Link>
       </div>
     </div>

@@ -1,455 +1,189 @@
-"use client";
-
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import type { Metadata } from "next";
 import DemoBanner from "@/components/DemoBanner";
+import DemoAnimation from "@/components/DemoAnimation";
 
-const THEME = {
-  primary: "#1A1A1A",
-  accent: "#C41E3A",
-  light: "#F8F8F8",
-  name: "Black Scissors",
-  subtitle: "Fribourg",
-  emoji: "✂️",
-  whatsapp: "Bonjour, je suis intéressé par Stampify pour mon barbershop. Pouvez-vous me contacter ?",
-  stamps: 6,
-  reward: "1 coupe offerte",
-  spinSegments: [
-    { label: "Coupe offerte", color: "#1A1A1A" },
-    { label: "−10%", color: "#C41E3A" },
-    { label: "Soin barbe", color: "#333333" },
-    { label: "Retente !", color: "#555555" },
-    { label: "Double tampon", color: "#1A1A1A" },
-    { label: "−20%", color: "#C41E3A" },
-    { label: "Rasage offert", color: "#333333" },
-    { label: "Retente !", color: "#555555" },
-  ],
+export const metadata: Metadata = {
+  title: "Barber Shop 41 — Démo Stampify",
+  description: "Exemple de site web pour un barbershop à Genève avec carte de fidélité digitale. Livré par Stampify en 48h.",
 };
 
-function FakeQR({ color }: { color: string }) {
-  const pattern = [
-    [1,1,1,1,1,1,1,0,1,0,0,1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
-    [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
-    [1,0,1,1,1,0,1,0,0,1,0,0,1,0,1,1,1,0,1],
-    [1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
-    [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],
-    [1,0,1,0,1,1,1,1,0,0,1,0,1,1,0,1,0,0,1],
-    [0,1,0,1,0,1,0,0,1,1,0,1,0,0,1,0,1,1,0],
-    [1,1,0,0,1,0,1,0,0,1,1,0,1,0,0,1,1,0,1],
-    [0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0],
-    [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0],
-    [1,1,1,1,1,1,1,0,0,1,0,1,0,0,1,0,0,0,1],
-    [1,0,0,0,0,0,1,0,1,0,0,1,1,0,0,1,0,1,0],
-    [1,0,1,1,1,0,1,0,0,1,1,0,0,1,0,0,1,0,1],
-    [1,0,1,1,1,0,1,0,1,0,0,1,0,0,1,1,0,1,0],
-    [1,0,0,0,0,0,1,0,0,1,1,0,1,0,0,1,1,0,0],
-    [1,1,1,1,1,1,1,0,1,0,0,1,0,1,0,0,1,0,1],
-  ];
+const PRIMARY = "#2C2C2C";
+const ACCENT = "#D4A853";
+const LIGHT = "#F5F5F5";
+
+const menu = [
+  { name: "Coupe homme", price: "45.00 CHF", desc: "Consultation, shampooing, coupe stylisée, finition" },
+  { name: "Coupe + barbe", price: "65.00 CHF", desc: "Coupe complète et taille de barbe au rasoir droit" },
+  { name: "Barbe seule", price: "35.00 CHF", desc: "Taille, façonnage, rasage à la serviette chaude" },
+  { name: "Coupe enfant", price: "30.00 CHF", desc: "Pour les moins de 12 ans, avec patience et sourire" },
+];
+
+export default function BarbershopPage() {
   return (
-    <svg viewBox="0 0 19 19" className="w-40 h-40">
-      {pattern.map((row, y) =>
-        row.map((cell, x) =>
-          cell ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={color} /> : null
-        )
-      )}
-    </svg>
-  );
-}
-
-function SpinWheel({ segments, accent, primary }: { segments: { label: string; color: string }[]; accent: string; primary: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [spinning, setSpinning] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const currentAngle = useRef(0);
-
-  const drawWheel = (angle: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    const r = cx - 8;
-    const arc = (2 * Math.PI) / segments.length;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 20;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-    ctx.restore();
-    segments.forEach((seg, i) => {
-      const start = angle + i * arc;
-      const end = start + arc;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, r, start, end);
-      ctx.closePath();
-      ctx.fillStyle = seg.color;
-      ctx.fill();
-      ctx.strokeStyle = "#111";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(start + arc / 2);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 11px system-ui";
-      ctx.shadowColor = "rgba(0,0,0,0.6)";
-      ctx.shadowBlur = 4;
-      ctx.fillText(seg.label, r - 10, 4);
-      ctx.restore();
-    });
-    ctx.beginPath();
-    ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
-    ctx.fillStyle = accent;
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 14px system-ui";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("✂️", cx, cy);
-  };
-
-  useEffect(() => { drawWheel(currentAngle.current); });
-
-  const spin = () => {
-    if (spinning) return;
-    setSpinning(true);
-    setResult(null);
-    const extraSpins = (5 + Math.random() * 5) * 2 * Math.PI;
-    const duration = 4000;
-    const start = performance.now();
-    const startAngle = currentAngle.current;
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 4);
-      currentAngle.current = startAngle + extraSpins * ease;
-      drawWheel(currentAngle.current);
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setSpinning(false);
-        const arc = (2 * Math.PI) / segments.length;
-        const normalised = (((-currentAngle.current) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        const idx = Math.floor(normalised / arc) % segments.length;
-        setResult(segments[idx].label);
-      }
-    };
-    requestAnimationFrame(animate);
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-10 w-0 h-0"
-          style={{ borderLeft: "10px solid transparent", borderRight: "10px solid transparent", borderTop: `20px solid ${accent}` }} />
-        <canvas ref={canvasRef} width={240} height={240} className="drop-shadow-2xl" />
-      </div>
-      <button onClick={spin} disabled={spinning}
-        className="px-8 py-3 rounded-2xl font-black text-white text-lg shadow-lg transition-all active:scale-95 disabled:opacity-60"
-        style={{ backgroundColor: accent }}>
-        {spinning ? "⏳ La roue tourne…" : "🎰 Tourner !"}
-      </button>
-      {result && (
-        <div className="flex items-center gap-3 px-6 py-4 rounded-2xl shadow-lg animate-bounce" style={{ backgroundColor: accent }}>
-          <span className="text-2xl">🎉</span>
-          <div>
-            <p className="font-black text-white text-lg">{result}</p>
-            <p className="text-white/80 text-xs">Montrez cet écran au comptoir !</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function BarbershopDemo() {
-  const [stamps, setStamps] = useState(2);
-  const [showQR, setShowQR] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [addingStamp, setAddingStamp] = useState(false);
-  const maxStamps = THEME.stamps;
-
-  const addStamp = () => {
-    if (stamps >= maxStamps || addingStamp) return;
-    setAddingStamp(true);
-    setTimeout(() => { setStamps((s) => Math.min(s + 1, maxStamps)); setAddingStamp(false); }, 300);
-  };
-
-  return (
-    <div className="min-h-screen font-sans" style={{ backgroundColor: THEME.light }}>
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: "#FAFAF8" }}>
       <DemoBanner />
 
-      <header className="bg-black/95 backdrop-blur-md border-b border-white/10 shadow-lg">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href="/demo" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-              <path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" />
-            </svg>
-            Toutes les démos
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-xl">{THEME.emoji}</span>
-            <span className="font-black text-white text-sm">{THEME.name}</span>
+      {/* Demo site navbar */}
+      <nav style={{ background: PRIMARY, padding: "0 24px", position: "sticky", top: 56, zIndex: 40 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", height: 60 }}>
+          <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 20, fontWeight: 700, color: "white", letterSpacing: "-0.01em" }}>
+            ✂️ Barber Shop 41
           </div>
-          <Link href="/signup" className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
-            Créer le mien
-          </Link>
+          <div style={{ display: "flex", gap: 24 }}>
+            {["Services", "Notre équipe", "Fidélité", "Réservation"].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", textDecoration: "none", fontWeight: 500 }}>
+                {item}
+              </a>
+            ))}
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-16">
+      {/* Hero */}
+      <section style={{ background: `linear-gradient(135deg, #111111 0%, ${PRIMARY} 100%)`, padding: "80px 24px 72px", textAlign: "center" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+          <div style={{ display: "inline-block", background: "rgba(212,168,83,0.2)", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, color: ACCENT, marginBottom: 20 }}>
+            Barbershop premium · Genève
+          </div>
+          <h1 style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 700, color: "white", margin: "0 0 16px 0", letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+            Le barbershop<br /><em style={{ fontStyle: "italic", color: ACCENT }}>de référence à Genève</em>
+          </h1>
+          <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", lineHeight: 1.7, margin: "0 0 32px 0" }}>
+            Coupes précises, rasage à l&apos;ancienne, ambiance vintage. Parce que vous méritez le meilleur.
+          </p>
+          <a href="#reservation" style={{ display: "inline-block", background: ACCENT, color: "#1A1410", padding: "14px 32px", borderRadius: 10, fontWeight: 700, fontSize: 15, textDecoration: "none" }}>
+            Prendre rendez-vous →
+          </a>
+        </div>
+      </section>
 
-        {/* Section 1 — Vitrine */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-black text-sm">1</div>
-            <div>
-              <h2 className="font-black text-gray-900 text-xl">Site vitrine</h2>
-              <p className="text-gray-500 text-sm">Mini-aperçu de votre présence en ligne</p>
-            </div>
+      {/* About */}
+      <section id="notre-equipe" style={{ background: "white", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT, marginBottom: 12 }}>Notre équipe</div>
+            <h2 style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1A1410", margin: "0 0 16px 0", lineHeight: 1.2 }}>
+              Des artisans de la coupe masculine
+            </h2>
+            <p style={{ color: "#6B6259", lineHeight: 1.75, margin: "0 0 16px 0" }}>
+              Fondé par Karim en 2018, Barber Shop 41 est devenu la référence genevoise pour les gentlemen qui exigent l&apos;excellence. Chaque coupe est un acte artisanal.
+            </p>
+            <p style={{ color: "#6B6259", lineHeight: 1.75 }}>
+              Notre équipe de 3 barbiers certifiés maîtrise aussi bien les coupes classiques que les styles contemporains. Outils premium, serviettes chaudes, rasoir droit — l&apos;expérience complète.
+            </p>
           </div>
-          <div className="rounded-3xl overflow-hidden shadow-xl border border-gray-200">
-            <div className="relative h-56 sm:h-72 flex flex-col items-center justify-center text-center px-6" style={{ backgroundColor: THEME.primary }}>
-              <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(45deg, #C41E3A 0, #C41E3A 1px, transparent 0, transparent 50%)", backgroundSize: "20px 20px" }} />
-              <span className="text-6xl mb-4 drop-shadow-lg">{THEME.emoji}</span>
-              <h3 className="text-3xl font-black text-white mb-1">{THEME.name}</h3>
-              <p className="text-sm font-medium mb-4" style={{ color: THEME.accent }}>{THEME.subtitle} · Sur RDV & sans RDV</p>
-              <button onClick={() => setShowModal(true)}
-                className="px-6 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-95 text-white"
-                style={{ backgroundColor: THEME.accent }}>
-                Voir le site complet →
-              </button>
+          <div style={{ background: LIGHT, borderRadius: 20, padding: 32, textAlign: "center" }}>
+            <div style={{ fontSize: 64, marginBottom: 16 }}>✂️</div>
+            <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 18, color: "#1A1410", fontWeight: 700, marginBottom: 8 }}>
+              22 Rue de Rive
             </div>
-            <div className="grid sm:grid-cols-3 gap-0 bg-white">
-              <div className="p-6 border-b sm:border-b-0 sm:border-r border-gray-100">
-                <h4 className="font-black text-gray-900 mb-2">Notre style</h4>
-                <p className="text-sm text-gray-600">Black Scissors, c&apos;est l&apos;alliance du style old-school et du savoir-faire moderne. Coupes précises, barbe soignée, atmosphère unique.</p>
-              </div>
-              <div className="p-6 border-b sm:border-b-0 sm:border-r border-gray-100">
-                <h4 className="font-black text-gray-900 mb-3">Nos services</h4>
-                <ul className="space-y-1.5 text-sm text-gray-600">
-                  {["Coupe homme — 25€", "Barbe & rasage — 20€", "Coupe + barbe — 40€", "Coloration — à partir de 30€"].map((item) => (
-                    <li key={item} className="flex items-center gap-2"><span style={{ color: THEME.accent }}>•</span> {item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="p-6">
-                <h4 className="font-black text-gray-900 mb-3">Nous trouver</h4>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p>📍 8 Rue de Lausanne 8, Fribourg</p>
-                  <p>🕐 Lun–Sam : 9h–20h</p>
-                  <p>🕐 Dim : 10h–17h</p>
-                  <p>📞 04 69 XX XX XX</p>
-                </div>
-                <div className="mt-4 h-24 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
-                  <span className="text-gray-400 text-xs">📍 Carte interactive</span>
-                </div>
-              </div>
-            </div>
+            <div style={{ color: "#6B6259", fontSize: 14 }}>1204 Genève</div>
+            <div style={{ color: "#6B6259", fontSize: 14, marginTop: 4 }}>Lun–Sam : 9h – 19h</div>
+            <div style={{ color: "#6B6259", fontSize: 14 }}>Dim : fermé</div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Section 2 — Carte fidélité */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-black text-sm">2</div>
-            <div>
-              <h2 className="font-black text-gray-900 text-xl">Carte fidélité digitale</h2>
-              <p className="text-gray-500 text-sm">Cliquez sur un tampon pour simuler une visite</p>
-            </div>
+      {/* Services */}
+      <section id="services" style={{ background: LIGHT, padding: "72px 24px" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT, marginBottom: 12 }}>Services</div>
+            <h2 style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1A1410", margin: 0 }}>Nos prestations</h2>
           </div>
-          <div className="rounded-3xl shadow-xl overflow-hidden border border-gray-200" style={{ backgroundColor: THEME.primary }}>
-            <div className="p-5 sm:p-8">
-              <div className="flex items-start justify-between mb-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+            {menu.map((item) => (
+              <div key={item.name} style={{ background: "white", border: "1px solid #E2D9CC", borderRadius: 16, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
-                  <p className="text-xs font-semibold mb-1" style={{ color: THEME.accent }}>CARTE VIP</p>
-                  <h3 className="text-xl font-black text-white">{THEME.name}</h3>
-                  <p className="text-white/50 text-xs mt-0.5">Membre depuis janv. 2025 ✂️</p>
+                  <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 17, fontWeight: 700, color: "#1A1410", marginBottom: 4 }}>{item.name}</div>
+                  <div style={{ fontSize: 13, color: "#6B6259", lineHeight: 1.5 }}>{item.desc}</div>
                 </div>
-                <div className="text-right">
-                  <span className="text-3xl font-black text-white">{stamps}</span>
-                  <span className="text-white/50 text-sm">/{maxStamps}</span>
-                  <p className="text-xs mt-0.5" style={{ color: THEME.accent }}>coupes</p>
-                </div>
+                <div style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 16, fontWeight: 700, color: ACCENT, whiteSpace: "nowrap", marginLeft: 16 }}>{item.price}</div>
               </div>
-              <div className="h-1.5 rounded-full bg-white/10 mb-6">
-                <div className="h-1.5 rounded-full transition-all duration-500" style={{ width: `${(stamps / maxStamps) * 100}%`, backgroundColor: THEME.accent }} />
-              </div>
-              <div className="grid grid-cols-6 gap-3 mb-4">
-                {Array.from({ length: maxStamps }).map((_, i) => (
-                  <button key={i} onClick={addStamp}
-                    className={`aspect-square rounded-2xl flex items-center justify-center text-xl transition-all duration-300 border-2 ${
-                      i < stamps ? "scale-100 border-transparent" : "scale-95 border-white/20 bg-white/5"
-                    } ${i === stamps && !addingStamp ? "animate-pulse" : ""}`}
-                    style={i < stamps ? { backgroundColor: THEME.accent } : {}}
-                    title={i < stamps ? "Tampon validé" : "Cliquer pour ajouter"}>
-                    {i < stamps ? "✂️" : <span className="text-white/30 text-lg">+</span>}
-                  </button>
-                ))}
-              </div>
-              <p className="text-center text-white/50 text-xs">
-                {stamps >= maxStamps ? "🎉 Félicitations ! Votre prochaine coupe est offerte !" : `Encore ${maxStamps - stamps} coupe${maxStamps - stamps > 1 ? "s" : ""} pour ${THEME.reward}`}
-              </p>
-            </div>
-            <div className="px-5 sm:px-8 py-5 flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-white/10">
-              <div>
-                <p className="font-bold text-white text-sm">🎁 Récompense : {THEME.reward}</p>
-                <p className="text-xs text-white/40 mt-0.5">Valable 60 jours après l&apos;obtention</p>
-              </div>
-              <div className="flex gap-3">
-                <button onClick={addStamp} disabled={stamps >= maxStamps}
-                  className="px-4 py-2 rounded-xl font-bold text-sm text-white transition-all active:scale-95 disabled:opacity-40"
-                  style={{ backgroundColor: THEME.accent }}>
-                  + Tampon
-                </button>
-                <button onClick={() => { setStamps(0); setShowQR(false); }}
-                  className="px-4 py-2 rounded-xl font-bold text-sm border border-white/20 text-white/70 hover:bg-white/10 transition-all active:scale-95">
-                  Reset
-                </button>
-              </div>
-            </div>
-            <div className="px-5 sm:px-8 pb-6 flex flex-col items-center gap-4 border-t border-white/10 pt-4">
-              <button onClick={() => setShowQR(!showQR)}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-white text-sm transition-all active:scale-95 shadow-md border border-white/20 hover:bg-white/10">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                  <path d="M14 14h.01M14 18h.01M18 14h.01M18 18h.01"/>
-                </svg>
-                {showQR ? "Masquer le QR code" : "📱 Scanner le QR code"}
-              </button>
-              {showQR && (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="bg-white p-4 rounded-2xl shadow-lg">
-                    <FakeQR color={THEME.primary} />
-                  </div>
-                  <p className="text-xs text-white/50 text-center">Présentez ce QR au barbier pour valider votre visite</p>
-                  <div className="flex gap-2 items-center text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20 text-white/70">
-                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: THEME.accent }} />
-                    QR actif — expire dans 4:59
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Section 3 — Roue */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center font-black text-sm">3</div>
-            <div>
-              <h2 className="font-black text-gray-900 text-xl">Roue de la fortune</h2>
-              <p className="text-gray-500 text-sm">Récompensez vos clients avec des lots exclusifs</p>
-            </div>
-          </div>
-          <div className="bg-gray-900 rounded-3xl shadow-xl border border-gray-700 p-8 sm:p-12 flex flex-col items-center">
-            <p className="text-center text-gray-400 text-sm mb-8 max-w-sm">Activée après chaque visite ou avis Google — vos clients adorent ça !</p>
-            <SpinWheel segments={THEME.spinSegments} accent={THEME.accent} primary={THEME.primary} />
-          </div>
-        </section>
-
-        {/* Section 4 — CTA */}
-        <section>
-          <div className="rounded-3xl overflow-hidden shadow-xl" style={{ backgroundColor: THEME.primary }}>
-            <div className="p-8 sm:p-12 text-center border border-white/10 rounded-3xl">
-              <div className="text-5xl mb-4">🚀</div>
-              <h2 className="text-3xl font-black text-white mb-3">Vous voulez ça<br />pour votre commerce ?</h2>
-              <p className="text-white/60 mb-8 max-w-md mx-auto">Carte fidélité, roue de la fortune, site vitrine — tout en un. Prêt en moins de 5 minutes, sans application.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href={`https://wa.me/41791342997?text=${encodeURIComponent(THEME.whatsapp)}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg shadow-lg transition-all hover:opacity-90 active:scale-95"
-                  style={{ backgroundColor: "#25D366", color: "#fff" }}>
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                  </svg>
-                  Contacter via WhatsApp
-                </a>
-                <Link href="/signup"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-lg border-2 border-white/20 text-white hover:bg-white/10 transition-all">
-                  Essayer gratuitement →
-                </Link>
-              </div>
-              <p className="text-white/30 text-xs mt-6">Sans engagement · Réponse sous 24h · Setup inclus</p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: THEME.primary }}>
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{THEME.emoji}</span>
-              <div>
-                <h2 className="font-black text-white text-lg">{THEME.name}</h2>
-                <p className="text-xs" style={{ color: THEME.accent }}>Site vitrine complet</p>
-              </div>
-            </div>
-            <button onClick={() => setShowModal(false)}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} className="w-5 h-5">
-                <path d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <div className="relative py-20 flex flex-col items-center text-center px-6">
-              <span className="text-8xl mb-6 drop-shadow-2xl">{THEME.emoji}</span>
-              <h1 className="text-5xl font-black text-white mb-3">{THEME.name}</h1>
-              <p className="text-lg mb-2" style={{ color: THEME.accent }}>Barbershop Premium · {THEME.subtitle}</p>
-              <p className="text-white/50 text-sm max-w-md">L&apos;art de la coupe masculine dans un cadre unique. Coupes précises, soins de barbe, rasage traditionnel. Votre style, notre passion.</p>
-              <div className="flex gap-3 mt-6">
-                <span className="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 text-white">⭐ 4.9/5 (318 avis)</span>
-                <span className="px-4 py-2 rounded-full text-sm font-semibold text-white" style={{ backgroundColor: THEME.accent }}>Places disponibles</span>
-              </div>
-            </div>
-            <div className="bg-gray-950">
-              <div className="max-w-3xl mx-auto px-6 py-12">
-                <h3 className="font-black text-2xl text-white mb-8 text-center">Nos prestations</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    { name: "Coupe homme", price: "25€", desc: "Consultation + coupe ciseau ou tondeuse" },
-                    { name: "Barbe", price: "20€", desc: "Taille, contours, finitions soignées" },
-                    { name: "Coupe + Barbe", price: "40€", desc: "Le combo parfait pour être au top" },
-                    { name: "Rasage traditionnel", price: "30€", desc: "Blaireau, mousse chaude, lame droite" },
-                    { name: "Coloration", price: "dès 30€", desc: "Gris effacés ou couleur tendance" },
-                    { name: "Soin capillaire", price: "15€", desc: "Masque nourrissant + coiffage" },
-                  ].map((item) => (
-                    <div key={item.name} className="flex items-start justify-between p-4 rounded-2xl border border-white/10 hover:border-white/20 transition-colors">
-                      <div>
-                        <p className="font-bold text-white">{item.name}</p>
-                        <p className="text-sm text-gray-400">{item.desc}</p>
-                      </div>
-                      <span className="font-black text-lg ml-4 shrink-0" style={{ color: THEME.accent }}>{item.price}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="py-10 px-6 text-center border-t border-white/10">
-              <p className="font-black text-white text-lg mb-1">{THEME.name}</p>
-              <p className="text-gray-400 text-sm">8 Rue de Lausanne 8, Fribourg · 04 69 XX XX XX</p>
-              <p className="text-gray-600 text-xs mt-2">Lun–Sam 9h–20h · Dim 10h–17h</p>
-            </div>
+            ))}
           </div>
         </div>
-      )}
+      </section>
 
-      <footer className="border-t border-gray-200 py-6 text-center text-xs text-gray-400 bg-white">
-        <p>Démo Stampify — <Link href="/demo" className="text-indigo-500 hover:underline">Voir toutes les démos</Link> · <Link href="/signup" className="text-indigo-500 hover:underline">Créer mon programme</Link></p>
+      {/* Loyalty Card */}
+      <section id="fidelite" style={{ background: "white", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT, marginBottom: 12 }}>Carte VIP</div>
+          <h2 style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1A1410", margin: "0 0 16px 0" }}>
+            Coupe offerte après 10 visites
+          </h2>
+          <p style={{ color: "#6B6259", lineHeight: 1.7, marginBottom: 40, fontSize: 16 }}>
+            Un tampon à chaque passage. Approchez votre téléphone de la plaquette NFC à l&apos;entrée ou scannez le QR code en caisse.
+          </p>
+          <div style={{ background: "#1A1410", borderRadius: 20, padding: "32px", display: "inline-block", minWidth: 300 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.9)", marginBottom: 20 }}>Votre carte VIP</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 16 }}>
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 36, height: 36, borderRadius: "50%",
+                    background: i < 6 ? ACCENT : "transparent",
+                    border: i < 6 ? `2px solid ${ACCENT}` : "2px solid rgba(255,255,255,0.2)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >
+                  {i < 6 && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>6 / 10 · Plus que 4 visites</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stampify Feature Showcase */}
+      <section style={{ background: LIGHT, padding: "72px 24px" }}>
+        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+          <DemoAnimation
+            primaryColor={PRIMARY}
+            stampIcon="✂️"
+            businessName="Barber Shop 41"
+            reward="Coupe offerte après 10 visites"
+            rewardIcon="✂️"
+          />
+          <p style={{ fontSize: 13, color: "#9C9085", marginTop: 32 }}>
+            Propulsé par <strong style={{ color: "#3D31B0" }}>Stampify</strong> · Carte fidélité digitale
+          </p>
+        </div>
+      </section>
+
+      {/* Réservation */}
+      <section id="reservation" style={{ background: "white", padding: "72px 24px" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT, marginBottom: 12 }}>Rendez-vous</div>
+          <h2 style={{ fontFamily: "Fraunces, Georgia, serif", fontSize: 28, fontWeight: 700, color: "#1A1410", margin: "0 0 24px 0" }}>Réservez votre créneau</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+            {[
+              { icon: "📍", label: "Adresse", value: "22 Rue de Rive, 1204 Genève" },
+              { icon: "📞", label: "Téléphone", value: "+41 22 000 00 00" },
+              { icon: "✉️", label: "Email", value: "booking@barbershop41.ch" },
+            ].map((c) => (
+              <div key={c.label} style={{ background: LIGHT, borderRadius: 12, padding: "16px 12px", textAlign: "center" }}>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>{c.icon}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: ACCENT, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{c.label}</div>
+                <div style={{ fontSize: 12, color: "#6B6259", lineHeight: 1.4 }}>{c.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ background: "#1A1410", padding: "24px", textAlign: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, margin: 0 }}>
+          Barber Shop 41 © 2026 · Site créé par{" "}
+          <a href="https://www.stampify.ch" style={{ color: "#3D31B0", textDecoration: "none" }}>Stampify</a>
+        </p>
       </footer>
     </div>
   );
