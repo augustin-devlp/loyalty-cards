@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "fidelisation-clients-cafe-coffee-shop",
     "plaquette-nfc-commerce-suisse",
     "stampify-avis-test-carte-fidelite",
+    "roue-fortune-carte-fidelite",
   ];
 
   const staticPages = [

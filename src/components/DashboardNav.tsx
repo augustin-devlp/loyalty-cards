@@ -130,6 +130,14 @@ function CalendarIcon() {
   );
 }
 
+function SmsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
 // ── Desktop nav links ─────────────────────────────────────────────────────────
 
 const OWNER_LINKS = [
@@ -138,6 +146,8 @@ const OWNER_LINKS = [
   { href: "/dashboard/reservations", label: "Réservations", icon: <CalendarIcon /> },
   { href: "/dashboard/spin-wheel", label: "Roue", icon: <PromoIcon /> },
   { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
+  { href: "/dashboard/sms", label: "SMS", icon: <SmsIcon /> },
+  { href: "/dashboard/menu", label: "Menu", icon: <MenuIcon className="w-4 h-4" /> },
   { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
   { href: "/dashboard/billing", label: "Facturation", icon: <BillingIcon /> },
   { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },

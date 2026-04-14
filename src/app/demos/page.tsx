@@ -27,8 +27,6 @@ const demos: Demo[] = [
     gradientFrom: "#1B4332",
     gradientTo: "#2D5A4E",
     features: ["Réservation soins", "Carte fidélité", "Packages"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%21+La+d%C3%A9mo+Spa+sur+Stampify+est+exactement+ce+que+je+recherche.+Je+voudrais+un+site+similaire+pour+mon+spa.+Merci+%21",
   },
   {
     name: "Café Lumière",
@@ -42,8 +40,6 @@ const demos: Demo[] = [
     gradientFrom: "#3E1F0A",
     gradientTo: "#6B3F2A",
     features: ["Réservation table", "Commande en avance", "Carte fidélité"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%C3%A9quipe+Stampify+%21+J%27ai+vu+la+d%C3%A9mo+Caf%C3%A9+Lumi%C3%A8re+et+je+voudrais+un+site+similaire+pour+mon+caf%C3%A9.+Quelles+sont+les+prochaines+%C3%A9tapes+%3F",
   },
   {
     name: "Black Scissors",
@@ -57,8 +53,6 @@ const demos: Demo[] = [
     gradientFrom: "#000000",
     gradientTo: "#C41E3A",
     features: ["Réservation coupe", "Carte VIP", "Galerie"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%C3%A9quipe+Stampify+%21+J%27ai+vu+la+d%C3%A9mo+Black+Scissors+et+je+voudrais+un+site+avec+r%C3%A9servation+en+ligne+pour+mon+barbershop.",
   },
   {
     name: "Bistrot du Coin",
@@ -72,8 +66,6 @@ const demos: Demo[] = [
     gradientFrom: "#4E1620",
     gradientTo: "#6B1F2A",
     features: ["Résa table", "Carte des vins", "Menu QR · Fidélité"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%21+La+d%C3%A9mo+Bistrot+du+Coin+sur+Stampify+correspond+exactement+%C3%A0+ce+que+je+cherche+pour+mon+restaurant.+Comment+%C3%A7a+se+passe+%3F",
   },
   {
     name: "Boulangerie Martin",
@@ -87,8 +79,6 @@ const demos: Demo[] = [
     gradientFrom: "#5C4309",
     gradientTo: "#8B6914",
     features: ["Commande en ligne", "Retrait QR code", "Fidélité"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%21+La+d%C3%A9mo+Boulangerie+Martin+sur+Stampify+m%27int%C3%A9resse+beaucoup.+Je+voudrais+un+site+avec+commande+en+ligne+pour+ma+boulangerie.+Pouvez-vous+me+contacter+%3F",
   },
   {
     name: "Nail Studio",
@@ -102,8 +92,6 @@ const demos: Demo[] = [
     gradientFrom: "#880E4F",
     gradientTo: "#C2185B",
     features: ["Prise de RDV", "Galerie poses", "Carte récompenses"],
-    waLink:
-      "https://wa.me/41791342997?text=Bonjour+%C3%A9quipe+Stampify+%21+J%27ai+vu+la+d%C3%A9mo+Nail+Studio+et+je+voudrais+un+site+avec+prise+de+RDV+pour+mon+salon+de+manucure.",
   },
 ];
 
@@ -226,7 +214,7 @@ export default function DemosPage() {
                 textDecoration: "none",
               }}
             >
-              Obtenir mon site → 990 CHF
+              Obtenir mon site en 48h — 990 CHF →
             </a>
             <Link
               href="/tarif"

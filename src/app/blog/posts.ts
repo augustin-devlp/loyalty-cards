@@ -1150,6 +1150,141 @@ export const blogPosts: BlogPost[] = [
 <p style="margin-top:32px;padding:20px;background:#f8f8ff;border-radius:8px;border-left:4px solid #3D31B0;">Thomas Ballmer est gérant du Café de la Gare à Lausanne depuis 2019. Cet article représente son expérience personnelle et n'est pas sponsorisé. Vous pouvez découvrir la solution qu'il utilise sur <a href="https://www.stampify.ch" style="color:#3D31B0;font-weight:600;">www.stampify.ch</a>.</p>
     `,
   },
+  {
+    slug: "roue-fortune-carte-fidelite",
+    title: "Roue de la fortune et carte de fidélité : comment gamifier son commerce en 2026",
+    metaDescription:
+      "Découvrez comment la roue de la fortune digitale et la loterie mensuelle transforment vos clients en habitués. Guide pratique pour les commerçants suisses.",
+    category: "Fidélisation",
+    excerpt:
+      "La gamification révolutionne la fidélisation client dans le commerce local. Roue de la fortune, loterie mensuelle, segments configurables : découvrez comment intégrer ces mécaniques de jeu à votre carte fidélité pour booster l'engagement de vos clients.",
+    readingTime: 6,
+    keywords: [
+      "roue de la fortune commerce",
+      "gamification carte fidelite",
+      "loterie mensuelle fidelisation",
+      "roue fortune digitale suisse",
+      "gamifier commerce local",
+    ],
+    content: `
+<h2>La gamification : le nouveau levier de fidélisation pour le commerce local</h2>
+<p>En 2026, les commerçants suisses font face à un paradoxe. Jamais les clients n'ont eu autant d'options pour dépenser leur argent, et jamais il n'a été aussi difficile de les fidéliser. Les grandes enseignes (Migros, Coop, Manor) investissent des dizaines de millions dans leurs programmes de fidélité numériques. Comment un café de quartier, une boulangerie artisanale ou un spa indépendant peut-il rivaliser avec ces mastodontes ?</p>
+
+<p>La réponse tient en un mot : <strong>la gamification</strong>. Intégrer des mécaniques de jeu dans votre programme de fidélité ne nécessite plus un budget colossal ni une équipe technique. Les outils modernes permettent à n'importe quel commerçant d'offrir à ses clients une expérience engageante, mémorable et — surtout — qui les fait revenir.</p>
+
+<p>Au cœur de cette révolution : <strong>la roue de la fortune digitale</strong> et la <strong>loterie mensuelle</strong>. Ces deux fonctionnalités, intégrées nativement dans Stampify, transforment le simple fait de venir dans votre commerce en une petite aventure. Ce guide vous explique pourquoi ça fonctionne, comment le configurer, et quels résultats attendre.</p>
+
+<h2>Pourquoi la roue de la fortune fonctionne : la psychologie du jeu</h2>
+<p>Avant d'entrer dans la technique, il faut comprendre ce qui rend la roue de la fortune si efficace d'un point de vue psychologique. Ce n'est pas du hasard : les casinos, les jeux vidéo et les applications mobiles les plus populaires utilisent ces mêmes mécaniques depuis des décennies.</p>
+
+<h3>L'anticipation : le moteur caché de l'engagement</h3>
+<p>Des études en neurosciences ont montré que <strong>l'anticipation d'une récompense active les mêmes circuits de dopamine que la récompense elle-même</strong> — parfois davantage. Quand un client sait qu'il peut faire tourner la roue à sa prochaine visite, il y pense entre ses passages. Cette anticipation crée un lien émotionnel avec votre commerce qui dépasse largement ce qu'une carte tampon classique peut générer.</p>
+
+<h3>L'aléatoire variable : la variable ratio schedule</h3>
+<p>Les psychologues comportementaux ont identifié ce qu'ils appellent le <em>variable ratio reinforcement schedule</em> : un système de récompenses aléatoires est plus engageant qu'un système fixe. Pourquoi ? Parce que l'incertitude maintient l'attention. Un client qui sait qu'il obtiendra un café gratuit à la 10e visite pense à sa récompense une fois sur dix. Un client qui peut gagner quelque chose à chaque visite y pense à chaque fois.</p>
+
+<h3>Le sentiment de chance et de valeur</h3>
+<p>Même une petite récompense obtenue par chance — une remise de 5 %, un produit bonus — génère un sentiment positif disproportionné. Le client ne se dit pas "j'ai obtenu une réduction de 2 CHF". Il se dit "j'ai eu de la chance dans ce commerce". Cette association émotionnelle est précieuse pour un commerçant local dont la relation client est le principal avantage concurrentiel face aux grandes surfaces.</p>
+
+<h2>Comment configurer votre roue de la fortune avec Stampify</h2>
+<p>Stampify intègre une roue de la fortune entièrement personnalisable, accessible via votre tableau de bord. Voici comment en tirer le meilleur parti.</p>
+
+<h3>Définir vos segments</h3>
+<p>La roue peut comporter entre 4 et 8 segments. Chaque segment correspond à une récompense différente. La règle d'or : <strong>équilibrez les segments pour maintenir la rentabilité tout en garantissant l'engagement</strong>.</p>
+
+<p>Un exemple de configuration efficace pour un café :</p>
+<ul>
+  <li><strong>Segment 1 (30 %) — "Merci pour votre visite !"</strong> : pas de gain matériel, mais un message chaleureux. Préserve la rentabilité.</li>
+  <li><strong>Segment 2 (25 %) — "+1 tampon bonus"</strong> : accélère la complétion de la carte fidélité, encourage les retours rapides.</li>
+  <li><strong>Segment 3 (20 %) — "Café offert à votre prochaine visite"</strong> : récompense différée qui garantit un retour.</li>
+  <li><strong>Segment 4 (15 %) — "10 % sur votre prochaine commande"</strong> : remise directe, perçue comme précieuse.</li>
+  <li><strong>Segment 5 (8 %) — "Viennoiserie offerte"</strong> : récompense immédiate et concrète.</li>
+  <li><strong>Segment 6 (2 %) — "Gros lot : carte cadeau 20 CHF"</strong> : le jackpot rare qui nourrit les conversations et le bouche-à-oreille.</li>
+</ul>
+
+<h3>Configurer la fréquence d'accès</h3>
+<p>Une question cruciale : à quelle fréquence vos clients peuvent-ils faire tourner la roue ? Stampify vous permet de définir précisément cette règle :</p>
+<ul>
+  <li><strong>Une fois par visite</strong> : maximum d'engagement, idéal pour les commerces à forte fréquence comme les cafés ou les boulangeries.</li>
+  <li><strong>Une fois par semaine</strong> : plus adapté pour les commerces à fréquence intermédiaire (coiffeurs, spas).</li>
+  <li><strong>Une fois par mois</strong> : correspond bien à la loterie mensuelle (voir section suivante).</li>
+</ul>
+
+<p>Le conseil de l'équipe Stampify : pour les commerces avec une fréquence de visite supérieure à 2 fois par semaine, optez pour "une fois par visite". Pour les autres, "une fois par semaine" maintient l'engagement sans déséquilibrer votre marge.</p>
+
+<h3>Paramétrer les gains et leur validité</h3>
+<p>Chaque récompense que vous créez dans Stampify est assortie d'une date d'expiration configurable. Cette fonctionnalité est stratégiquement importante : une récompense qui expire dans 7 jours est un puissant moteur de retour rapide. Configurez vos récompenses différées (café offert, remise) avec une validité de 7 à 14 jours pour maximiser l'effet d'urgence.</p>
+
+<h2>La loterie mensuelle : récompenser vos meilleurs clients</h2>
+<p>La roue de la fortune traite tous les clients de manière égale à chaque visite. La loterie mensuelle introduit une couche supplémentaire : <strong>les clients les plus fidèles ont plus de chances de gagner</strong>. C'est une mécanique puissante pour reconnaître et valoriser votre clientèle la plus engagée.</p>
+
+<h3>Comment fonctionne la loterie mensuelle Stampify</h3>
+<p>Chaque visite dans le mois donne au client un ou plusieurs tickets de loterie. En fin de mois, un tirage au sort désigne les gagnants parmi tous les tickets accumulés. Un client qui est venu 15 fois dans le mois a 15 fois plus de chances de gagner qu'un client venu une seule fois. Ce système :</p>
+<ul>
+  <li>Récompense la fidélité réelle, pas uniquement la chance ponctuelle.</li>
+  <li>Crée une émulation mensuelle : les clients savent que chaque visite supplémentaire améliore leurs chances.</li>
+  <li>Permet des lots plus importants (un dîner pour deux, une carte cadeau de 50 CHF, un soin complet) puisque le coût est dilué sur l'ensemble des participants.</li>
+</ul>
+
+<h3>Annoncer et célébrer le tirage</h3>
+<p>La loterie mensuelle ne fonctionne que si vos clients savent qu'elle existe et qu'ils attendent le résultat. Stampify envoie automatiquement un SMS récapitulatif le dernier jour du mois à tous les participants, puis annonce le gagnant le 1er du mois suivant. Ce moment de communication est aussi une opportunité marketing : même les non-gagnants reçoivent un message qui les relie à votre commerce.</p>
+
+<h2>Exemples concrets : roue de la fortune dans différents types de commerces</h2>
+
+<h3>Le café du quartier</h3>
+<p>Le Café Central à Fribourg a intégré la roue de la fortune Stampify en janvier 2026. Avec une fréquence de visite moyenne de 4 fois par semaine pour ses clients réguliers, la roue tourne à chaque visite. Résultat après deux mois : le nombre de visites hebdomadaires moyennes est passé de 3,8 à 4,6 par client actif. Le gérant attribue cette hausse à "l'effet roue" : ses clients planifient mieux leurs passages pour ne pas rater leur chance quotidienne.</p>
+
+<h3>La boulangerie artisanale</h3>
+<p>La Boulangerie des Alpes à Sion a choisi une configuration différente : la roue s'active après 3 tampons consécutifs, pas à chaque visite. Cette approche lie directement la gamification à la carte fidélité : les clients doivent venir régulièrement pour débloquer l'accès à la roue. L'effet est double — la carte fidélité progresse plus vite et la roue récompense l'assiduité.</p>
+
+<h3>Le spa et les soins bien-être</h3>
+<p>Pour un spa, la fréquence de visite est naturellement plus basse (une fois toutes les 2 à 4 semaines). La loterie mensuelle est ici plus adaptée que la roue quotidienne. L'Espace Sérénité à Genève utilise la loterie pour offrir un soin premium (valeur 120 CHF) à un client tiré au sort chaque mois. Ce lot est suffisamment attractif pour que les clients parlent de la loterie à leur entourage — un mécanisme de parrainage informel qui génère régulièrement de nouveaux clients.</p>
+
+<h2>Intégration avec la carte fidélité : une expérience cohérente</h2>
+<p>La vraie force de l'approche Stampify est l'intégration native entre la roue de la fortune, la loterie mensuelle et la carte fidélité à tampons. Ces trois éléments forment un écosystème cohérent plutôt que des outils séparés.</p>
+
+<p>Concrètement, depuis la même interface NFC (la plaquette en bois gravée posée sur votre comptoir), le client peut en un seul geste :</p>
+<ul>
+  <li>Collecter son tampon sur la carte fidélité.</li>
+  <li>Faire tourner la roue de la fortune si la fréquence le permet.</li>
+  <li>Voir son rang dans la loterie mensuelle en cours.</li>
+</ul>
+
+<p>Cette fluidité est essentielle. Si les clients devaient scanner des QR codes différents ou ouvrir plusieurs applications, l'engagement chuterait immédiatement. L'approche tout-en-un, accessible sans aucun téléchargement, est ce qui rend la gamification viable pour un petit commerce indépendant.</p>
+
+<h3>Synchronisation des récompenses</h3>
+<p>Les gains de la roue peuvent également être convertis en tampons bonus sur la carte fidélité, ou inversement, les tampons accumulés peuvent débloquer des tours supplémentaires sur la roue. Stampify vous laisse configurer ces liaisons selon la logique qui correspond le mieux à votre activité et à votre marge.</p>
+
+<h2>Résultats observés : chiffres et retours terrain</h2>
+<p>Les données collectées auprès des commerçants utilisant les fonctionnalités de gamification Stampify depuis leur lancement début 2026 dessinent une image cohérente :</p>
+
+<ul>
+  <li><strong>+28 % de fréquence de visite mensuelle</strong> en moyenne pour les clients ayant interagi au moins une fois avec la roue de la fortune.</li>
+  <li><strong>+41 % de taux de complétion de la carte fidélité</strong> : les clients qui jouent terminent leur carte presque deux fois plus souvent que ceux qui n'utilisent pas la roue.</li>
+  <li><strong>Taux de rétention à 3 mois de 67 %</strong> pour les participants à la loterie mensuelle, contre 38 % pour les clients avec carte fidélité classique uniquement.</li>
+  <li><strong>Net Promoter Score (NPS) en hausse</strong> : les clients qui utilisent la gamification recommandent le commerce à leur entourage dans une proportion significativement plus élevée.</li>
+</ul>
+
+<p>Ces résultats sont cohérents avec ce que la littérature académique sur la gamification prédit : <strong>l'ajout de mécaniques de jeu à des comportements existants (ici, la visite d'un commerce) augmente leur fréquence et leur durée sans modifier les habitudes de fond</strong>. Vous ne créez pas un besoin artificiel — vous rendez plus satisfaisante une habitude que vos clients ont déjà.</p>
+
+<h2>Par où commencer : les bonnes pratiques pour démarrer</h2>
+<p>Si vous êtes convaincu par la gamification mais que vous vous demandez par où commencer, voici les étapes recommandées :</p>
+
+<ol>
+  <li><strong>Définissez vos contraintes de marge</strong> avant de configurer les segments. Sachez combien vous pouvez offrir en récompenses par mois sans impact négatif sur votre rentabilité.</li>
+  <li><strong>Commencez simple</strong> : une roue à 4 segments vaut mieux qu'une roue trop complexe que vous devrez ajuster en urgence. Vous pourrez raffiner après 2 à 4 semaines d'observation.</li>
+  <li><strong>Communiquez le lancement</strong> : affiche en vitrine, mention sur vos réseaux sociaux, message à vos clients existants via SMS. La gamification ne fonctionne que si vos clients savent qu'elle existe.</li>
+  <li><strong>Observez les données</strong> : votre tableau de bord Stampify vous montre en temps réel quels segments sont les plus populaires, quel est le taux de participation, et comment la fréquence de visite évolue.</li>
+  <li><strong>Ajustez et itérez</strong> : après un mois, modifiez les segments qui ne fonctionnent pas. La flexibilité est l'un des grands avantages d'une solution digitale par rapport aux mécaniques papier.</li>
+</ol>
+
+<p>La gamification n'est pas une promesse magique. C'est un outil qui amplifie une relation client déjà existante. Si votre accueil est chaleureux et votre produit de qualité, la roue de la fortune renforcera ce lien. Si votre expérience client est défaillante, aucune mécanique de jeu ne compensera.</p>
+
+<p>Mais si vous avez déjà ce fondamental en place — et la plupart des commerçants indépendants que nous rencontrons en Suisse romande l'ont —, alors la gamification est probablement le levier de fidélisation le plus sous-exploité à votre disposition en 2026.</p>
+
+<p style="margin-top:32px;">Prêt à gamifier votre programme de fidélité ? Découvrez comment configurer votre roue de la fortune et votre loterie mensuelle dès aujourd'hui sur <a href="/subscribe" style="color:#3D31B0;font-weight:600;">Stampify — commencer maintenant →</a></p>
+    `,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

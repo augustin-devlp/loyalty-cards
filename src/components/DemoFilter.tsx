@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export interface Demo {
   name: string;
@@ -14,7 +15,6 @@ export interface Demo {
   gradientFrom: string;
   gradientTo: string;
   features: string[];
-  waLink: string;
 }
 
 const TYPE_LABELS: Record<Demo["type"], string> = {
@@ -81,6 +81,28 @@ export default function DemoFilter({ demos }: { demos: Demo[] }) {
           })}
         </div>
       </div>
+
+      {/* Top CTA */}
+      <section style={{ padding: "0 24px 32px" }}>
+        <div style={{ maxWidth: 1152, margin: "0 auto", textAlign: "center" }}>
+          <Link
+            href="/subscribe"
+            style={{
+              display: "inline-block",
+              background: "#EEF0FC",
+              color: "#3D31B0",
+              border: "1.5px solid #3D31B0",
+              padding: "14px 28px",
+              borderRadius: 10,
+              fontWeight: 600,
+              fontSize: 15,
+              textDecoration: "none",
+            }}
+          >
+            Voir ces fonctionnalités pour mon commerce →
+          </Link>
+        </div>
+      </section>
 
       {/* Cards grid */}
       <section style={{ padding: "16px 24px 80px" }}>
@@ -275,25 +297,6 @@ export default function DemoFilter({ demos }: { demos: Demo[] }) {
                       }}
                     >
                       Voir la démo interactive →
-                    </a>
-                    <a
-                      href={d.waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "block",
-                        background: "white",
-                        color: "#3D31B0",
-                        border: "1.5px solid #3D31B0",
-                        padding: "12px",
-                        borderRadius: 10,
-                        textAlign: "center",
-                        fontWeight: 600,
-                        fontSize: 14,
-                        textDecoration: "none",
-                      }}
-                    >
-                      Obtenir mon site {TYPE_LABELS[d.type]} →
                     </a>
                   </div>
                 </div>
