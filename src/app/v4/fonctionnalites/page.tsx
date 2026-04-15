@@ -250,6 +250,29 @@ function WheelMini() {
   );
 }
 
+function LotteryMiniCard() {
+  const tiles = [true, true, false, false, true, false];
+  return (
+    <div style={{ width: "130px", background: "#FBF8F3", borderRadius: "14px", padding: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.07)" }}>
+      <div style={{ fontSize: "8px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em", marginBottom: "8px", textAlign: "center" }}>LOTERIE</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "4px", marginBottom: "8px" }}>
+        {tiles.map((r, i) => (
+          <div key={i} style={{ height: "30px", borderRadius: "5px", background: r ? "#E8F7F2" : "#EBEBEB", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {r ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13z" fill="#1d9e75"/></svg>
+            ) : (
+              <span style={{ fontSize: "11px", color: "#B0B0B0", fontWeight: 700 }}>?</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div style={{ background: "#1d9e75", borderRadius: "7px", padding: "6px 8px", textAlign: "center" }}>
+        <div style={{ fontSize: "8px", fontWeight: 700, color: "white", lineHeight: 1.4 }}>Gagné ! Laissez un avis Google</div>
+      </div>
+    </div>
+  );
+}
+
 function PhoneSMSMockup() {
   return (
     <div
@@ -665,19 +688,32 @@ export default function FonctionnalitesPage() {
         }
       />
 
-      {/* ── Section 4 — La roue ── */}
+      {/* ── Section 4 — La roue + loterie ── */}
       <SplitSection
         bg="#F2EFE9"
         reverse
-        badge="Gamification incluse"
+        badge="Gamification + avis Google inclus"
         title="Jouez. Gagnez. Revenez."
-        body="Roue de la fortune activable sur la carte fidélité. À chaque visite, vos clients tentent leur chance. +40% de taux de retour."
+        body="Roue de la fortune ou loterie — vos clients tentent leur chance à chaque visite. Pour récupérer leur lot, ils laissent un avis Google. Résultat : 100% des joueurs laissent un avis, automatiquement."
         checks={[
-          "Lots 100% personnalisables",
-          "Activable en 1 clic depuis le dashboard",
-          "Fréquence configurable",
+          "Roue de la fortune + loterie, au choix",
+          "Gagner un lot = laisser un avis Google",
+          "Lots 100% personnalisables (soin, réduction…)",
+          "100% des joueurs laissent un avis",
         ]}
-        visual={<WheelMini />}
+        visual={
+          <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+              <WheelMini />
+              <span style={{ fontSize: "11px", color: "#5C5C5C", fontWeight: 600 }}>Roue de la fortune</span>
+            </div>
+            <div style={{ fontSize: "20px", color: "#C8E6DB", fontWeight: 700, alignSelf: "center" }}>+</div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+              <LotteryMiniCard />
+              <span style={{ fontSize: "11px", color: "#5C5C5C", fontWeight: 600 }}>Loterie à gratter</span>
+            </div>
+          </div>
+        }
       />
 
       {/* ── Section 5 — Les SMS ── */}
