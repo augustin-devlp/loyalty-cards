@@ -33,25 +33,19 @@ export default function NavbarV4() {
     { label: "Blog", href: "/blog" },
   ];
 
-  const baseNav: React.CSSProperties = {
-    position: "sticky",
-    top: 0,
-    zIndex: 1000,
-    height: "52px",
-    background: "rgba(250,250,248,0.9)",
-    backdropFilter: "blur(24px)",
-    WebkitBackdropFilter: "blur(24px)",
-    borderBottom: "1px solid rgba(0,0,0,0.06)",
-    transform: hidden ? "translateY(-100%)" : "translateY(0)",
-    transition: "transform 0.25s ease",
-    display: "flex",
-    alignItems: "center",
-    fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
-  };
-
   return (
     <>
-      <nav style={baseNav}>
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 1000,
+        height: "52px",
+        background: "rgba(251,248,243,0.9)",
+        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+        borderBottom: "1px solid rgba(0,0,0,0.06)",
+        transform: hidden ? "translateY(-100%)" : "translateY(0)",
+        transition: "transform 0.25s ease",
+        display: "flex", alignItems: "center",
+        fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
+      }}>
         <div style={{
           maxWidth: "900px", margin: "0 auto", padding: "0 20px",
           width: "100%", display: "flex", alignItems: "center",
@@ -59,8 +53,8 @@ export default function NavbarV4() {
         }}>
           {/* Logo */}
           <Link href="/v4" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "16px", height: "16px", background: "#1d9e75", borderRadius: "3px", flexShrink: 0 }} />
-            <span style={{ fontSize: "18px", fontWeight: 700, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Stampify</span>
+            <div style={{ width: "8px", height: "8px", background: "#1d9e75", borderRadius: "2px", flexShrink: 0 }} />
+            <span style={{ fontSize: "18px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "-0.02em" }}>Stampify</span>
           </Link>
 
           {/* Desktop links */}
@@ -68,9 +62,9 @@ export default function NavbarV4() {
             {links.map((l) => (
               <Link
                 key={l.href} href={l.href}
-                style={{ fontSize: "14px", color: "#555555", textDecoration: "none", fontWeight: 400, transition: "color 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#1a1a1a")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#555555")}
+                style={{ fontSize: "14px", color: "#5C5C5C", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#1A1A1A")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#5C5C5C")}
               >
                 {l.label}
               </Link>
@@ -87,7 +81,7 @@ export default function NavbarV4() {
                 textDecoration: "none", display: "inline-block",
                 transition: "background 0.2s, transform 0.2s",
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#17886a"; e.currentTarget.style.transform = "scale(1.02)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}
             >
               Obtenir mon site
@@ -102,7 +96,7 @@ export default function NavbarV4() {
             style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", display: "none", flexDirection: "column", gap: "5px" }}
           >
             {[0, 1, 2].map((i) => (
-              <span key={i} style={{ display: "block", width: "22px", height: "1.5px", background: "#1a1a1a", borderRadius: "2px" }} />
+              <span key={i} style={{ display: "block", width: "22px", height: "1.5px", background: "#1A1A1A", borderRadius: "2px" }} />
             ))}
           </button>
         </div>
@@ -111,7 +105,7 @@ export default function NavbarV4() {
       {/* Mobile fullscreen */}
       <div style={{
         position: "fixed", inset: 0, zIndex: 1100,
-        background: "rgba(250,250,248,0.97)",
+        background: "rgba(251,248,243,0.97)",
         backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
         display: "flex", flexDirection: "column",
         padding: "20px 24px 40px",
@@ -124,17 +118,17 @@ export default function NavbarV4() {
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "48px" }}>
           <Link href="/v4" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "16px", height: "16px", background: "#1d9e75", borderRadius: "3px" }} />
-            <span style={{ fontSize: "18px", fontWeight: 700, color: "#1a1a1a" }}>Stampify</span>
+            <div style={{ width: "8px", height: "8px", background: "#1d9e75", borderRadius: "2px" }} />
+            <span style={{ fontSize: "18px", fontWeight: 800, color: "#1A1A1A" }}>Stampify</span>
           </Link>
-          <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1a1a1a", lineHeight: 1 }}>✕</button>
+          <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1A1A1A", lineHeight: 1 }}>✕</button>
         </div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
           {links.map((l) => (
             <Link
               key={l.href} href={l.href}
               onClick={() => setMobileOpen(false)}
-              style={{ fontSize: "28px", fontWeight: 600, color: "#1a1a1a", textDecoration: "none", padding: "14px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}
+              style={{ fontSize: "28px", fontWeight: 700, color: "#1A1A1A", textDecoration: "none", padding: "14px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}
             >
               {l.label}
             </Link>

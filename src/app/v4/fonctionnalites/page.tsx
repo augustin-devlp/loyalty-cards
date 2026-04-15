@@ -6,76 +6,39 @@ const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
 const globalStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; }
+
   .fade-up {
     opacity: 0;
     transform: translateY(32px);
     transition: opacity 0.65s ease, transform 0.65s ease;
   }
-
   .fade-up.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .feat-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 24px;
-  }
-
-  .feat-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 17px;
-    color: #1a1a1a;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    line-height: 1.7;
-  }
-
-  .feat-list li::before {
-    content: '✓';
-    color: #1d9e75;
-    font-weight: 700;
-    font-size: 13px;
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    background: #e8f7f2;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .section-inner {
+  .split-inner {
     max-width: 900px;
     margin: 0 auto;
-    padding: 0 20px;
     display: flex;
     align-items: center;
-    gap: 72px;
+    gap: 64px;
   }
-
-  .section-inner.reverse {
+  .split-inner.reverse {
     flex-direction: row-reverse;
   }
-
-  .section-text {
-    flex: 1;
-  }
-
-  .section-visual {
-    flex: 0 0 320px;
+  .split-text { flex: 1; min-width: 0; }
+  .split-visual {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .section-badge {
+  .badge {
     display: inline-flex;
     align-items: center;
     background: #e8f7f2;
@@ -84,144 +47,153 @@ const globalStyles = `
     font-weight: 700;
     padding: 6px 14px;
     border-radius: 999px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     letter-spacing: 0.01em;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
+  .badge-addon {
+    background: #E8F7F2;
+    color: #1d9e75;
+  }
 
-  .section-title {
-    font-size: 56px;
+  .split-title {
+    font-size: 48px;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: #1a1a1a;
+    color: #1A1A1A;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    line-height: 1.05;
+    line-height: 1.08;
+    margin: 0 0 16px;
   }
-
-  .section-body {
+  .split-body {
     font-size: 17px;
-    color: #555555;
+    color: #5C5C5C;
     line-height: 1.7;
-    margin-top: 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0 0 24px;
   }
 
-  .cta-pill {
-    display: inline-flex;
+  .check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .check-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #1A1A1A;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.5;
+  }
+  .check-list li .chk {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 50%;
+    background: #e8f7f2;
+    color: #1d9e75;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .trigger-cols {
+    column-count: 2;
+    column-gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .trigger-cols li {
+    display: flex;
     align-items: center;
     gap: 8px;
-    background: #1d9e75;
-    color: #fff;
+    font-size: 13px;
+    color: #5C5C5C;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 14px 30px;
-    border-radius: 999px;
+    line-height: 1.6;
+    break-inside: avoid;
+  }
+  .trigger-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #1d9e75;
+    flex-shrink: 0;
+  }
+
+  .cta-white-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #1d9e75;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 40px;
+    border-radius: 980px;
     text-decoration: none;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
     cursor: pointer;
     border: none;
     white-space: nowrap;
   }
-
-  .cta-pill:hover {
-    background: #18886a;
+  .cta-white-pill:hover {
+    opacity: 0.92;
     transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    .section-inner,
-    .section-inner.reverse {
+    .split-inner,
+    .split-inner.reverse {
       flex-direction: column;
-      gap: 40px;
+      gap: 36px;
     }
-
-    .section-visual {
-      flex: none;
+    .split-visual {
+      order: -1;
       width: 100%;
     }
-
-    .section-title {
-      font-size: 40px;
+    .split-title {
+      font-size: 34px;
+    }
+    .trigger-cols {
+      column-count: 1;
     }
   }
 `;
 
 /* ─── Visual Mockups ─── */
 
-function BrowserMockup() {
-  return (
-    <div
-      style={{
-        width: 320,
-        height: 220,
-        background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        overflow: "hidden",
-        border: "1px solid #e8e8e6",
-      }}
-    >
-      {/* Header bar */}
-      <div
-        style={{
-          background: "#f4f4f2",
-          padding: "10px 14px",
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          borderBottom: "1px solid #e8e8e6",
-        }}
-      >
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff5f57", flexShrink: 0 }} />
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#febc2e", flexShrink: 0 }} />
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#28c840", flexShrink: 0 }} />
-        <div
-          style={{
-            flex: 1,
-            marginLeft: 8,
-            background: "#f4f4f2",
-            border: "1px solid #e0e0de",
-            borderRadius: 4,
-            height: 16,
-          }}
-        />
-      </div>
-      {/* Content */}
-      <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-        {/* Green hero rect */}
-        <div style={{ height: 40, background: "#1d9e75", borderRadius: 4 }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "90%" }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "75%" }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "85%" }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "60%" }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "80%" }} />
-        <div style={{ height: 8, background: "#f4f4f2", borderRadius: 4, width: "70%" }} />
-      </div>
-    </div>
-  );
-}
-
-function LoyaltyCardMockup() {
+function LoyaltyCardMini() {
   const filled = 7;
   const total = 10;
   return (
     <div
       style={{
-        width: 280,
+        width: 260,
         height: 160,
-        background: "linear-gradient(135deg, #1d9e75, #17886a)",
+        background: "linear-gradient(135deg, #1d9e75 0%, #17886a 100%)",
         borderRadius: 16,
         padding: "20px 24px",
-        boxShadow: "0 8px 32px rgba(29,158,117,0.28)",
+        boxShadow: "0 8px 32px rgba(29,158,117,0.3)",
         color: "#fff",
         fontFamily: "'Plus Jakarta Sans', sans-serif",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        flexShrink: 0,
       }}
     >
-      <div style={{ fontSize: 16, fontWeight: 700 }}>Mon Commerce</div>
+      <div style={{ fontSize: 15, fontWeight: 700 }}>Café Lumière</div>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {Array.from({ length: total }).map((_, i) => (
           <div
@@ -240,116 +212,66 @@ function LoyaltyCardMockup() {
   );
 }
 
-function NfcMockup() {
+function WheelMini() {
   return (
     <div
       style={{
         width: 200,
-        height: 130,
-        background: "linear-gradient(135deg, #8B6914, #6B4F10)",
-        borderRadius: 12,
-        padding: "16px 20px",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.22)",
+        height: 200,
+        borderRadius: "50%",
+        background:
+          "conic-gradient(from 0deg, #1d9e75 0deg 60deg, #F2EFE9 60deg 120deg, #1A1A1A 120deg 180deg, #E8F7F2 180deg 240deg, #5C5C5C 240deg 300deg, #FFFFFF 300deg 360deg)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        position: "relative",
-        overflow: "hidden",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
       }}
     >
-      {/* NFC concentric circles */}
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          right: 20,
-          transform: "translateY(-50%)",
-          width: 50,
-          height: 50,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {[44, 32, 20].map((size, i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              width: size,
-              height: size,
-              borderRadius: "50%",
-              border: "2px solid rgba(255,255,255,0.6)",
-            }}
-          />
-        ))}
-      </div>
-      <div style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Stampify</div>
-      <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>Mon Commerce</div>
-    </div>
-  );
-}
-
-function WheelMockup() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-      <div
-        style={{
-          width: 200,
-          height: 200,
+          width: 56,
+          height: 56,
           borderRadius: "50%",
-          background:
-            "conic-gradient(#1d9e75 0% 17%, #f4f4f2 17% 33%, #1a1a1a 33% 50%, #e8f7f2 50% 67%, #555555 67% 83%, #fff 83% 100%)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-          position: "relative",
+          background: "#fff",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          fontSize: 22,
+          fontWeight: 800,
+          color: "#1d9e75",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
         }}
       >
-        <div
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: "50%",
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 22,
-            fontWeight: 800,
-            color: "#1d9e75",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            zIndex: 2,
-          }}
-        >
-          S
-        </div>
+        S
       </div>
     </div>
   );
 }
 
-function SmsMockup() {
+function PhoneSMSMockup() {
   return (
     <div
       style={{
-        width: 160,
-        height: 280,
-        background: "#1a1a1a",
+        width: 200,
+        height: 360,
+        background: "#1A1A1A",
         borderRadius: 28,
-        padding: 12,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.22)",
+        padding: 14,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 0,
+        flexShrink: 0,
       }}
     >
       <div
         style={{
           background: "#fafaf8",
-          borderRadius: 20,
-          height: "100%",
-          padding: 10,
+          borderRadius: 18,
+          flex: 1,
+          padding: "12px 10px",
           display: "flex",
           flexDirection: "column",
           gap: 10,
@@ -362,31 +284,28 @@ function SmsMockup() {
             color: "#aaa",
             textAlign: "center",
             fontFamily: "'Plus Jakarta Sans', sans-serif",
-            paddingTop: 4,
           }}
         >
           SMS
         </div>
-        {/* Received bubble */}
         <div
           style={{
             background: "#e8f7f2",
             borderRadius: "12px 12px 12px 3px",
             padding: "8px 10px",
-            maxWidth: "85%",
+            maxWidth: "86%",
           }}
         >
-          <div style={{ fontSize: 11, color: "#1a1a1a", lineHeight: 1.5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <div style={{ fontSize: 11, color: "#1A1A1A", lineHeight: 1.5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Bonne fête ! -15% aujourd&apos;hui 🎂
           </div>
         </div>
-        {/* Sent bubble */}
         <div
           style={{
             background: "#1d9e75",
             borderRadius: "12px 12px 3px 12px",
             padding: "8px 10px",
-            maxWidth: "80%",
+            maxWidth: "78%",
             alignSelf: "flex-end",
           }}
         >
@@ -394,271 +313,140 @@ function SmsMockup() {
             Merci ! J&apos;arrive 😊
           </div>
         </div>
-        {/* Another received */}
         <div
           style={{
             background: "#e8f7f2",
             borderRadius: "12px 12px 12px 3px",
             padding: "8px 10px",
-            maxWidth: "85%",
+            maxWidth: "86%",
           }}
         >
-          <div style={{ fontSize: 11, color: "#1a1a1a", lineHeight: 1.5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-            Flash : 2h restantes !
+          <div style={{ fontSize: 11, color: "#1A1A1A", lineHeight: 1.5, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Flash : 2h restantes ⚡
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function AutomationMockup() {
-  const steps = ["Visite", "Tampon", "Récompense"];
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      {steps.map((label, i) => (
-        <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: 8,
-              padding: "12px 14px",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-              border: "1px solid #e8e8e6",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#1d9e75",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {label}
-          </div>
-          {i < steps.length - 1 && (
-            <div
-              style={{
-                fontSize: 18,
-                color: "#1d9e75",
-                fontWeight: 700,
-              }}
-            >
-              →
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CalendarMockup() {
-  const days = ["L", "M", "M", "J", "V", "S", "D"];
-  const dates = Array.from({ length: 21 }, (_, i) => i + 1);
-  const booked = [3, 8, 11, 15, 17];
-  const today = 15;
-  return (
-    <div
-      style={{
-        width: 280,
-        height: 200,
-        background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        padding: 18,
-        border: "1px solid #e8e8e6",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-        <span style={{ fontWeight: 700, fontSize: 13, color: "#1a1a1a" }}>Avril 2026</span>
-        <div style={{ display: "flex", gap: 4 }}>
-          <div style={{ width: 20, height: 20, borderRadius: 4, background: "#f4f4f2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>‹</div>
-          <div style={{ width: 20, height: 20, borderRadius: 4, background: "#f4f4f2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>›</div>
-        </div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, textAlign: "center" }}>
-        {days.map((d, i) => (
-          <div key={i} style={{ fontSize: 9, color: "#aaa", fontWeight: 600, padding: "2px 0" }}>{d}</div>
-        ))}
-        {dates.map((d) => (
-          <div
-            key={d}
-            style={{
-              fontSize: 11,
-              padding: "4px 2px",
-              borderRadius: 4,
-              background: booked.includes(d) ? "#1d9e75" : d === today ? "#1a1a1a" : "transparent",
-              color: booked.includes(d) || d === today ? "#fff" : "#1a1a1a",
-              fontWeight: booked.includes(d) || d === today ? 700 : 400,
-            }}
-          >
-            {d}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function OrderMockup() {
-  const items = [
-    { name: "Croissant x2", price: "3.40" },
-    { name: "Café allongé", price: "3.00" },
-    { name: "Pain au choc.", price: "2.20" },
-  ];
-  return (
-    <div
-      style={{
-        width: 260,
-        height: 160,
-        background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        padding: "16px 18px",
-        border: "1px solid #e8e8e6",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-      }}
-    >
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#1a1a1a" }}>Commande #042</div>
-      {items.map((item) => (
-        <div key={item.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 24, height: 24, borderRadius: 4, background: "#f4f4f2" }} />
-            <span style={{ fontSize: 12, color: "#555" }}>{item.name}</span>
-          </div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#1d9e75" }}>{item.price}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function QrMockup() {
-  const pattern = [
-    [1,1,1,0,1,0,1,1,1],
-    [1,0,1,0,1,0,1,0,1],
-    [1,0,1,1,0,1,1,0,1],
-    [0,0,0,1,0,0,0,0,0],
-    [1,1,0,0,1,0,0,1,1],
-    [0,0,0,1,0,1,0,0,0],
-    [1,0,1,0,0,1,1,0,1],
-    [1,0,1,0,1,0,0,0,1],
-    [1,1,1,1,0,0,1,1,1],
-  ];
-  return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: 12,
-        padding: 16,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        border: "1px solid #e8e8e6",
-        display: "inline-flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 10,
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-      }}
-    >
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(9, 12px)", gap: 2 }}>
-        {pattern.flat().map((cell, i) => (
-          <div
-            key={i}
-            style={{
-              width: 12,
-              height: 12,
-              background: cell ? "#1a1a1a" : "#fff",
-              borderRadius: 1,
-            }}
-          />
-        ))}
-      </div>
-      <div style={{ fontSize: 11, color: "#aaa", fontWeight: 600 }}>Menu digital</div>
     </div>
   );
 }
 
 function DashboardMockup() {
-  const bars = [40, 65, 50, 80, 60, 90, 70];
-  const days = ["L", "M", "M", "J", "V", "S", "D"];
+  const stats = [
+    { label: "Clients actifs", value: "248" },
+    { label: "Tampons ce mois", value: "1 034" },
+    { label: "Taux de retour", value: "68 %" },
+  ];
   return (
     <div
       style={{
-        width: 300,
-        height: 180,
+        width: 280,
         background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        padding: 16,
+        borderRadius: 16,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.09)",
+        padding: 20,
         border: "1px solid #e8e8e6",
         fontFamily: "'Plus Jakarta Sans', sans-serif",
         display: "flex",
         flexDirection: "column",
-        gap: 12,
+        gap: 16,
+        flexShrink: 0,
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#1a1a1a" }}>Tampons cette semaine</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: "#1d9e75" }}>+247</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "#1A1A1A" }}>Dashboard</div>
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "10px 14px",
+            background: "#FBF8F3",
+            borderRadius: 10,
+          }}
+        >
+          <span style={{ fontSize: 13, color: "#5C5C5C" }}>{s.label}</span>
+          <span style={{ fontSize: 16, fontWeight: 800, color: "#1d9e75" }}>{s.value}</span>
         </div>
-        <div style={{ fontSize: 11, color: "#1d9e75", background: "#e8f7f2", padding: "3px 8px", borderRadius: 999, fontWeight: 600 }}>
-          +12%
-        </div>
-      </div>
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 64, flex: 1 }}>
-        {bars.map((h, i) => (
-          <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-            <div
-              style={{
-                width: "100%",
-                height: (h / 100) * 56,
-                background: i === 5 ? "#1d9e75" : "#e8e8e6",
-                borderRadius: "3px 3px 0 0",
-              }}
-            />
-            <div style={{ fontSize: 9, color: "#aaa" }}>{days[i]}</div>
-          </div>
-        ))}
-      </div>
+      ))}
     </div>
   );
 }
 
-/* ─── Section component ─── */
+/* ─── Reusable Section ─── */
 
 interface SectionProps {
   bg: string;
   reverse?: boolean;
   badge: string;
+  badgeClass?: string;
   title: string;
   body: string;
-  features: string[];
+  checks?: string[];
   visual: React.ReactNode;
+  textChildren?: React.ReactNode;
 }
 
-function Section({ bg, reverse, badge, title, body, features, visual }: SectionProps) {
+function SplitSection({
+  bg,
+  reverse,
+  badge,
+  badgeClass,
+  title,
+  body,
+  checks,
+  visual,
+  textChildren,
+}: SectionProps) {
   return (
-    <section style={{ background: bg, padding: "160px 20px" }}>
-      <div className={`section-inner${reverse ? " reverse" : ""}`}>
-        <div className="section-text fade-up">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-title">{title}</h2>
-          <p className="section-body">{body}</p>
-          <ul className="feat-list">
-            {features.map((f) => (
-              <li key={f}>{f}</li>
-            ))}
-          </ul>
+    <section
+      style={{
+        background: bg,
+        padding: "120px 20px",
+      }}
+    >
+      <div className={`split-inner${reverse ? " reverse" : ""}`}>
+        <div className="split-text fade-up">
+          <span className={`badge${badgeClass ? " " + badgeClass : ""}`}>{badge}</span>
+          <h2 className="split-title">{title}</h2>
+          <p className="split-body">{body}</p>
+          {checks && (
+            <ul className="check-list">
+              {checks.map((c) => (
+                <li key={c}>
+                  <span className="chk">✓</span>
+                  {c}
+                </li>
+              ))}
+            </ul>
+          )}
+          {textChildren}
         </div>
-        <div className="section-visual fade-up">{visual}</div>
+        <div className="split-visual fade-up">{visual}</div>
       </div>
     </section>
   );
 }
+
+/* ─── Trigger list for section 6 ─── */
+
+const TRIGGERS = [
+  "Anniversaire client",
+  "Inactivité 14 jours",
+  "Inactivité 30 jours",
+  "Inactivité 60 jours",
+  "Récompense atteinte",
+  "Rappel avant expiration",
+  "Bienvenue nouveau client",
+  "Après 1ère visite",
+  "Rappel réservation J-1",
+  "Rappel réservation H-2",
+  "Promo flash",
+  "Mise à jour menu",
+  "Événement spécial",
+  "Réouverture après congé",
+  "Nouveau produit dispo",
+];
 
 /* ─── Page ─── */
 
@@ -672,12 +460,10 @@ export default function FonctionnalitesPage() {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.1 }
     );
-
     const elements = document.querySelectorAll(".fade-up");
     elements.forEach((el) => observer.observe(el));
-
     return () => observer.disconnect();
   }, []);
 
@@ -685,10 +471,10 @@ export default function FonctionnalitesPage() {
     <>
       <style>{globalStyles}</style>
 
-      {/* Hero */}
+      {/* ── HERO ── */}
       <section
         style={{
-          background: "#fafaf8",
+          background: "#FBF8F3",
           padding: "120px 20px 80px",
           textAlign: "center",
         }}
@@ -698,195 +484,248 @@ export default function FonctionnalitesPage() {
             className="fade-up"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 72,
+              fontSize: "clamp(48px, 7vw, 64px)",
               fontWeight: 800,
               letterSpacing: "-0.04em",
-              color: "#1a1a1a",
-              lineHeight: 1.05,
+              color: "#1A1A1A",
+              lineHeight: 1.1,
+              margin: "0 0 20px",
+              whiteSpace: "pre-line",
             }}
           >
-            Tout ce qu&apos;il faut.
+            {"Tout ce qu'il faut.\nRien de superflu."}
           </h1>
           <p
             className="fade-up"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: 21,
-              color: "#555555",
-              marginTop: 20,
+              color: "#5C5C5C",
               lineHeight: 1.7,
+              margin: 0,
             }}
           >
-            Un site qui travaille pour vous, 24h/24.
+            Site, carte, NFC, SMS, réservations, commandes. 990 CHF. 48h.
           </p>
-          <div className="fade-up" style={{ marginTop: 36 }}>
-            <a href={WA_MAIN} className="cta-pill">
-              Obtenir mon site — 990 CHF
-            </a>
-          </div>
         </div>
       </section>
 
-      {/* Section 1 — Le site */}
-      <Section
-        bg="#fafaf8"
-        badge="Visibilité en ligne"
-        title="Le site."
-        body="Un site rapide, beau, et optimisé pour Google. Vos clients vous trouvent — et restent."
-        features={[
-          "SEO local Suisse romande",
-          "Chargement < 2 secondes",
-          "Adapté mobile & desktop",
-          "Domaine .ch inclus",
+      {/* ── Section 1 — Le site ── */}
+      <SplitSection
+        bg="#FBF8F3"
+        badge="Inclus dans le forfait"
+        title="Votre vitrine en ligne."
+        body="Un site 5 pages, rapide, mobile-first, optimisé pour Google. Domaine .ch à votre nom. Livré en 48h."
+        checks={[
+          "5 pages professionnelles sur mesure",
+          "SEO local optimisé dès le lancement",
+          "Domaine .ch + hébergement inclus 1ère année",
         ]}
-        visual={<BrowserMockup />}
+        visual={
+          <img
+            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=500&q=80"
+            alt="Site vitrine professionnel sur ordinateur"
+            loading="lazy"
+            style={{
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 440,
+              display: "block",
+            }}
+          />
+        }
       />
 
-      {/* Section 2 — La carte */}
-      <Section
-        bg="#f4f4f2"
+      {/* ── Section 2 — La carte ── */}
+      <SplitSection
+        bg="#F2EFE9"
         reverse
-        badge="Fidélité digitale"
-        title="La carte."
-        body="Vos clients reviennent. Automatiquement. La carte fidélité digitale s'active en 1 tap — pas d'app à télécharger."
-        features={[
-          "Tampons digitaux",
-          "Récompenses automatiques",
-          "Aucune app à installer",
-          "Compatible iPhone & Android",
+        badge="Zéro application requise"
+        title="Plus de cartes perdues."
+        body="Vos clients scannent le QR code ou approchent leur téléphone. La carte s'ouvre instantanément. Aucune app, aucun compte."
+        checks={[
+          "QR code + NFC — les deux inclus",
+          "10 cases personnalisables (couleurs, lots)",
+          "Tampons automatiques, notifications incluses",
         ]}
-        visual={<LoyaltyCardMockup />}
+        visual={<LoyaltyCardMini />}
       />
 
-      {/* Section 3 — La plaquette */}
-      <Section
-        bg="#fafaf8"
-        badge="NFC gravée"
-        title="La plaquette."
-        body="Une plaquette NFC en bois gravée à votre nom, posée sur votre comptoir. Vos clients tapent, leur carte s'ouvre."
-        features={[
-          "Gravure laser personnalisée",
-          "Compatible tous smartphones",
-          "QR code imprimable inclus",
-          "Livrée en 48h",
+      {/* ── Section 3 — La plaquette ── */}
+      <SplitSection
+        bg="#FBF8F3"
+        badge="Incluse dans le forfait"
+        title="En bois. À votre nom."
+        body="Plaquette NFC gravée au laser. Posée sur votre comptoir. Vos clients approchent leur téléphone. Sans friction."
+        checks={[
+          "Gravure laser nom + logo",
+          "Compatible iPhone et Android",
+          "Livrée avec votre commande en 48h",
         ]}
-        visual={<NfcMockup />}
+        visual={
+          <img
+            src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?auto=format&fit=crop&w=500&q=80"
+            alt="Plaquette NFC en bois gravée au laser"
+            loading="lazy"
+            style={{
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 440,
+              display: "block",
+            }}
+          />
+        }
       />
 
-      {/* Section 4 — La roue */}
-      <Section
-        bg="#f4f4f2"
+      {/* ── Section 4 — La roue ── */}
+      <SplitSection
+        bg="#F2EFE9"
         reverse
-        badge="Gamification"
-        title="La roue."
-        body="Activez la roue de la fortune. À chaque visite, une chance de gagner. Taux de retour +40%."
-        features={[
-          "6 récompenses configurables",
-          "Animation CSS fluide",
-          "Aucune app requise",
-          "Statistiques incluses",
+        badge="Gamification incluse"
+        title="Jouez. Gagnez. Revenez."
+        body="Roue de la fortune activable sur la carte fidélité. À chaque visite, vos clients tentent leur chance. +40% de taux de retour."
+        checks={[
+          "Lots 100% personnalisables",
+          "Activable en 1 clic depuis le dashboard",
+          "Fréquence configurable",
         ]}
-        visual={<WheelMockup />}
+        visual={<WheelMini />}
       />
 
-      {/* Section 5 — Les SMS */}
-      <Section
-        bg="#fafaf8"
-        badge="Marketing automatique"
-        title="Les SMS."
-        body="15 triggers configurables. Anniversaire, inactivité, promo flash. 98% de taux d'ouverture."
-        features={[
-          "SMS anniversaire auto",
-          "Relance inactif 14/30/60j",
-          "Promo flash 2 clics",
-          "Statistiques temps réel",
+      {/* ── Section 5 — Les SMS ── */}
+      <SplitSection
+        bg="#FBF8F3"
+        badge="Add-on 49 CHF/mois"
+        badgeClass="badge-addon"
+        title="Le bon message. Au bon moment."
+        body="15 triggers configurables. Anniversaire, inactivité, promo flash, récompense. Entièrement automatiques."
+        checks={[
+          "15+ déclencheurs automatiques",
+          "Promo flash manuelle en 2 clics",
+          "SMS anniversaire, relance, récompense",
         ]}
-        visual={<SmsMockup />}
+        visual={<PhoneSMSMockup />}
       />
 
-      {/* Section 6 — L'automatique */}
-      <Section
-        bg="#f4f4f2"
+      {/* ── Section 6 — L'automatique ── */}
+      <SplitSection
+        bg="#F2EFE9"
         reverse
-        badge="Zéro effort"
-        title="L'automatique."
-        body="Tout se déclenche tout seul. Vous n'avez rien à faire. Le système travaille pendant que vous servez vos clients."
-        features={[
-          "Tampons enregistrés auto",
-          "Récompenses envoyées auto",
-          "Rappels automatiques",
-          "Rapports mensuels",
-        ]}
-        visual={<AutomationMockup />}
+        badge="Add-on 49 CHF/mois"
+        badgeClass="badge-addon"
+        title="Zéro effort. Résultats réels."
+        body="Une fois configuré, tout se passe seul. Vos clients reçoivent le bon message au bon moment, sans que vous leviez le petit doigt."
+        visual={
+          <ul className="trigger-cols">
+            {TRIGGERS.map((t) => (
+              <li key={t}>
+                <span className="trigger-dot" />
+                {t}
+              </li>
+            ))}
+          </ul>
+        }
       />
 
-      {/* Section 7 — Les réservations */}
-      <Section
-        bg="#fafaf8"
-        badge="24h/24"
-        title="Les réservations."
-        body="Vos clients réservent en ligne, n'importe quand. Zéro appel manqué. Confirmation automatique."
-        features={[
-          "Calendrier en ligne",
-          "Confirmation automatique",
-          "Rappel SMS",
-          "Compatible Google Agenda",
+      {/* ── Section 7 — Les réservations ── */}
+      <SplitSection
+        bg="#FBF8F3"
+        badge="Fonctionnalité incluse"
+        title="Plus de no-show."
+        body="Système de réservation intégré à votre site. Vos clients réservent depuis leur téléphone. Rappels SMS automatiques."
+        checks={[
+          "Réservation table, RDV, service",
+          "Rappels SMS automatiques J-1 et H-2",
+          "Annulation en 1 clic côté client",
         ]}
-        visual={<CalendarMockup />}
+        visual={
+          <img
+            src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=500&q=80"
+            alt="Système de réservation en ligne depuis smartphone"
+            loading="lazy"
+            style={{
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 440,
+              display: "block",
+            }}
+          />
+        }
       />
 
-      {/* Section 8 — Les commandes */}
-      <Section
-        bg="#f4f4f2"
+      {/* ── Section 8 — Les commandes ── */}
+      <SplitSection
+        bg="#F2EFE9"
         reverse
-        badge="Pré-commandes"
-        title="Les commandes."
-        body="Vos clients commandent à l'avance. Ils arrivent, c'est prêt. Parfait pour les boulangeries, cafés, traiteurs."
-        features={[
-          "Commande en ligne",
-          "Retrait QR code",
-          "Paiement en ligne ou sur place",
-          "Notifications en temps réel",
+        badge="Click & Collect"
+        title="Commandez. Récupérez. C'est tout."
+        body="Pré-commande et click & collect depuis votre site. Moins d'attente, moins de gaspillage, plus de satisfaction."
+        checks={[
+          "Pré-commande en ligne 24h/24",
+          "Paiement sécurisé en ligne optionnel",
+          "Notification dès que la commande est prête",
         ]}
-        visual={<OrderMockup />}
+        visual={
+          <img
+            src="https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?auto=format&fit=crop&w=500&q=80"
+            alt="Commande click and collect depuis téléphone"
+            loading="lazy"
+            style={{
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 440,
+              display: "block",
+            }}
+          />
+        }
       />
 
-      {/* Section 9 — Le menu */}
-      <Section
-        bg="#fafaf8"
-        badge="QR code menu"
-        title="Le menu."
-        body="Mettez à jour votre menu en 30 secondes. Vos clients scannent, zéro impression, zéro gaspillage."
-        features={[
-          "Mise à jour instantanée",
-          "Zéro impression",
-          "Photos incluses",
-          "Multi-langues",
+      {/* ── Section 9 — Le menu QR ── */}
+      <SplitSection
+        bg="#FBF8F3"
+        badge="Fonctionnalité incluse"
+        title="Votre menu toujours à jour."
+        body="QR code sur chaque table. Vos clients scannent, votre menu apparaît. Mettez à jour les prix depuis votre téléphone en 10 secondes."
+        checks={[
+          "Menu dynamique mis à jour en temps réel",
+          "QR code imprimable format A5/A6",
+          "Multilingue (FR/DE/EN) en option",
         ]}
-        visual={<QrMockup />}
+        visual={
+          <img
+            src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=500&q=80"
+            alt="Menu QR code sur table de restaurant"
+            loading="lazy"
+            style={{
+              borderRadius: 16,
+              width: "100%",
+              maxWidth: 440,
+              display: "block",
+            }}
+          />
+        }
       />
 
-      {/* Section 10 — Le dashboard */}
-      <Section
-        bg="#f4f4f2"
+      {/* ── Section 10 — Le dashboard ── */}
+      <SplitSection
+        bg="#F2EFE9"
         reverse
-        badge="Tableau de bord"
-        title="Le dashboard."
-        body="Suivez tout : clients, tampons, réservations, SMS. En temps réel, depuis votre téléphone."
-        features={[
-          "Stats temps réel",
-          "Export données",
-          "Historique clients",
-          "Alertes personnalisées",
+        badge="Inclus dans le forfait"
+        title="Tout voir. Tout piloter."
+        body="Depuis votre téléphone, en temps réel : clients actifs, tampons distribués, SMS envoyés, taux de retour. Toutes vos données, zéro complexité."
+        checks={[
+          "Stats clients en temps réel",
+          "Historique de chaque visite",
+          "Accès depuis téléphone ou ordinateur",
         ]}
         visual={<DashboardMockup />}
       />
 
-      {/* CTA Final */}
+      {/* ── CTA BOTTOM ── */}
       <section
         style={{
-          background: "#1a1a1a",
-          padding: "120px 20px",
+          background: "#1d9e75",
+          padding: "80px 20px",
           textAlign: "center",
         }}
       >
@@ -895,30 +734,31 @@ export default function FonctionnalitesPage() {
             className="fade-up"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 56,
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
+              fontSize: 40,
+              fontWeight: 800,
               color: "#fff",
-              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
+              margin: "0 0 16px",
             }}
           >
-            Prêt à lancer ?
+            Prêt à démarrer ?
           </h2>
           <p
             className="fade-up"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: 19,
-              color: "rgba(255,255,255,0.55)",
-              marginTop: 20,
+              fontSize: 17,
+              color: "rgba(255,255,255,0.75)",
               lineHeight: 1.7,
+              margin: "0 0 36px",
             }}
           >
-            Votre site en 48h. Accompagnement complet inclus.
+            990 CHF · Livraison 48h garantie.
           </p>
-          <div className="fade-up" style={{ marginTop: 40 }}>
-            <a href={WA_MAIN} className="cta-pill">
-              Obtenir mon site — 990 CHF
+          <div className="fade-up">
+            <a href={WA_MAIN} className="cta-white-pill">
+              Obtenir mon site
             </a>
           </div>
         </div>
