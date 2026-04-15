@@ -88,9 +88,9 @@ function CoffeeCupIcon({ filled }: { filled: boolean }) {
   );
 }
 
-/* ─── 4-step hero animation ─── */
+/* ─── 3-step hero animation ─── */
 function HeroStepAnimation({ step }: { step: number }) {
-  const visits = useRef([0, 0, 0, 0]);
+  const visits = useRef([0, 0, 0]);
   const prev = useRef(-1);
   if (prev.current !== step) { visits.current[step]++; prev.current = step; }
   const v = visits.current;
@@ -98,8 +98,7 @@ function HeroStepAnimation({ step }: { step: number }) {
   const labels = [
     "Le client approche son téléphone — le tampon s'ajoute seul",
     "La carte fidélité se remplit visite après visite",
-    "Carte complète — une notification envoyée automatiquement",
-    "Vos clients reçoivent leur récompense par SMS, sans effort",
+    "Carte complète — une notification push envoyée automatiquement",
   ];
 
   const panel = (s: number, extra?: React.CSSProperties): React.CSSProperties => ({
@@ -116,7 +115,7 @@ function HeroStepAnimation({ step }: { step: number }) {
     <div style={{ position: "relative", width: "100%", maxWidth: "420px" }}>
       {/* Step pills */}
       <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "20px" }}>
-        {[0,1,2,3].map(i => (
+        {[0,1,2].map(i => (
           <div key={i} style={{
             height: "6px", borderRadius: "3px",
             width: i === step ? "22px" : "6px",
@@ -198,10 +197,10 @@ function HeroStepAnimation({ step }: { step: number }) {
               <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.5)", marginBottom: "2px", letterSpacing: "0.08em" }}>STAMPIFY</div>
               <div style={{ fontSize: "20px", fontWeight: 700, color: "white", marginBottom: "4px" }}>Spa Essence</div>
               <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", marginBottom: "20px" }}>Genève · 1 soin offert à la 10e visite</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px", marginBottom: "14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gridTemplateRows: "repeat(2, 52px)", gap: "8px", marginBottom: "14px" }}>
                 {Array.from({ length: 10 }, (_, i) => (
                   <div key={i === 7 ? `sp-${v[1]}` : i} style={{
-                    aspectRatio: "1", borderRadius: "10px",
+                    borderRadius: "10px",
                     background: i < 8 ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)",
                     border: i >= 8 ? "1.5px solid rgba(255,255,255,0.2)" : "none",
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -256,32 +255,6 @@ function HeroStepAnimation({ step }: { step: number }) {
           </div>
         </div>
 
-        {/* ── Step 3 — SMS conversation ── */}
-        <div style={panel(3)}>
-          <div style={{
-            width: "190px", background: "#1A1A1A", borderRadius: "38px", padding: "12px",
-            boxShadow: "0 0 0 1.5px #3A3A3C, 0 24px 60px rgba(0,0,0,0.35)",
-            flexShrink: 0,
-          }}>
-            <div style={{ width: "72px", height: "22px", borderRadius: "11px", background: "#000", margin: "0 auto 8px" }} />
-            <div style={{ background: "#FBF8F3", borderRadius: "28px", padding: "14px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "#1A1A1A", textAlign: "center", borderBottom: "1px solid #F2EFE9", paddingBottom: "8px", marginBottom: "12px" }}>
-                Spa Essence
-              </div>
-              <div style={{ fontSize: "9px", color: "#5C5C5C", textAlign: "center", marginBottom: "10px" }}>Aujourd&apos;hui · 10:23</div>
-              <div key={`m1-${v[3]}`} style={{ background: "#E8F7F2", borderRadius: "12px 12px 12px 3px", padding: "9px 11px", fontSize: "11px", color: "#1A1A1A", lineHeight: 1.5, marginBottom: "8px", opacity: 0, animation: "smsFadeIn 0.4s 0.2s ease both" }}>
-                Bonjour ! Vos 10 tampons Spa Essence sont validés.
-              </div>
-              <div key={`m2-${v[3]}`} style={{ background: "#1d9e75", borderRadius: "12px 12px 3px 12px", padding: "9px 11px", fontSize: "11px", color: "white", lineHeight: 1.5, marginBottom: "8px", marginLeft: "16px", opacity: 0, animation: "smsFadeIn 0.4s 0.9s ease both" }}>
-                Votre soin offert vous attend. Valable 30 jours.
-              </div>
-              <div key={`m3-${v[3]}`} style={{ background: "#F2EFE9", borderRadius: "8px", padding: "7px 10px", fontSize: "10px", color: "#1d9e75", fontWeight: 600, textAlign: "center", opacity: 0, animation: "smsFadeIn 0.4s 1.6s ease both" }}>
-                Prendre rendez-vous →
-              </div>
-            </div>
-            <div style={{ width: "60px", height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.2)", margin: "8px auto 0" }} />
-          </div>
-        </div>
       </div>
 
       {/* Labels — all rendered, fade in/out */}
@@ -453,43 +426,54 @@ function WheelSVG({ size = 300 }: { size?: number }) {
   );
 }
 
-/* ─── Lottery mockup ─── */
+/* ─── Lottery mockup (raffle-ticket concept) ─── */
 function LotteryMockup({ animKey }: { animKey: number }) {
-  const tiles = [true, true, false, false, true, false];
   return (
     <div style={{ width: "240px", background: "#FBF8F3", borderRadius: "20px", padding: "20px", boxShadow: "0 16px 48px rgba(0,0,0,0.1)", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-        <span style={{ fontSize: "10px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em" }}>LOTERIE STAMPIFY</span>
-        <span style={{ fontSize: "10px", color: "#1d9e75", fontWeight: 600 }}>Spa Essence</span>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <span style={{ fontSize: "10px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em" }}>TIRAGE DU MOIS</span>
+        <span style={{ fontSize: "10px", color: "#1d9e75", fontWeight: 600 }}>Café Lumière</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "6px", marginBottom: "12px" }}>
-        {tiles.map((revealed, i) => (
-          <div key={`${animKey}-${i}`} style={{
-            height: "52px", borderRadius: "8px",
-            background: revealed ? "#E8F7F2" : "linear-gradient(135deg, #CFCFCF, #DEDEDE)",
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "3px",
-            animation: revealed ? `scratchReveal 0.4s ${i * 0.12}s ease both` : "none",
-            opacity: revealed ? 0 : 1,
-          }}>
-            {revealed ? (
-              <>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13z" fill="#1d9e75"/></svg>
-                <span style={{ fontSize: "7px", color: "#1d9e75", fontWeight: 700 }}>Soin offert</span>
-              </>
-            ) : (
-              <span style={{ fontSize: "16px", color: "#999", fontWeight: 700, lineHeight: 1 }}>?</span>
-            )}
-          </div>
-        ))}
-      </div>
-      <div key={`win-${animKey}`} style={{
-        background: "#1d9e75", borderRadius: "12px", padding: "12px",
-        textAlign: "center",
-        animation: "rewardPop 0.6s 0.7s cubic-bezier(0.34,1.56,0.64,1) both",
+
+      {/* Prize */}
+      <div key={`prize-${animKey}`} style={{
+        background: "linear-gradient(135deg, #1d9e75 0%, #0D7A5A 100%)",
+        borderRadius: "14px", padding: "14px 16px", marginBottom: "12px",
+        animation: "rewardPop 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both",
         opacity: 0,
       }}>
-        <div style={{ fontSize: "12px", fontWeight: 700, color: "white", marginBottom: "3px" }}>3 soins identiques = Vous gagnez !</div>
-        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.8)", lineHeight: 1.4 }}>Laissez un avis Google pour valider votre lot</div>
+        <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.6)", letterSpacing: "0.08em", marginBottom: "4px" }}>LOT À GAGNER</div>
+        <div style={{ fontSize: "18px", fontWeight: 800, color: "white", lineHeight: 1.1, marginBottom: "3px" }}>1 mois de café</div>
+        <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)" }}>offert · valeur 60 CHF</div>
+      </div>
+
+      {/* Ticket stub */}
+      <div key={`ticket-${animKey}`} style={{
+        background: "#FFFFFF", borderRadius: "12px", padding: "12px 14px",
+        display: "flex", alignItems: "center", gap: "12px",
+        border: "1.5px dashed #C8E6DB", marginBottom: "10px",
+        animation: "rewardPop 0.5s 0.55s cubic-bezier(0.34,1.56,0.64,1) both",
+        opacity: 0,
+      }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: "9px", color: "#5C5C5C", marginBottom: "3px" }}>Votre ticket</div>
+          <div style={{ fontSize: "18px", fontWeight: 800, color: "#1d9e75", letterSpacing: "0.04em" }}>#0742</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: "9px", color: "#5C5C5C", marginBottom: "3px" }}>Participants</div>
+          <div style={{ fontSize: "18px", fontWeight: 700, color: "#1A1A1A" }}>47</div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div key={`cta-${animKey}`} style={{
+        background: "#E8F7F2", borderRadius: "10px", padding: "10px 12px", textAlign: "center",
+        animation: "rewardPop 0.5s 0.9s cubic-bezier(0.34,1.56,0.64,1) both",
+        opacity: 0,
+      }}>
+        <div style={{ fontSize: "11px", fontWeight: 700, color: "#1d9e75", lineHeight: 1.4 }}>Laissez un avis Google</div>
+        <div style={{ fontSize: "10px", color: "#0D7A5A", lineHeight: 1.4 }}>pour recevoir votre ticket →</div>
       </div>
     </div>
   );
@@ -589,7 +573,7 @@ export default function V4Page() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const iv = setInterval(() => setStep(s => (s + 1) % 4), 3000);
+    const iv = setInterval(() => setStep(s => (s + 1) % 3), 3000);
     return () => clearInterval(iv);
   }, []);
 
@@ -1126,7 +1110,7 @@ export default function V4Page() {
                 {[
                   { stat: "3×", text: "plus de visites pour les commerces avec 50+ avis Google" },
                   { stat: "88%", text: "des clients consultent les avis Google avant de visiter" },
-                  { stat: "8/10", text: "clients qui jouent laissent un avis après avoir gagné" },
+                  { stat: "100%", text: "des joueurs laissent un avis — c'est la condition pour valider leur lot" },
                 ].map((s, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <span style={{ fontSize: "20px", fontWeight: 800, color: "#1d9e75", minWidth: "40px", flexShrink: 0 }}>{s.stat}</span>

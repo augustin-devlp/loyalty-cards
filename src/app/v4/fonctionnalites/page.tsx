@@ -251,23 +251,19 @@ function WheelMini() {
 }
 
 function LotteryMiniCard() {
-  const tiles = [true, true, false, false, true, false];
   return (
     <div style={{ width: "130px", background: "#FBF8F3", borderRadius: "14px", padding: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.07)" }}>
-      <div style={{ fontSize: "8px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em", marginBottom: "8px", textAlign: "center" }}>LOTERIE</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "4px", marginBottom: "8px" }}>
-        {tiles.map((r, i) => (
-          <div key={i} style={{ height: "30px", borderRadius: "5px", background: r ? "#E8F7F2" : "#EBEBEB", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {r ? (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13z" fill="#1d9e75"/></svg>
-            ) : (
-              <span style={{ fontSize: "11px", color: "#B0B0B0", fontWeight: 700 }}>?</span>
-            )}
-          </div>
-        ))}
+      <div style={{ fontSize: "7px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em", marginBottom: "8px", textAlign: "center" }}>TIRAGE DU MOIS</div>
+      <div style={{ background: "linear-gradient(135deg, #1d9e75, #0D7A5A)", borderRadius: "8px", padding: "8px 10px", marginBottom: "6px", textAlign: "center" }}>
+        <div style={{ fontSize: "8px", color: "rgba(255,255,255,0.7)", marginBottom: "2px" }}>À GAGNER</div>
+        <div style={{ fontSize: "10px", fontWeight: 800, color: "white", lineHeight: 1.2 }}>1 mois offert</div>
       </div>
-      <div style={{ background: "#1d9e75", borderRadius: "7px", padding: "6px 8px", textAlign: "center" }}>
-        <div style={{ fontSize: "8px", fontWeight: 700, color: "white", lineHeight: 1.4 }}>Gagné ! Laissez un avis Google</div>
+      <div style={{ background: "#fff", borderRadius: "6px", padding: "6px 8px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px dashed #C8E6DB", marginBottom: "6px" }}>
+        <div style={{ fontSize: "11px", fontWeight: 800, color: "#1d9e75" }}>#0742</div>
+        <div style={{ fontSize: "8px", color: "#5C5C5C" }}>47 part.</div>
+      </div>
+      <div style={{ background: "#1d9e75", borderRadius: "7px", padding: "5px 8px", textAlign: "center" }}>
+        <div style={{ fontSize: "8px", fontWeight: 700, color: "white", lineHeight: 1.4 }}>Avis Google = ticket</div>
       </div>
     </div>
   );
@@ -694,11 +690,11 @@ export default function FonctionnalitesPage() {
         reverse
         badge="Gamification + avis Google inclus"
         title="Jouez. Gagnez. Revenez."
-        body="Roue de la fortune ou loterie — vos clients tentent leur chance à chaque visite. Pour récupérer leur lot, ils laissent un avis Google. Résultat : 100% des joueurs laissent un avis, automatiquement."
+        body="Roue de la fortune ou tirage au sort mensuel — deux mécaniques, un seul objectif. La roue offre un lot immédiat en échange d'un avis Google. La loterie inscrit chaque client qui laisse un avis dans un tirage mensuel : 1 chance sur X de remporter un mois de produit offert."
         checks={[
-          "Roue de la fortune + loterie, au choix",
-          "Gagner un lot = laisser un avis Google",
-          "Lots 100% personnalisables (soin, réduction…)",
+          "Roue : lot immédiat contre avis Google",
+          "Loterie : avis Google = 1 ticket dans l'urne",
+          "1 gagnant par mois, lot 100% personnalisable",
           "100% des joueurs laissent un avis",
         ]}
         visual={
@@ -710,7 +706,7 @@ export default function FonctionnalitesPage() {
             <div style={{ fontSize: "20px", color: "#C8E6DB", fontWeight: 700, alignSelf: "center" }}>+</div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
               <LotteryMiniCard />
-              <span style={{ fontSize: "11px", color: "#5C5C5C", fontWeight: 600 }}>Loterie à gratter</span>
+              <span style={{ fontSize: "11px", color: "#5C5C5C", fontWeight: 600 }}>Tirage au sort mensuel</span>
             </div>
           </div>
         }
