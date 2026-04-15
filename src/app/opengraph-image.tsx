@@ -75,31 +75,31 @@ export default function OGImage() {
             zIndex: 1,
           }}
         >
-          {/* Stamp icon */}
+          {/* Stamp icon — 100px */}
           <div
             style={{
-              width: 88,
-              height: 88,
+              width: 100,
+              height: 100,
               border: "3px solid white",
-              borderRadius: 18,
+              borderRadius: 20,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 9,
+              gap: 10,
             }}
           >
             {[[true,true,true],[true,true,true],[true,false,false]].map((row, ri) => (
-              <div key={ri} style={{ display: "flex", gap: 9 }}>
+              <div key={ri} style={{ display: "flex", gap: 10 }}>
                 {row.map((filled, ci) => (
                   <div
                     key={ci}
                     style={{
-                      width: 14,
-                      height: 14,
+                      width: 16,
+                      height: 16,
                       borderRadius: "50%",
                       background: filled ? "white" : "transparent",
-                      border: filled ? "none" : "2px solid rgba(255,255,255,0.6)",
+                      border: filled ? "none" : "2px solid rgba(255,255,255,0.65)",
                     }}
                   />
                 ))}
@@ -107,10 +107,10 @@ export default function OGImage() {
             ))}
           </div>
 
-          {/* Wordmark */}
+          {/* Wordmark — 56px */}
           <div
             style={{
-              fontSize: 72,
+              fontSize: 56,
               fontWeight: 800,
               color: "white",
               letterSpacing: "-0.04em",
@@ -121,12 +121,12 @@ export default function OGImage() {
           </div>
         </div>
 
-        {/* Bottom tagline */}
+        {/* Bottom tagline — 22px */}
         <div
           style={{
             position: "absolute",
             bottom: 56,
-            fontSize: 24,
+            fontSize: 22,
             color: "rgba(255,255,255,0.75)",
             letterSpacing: "0.02em",
           }}

@@ -14,7 +14,7 @@ interface BrandPatternProps {
 export default function BrandPattern({
   opacity = 0.04,
   color = "#1d9e75",
-  size = 80,
+  size = 72,
 }: BrandPatternProps) {
   // Stamp icon path data (scaled to 16px, centered in the pattern cell)
   // Stamp = rounded rect + 3x3 circle grid (7 filled, 2 empty)

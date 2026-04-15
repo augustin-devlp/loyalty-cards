@@ -387,6 +387,84 @@ interface SectionProps {
   textChildren?: React.ReactNode;
 }
 
+function CalendarMockup() {
+  const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+  const cells = [
+    { d: 1 }, { d: 2 }, { d: 3 }, { d: 4 }, { d: 5 }, { d: 6 }, { d: 7 },
+    { d: 8 }, { d: 9 }, { d: 10, booked: true, label: "14h00" }, { d: 11 }, { d: 12, booked: true, label: "11h30" }, { d: 13 }, { d: 14 },
+    { d: 15 }, { d: 16, today: true }, { d: 17, booked: true, label: "10h00" }, { d: 18 }, { d: 19 }, { d: 20 }, { d: 21 },
+    { d: 22 }, { d: 23 }, { d: 24 }, { d: 25, booked: true, label: "16h30" }, { d: 26 }, { d: 27 }, { d: 28 },
+  ];
+
+  return (
+    <div style={{
+      background: "white",
+      borderRadius: 20,
+      boxShadow: "0 8px 40px rgba(0,0,0,0.10)",
+      padding: "24px",
+      width: 340,
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+    }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div>
+          <div style={{ fontSize: 13, color: "#5C5C5C", fontWeight: 600 }}>Avril 2025</div>
+          <div style={{ fontSize: 17, color: "#1A1A1A", fontWeight: 700 }}>Réservations</div>
+        </div>
+        <div style={{
+          background: "#1d9e75", color: "white", borderRadius: 10,
+          padding: "8px 14px", fontSize: 13, fontWeight: 700,
+        }}>+ Nouveau RDV</div>
+      </div>
+
+      {/* Day headers */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 6 }}>
+        {days.map(d => (
+          <div key={d} style={{ textAlign: "center", fontSize: 11, color: "#9CA3AF", fontWeight: 600, padding: "4px 0" }}>{d}</div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+        {cells.map(({ d, booked, today, label }) => (
+          <div key={d} style={{
+            textAlign: "center",
+            padding: "6px 2px",
+            borderRadius: 8,
+            background: today ? "#1d9e75" : booked ? "#E8F7F2" : "transparent",
+            position: "relative",
+          }}>
+            <div style={{
+              fontSize: 13,
+              fontWeight: today ? 700 : booked ? 600 : 400,
+              color: today ? "white" : booked ? "#1d9e75" : "#1A1A1A",
+            }}>{d}</div>
+            {booked && label && (
+              <div style={{ fontSize: 9, color: "#1d9e75", fontWeight: 700, marginTop: 1 }}>{label}</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        marginTop: 20,
+        padding: "12px 16px",
+        background: "#E8F7F2",
+        borderRadius: 12,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}>
+        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#1d9e75", flexShrink: 0 }} />
+        <div style={{ fontSize: 13, color: "#1A1A1A", fontWeight: 500 }}>
+          SMS de rappel envoyé <span style={{ color: "#1d9e75", fontWeight: 700 }}>automatiquement</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SplitSection({
   bg,
   reverse,
@@ -638,19 +716,7 @@ export default function FonctionnalitesPage() {
           "Rappels SMS automatiques J-1 et H-2",
           "Annulation en 1 clic côté client",
         ]}
-        visual={
-          <img
-            src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=500&q=80"
-            alt="Système de réservation en ligne depuis smartphone"
-            loading="lazy"
-            style={{
-              borderRadius: 16,
-              width: "100%",
-              maxWidth: 440,
-              display: "block",
-            }}
-          />
-        }
+        visual={<CalendarMockup />}
       />
 
       {/* ── Section 8 — Les commandes ── */}
