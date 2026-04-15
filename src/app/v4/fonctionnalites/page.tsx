@@ -601,14 +601,19 @@ export default function FonctionnalitesPage() {
         ]}
         visual={
           <img
-            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=500&q=80"
-            alt="Site vitrine professionnel sur ordinateur"
+            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=85"
+            alt="MacBook avec tableau de bord analytics — site vitrine professionnel"
             loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
             style={{
               borderRadius: 16,
               width: "100%",
               maxWidth: 440,
               display: "block",
+              aspectRatio: "3/2",
+              objectFit: "cover",
             }}
           />
         }
@@ -642,14 +647,19 @@ export default function FonctionnalitesPage() {
         ]}
         visual={
           <img
-            src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?auto=format&fit=crop&w=500&q=80"
-            alt="Plaquette NFC en bois gravée au laser"
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=85"
+            alt="Commerçant et client au comptoir — interaction avec la plaquette NFC"
             loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
             style={{
               borderRadius: 16,
               width: "100%",
               maxWidth: 440,
               display: "block",
+              aspectRatio: "3/2",
+              objectFit: "cover",
             }}
           />
         }
@@ -733,14 +743,19 @@ export default function FonctionnalitesPage() {
         ]}
         visual={
           <img
-            src="https://images.unsplash.com/photo-1520201163981-8cc95007dd2a?auto=format&fit=crop&w=500&q=80"
-            alt="Commande click and collect depuis téléphone"
+            src="https://images.unsplash.com/photo-1601972602237-8c79241e468b?auto=format&fit=crop&w=600&q=85"
+            alt="Application de commande en ligne sur téléphone — click & collect"
             loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
             style={{
               borderRadius: 16,
               width: "100%",
               maxWidth: 440,
               display: "block",
+              aspectRatio: "3/2",
+              objectFit: "cover",
             }}
           />
         }
@@ -759,14 +774,19 @@ export default function FonctionnalitesPage() {
         ]}
         visual={
           <img
-            src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=500&q=80"
-            alt="Menu QR code sur table de restaurant"
+            src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=85"
+            alt="Table de restaurant — menu QR code dynamique Stampify"
             loading="lazy"
+            decoding="async"
+            width={600}
+            height={400}
             style={{
               borderRadius: 16,
               width: "100%",
               maxWidth: 440,
               display: "block",
+              aspectRatio: "3/2",
+              objectFit: "cover",
             }}
           />
         }

@@ -8,16 +8,19 @@ const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
 const IMG = {
-  heroCtx: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80",
-  nfcUsage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80",
-  plaque: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80",
+  // Comptoir boutique — montre l'usage réel Stampify en magasin
+  heroCtx: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85",
+  // Main qui tape téléphone sur terminal NFC
+  nfcUsage: "https://images.unsplash.com/photo-1556742111-a301076d9d18?auto=format&fit=crop&w=800&q=80",
+  // Carte de fidélité digitale — paiement premium
+  plaque: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80",
 };
 
 const DEMOS = [
   { name: "Spa Essence", city: "Genève", cat: "Spa", badge: "⭐ Le plus demandé", img: "photo-1540555700478-4be289fbecef", href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html" },
   { name: "Café Lumière", city: "Genève", cat: "Café", img: "photo-1509042239860-f550ce710b93", href: "#" },
   { name: "Bistrot du Coin", city: "Neuchâtel", cat: "Restaurant", img: "photo-1414235077428-338989a2e8c0", href: "#" },
-  { name: "Boulangerie Martin", city: "Lausanne", cat: "Boulangerie", img: "photo-1516450360452-9312f5e86fc7", href: "#" },
+  { name: "Boulangerie Martin", city: "Lausanne", cat: "Boulangerie", img: "photo-1507003211169-0a1dd7228f2d", href: "#" },
   { name: "Black Scissors", city: "Fribourg", cat: "Barbershop", img: "photo-1503951914875-452162b0f3f1", href: "#" },
   { name: "Nail Studio Rose", city: "Lausanne", cat: "Manucure", img: "photo-1604654894610-df63bc536371", href: "#" },
 ];
@@ -346,8 +349,12 @@ export default function V4Page() {
           <div className="fade-up" style={{ marginTop: "56px", animationDelay: "0.7s" }}>
             <img
               src={IMG.heroCtx}
-              alt="Utilisation réelle Stampify — plaquette NFC sur comptoir de boulangerie"
-              style={{ maxWidth: "800px", width: "100%", borderRadius: "20px", boxShadow: "0 32px 80px rgba(0,0,0,0.10)", margin: "0 auto" }}
+              alt="Stampify en action — client et commerçant au comptoir"
+              loading="eager"
+              decoding="async"
+              width={900}
+              height={600}
+              style={{ maxWidth: "800px", width: "100%", borderRadius: "20px", boxShadow: "0 32px 80px rgba(0,0,0,0.10)", margin: "0 auto", display: "block", objectFit: "cover", aspectRatio: "3/2" }}
             />
             <p style={{ fontSize: "13px", color: "#5C5C5C", textAlign: "center", marginTop: "12px" }}>
               Exemple d&apos;utilisation réelle — Stampify
@@ -571,9 +578,12 @@ export default function V4Page() {
             <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%" }}>
               <img
                 src={IMG.plaque}
-                alt="Plaquette NFC en bois gravée Stampify — produit premium"
+                alt="Paiement digital par carte — expérience client fluide"
                 loading="lazy"
-                style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)" }}
+                decoding="async"
+                width={800}
+                height={533}
+                style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)", aspectRatio: "3/2", objectFit: "cover", display: "block" }}
               />
               <p style={{ fontSize: "11px", color: "#5C5C5C", marginTop: "8px" }}>Photo : Unsplash</p>
             </div>
@@ -607,9 +617,12 @@ export default function V4Page() {
             <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%" }}>
               <img
                 src={IMG.nfcUsage}
-                alt="Commerçante utilisant Stampify sur smartphone — résultats réels"
+                alt="Client qui tape son téléphone sur le terminal NFC Stampify"
                 loading="lazy"
-                style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)" }}
+                decoding="async"
+                width={800}
+                height={533}
+                style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)", aspectRatio: "3/2", objectFit: "cover", display: "block" }}
               />
               <p style={{ fontSize: "11px", color: "#5C5C5C", marginTop: "8px" }}>Photo : Unsplash</p>
             </div>
