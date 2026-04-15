@@ -51,7 +51,7 @@ const DEMOS: Demo[] = [
     name: "Boulangerie Martin",
     city: "Lausanne",
     cat: "Boulangerie",
-    img: "photo-1516450360452-9312f5e86fc7",
+    img: "photo-1509440159596-0249088772ff",
     href: "#",
   },
   {

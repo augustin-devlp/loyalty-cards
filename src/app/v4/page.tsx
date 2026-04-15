@@ -110,32 +110,74 @@ function HeroStepAnimation({ step }: { step: number }) {
       <div style={{ height: "260px", position: "relative" }}>
 
         {/* ── Step 0 — NFC tap ── */}
-        <div style={{ ...panel(0), gap: "28px" }}>
-          <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: "88px", height: "56px", borderRadius: "12px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px", position: "relative", zIndex: 2 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                <circle cx="12" cy="12" r="1.8" fill="white"/>
-              </svg>
-              <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>Spa Essence</span>
+        <div style={{ ...panel(0), gap: "24px", alignItems: "flex-end", paddingBottom: "20px" }}>
+          {/* Wooden NFC tag on counter */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+            <div style={{ position: "relative" }}>
+              <div style={{
+                width: "84px", height: "54px", borderRadius: "10px",
+                background: "linear-gradient(160deg, #A0714F 0%, #7A5230 50%, #9B6B40 100%)",
+                boxShadow: "0 6px 20px rgba(122,82,48,0.4), inset 0 1px 0 rgba(255,255,255,0.12)",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px",
+                position: "relative", overflow: "hidden", zIndex: 2,
+              }}>
+                {/* Wood grain */}
+                {[12,26,40,52].map(t => (
+                  <div key={t} style={{ position: "absolute", left: "-10%", right: "-10%", top: `${t}%`, height: "1px", background: "rgba(0,0,0,0.12)", transform: "rotate(-1deg)" }} />
+                ))}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ position: "relative", zIndex: 1 }}>
+                  <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <circle cx="12" cy="12" r="1.8" fill="white"/>
+                </svg>
+                <span style={{ fontSize: "7px", color: "rgba(255,255,255,0.95)", fontWeight: 700, letterSpacing: "0.06em", position: "relative", zIndex: 1 }}>STAMPIFY</span>
+              </div>
+              {/* Ripple rings from NFC tag */}
+              {[0,1,2].map(i => (
+                <div key={i} style={{ position: "absolute", inset: "-8px", borderRadius: "18px", border: "1.5px solid rgba(29,158,117,0.45)", animation: `rippleAnim 2s ${i*0.6}s ease-out infinite` }} />
+              ))}
             </div>
+            {/* Counter surface */}
+            <div style={{ width: "120px", height: "6px", borderRadius: "3px", background: "linear-gradient(180deg, #D4B896 0%, #C4A07A 100%)", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
+            <div style={{ fontSize: "9px", color: "#5C5C5C", fontWeight: 500 }}>Plaquette NFC gravée</div>
+          </div>
+
+          {/* Signal arcs */}
+          <div style={{ display: "flex", gap: "3px", alignItems: "center", paddingBottom: "28px" }}>
             {[0,1,2].map(i => (
-              <div key={i} style={{ position: "absolute", width: "88px", height: "56px", borderRadius: "50%", border: "2px solid rgba(29,158,117,0.5)", animation: `rippleAnim 1.8s ${i*0.55}s ease-out infinite` }} />
+              <svg key={i} width="11" height="20" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
+                <path d="M2 2 Q7 10 2 18" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+              </svg>
             ))}
           </div>
-          <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
-            {[0,1,2].map(i => (
-              <svg key={i} width="12" height="22" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
-                <path d="M2 2 Q7 11 2 20" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-              </svg>
-            ))}
-          </div>
-          <div style={{ width: "52px", height: "90px", borderRadius: "12px", background: "#1A1A1A", padding: "4px", animation: "phoneApproach 2s ease-in-out infinite alternate", flexShrink: 0 }}>
-            <div style={{ borderRadius: "8px", background: "#FBF8F3", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ width: "26px", height: "16px", borderRadius: "3px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
+
+          {/* Realistic phone approaching */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", animation: "phoneApproach 2.2s ease-in-out infinite alternate" }}>
+            <div style={{
+              width: "58px", height: "112px", borderRadius: "16px",
+              background: "linear-gradient(160deg, #2C2C2E, #1C1C1E)",
+              boxShadow: "0 0 0 1.5px #3A3A3C, inset 0 0 0 1px rgba(255,255,255,0.07), 0 16px 40px rgba(0,0,0,0.35)",
+              position: "relative", flexShrink: 0,
+            }}>
+              {/* Dynamic Island */}
+              <div style={{ position: "absolute", top: "8px", left: "50%", transform: "translateX(-50%)", width: "20px", height: "6px", borderRadius: "3px", background: "#000" }} />
+              {/* Screen */}
+              <div style={{ position: "absolute", top: "20px", bottom: "10px", left: "3px", right: "3px", borderRadius: "13px", background: "#FBF8F3", overflow: "hidden", padding: "7px 6px", display: "flex", flexDirection: "column", gap: "5px" }}>
+                <div style={{ height: "22px", borderRadius: "5px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
+                <div style={{ fontSize: "5.5px", color: "#5C5C5C", textAlign: "center", fontWeight: 600 }}>Spa Essence</div>
+                <div style={{ display: "flex", gap: "3px", justifyContent: "center", flexWrap: "wrap" }}>
+                  {Array.from({length:6},(_,i) => <div key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i<4?"#1d9e75":"rgba(29,158,117,0.22)" }} />)}
+                </div>
+                <div style={{ fontSize: "5px", color: "#1d9e75", textAlign: "center" }}>4 / 10 tampons</div>
+              </div>
+              {/* Home bar */}
+              <div style={{ position: "absolute", bottom: "3px", left: "50%", transform: "translateX(-50%)", width: "22px", height: "3px", borderRadius: "2px", background: "rgba(255,255,255,0.25)" }} />
+              {/* Side button */}
+              <div style={{ position: "absolute", right: "-2px", top: "32px", width: "2px", height: "18px", borderRadius: "1px", background: "#3A3A3C" }} />
             </div>
+            {/* Hand/wrist hint */}
+            <div style={{ width: "46px", height: "14px", borderRadius: "8px 8px 0 0", background: "linear-gradient(180deg, #D4A882, #C49070)", opacity: 0.7 }} />
           </div>
         </div>
 
@@ -330,7 +372,7 @@ function LoyaltyCardAnimated() {
 /* ─── Wheel SVG ─── */
 function WheelSVG({ size = 300 }: { size?: number }) {
   const segs = [
-    { d: "M150,150 L150,20 A130,130,0,0,1,262.58,85 Z", fill: "#1d9e75", tc: "white", label: "Café offert", tx: 192.5, ty: 76 },
+    { d: "M150,150 L150,20 A130,130,0,0,1,262.58,85 Z", fill: "#1d9e75", tc: "white", label: "Avis Google", tx: 192.5, ty: 76 },
     { d: "M150,150 L262.58,85 A130,130,0,0,1,262.58,215 Z", fill: "#F2EFE9", tc: "#1A1A1A", label: "−10%", tx: 234, ty: 150 },
     { d: "M150,150 L262.58,215 A130,130,0,0,1,150,280 Z", fill: "#1A1A1A", tc: "white", label: "Tampon ×2", tx: 192.5, ty: 224 },
     { d: "M150,150 L150,280 A130,130,0,0,1,37.42,215 Z", fill: "#E8F7F2", tc: "#0D7A5A", label: "−20%", tx: 108, ty: 224 },
@@ -338,16 +380,22 @@ function WheelSVG({ size = 300 }: { size?: number }) {
     { d: "M150,150 L37.42,85 A130,130,0,0,1,150,20 Z", fill: "#FFFFFF", tc: "#1A1A1A", label: "−5%", tx: 108, ty: 76 },
   ];
   return (
-    <div className="wheel-wrap" style={{ width: `${size}px`, height: `${size}px`, margin: "0 auto", filter: "drop-shadow(0 16px 48px rgba(0,0,0,0.08))" }}>
-      <svg viewBox="0 0 300 300" width={size} height={size}>
-        {segs.map((seg, i) => (
-          <g key={i}>
-            <path d={seg.d} fill={seg.fill} stroke="#F2EFE9" strokeWidth="2" />
-            <text x={seg.tx} y={seg.ty} fill={seg.tc} fontSize="8.5" fontWeight="600" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">{seg.label}</text>
-          </g>
-        ))}
-        <circle cx="150" cy="150" r="30" fill="white" stroke="#F2EFE9" strokeWidth="2" />
-        <text x="150" y="150" fill="#1d9e75" fontSize="15" fontWeight="800" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">S</text>
+    <div style={{ position: "relative", width: `${size}px`, height: `${size}px`, margin: "0 auto" }}>
+      {/* Spinning wheel only — the pointer is outside */}
+      <div className="wheel-wrap" style={{ width: `${size}px`, height: `${size}px`, filter: "drop-shadow(0 16px 48px rgba(0,0,0,0.08))" }}>
+        <svg viewBox="0 0 300 300" width={size} height={size}>
+          {segs.map((seg, i) => (
+            <g key={i}>
+              <path d={seg.d} fill={seg.fill} stroke="#F2EFE9" strokeWidth="2" />
+              <text x={seg.tx} y={seg.ty} fill={seg.tc} fontSize="8.5" fontWeight="600" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">{seg.label}</text>
+            </g>
+          ))}
+          <circle cx="150" cy="150" r="30" fill="white" stroke="#F2EFE9" strokeWidth="2" />
+          <text x="150" y="150" fill="#1d9e75" fontSize="15" fontWeight="800" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">S</text>
+        </svg>
+      </div>
+      {/* Fixed pointer — never spins */}
+      <svg style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }} viewBox="0 0 300 300" width={size} height={size}>
         <polygon points="150,2 144,18 156,18" fill="#1A1A1A" />
       </svg>
     </div>
@@ -718,16 +766,20 @@ export default function V4Page() {
                     stampify.ch/lessence-spa
                   </div>
                 </div>
-                {/* Spa photo */}
-                <img
-                  src={`https://images.unsplash.com/${DEMOS[0].img}?auto=format&fit=crop&w=500&q=80`}
-                  alt="Démo Spa Essence — site Stampify"
-                  loading="lazy"
-                  decoding="async"
-                  width={500}
-                  height={310}
-                  style={{ width: "100%", display: "block", objectFit: "cover", aspectRatio: "16/10" }}
-                />
+                {/* Live iframe preview of the actual spa demo */}
+                <div style={{ position: "relative", overflow: "hidden", height: "290px" }}>
+                  <iframe
+                    src="https://loyalty-cards-rho.vercel.app/lessence-spa.html"
+                    title="Démo Spa Essence — Stampify"
+                    loading="lazy"
+                    style={{
+                      position: "absolute", top: 0, left: 0,
+                      width: "260%", height: "775px",
+                      transform: "scale(0.385)", transformOrigin: "top left",
+                      border: "none", pointerEvents: "none",
+                    }}
+                  />
+                </div>
               </div>
             </div>
             {/* Right — text + CTA */}
@@ -919,15 +971,30 @@ export default function V4Page() {
               <WheelSVG size={280} />
             </div>
             <div className="fade-up" style={{ flex: 1 }}>
-              <div style={badge()}>Gamification incluse</div>
+              <div style={badge()}>Gamification + avis Google inclus</div>
               <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>
-                Vos clients jouent.<br />Ils reviennent.
+                Vos clients jouent,<br />laissent un avis,<br />reviennent.
               </h2>
-              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>
-                Activez la roue de la fortune sur la carte fidélité. À chaque visite, vos clients ont une chance de gagner un lot. Taux de retour augmenté de 40%+.
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "20px" }}>
+                La roue de la fortune et la loterie offrent un produit à votre client — en échange d&apos;un avis Google. Vos avis augmentent automatiquement, votre réputation aussi.
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "32px" }}>
-                {["Lots 100% personnalisables", "Fréquence configurable depuis le dashboard", "Activable/désactivable en 1 clic"].map((item, i) => (
+
+              {/* Google reviews stats */}
+              <div style={{ background: "#F2EFE9", borderRadius: "16px", padding: "16px 20px", marginBottom: "24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                {[
+                  { stat: "3×", text: "plus de visites pour les commerces avec 50+ avis Google" },
+                  { stat: "88%", text: "des clients consultent les avis Google avant de visiter" },
+                  { stat: "8/10", text: "clients qui jouent laissent un avis après avoir gagné" },
+                ].map((s, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <span style={{ fontSize: "20px", fontWeight: 800, color: "#1d9e75", minWidth: "40px", flexShrink: 0 }}>{s.stat}</span>
+                    <span style={{ fontSize: "14px", color: "#5C5C5C", lineHeight: 1.4 }}>{s.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "28px" }}>
+                {["Lots 100% personnalisables (produit, réduction, café offert…)", "Échange automatique : lot contre avis Google en 1 clic", "Fréquence et probabilité configurables depuis le dashboard", "Roue + loterie — deux mécaniques, une seule interface"].map((item, i) => (
                   <div key={i} style={checkItem}><span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span> {item}</div>
                 ))}
               </div>
