@@ -1,235 +1,890 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import BrandPattern from "../components/BrandPattern";
 
-const WA_OBTENIR =
-  "https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
-const WA_CONTACT =
-  "https://wa.me/41791342997?text=Bonjour%2C%20j%27ai%20une%20question%20pour%20l%27%C3%A9quipe%20Stampify.";
+const WA_MAIN =
+  "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
-export default function Home() {
-  const [step, setStep] = useState(0);
-  const [spinKey, setSpinKey] = useState(0);
-  const [typeKey, setTypeKey] = useState(0);
+const IMG = {
+  heroCtx: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=900&q=85",
+  nfcUsage: "https://images.unsplash.com/photo-1556742111-a301076d9d18?auto=format&fit=crop&w=800&q=80",
+  plaque: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80",
+};
 
-  useEffect(() => {
-    const t = setInterval(() => {
-      setStep((s) => {
-        const next = (s + 1) % 4;
-        if (next === 2) setSpinKey((k) => k + 1);
-        if (next === 3) setTypeKey((k) => k + 1);
-        return next;
-      });
-    }, 3000);
-    return () => clearInterval(t);
-  }, []);
+const DEMOS = [
+  { name: "Spa Essence", city: "Genève", cat: "Spa", badge: "⭐ Le plus demandé", img: "photo-1540555700478-4be289fbecef", href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html" },
+  { name: "Café Lumière", city: "Genève", cat: "Café", img: "photo-1509042239860-f550ce710b93", href: "#" },
+  { name: "Bistrot du Coin", city: "Neuchâtel", cat: "Restaurant", img: "photo-1414235077428-338989a2e8c0", href: "#" },
+  { name: "Boulangerie Martin", city: "Lausanne", cat: "Boulangerie", img: "photo-1507003211169-0a1dd7228f2d", href: "#" },
+  { name: "Black Scissors", city: "Fribourg", cat: "Barbershop", img: "photo-1503951914875-452162b0f3f1", href: "#" },
+  { name: "Nail Studio Rose", city: "Lausanne", cat: "Manucure", img: "photo-1604654894610-df63bc536371", href: "#" },
+];
 
-  const blogPreviews = [
-    {
-      slug: "carte-fidelite-digitale-boulangerie-suisse",
-      category: "Fidélisation",
-      title:
-        "Carte de fidélité digitale pour boulangerie en Suisse : le guide complet 2026",
-    },
-    {
-      slug: "site-web-cafe-lausanne-geneve",
-      category: "Site web",
-      title:
-        "Créer un site web pour son café à Lausanne ou Genève : prix et options 2026",
-    },
-    {
-      slug: "fideliser-clients-restaurant-suisse-romande",
-      category: "Restaurant",
-      title:
-        "Comment fidéliser les clients de son restaurant en Suisse romande",
-    },
+const LOGOS = [
+  "Café Lumière · Genève", "Boulangerie Martin · Lausanne", "Black Scissors · Fribourg",
+  "Spa Essence · Genève", "Nail Studio Rose · Lausanne", "Bistrot du Coin · Neuchâtel",
+  "Le Petit Torréfacteur · Vevey", "Institut Belle Peau · Sion",
+];
+
+function StampMotif({ style }: { style?: React.CSSProperties }) {
+  return (
+    <div style={{ position: "absolute", pointerEvents: "none", zIndex: 0, ...style }}>
+      <div style={{ width: "200px", height: "200px", borderRadius: "50%", border: "1.5px solid #1d9e75", opacity: 0.04 }} />
+      <div style={{ position: "absolute", top: "20px", left: "20px", right: "20px", bottom: "20px", borderRadius: "50%", border: "1px solid #1d9e75", opacity: 0.03 }} />
+    </div>
+  );
+}
+
+function WordTitle({ text, style }: { text: string; style?: React.CSSProperties }) {
+  let idx = 0;
+  return (
+    <h1 style={style}>
+      {text.split("\n").map((line, li) => (
+        <span key={li} style={{ display: "block" }}>
+          {line.split(" ").map((word) => {
+            const i = idx++;
+            return (
+              <span key={i} style={{
+                display: "inline-block", marginRight: "0.25em",
+                opacity: 0, animation: `wordIn 0.5s ease forwards`,
+                animationDelay: `${i * 0.06}s`,
+              }}>{word}</span>
+            );
+          })}
+        </span>
+      ))}
+    </h1>
+  );
+}
+
+function SpaDropIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13z"
+        fill={filled ? "rgba(255,255,255,0.9)" : "none"}
+        stroke={filled ? "none" : "rgba(255,255,255,0.3)"}
+        strokeWidth="1.6" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function CoffeeCupIcon({ filled }: { filled: boolean }) {
+  const clr = filled ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.28)";
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path d="M6 7h12l-2 12H8L6 7z" fill={filled ? "rgba(255,255,255,0.15)" : "none"} stroke={clr} strokeWidth="1.6" strokeLinejoin="round"/>
+      <path d="M18 9h2a2 2 0 0 1 0 4h-2" stroke={clr} strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M9 7V5M13 7V5" stroke={clr} strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function HeroStepAnimation({ step }: { step: number }) {
+  const visits = useRef([0, 0, 0]);
+  const prev = useRef(-1);
+  if (prev.current !== step) { visits.current[step]++; prev.current = step; }
+  const v = visits.current;
+
+  const labels = [
+    "Le client approche son téléphone — le tampon s'ajoute seul",
+    "La carte fidélité se remplit visite après visite",
+    "Carte complète — une notification push envoyée automatiquement",
   ];
 
+  const panel = (s: number, extra?: React.CSSProperties): React.CSSProperties => ({
+    position: "absolute", inset: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    opacity: s === step ? 1 : 0,
+    transform: s === step ? "translateY(0)" : "translateY(10px)",
+    transition: "opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1)",
+    pointerEvents: "none",
+    ...extra,
+  });
+
   return (
-    <div style={{ background: "#F5F0E8", fontFamily: "'DM Sans', sans-serif" }}>
-      <style>{`
-        @keyframes slideInPhone { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(10px); opacity: 1; } }
-        @keyframes rippleAnim { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
-        @keyframes stampBounce { 0% { transform: scale(0); } 60% { transform: scale(1.3); } 100% { transform: scale(1); } }
-        @keyframes rewardPop { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 60% { transform: scale(1.2) rotate(3deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-        @keyframes typewriterAnim { from { width: 0; } to { width: 100%; } }
-        @keyframes cursorBlink { 0%,100% { border-right-color: white; } 50% { border-right-color: transparent; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes floatUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-      `}</style>
+    <div style={{ position: "relative", width: "100%", maxWidth: "420px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "20px" }}>
+        {[0,1,2].map(i => (
+          <div key={i} style={{
+            height: "6px", borderRadius: "3px",
+            width: i === step ? "22px" : "6px",
+            background: i === step ? "#1d9e75" : "#C8E6DB",
+            transition: "width 0.4s ease, background 0.4s ease",
+          }} />
+        ))}
+      </div>
 
-      <Navbar />
-
-      {/* ══ 1. HERO ══ */}
-      <section style={{ paddingTop: 128, paddingBottom: 80, paddingLeft: 24, paddingRight: 24 }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div
-            style={{ display: "grid", gridTemplateColumns: "55% 45%", gap: 64, alignItems: "center" }}
-            className="max-[900px]:!grid-cols-1"
-          >
-            {/* Left */}
-            <div>
-              <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
-                ⚡ Livraison en 48h garantie
+      <div style={{ height: "320px", position: "relative" }}>
+        <div style={{ ...panel(0), gap: "24px", alignItems: "flex-end", paddingBottom: "20px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+            <div style={{ position: "relative" }}>
+              <div style={{
+                width: "84px", height: "54px", borderRadius: "10px",
+                background: "linear-gradient(160deg, #A0714F 0%, #7A5230 50%, #9B6B40 100%)",
+                boxShadow: "0 6px 20px rgba(122,82,48,0.4), inset 0 1px 0 rgba(255,255,255,0.12)",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px",
+                position: "relative", overflow: "hidden", zIndex: 2,
+              }}>
+                {[12,26,40,52].map(t => (
+                  <div key={t} style={{ position: "absolute", left: "-10%", right: "-10%", top: `${t}%`, height: "1px", background: "rgba(0,0,0,0.12)", transform: "rotate(-1deg)" }} />
+                ))}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ position: "relative", zIndex: 1 }}>
+                  <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <circle cx="12" cy="12" r="1.8" fill="white"/>
+                </svg>
+                <span style={{ fontSize: "7px", color: "rgba(255,255,255,0.95)", fontWeight: 700, letterSpacing: "0.06em", position: "relative", zIndex: 1 }}>STAMPIFY</span>
               </div>
-              <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(42px, 5vw, 68px)", fontWeight: 600, lineHeight: 1.05, color: "#1A1410", margin: "0 0 16px 0", letterSpacing: "-0.02em" }}>
-                Votre commerce mérite <em style={{ fontStyle: "italic" }}>mieux</em> qu&apos;une carte papier.
-              </h1>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: "#6B6259", lineHeight: 1.65, maxWidth: 480, margin: "0 0 32px 0" }}>
-                Site vitrine + carte fidélité digitale + plaquette NFC gravée. 990 CHF, livraison 48h.
-              </p>
-              <Link
-                href="/subscribe"
-                style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "16px 32px", borderRadius: 10, fontSize: 16, fontWeight: 600, textDecoration: "none", marginBottom: 20, transition: "background 0.2s, transform 0.15s, box-shadow 0.15s" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#2D2390"; (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 24px rgba(61,49,176,0.3)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "#3D31B0"; (e.currentTarget as HTMLAnchorElement).style.transform = "none"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
-              >
-                Obtenir mon site →
-              </Link>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 20, marginTop: 8 }}>
-                {["✓ 48h chrono", "✓ 990 CHF tout inclus", "✓ Zéro abonnement", "✓ Plaquette NFC gravée"].map((f) => (
-                  <span key={f} style={{ fontSize: 14, color: "#6B6259" }}>{f}</span>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ position: "absolute", inset: "-8px", borderRadius: "18px", border: "1.5px solid rgba(29,158,117,0.45)", animation: `rippleAnim 2s ${i*0.6}s ease-out infinite` }} />
+              ))}
+            </div>
+            <div style={{ width: "120px", height: "6px", borderRadius: "3px", background: "linear-gradient(180deg, #D4B896 0%, #C4A07A 100%)", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
+            <div style={{ fontSize: "9px", color: "#5C5C5C", fontWeight: 500 }}>Plaquette NFC gravée</div>
+          </div>
+          <div style={{ display: "flex", gap: "3px", alignItems: "center", paddingBottom: "28px" }}>
+            {[0,1,2].map(i => (
+              <svg key={i} width="11" height="20" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
+                <path d="M2 2 Q7 10 2 18" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+              </svg>
+            ))}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", animation: "phoneApproach 2.2s ease-in-out infinite alternate" }}>
+            <div style={{
+              width: "58px", height: "112px", borderRadius: "16px",
+              background: "linear-gradient(160deg, #2C2C2E, #1C1C1E)",
+              boxShadow: "0 0 0 1.5px #3A3A3C, inset 0 0 0 1px rgba(255,255,255,0.07), 0 16px 40px rgba(0,0,0,0.35)",
+              position: "relative", flexShrink: 0,
+            }}>
+              <div style={{ position: "absolute", top: "8px", left: "50%", transform: "translateX(-50%)", width: "20px", height: "6px", borderRadius: "3px", background: "#000" }} />
+              <div style={{ position: "absolute", top: "20px", bottom: "10px", left: "3px", right: "3px", borderRadius: "13px", background: "#FBF8F3", overflow: "hidden", padding: "7px 6px", display: "flex", flexDirection: "column", gap: "5px" }}>
+                <div style={{ height: "22px", borderRadius: "5px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
+                <div style={{ fontSize: "5.5px", color: "#5C5C5C", textAlign: "center", fontWeight: 600 }}>Spa Essence</div>
+                <div style={{ display: "flex", gap: "3px", justifyContent: "center", flexWrap: "wrap" }}>
+                  {Array.from({length:6},(_,i) => <div key={i} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i<4?"#1d9e75":"rgba(29,158,117,0.22)" }} />)}
+                </div>
+                <div style={{ fontSize: "5px", color: "#1d9e75", textAlign: "center" }}>4 / 10 tampons</div>
+              </div>
+              <div style={{ position: "absolute", bottom: "3px", left: "50%", transform: "translateX(-50%)", width: "22px", height: "3px", borderRadius: "2px", background: "rgba(255,255,255,0.25)" }} />
+              <div style={{ position: "absolute", right: "-2px", top: "32px", width: "2px", height: "18px", borderRadius: "1px", background: "#3A3A3C" }} />
+            </div>
+            <div style={{ width: "46px", height: "14px", borderRadius: "8px 8px 0 0", background: "linear-gradient(180deg, #D4A882, #C49070)", opacity: 0.7 }} />
+          </div>
+        </div>
+
+        <div style={panel(1)}>
+          <div style={{ width: "100%", maxWidth: "380px", padding: "0 8px" }}>
+            <div style={{
+              background: "linear-gradient(135deg, #1d9e75 0%, #0D7A5A 100%)",
+              borderRadius: "24px", padding: "24px 22px",
+              boxShadow: "0 28px 70px rgba(29,158,117,0.28)",
+            }}>
+              <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.5)", marginBottom: "2px", letterSpacing: "0.08em" }}>STAMPIFY</div>
+              <div style={{ fontSize: "20px", fontWeight: 700, color: "white", marginBottom: "4px" }}>Spa Essence</div>
+              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", marginBottom: "20px" }}>Genève · 1 soin offert à la 10e visite</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gridTemplateRows: "repeat(2, 52px)", gap: "8px", marginBottom: "14px" }}>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div key={i === 7 ? `sp-${v[1]}` : i} style={{
+                    borderRadius: "10px",
+                    background: i < 8 ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)",
+                    border: i >= 8 ? "1.5px solid rgba(255,255,255,0.2)" : "none",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    animation: i === 7 ? "stampBounce 0.8s 0.3s cubic-bezier(0.34,1.56,0.64,1) both" : "none",
+                  }}>
+                    <SpaDropIcon filled={i < 8} />
+                  </div>
                 ))}
               </div>
-            </div>
-
-            {/* Right — 4-step animation */}
-            <div style={{ position: "relative", height: 380 }} className="hidden lg:block">
-              {/* Step 0: NFC tap */}
-              <div style={{ position: "absolute", inset: 0, opacity: step === 0 ? 1 : 0, transition: "opacity 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ width: 200, height: 130, background: "linear-gradient(135deg, #8B6335 0%, #C8960C 50%, #8B6335 100%)", borderRadius: 16, boxShadow: "0 8px 32px rgba(139,99,53,0.3)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, border: "2px solid rgba(255,255,255,0.2)" }}>
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                      <circle cx="20" cy="20" r="8" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="none"/>
-                      <path d="M10 20 Q10 8 20 8 Q30 8 30 20" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                      <path d="M6 20 Q6 4 20 4 Q34 4 34 20" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                    </svg>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.9)", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase" }}>Boulangerie Martin</div>
-                  </div>
-                  <div style={{ position: "absolute", right: -60, animation: step === 0 ? "slideInPhone 0.8s ease-out 0.3s both" : "none", fontSize: 40 }}>📱</div>
-                  <div style={{ position: "absolute", width: 80, height: 80, borderRadius: "50%", border: "3px solid #3D31B0", animation: step === 0 ? "rippleAnim 0.6s ease-out 1.2s both" : "none", pointerEvents: "none" }} />
-                </div>
-                <div style={{ background: "#1A1410", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>Approchez votre téléphone →</div>
-              </div>
-
-              {/* Step 1: Loyalty card */}
-              <div style={{ position: "absolute", inset: 0, opacity: step === 1 ? 1 : 0, transition: "opacity 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ background: "white", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", padding: "24px 28px", width: 280 }}>
-                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 16, fontWeight: 700, color: "#1A1410", marginBottom: 12 }}>Boulangerie Martin</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 12 }}>
-                    {[0,1,2,3,4,5,6,7,8,9].map((i) => (
-                      <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", background: i < 6 ? "#3D31B0" : "#EEF0FC", border: "1px solid #E2D9CC", display: "flex", alignItems: "center", justifyContent: "center", animation: i === 6 && step === 1 ? "stampBounce 0.4s ease-out 0.6s both" : "none" }}>
-                        {i < 6 && <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#6B6259" }}>6 / 10 tampons — encore 4 pour votre café offert</div>
-                </div>
-                <div style={{ background: "#3D31B0", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>✓ Tampon ajouté</div>
-              </div>
-
-              {/* Step 2: Reward unlocked */}
-              <div style={{ position: "absolute", inset: 0, opacity: step === 2 ? 1 : 0, transition: "opacity 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ background: "white", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.12)", padding: "24px 28px", width: 280 }}>
-                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 16, fontWeight: 700, color: "#1A1410", marginBottom: 12 }}>Boulangerie Martin</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 12 }}>
-                    {[0,1,2,3,4,5,6,7,8,9].map((i) => (
-                      <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", background: "#3D31B0", border: "1px solid #3D31B0", display: "flex", alignItems: "center", justifyContent: "center", animation: i === 9 && step === 2 ? "stampBounce 0.4s ease-out 0.4s both" : "none" }}>
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#6B6259", marginBottom: 8 }}>10 / 10 tampons — Récompense débloquée !</div>
-                  <div key={spinKey} style={{ background: "#EEF0FC", border: "1.5px solid #3D31B0", borderRadius: 8, padding: "8px 12px", textAlign: "center", fontSize: 13, fontWeight: 700, color: "#3D31B0", animation: step === 2 ? "rewardPop 0.5s ease-out 0.8s both" : "none", opacity: step === 2 ? undefined : 0 }}>
-                    🎁 Café offert — à récupérer !
-                  </div>
-                </div>
-                <div style={{ background: "#3D31B0", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600 }}>✨ Récompense débloquée</div>
-              </div>
-
-              {/* Step 3: SMS typewriter */}
-              <div style={{ position: "absolute", inset: 0, opacity: step === 3 ? 1 : 0, transition: "opacity 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ background: "#1A1410", borderRadius: 16, padding: "20px 24px", width: 280 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                    <div style={{ width: 24, height: 24, background: "#3D31B0", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="2"/></svg>
-                    </div>
-                    <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>Stampify</span>
-                  </div>
-                  <div
-                    key={typeKey}
-                    style={{ color: "white", fontSize: 14, lineHeight: 1.7, overflow: "hidden", whiteSpace: "nowrap", width: 0, borderRight: "2px solid white", fontFamily: "'DM Sans', sans-serif", animation: "typewriterAnim 2s steps(45) 0.3s forwards, cursorBlink 0.7s step-end infinite" }}
-                  >
-                    🥐 Il vous reste 3 tampons pour votre café offert ! Revenez ce weekend.
-                  </div>
-                </div>
-                <div style={{ background: "#1A1410", color: "white", borderRadius: 20, padding: "6px 14px", fontSize: 12, fontWeight: 600, border: "1px solid rgba(255,255,255,0.2)" }}>📱 SMS envoyé à vos clients</div>
-              </div>
+              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>8 / 10 · encore 2 visites pour votre soin offert</div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ══ STATS BAR ══ */}
-      <section style={{ background: "#1A1410", padding: "56px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto", display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: 32 }}>
-          {[
-            { num: "48h", label: "Livraison garantie" },
-            { num: "990 CHF", label: "Tout inclus" },
-            { num: "100%", label: "Propriétaire du site" },
-            { num: "0 CHF", label: "Abonnement mensuel" },
-          ].map((s, i) => (
-            <div key={i} style={{ textAlign: "center", borderRight: i < 3 ? "1px solid rgba(255,255,255,0.1)" : "none", paddingRight: i < 3 ? 32 : 0, flex: 1, minWidth: 140 }}>
-              <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 4vw, 52px)", fontWeight: 600, color: "white", lineHeight: 1 }}>{s.num}</div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.45)", marginTop: 8 }}>{s.label}</div>
+        <div style={panel(2)}>
+          <div style={{
+            width: "190px", height: "330px", borderRadius: "38px",
+            background: "linear-gradient(160deg, #2C2C2E, #1C1C1E)",
+            boxShadow: "0 0 0 1.5px #3A3A3C, inset 0 0 0 1px rgba(255,255,255,0.07), 0 32px 80px rgba(0,0,0,0.4)",
+            position: "relative", overflow: "hidden", flexShrink: 0,
+          }}>
+            <div style={{ position: "absolute", top: "14px", left: "50%", transform: "translateX(-50%)", width: "80px", height: "26px", borderRadius: "13px", background: "#000", zIndex: 10 }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, #0B5940 0%, #083D2B 100%)" }} />
+            <div style={{ position: "absolute", top: "60px", left: 0, right: 0, textAlign: "center" }}>
+              <div style={{ fontSize: "52px", fontWeight: 100, color: "white", lineHeight: 1, letterSpacing: "-2px" }}>9:41</div>
+              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.65)", marginTop: "4px" }}>Lundi 15 avril</div>
             </div>
+            <div key={`notif-${v[2]}`} style={{
+              position: "absolute", bottom: "40px", left: "10px", right: "10px",
+              background: "rgba(26,26,26,0.85)", backdropFilter: "blur(20px)",
+              borderRadius: "16px", padding: "12px 14px",
+              animation: "rewardPop 0.6s 0.4s cubic-bezier(0.34,1.56,0.64,1) both",
+              opacity: 0,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                <div style={{ width: "26px", height: "26px", borderRadius: "7px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13z" fill="white"/></svg>
+                </div>
+                <span style={{ fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.9)", flex: 1 }}>Spa Essence</span>
+                <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)" }}>maint.</span>
+              </div>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "white", marginBottom: "3px" }}>Votre soin offert vous attend !</div>
+              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", lineHeight: 1.4 }}>Carte complète — venez récupérer votre soin.</div>
+            </div>
+            <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", width: "60px", height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.2)" }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ position: "relative", minHeight: "44px", marginTop: "12px" }}>
+        {labels.map((label, i) => (
+          <p key={i} style={{
+            position: "absolute", inset: 0, margin: 0, padding: "0 8px",
+            textAlign: "center", fontSize: "13px", color: "#5C5C5C", fontWeight: 500,
+            lineHeight: 1.5,
+            opacity: i === step ? 1 : 0,
+            transition: "opacity 0.4s ease",
+          }}>
+            {label}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LoyaltyCardAnimated() {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loop = useCallback(() => {
+    const fill = () => {
+      countRef.current += 1;
+      setCount(countRef.current);
+      if (countRef.current < 10) {
+        timerRef.current = setTimeout(fill, 380);
+      } else {
+        timerRef.current = setTimeout(() => {
+          countRef.current = 0;
+          setCount(0);
+          timerRef.current = setTimeout(fill, 600);
+        }, 1500);
+      }
+    };
+    timerRef.current = setTimeout(fill, 800);
+  }, []);
+
+  useEffect(() => {
+    loop();
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [loop]);
+
+  return (
+    <div style={{
+      width: "320px", height: "200px", borderRadius: "20px",
+      background: "linear-gradient(135deg, #1d9e75, #0D7A5A)",
+      boxShadow: "0 32px 80px rgba(29,158,117,0.2)",
+      padding: "28px 24px", margin: "0 auto",
+    }}>
+      <div style={{ fontSize: "18px", fontWeight: 700, color: "white", marginBottom: "4px" }}>Café Lumière</div>
+      <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.65)", marginBottom: "18px" }}>1 café offert à la 10ème visite</div>
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+        {Array.from({ length: 10 }, (_, i) => (
+          <div key={i} style={{
+            width: "26px", height: "26px", borderRadius: "7px",
+            background: i < count ? "rgba(255,255,255,0.18)" : "transparent",
+            border: i >= count ? "1.5px solid rgba(255,255,255,0.2)" : "none",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.3s ease",
+            transform: i === count - 1 && count > 0 ? "scale(1.3)" : "scale(1)",
+          }}>
+            <CoffeeCupIcon filled={i < count} />
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>
+        {count} / 10 · {count < 10 ? `encore ${10 - count} pour votre récompense` : "🎉 Récompense disponible !"}
+      </div>
+    </div>
+  );
+}
+
+function WheelSVG({ size = 300 }: { size?: number }) {
+  const segs = [
+    { d: "M150,150 L150,20 A130,130,0,0,1,262.58,85 Z", fill: "#1d9e75", tc: "white", label: "Avis Google", tx: 192.5, ty: 76 },
+    { d: "M150,150 L262.58,85 A130,130,0,0,1,262.58,215 Z", fill: "#F2EFE9", tc: "#1A1A1A", label: "−10%", tx: 234, ty: 150 },
+    { d: "M150,150 L262.58,215 A130,130,0,0,1,150,280 Z", fill: "#1A1A1A", tc: "white", label: "Tampon ×2", tx: 192.5, ty: 224 },
+    { d: "M150,150 L150,280 A130,130,0,0,1,37.42,215 Z", fill: "#E8F7F2", tc: "#0D7A5A", label: "−20%", tx: 108, ty: 224 },
+    { d: "M150,150 L37.42,215 A130,130,0,0,1,37.42,85 Z", fill: "#5C5C5C", tc: "white", label: "Surprise !", tx: 66, ty: 150 },
+    { d: "M150,150 L37.42,85 A130,130,0,0,1,150,20 Z", fill: "#FFFFFF", tc: "#1A1A1A", label: "−5%", tx: 108, ty: 76 },
+  ];
+  return (
+    <div style={{ position: "relative", width: `${size}px`, height: `${size}px`, margin: "0 auto" }}>
+      <div className="wheel-wrap" style={{ width: `${size}px`, height: `${size}px`, filter: "drop-shadow(0 16px 48px rgba(0,0,0,0.08))" }}>
+        <svg viewBox="0 0 300 300" width={size} height={size}>
+          {segs.map((seg, i) => (
+            <g key={i}>
+              <path d={seg.d} fill={seg.fill} stroke="#F2EFE9" strokeWidth="2" />
+              <text x={seg.tx} y={seg.ty} fill={seg.tc} fontSize="8.5" fontWeight="600" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">{seg.label}</text>
+            </g>
           ))}
+          <circle cx="150" cy="150" r="30" fill="white" stroke="#F2EFE9" strokeWidth="2" />
+          <text x="150" y="150" fill="#1d9e75" fontSize="15" fontWeight="800" textAnchor="middle" dominantBaseline="middle" fontFamily="Plus Jakarta Sans, sans-serif">S</text>
+        </svg>
+      </div>
+      <svg style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }} viewBox="0 0 300 300" width={size} height={size}>
+        <polygon points="150,2 144,18 156,18" fill="#1A1A1A" />
+      </svg>
+    </div>
+  );
+}
+
+function LotteryMockup({ animKey }: { animKey: number }) {
+  return (
+    <div style={{ width: "240px", background: "#FBF8F3", borderRadius: "20px", padding: "20px", boxShadow: "0 16px 48px rgba(0,0,0,0.1)", margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <span style={{ fontSize: "10px", fontWeight: 700, color: "#5C5C5C", letterSpacing: "0.08em" }}>TIRAGE DU MOIS</span>
+        <span style={{ fontSize: "10px", color: "#1d9e75", fontWeight: 600 }}>Café Lumière</span>
+      </div>
+      <div key={`prize-${animKey}`} style={{
+        background: "linear-gradient(135deg, #1d9e75 0%, #0D7A5A 100%)",
+        borderRadius: "14px", padding: "14px 16px", marginBottom: "12px",
+        animation: "rewardPop 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both",
+        opacity: 0,
+      }}>
+        <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.6)", letterSpacing: "0.08em", marginBottom: "4px" }}>LOT À GAGNER</div>
+        <div style={{ fontSize: "18px", fontWeight: 800, color: "white", lineHeight: 1.1, marginBottom: "3px" }}>1 mois de café</div>
+        <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)" }}>offert · valeur 60 CHF</div>
+      </div>
+      <div key={`ticket-${animKey}`} style={{
+        background: "#FFFFFF", borderRadius: "12px", padding: "12px 14px",
+        display: "flex", alignItems: "center", gap: "12px",
+        border: "1.5px dashed #C8E6DB", marginBottom: "10px",
+        animation: "rewardPop 0.5s 0.55s cubic-bezier(0.34,1.56,0.64,1) both",
+        opacity: 0,
+      }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: "9px", color: "#5C5C5C", marginBottom: "3px" }}>Votre ticket</div>
+          <div style={{ fontSize: "18px", fontWeight: 800, color: "#1d9e75", letterSpacing: "0.04em" }}>#0742</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: "9px", color: "#5C5C5C", marginBottom: "3px" }}>Participants</div>
+          <div style={{ fontSize: "18px", fontWeight: 700, color: "#1A1A1A" }}>47</div>
+        </div>
+      </div>
+      <div key={`cta-${animKey}`} style={{
+        background: "#E8F7F2", borderRadius: "10px", padding: "10px 12px", textAlign: "center",
+        animation: "rewardPop 0.5s 0.9s cubic-bezier(0.34,1.56,0.64,1) both",
+        opacity: 0,
+      }}>
+        <div style={{ fontSize: "11px", fontWeight: 700, color: "#1d9e75", lineHeight: 1.4 }}>Laissez un avis Google</div>
+        <div style={{ fontSize: "10px", color: "#0D7A5A", lineHeight: 1.4 }}>pour recevoir votre ticket →</div>
+      </div>
+    </div>
+  );
+}
+
+function SMSMockup() {
+  const bubbles = [
+    { text: "🥐 Il vous reste 2 tampons chez Boulangerie Martin. Revenez !", delay: "0s", bg: "#E8F7F2", color: "#1A1A1A" },
+    { text: "Ce weekend −20% sur les viennoiseries !", delay: "1.5s", bg: "#E8F7F2", color: "#1A1A1A" },
+    { text: "🎉 Votre récompense est prête !", delay: "3s", bg: "#1d9e75", color: "white" },
+  ];
+  return (
+    <div style={{ width: "240px", height: "480px", background: "#1A1A1A", borderRadius: "36px", padding: "18px", boxShadow: "0 24px 60px rgba(0,0,0,0.2)", margin: "0 auto" }}>
+      <div style={{ background: "#FBF8F3", borderRadius: "24px", height: "100%", padding: "16px", display: "flex", flexDirection: "column", gap: "10px", overflow: "hidden" }}>
+        <div style={{ fontSize: "11px", fontWeight: 600, color: "#1A1A1A", textAlign: "center", paddingBottom: "8px", borderBottom: "1px solid #F2EFE9" }}>Messages</div>
+        {bubbles.map((b, i) => (
+          <div key={i} style={{ background: b.bg, borderRadius: "14px", padding: "10px 14px", fontSize: "11px", color: b.color, lineHeight: 1.5, opacity: 0, animation: `smsBubble 4.5s ${b.delay} infinite` }}>{b.text}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NFCAnimation() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "16px", margin: "20px 0" }}>
+      <div style={{ width: "80px", height: "50px", borderRadius: "8px", background: "linear-gradient(135deg,#8B6914,#6B4F10)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", flexShrink: 0 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+          <circle cx="12" cy="12" r="1.5" fill="white"/>
+        </svg>
+        <span style={{ fontSize: "6px", color: "rgba(255,255,255,0.85)", textAlign: "center" }}>Boulangerie Martin</span>
+      </div>
+      <div style={{ position: "relative", width: "36px", height: "50px" }}>
+        {[0, 1, 2].map((i) => (
+          <svg key={i} width="16" height="28" style={{ position: "absolute", left: `${i * 7}px`, top: "11px", opacity: 0, animation: `arcFade 1.8s ${i * 0.4}s infinite` }}>
+            <path d="M2 2 Q9 14 2 26" stroke="#1d9e75" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+          </svg>
+        ))}
+      </div>
+      <div style={{ width: "42px", height: "72px", borderRadius: "11px", background: "#1A1A1A", animation: "phoneApproach 2s ease-in-out infinite alternate", flexShrink: 0, padding: "4px" }}>
+        <div style={{ borderRadius: "8px", background: "#FBF8F3", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: "22px", height: "14px", borderRadius: "3px", background: "#1d9e75" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div onClick={() => setOpen(!open)} style={{ background: "#FFFFFF", borderRadius: "16px", padding: "24px", cursor: "pointer", userSelect: "none" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px" }}>
+        <span style={{ fontSize: "17px", fontWeight: 600, color: "#1A1A1A" }}>{q}</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ flexShrink: 0, transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s ease" }}>
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="#5C5C5C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+      <div style={{ maxHeight: open ? "400px" : "0", overflow: "hidden", transition: "max-height 0.3s ease" }}>
+        <p style={{ fontSize: "15px", color: "#5C5C5C", lineHeight: 1.7, paddingTop: "16px" }}>{a}</p>
+      </div>
+    </div>
+  );
+}
+
+const greenBtn: React.CSSProperties = {
+  background: "#1d9e75", color: "#fff", borderRadius: "980px",
+  padding: "16px 32px", fontSize: "17px", fontWeight: 600,
+  textDecoration: "none", display: "inline-block",
+  transition: "background 0.2s, transform 0.2s",
+};
+const outlineBtn: React.CSSProperties = {
+  background: "transparent", color: "#1A1A1A",
+  border: "1.5px solid #1A1A1A", borderRadius: "980px",
+  padding: "16px 32px", fontSize: "17px", fontWeight: 600,
+  textDecoration: "none", display: "inline-block",
+  transition: "background 0.2s, color 0.2s",
+};
+const badgeStyle = (green = true): React.CSSProperties => ({
+  display: "inline-block",
+  background: green ? "#E8F7F2" : "#F2EFE9",
+  color: green ? "#1d9e75" : "#5C5C5C",
+  borderRadius: "980px", padding: "6px 16px",
+  fontSize: "13px", fontWeight: 500, marginBottom: "20px",
+});
+const checkItem: React.CSSProperties = { display: "flex", alignItems: "flex-start", gap: "10px", fontSize: "16px", color: "#1A1A1A", lineHeight: 1.5 };
+
+export default function HomePage() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const iv = setInterval(() => setStep(s => (s + 1) % 3), 3000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const [wheelStep, setWheelStep] = useState(0);
+  const wheelVisits = useRef([0, 0]);
+
+  useEffect(() => {
+    const iv = setInterval(() => setWheelStep(s => {
+      const next = (s + 1) % 2;
+      wheelVisits.current[next]++;
+      return next;
+    }), 4000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
+      { threshold: 0.07 }
+    );
+    document.querySelectorAll(".fade-up").forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
+  const maxW = { maxWidth: "900px", margin: "0 auto" };
+
+  return (
+    <>
+      {/* SECTION 1 — HERO */}
+      <section style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", paddingTop: "120px", paddingBottom: "80px", padding: "120px 20px 80px" }}>
+        <BrandPattern opacity={0.03} />
+        <StampMotif style={{ right: "-60px", top: "80px" }} />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div className="hero-split" style={{ display: "flex", gap: "56px", alignItems: "center" }}>
+            {/* Left — text */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="fade-up" style={{
+                display: "inline-flex", alignItems: "center",
+                background: "#E8F7F2", color: "#1d9e75",
+                borderRadius: "999px", padding: "6px 14px",
+                fontSize: "13px", fontWeight: 700,
+                marginBottom: "18px", letterSpacing: "0.01em",
+              }}>✦ Livraison en 48h garantie</div>
+              <WordTitle
+                text={"Vos clients\nreviennent.\nÀ chaque fois."}
+                style={{ fontSize: "80px", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.0, color: "#1A1A1A", marginBottom: "24px", fontFamily: "'Plus Jakarta Sans', sans-serif", margin: "0 0 24px" }}
+              />
+              <p className="fade-up" style={{ fontSize: "19px", color: "#5C5C5C", marginBottom: "32px", lineHeight: 1.5, maxWidth: "440px" }}>
+                Site vitrine + carte fidélité digitale<br/>+ plaquette NFC. 990 CHF, une fois,<br/>à vous pour toujours.
+              </p>
+              <div className="fade-up hero-btns" style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "20px" }}>
+                <Link href="/subscribe" style={greenBtn}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
+                  Obtenir mon site — 990 CHF
+                </Link>
+                <Link href="/demos" style={outlineBtn}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+                  Voir les démos →
+                </Link>
+              </div>
+              <p className="fade-up" style={{ fontSize: "13px", color: "#5C5C5C", letterSpacing: "0.04em" }}>
+                990 CHF · 48h · Suisse romande
+              </p>
+            </div>
+            {/* Right — image */}
+            <div className="fade-up hero-img-col" style={{ flex: "0 0 50%", maxWidth: "50%" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=900&q=85"
+                alt="Exemple de site créé avec Stampify — Spa Essence Genève"
+                loading="eager"
+                style={{
+                  width: "100%",
+                  borderRadius: "20px",
+                  boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+                  objectFit: "cover",
+                  aspectRatio: "4/3",
+                  display: "block",
+                }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ══ 2. NFC — COMMENT ÇA MARCHE ══ */}
-      <section style={{ background: "#F5F0E8", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }} className="max-[768px]:!grid-cols-1">
-            {/* Left: visual */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
-              <div style={{ position: "relative", width: 280, height: 180 }}>
-                <div style={{ width: 200, height: 130, background: "linear-gradient(135deg, #8B6335 0%, #C8960C 50%, #8B6335 100%)", borderRadius: 18, boxShadow: "0 16px 48px rgba(139,99,53,0.3)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, border: "2px solid rgba(255,255,255,0.25)", margin: "25px auto 0" }}>
-                  <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
-                    <circle cx="20" cy="20" r="8" stroke="rgba(255,255,255,0.9)" strokeWidth="2" fill="none"/>
-                    <path d="M10 20 Q10 8 20 8 Q30 8 30 20" stroke="rgba(255,255,255,0.6)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                    <path d="M6 20 Q6 4 20 4 Q34 4 34 20" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                  </svg>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.9)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Votre commerce</div>
+      {/* SECTION 2 — AVANT / APRÈS */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>
+            Le commerce local en 2026.<br />Avant et après Stampify.
+          </h2>
+          <div className="fade-up" style={{ maxWidth: "720px", margin: "0 auto", borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+              <div style={{ background: "#F2EFE9", padding: "20px 28px", fontSize: "16px", fontWeight: 700, color: "#5C5C5C" }}>Avant Stampify</div>
+              <div style={{ background: "#1d9e75", padding: "20px 28px", fontSize: "16px", fontWeight: 700, color: "white" }}>Avec Stampify</div>
+            </div>
+            {[
+              ["Carte papier que les clients perdent", "Carte digitale dans le téléphone, toujours disponible"],
+              ["Invisible sur Google", "Premier résultat Google local de votre ville"],
+              ["Clients qui oublient de revenir", "SMS automatique qui les rappelle à votre place"],
+              ["Site Wix bâclé créé en 2018", "Site professionnel livré en 48h"],
+              ["Aucune idée de qui sont vos clients fidèles", "Dashboard : chaque client, chaque visite, en temps réel"],
+              ["Plaquette à 0€ = logo générique imposé", "Plaquette NFC en bois gravée à votre nom"],
+            ].map(([before, after], i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: i % 2 === 0 ? "#FFFFFF" : "#FBF8F3" }}>
+                <div style={{ padding: "16px 24px", fontSize: "14px", color: "#5C5C5C", display: "flex", alignItems: "center", gap: "8px", borderRight: "1px solid rgba(0,0,0,0.06)" }}>
+                  <span style={{ color: "#ef4444", flexShrink: 0 }}>❌</span> {before}
                 </div>
-                <div style={{ position: "absolute", top: 0, right: 0, fontSize: 52, animation: "floatUp 3s ease-in-out infinite" }}>📱</div>
+                <div style={{ padding: "16px 24px", fontSize: "14px", color: "#1A1A1A", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ color: "#1d9e75", flexShrink: 0 }}>✓</span> {after}
+                </div>
               </div>
-              <div style={{ background: "#EEF0FC", borderRadius: 12, padding: "16px 24px", textAlign: "center" }}>
-                <div style={{ fontSize: 22, fontWeight: 700, color: "#3D31B0", fontFamily: "'Fraunces', Georgia, serif" }}>Aucun téléchargement</div>
-                <div style={{ fontSize: 14, color: "#6B6259", marginTop: 4 }}>La carte s&apos;ouvre directement dans Safari ou Chrome</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3 — STATS */}
+      <section style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", padding: "80px 20px" }}>
+        <StampMotif style={{ left: "-60px", bottom: "40px" }} />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px", maxWidth: "700px", margin: "0 auto 24px" }}>
+            {[
+              { n: "400 000+", l: "commerces locaux en Suisse et France sans outil de fidélité digitale" },
+              { n: "67%", l: "de dépenses supplémentaires d'un client fidèle vs un nouveau client" },
+              { n: "40%+", l: "d'augmentation du taux de retour client avec une carte fidélité digitale" },
+              { n: "48h", l: "pour avoir votre site en ligne, carte fidélité et plaquette NFC incluses" },
+            ].map((s, i) => (
+              <div key={i} className="fade-up" style={{ textAlign: "center", padding: "32px 16px", transitionDelay: `${i * 0.1}s` }}>
+                <div style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 800, color: "#1d9e75", lineHeight: 1, marginBottom: "12px" }}>{s.n}</div>
+                <div style={{ fontSize: "15px", color: "#5C5C5C", lineHeight: 1.5 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          <p className="fade-up" style={{ textAlign: "center", fontSize: "11px", color: "#5C5C5C", fontStyle: "italic" }}>
+            Sources : Invesp, Bain &amp; Company, études internes Stampify 2024-2025
+          </p>
+        </div>
+      </section>
+
+      {/* SECTION 4 — LOGOS */}
+      <section style={{ background: "#F2EFE9", overflow: "hidden", padding: "60px 0" }}>
+        <p className="fade-up" style={{ textAlign: "center", fontSize: "17px", fontWeight: 600, color: "#5C5C5C", marginBottom: "32px" }}>
+          Ils nous font confiance pour leur présence digitale
+        </p>
+        <div style={{ overflow: "hidden", position: "relative" }}>
+          <div style={{ display: "flex", gap: "12px", width: "max-content", animation: "marquee 30s linear infinite" }}>
+            {[...LOGOS, ...LOGOS].map((name, i) => (
+              <div key={i} style={{ background: "#FBF8F3", borderRadius: "980px", padding: "10px 20px", fontSize: "14px", fontWeight: 600, color: "#1A1A1A", whiteSpace: "nowrap", flexShrink: 0 }}>
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5 — AVIS */}
+      <section style={{ background: "#FBF8F3", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>
+            Ils nous font confiance.
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "24px" }}>
+            {[
+              { initials: "SM", quote: "J'avais essayé de créer mon site sur Wix — j'ai abandonné après 3 heures. Stampify m'a livré un site complet en 2 jours. Mes clients adorent la carte fidélité.", name: "Sophie M.", commerce: "Boulangerie artisanale, Lausanne" },
+              { initials: "KB", quote: "La plaquette NFC sur mon comptoir fait souvent réagir les clients. Ils trouvent ça moderne. Et moi, j'ai enfin une carte fidélité qui fonctionne — plus de cartes perdues.", name: "Karim B.", commerce: "Café & brunch, Genève" },
+              { initials: "MF", quote: "990 CHF pour le site, la carte, et la plaquette. Mon ancienne agence me demandait 3 500 CHF juste pour le site. Le rapport qualité-prix est imbattable.", name: "Marie-Claire F.", commerce: "Salon de coiffure, Fribourg" },
+            ].map((r, i) => (
+              <div key={i} className="fade-up" style={{ background: "#FFFFFF", borderRadius: "20px", padding: "32px", transition: "transform 0.3s ease, box-shadow 0.3s ease", transitionDelay: `${i * 0.1}s`, cursor: "default" }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.1)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+                <div style={{ fontSize: "40px", color: "#E8F7F2", fontWeight: 800, lineHeight: 1, marginBottom: "8px" }}>&quot;</div>
+                <div style={{ color: "#f5a623", fontSize: "15px", marginBottom: "12px" }}>★★★★★</div>
+                <p style={{ fontSize: "15px", color: "#1A1A1A", lineHeight: 1.7, fontStyle: "italic", marginBottom: "16px" }}>&ldquo;{r.quote}&rdquo;</p>
+                <div style={{ borderTop: "1px solid #F2EFE9", paddingTop: "16px", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#E8F7F2", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, color: "#1d9e75", flexShrink: 0 }}>{r.initials}</div>
+                  <div>
+                    <div style={{ fontSize: "15px", fontWeight: 600, color: "#1A1A1A" }}>{r.name}</div>
+                    <div style={{ fontSize: "13px", color: "#5C5C5C" }}>{r.commerce}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5b — METRICS */}
+      <section style={{ background: "#1A1A1A", position: "relative", overflow: "hidden", padding: "80px 20px" }}>
+        <BrandPattern opacity={0.05} color="#1d9e75" />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <div className="fade-up" style={{ display: "inline-block", background: "rgba(29,158,117,0.15)", color: "#1d9e75", borderRadius: "980px", padding: "6px 16px", fontSize: "13px", fontWeight: 500, marginBottom: "20px" }}>Résultats prouvés</div>
+            <h2 className="fade-up" style={{ fontSize: "clamp(32px,5vw,52px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "white", marginBottom: "16px" }}>
+              Des chiffres qui parlent.
+            </h2>
+            <p className="fade-up" style={{ fontSize: "17px", color: "rgba(255,255,255,0.45)", maxWidth: "480px", margin: "0 auto", lineHeight: 1.6 }}>
+              Nos clients voient leurs clients revenir plus souvent, dès les premières semaines.
+            </p>
+          </div>
+          <div className="metrics-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "20px", marginBottom: "24px" }}>
+            {[
+              { n: "67%", label: "taux de retour moyen", sub: "vs 32% sans fidélité" },
+              { n: "4.8★", label: "satisfaction client", sub: "sur 140+ avis Google" },
+              { n: "2×", label: "panier moyen", sub: "clients fidèles vs nouveaux" },
+            ].map((m, i) => (
+              <div key={i} className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px", transitionDelay: `${i*0.1}s` }}>
+                <div style={{ fontSize: "clamp(36px,4vw,52px)", fontWeight: 800, color: "#1d9e75", lineHeight: 1, marginBottom: "8px" }}>{m.n}</div>
+                <div style={{ fontSize: "15px", fontWeight: 600, color: "white", marginBottom: "4px" }}>{m.label}</div>
+                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>{m.sub}</div>
+              </div>
+            ))}
+          </div>
+          <div className="charts-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            <div className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>TAUX DE RETOUR CLIENT</div>
+              <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>+35% en 4 mois</div>
+              <svg viewBox="0 0 260 90" width="100%" style={{ overflow: "visible" }}>
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1d9e75" stopOpacity="0.28"/>
+                    <stop offset="100%" stopColor="#1d9e75" stopOpacity="0"/>
+                  </linearGradient>
+                </defs>
+                {[0,22,45,67,90].map(y => <line key={y} x1="0" y1={y} x2="260" y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>)}
+                <path d="M0,78 L43,68 L87,52 L130,38 L173,24 L217,14 L260,6 L260,90 L0,90 Z" fill="url(#cg)"/>
+                <path d="M0,78 L43,68 L87,52 L130,38 L173,24 L217,14 L260,6" stroke="#1d9e75" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                {([[0,78],[43,68],[87,52],[130,38],[173,24],[217,14],[260,6]] as [number,number][]).map(([x,y],i) => (
+                  <circle key={i} cx={x} cy={y} r="3.5" fill="#1d9e75"/>
+                ))}
+                {["Jan","Fév","Mar","Avr","Mai","Jun","Jul"].map((m, i) => (
+                  <text key={i} x={i*43} y="105" fill="rgba(255,255,255,0.25)" fontSize="8" textAnchor="middle">{m}</text>
+                ))}
+              </svg>
+            </div>
+            <div className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px", transitionDelay: "0.1s" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>PRIX DU MARCHÉ SUISSE</div>
+              <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>5× moins cher</div>
+              {[
+                { label: "Agence", price: "3 500–6 000 CHF", w: "100%", color: "#ef4444", sub: "site seul, sans fidélité" },
+                { label: "Freelance", price: "1 500–2 500 CHF", w: "60%", color: "#f59e0b", sub: "délais variables" },
+                { label: "Stampify", price: "990 CHF tout inclus", w: "25%", color: "#1d9e75", sub: "site + carte + NFC + 48h" },
+              ].map((r, i) => (
+                <div key={i} style={{ marginBottom: i < 2 ? "16px" : "0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                    <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", fontWeight: 500 }}>{r.label}</span>
+                    <span style={{ fontSize: "12px", color: r.color, fontWeight: 600 }}>{r.price}</span>
+                  </div>
+                  <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: "4px", height: "7px", overflow: "hidden" }}>
+                    <div style={{ width: r.w, height: "100%", background: r.color, borderRadius: "4px" }} />
+                  </div>
+                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)", marginTop: "3px" }}>{r.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6 — DEMO SPA */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <div className="spa-showcase" style={{ display: "flex", gap: "56px", alignItems: "center" }}>
+            <div className="fade-up spa-mock" style={{ flex: "0 0 auto", maxWidth: "460px", width: "100%" }}>
+              <div style={{ background: "#E2E2E2", borderRadius: "14px", overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.14)" }}>
+                <div style={{ background: "#F0F0F0", padding: "10px 14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ display: "flex", gap: "5px", flexShrink: 0 }}>
+                    {["#FF5F57","#FEBC2E","#28C840"].map((c,i) => (
+                      <div key={i} style={{ width: "10px", height: "10px", borderRadius: "50%", background: c }} />
+                    ))}
+                  </div>
+                  <div style={{ flex: 1, background: "white", borderRadius: "6px", padding: "4px 10px", fontSize: "10px", color: "#5C5C5C", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                    stampify.ch/lessence-spa
+                  </div>
+                </div>
+                <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer"
+                  style={{ display: "block", position: "relative", overflow: "hidden", aspectRatio: "16/10" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://api.microlink.io?url=https%3A%2F%2Floyalty-cards-rho.vercel.app%2Flessence-spa.html&screenshot=true&meta=false&embed=screenshot.url"
+                    alt="Démo Spa Essence — site Stampify en live"
+                    loading="lazy"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0)", display: "flex", alignItems: "center", justifyContent: "center", transition: "background 0.3s ease" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.25)"; const span = e.currentTarget.querySelector("span") as HTMLElement | null; if (span) span.style.opacity = "1"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0)"; const span = e.currentTarget.querySelector("span") as HTMLElement | null; if (span) span.style.opacity = "0"; }}>
+                    <span style={{ background: "white", borderRadius: "980px", padding: "8px 20px", fontSize: "13px", fontWeight: 600, color: "#1A1A1A", opacity: 0, transition: "opacity 0.3s ease" }}>
+                      Ouvrir la démo →
+                    </span>
+                  </div>
+                </a>
               </div>
             </div>
-            {/* Right: text */}
-            <div>
-              <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 20 }}>Technologie NFC</div>
-              <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 600, color: "#1A1410", margin: "0 0 20px 0", letterSpacing: "-0.02em" }}>
-                Vos clients tappent, leur carte s&apos;ouvre.
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badgeStyle()}>⭐ Le plus demandé</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,52px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "16px" }}>
+                Voyez ce qu&apos;on<br/>peut faire pour<br/>votre commerce.
               </h2>
-              <p style={{ fontSize: 16, color: "#6B6259", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                La plaquette en bois gravée à votre nom est posée sur votre comptoir. Vos clients approchent leur téléphone, et leur carte de fidélité s&apos;ouvre instantanément — sans application, sans compte, sans friction.
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "28px" }}>
+                Spa Essence, Genève — site vitrine 5 pages, carte fidélité &ldquo;soin offert&rdquo;, plaquette NFC gravée. Livré en 48h. Exactement ce que nous ferons pour vous.
               </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  "Compatible iPhone et Android",
-                  "Fonctionne aussi avec un QR code imprimable",
-                  "Plaquette en bois gravée livrée avec votre commande",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 15, color: "#1A1410" }}>{item}</span>
-                  </div>
+              <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer"
+                style={{ ...greenBtn, display: "inline-block", marginBottom: "20px" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
+                Accéder à la démo complète →
+              </a>
+              <div>
+                <Link href="/demos" style={{ fontSize: "14px", color: "#5C5C5C", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "#5C5C5C"; }}>
+                  Voir d&apos;autres exemples (café, restaurant, barbershop…) →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 7 — FEATURES */}
+      <section style={{ background: "#FBF8F3", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>
+            Tout ce dont votre commerce<br />a besoin. Réuni.
+          </h2>
+          <div className="features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "20px" }}>
+            {[
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#1d9e75" strokeWidth="1.5"/><ellipse cx="14" cy="14" rx="5" ry="11" stroke="#1d9e75" strokeWidth="1.5"/><path d="M3 14h22" stroke="#1d9e75" strokeWidth="1.5"/></svg>, title: "Site professionnel", desc: "5 pages, SEO local, domaine .ch inclus." },
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="7" width="20" height="14" rx="3" stroke="#1d9e75" strokeWidth="1.5"/><circle cx="14" cy="14" r="3" stroke="#1d9e75" strokeWidth="1.5"/></svg>, title: "Carte fidélité digitale", desc: "QR code ou NFC. Aucune app requise." },
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M7 14C7 10.134 10.134 7 14 7" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/><path d="M4 14C4 8.477 8.477 4 14 4" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/><path d="M10 14C10 11.791 11.791 10 14 10" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/><circle cx="14" cy="14" r="2" fill="#1d9e75"/></svg>, title: "Plaquette NFC gravée", desc: "En bois, à votre nom, sur votre comptoir." },
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="6" width="17" height="13" rx="3" stroke="#1d9e75" strokeWidth="1.5"/><path d="M13 19v3M9 22h8" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/><path d="M21 9h3M21 14h3" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/></svg>, title: "Campagnes SMS", desc: "Envoyez une promo à tous vos clients en 2 clics." },
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="3" stroke="#1d9e75" strokeWidth="1.5"/><path d="M4 10h20M10 4v6M18 4v6" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"/></svg>, title: "Réservations & commandes", desc: "Table, RDV, pré-commande depuis votre site." },
+              { icon: <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="20" width="4" height="4" rx="1" fill="#1d9e75"/><rect x="10" y="14" width="4" height="10" rx="1" fill="#1d9e75"/><rect x="16" y="8" width="4" height="16" rx="1" fill="#1d9e75"/><rect x="22" y="4" width="4" height="20" rx="1" fill="#1d9e75"/></svg>, title: "Tableau de bord", desc: "Stats en temps réel depuis votre téléphone." },
+            ].map((f, i) => (
+              <div key={i} className="fade-up feature-card" style={{ background: "#FFFFFF", borderRadius: "20px", padding: "32px", transition: "transform 0.3s ease, box-shadow 0.3s ease", transitionDelay: `${i * 0.08}s` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.1)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.06)"; }}>
+                <div style={{ width: "56px", height: "56px", borderRadius: "12px", background: "#E8F7F2", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>{f.icon}</div>
+                <div style={{ fontSize: "18px", fontWeight: 700, color: "#1A1A1A", marginBottom: "8px" }}>{f.title}</div>
+                <div style={{ fontSize: "15px", color: "#5C5C5C", lineHeight: 1.5 }}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 8 — PLAQUETTE NFC */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
+            <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={IMG.plaque} alt="Paiement digital par carte — expérience client fluide" loading="lazy" decoding="async" width={800} height={533} style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)", aspectRatio: "3/2", objectFit: "cover", display: "block" }} />
+              <p style={{ fontSize: "11px", color: "#5C5C5C", marginTop: "8px" }}>Photo : Unsplash</p>
+            </div>
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badgeStyle()}>✦ Incluse dans le forfait</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>En bois.<br />Gravée à votre nom.<br />Livrée avec votre commande.</h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>La plaquette est posée sur votre comptoir. Vos clients approchent leur téléphone. Leur carte fidélité s&apos;ouvre instantanément. Sans app. Sans compte. Sans friction.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
+                {["Gravure laser personnalisée (nom, logo)", "Compatible iPhone et Android", "Fonctionne aussi avec QR code imprimable", "Bois naturel, durable, élégant", "Livrée avec le reste de votre commande"].map((item, i) => (
+                  <div key={i} className="fade-up" style={{ ...checkItem, transitionDelay: `${i * 0.08}s` }}><span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span> {item}</div>
+                ))}
+              </div>
+              <NFCAnimation />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 9 — USAGE RÉEL */}
+      <section style={{ background: "#FBF8F3", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <div className="split-section-reverse" style={{ display: "flex", gap: "64px", alignItems: "center", flexDirection: "row-reverse" }}>
+            <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={IMG.nfcUsage} alt="Client qui tape son téléphone sur le terminal NFC Stampify" loading="lazy" decoding="async" width={800} height={533} style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)", aspectRatio: "3/2", objectFit: "cover", display: "block" }} />
+              <p style={{ fontSize: "11px", color: "#5C5C5C", marginTop: "8px" }}>Photo : Unsplash</p>
+            </div>
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badgeStyle()}>Résultats réels</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>Vos clients adorent.<br />Vos concurrents, moins.</h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "32px" }}>Chaque commerçant Stampify reçoit son propre site, sa propre marque, sa propre relation client. Pas un profil sur une plateforme tierce. Le vôtre. 100% à vous.</p>
+              <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer" style={outlineBtn}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+                Voir un exemple réel →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 10 — CARTE FIDÉLITÉ ANIMÉE */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
+            <div className="fade-up" style={{ flex: "0 0 auto" }}><LoyaltyCardAnimated /></div>
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badgeStyle()}>✦ Zéro application requise</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>La carte papier<br />finit à la poubelle.<br />La digitale, jamais.</h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>Vos clients ne perdent plus leur carte. Chaque passage est enregistré automatiquement. Vous choisissez la récompense, le nombre de tampons, les couleurs.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {["10 cases personnalisables (couleurs, icônes)", "QR code ou NFC tap — sans app", "Tampons qui n'expirent jamais", "Notifications automatiques à la récompense", "Dashboard temps réel"].map((item, i) => (
+                  <div key={i} className="fade-up" style={{ ...checkItem, transitionDelay: `${i * 0.08}s` }}><span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span> {item}</div>
                 ))}
               </div>
             </div>
@@ -237,64 +892,191 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ 3. SITE VITRINE ══ */}
-      <section style={{ background: "white", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }} className="max-[768px]:!grid-cols-1 max-[768px]:!flex max-[768px]:!flex-col-reverse">
-            {/* Left: text */}
-            <div>
-              <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 20 }}>Site vitrine professionnel</div>
-              <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 600, color: "#1A1410", margin: "0 0 20px 0", letterSpacing: "-0.02em" }}>
-                Un site qui vous ressemble, livré en 48h.
-              </h2>
-              <p style={{ fontSize: 16, color: "#6B6259", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                5 pages à vos couleurs. Menu, galerie, avis clients, horaires, contact. Domaine .ch inclus la première année. SEO local optimisé pour que vos clients vous trouvent sur Google avant vos concurrents.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  "Domaine .ch + hébergement inclus 1ère année",
-                  "Optimisé pour Google (SEO local Genève, Lausanne…)",
-                  "Mobile-first, rapide, accessible",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 15, color: "#1A1410" }}>{item}</span>
+      {/* SECTION 11 — ROUE */}
+      <section style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", padding: "80px 20px" }}>
+        <StampMotif style={{ right: "-60px", top: "50px" }} />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div className="split-section-reverse" style={{ display: "flex", gap: "64px", alignItems: "center", flexDirection: "row-reverse" }}>
+            <div className="fade-up" style={{ flex: "0 0 auto" }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "20px" }}>
+                {[0,1].map(i => (<div key={i} style={{ height: "6px", borderRadius: "3px", width: i === wheelStep ? "22px" : "6px", background: i === wheelStep ? "#1d9e75" : "#C8E6DB", transition: "width 0.4s ease, background 0.4s ease" }} />))}
+              </div>
+              <div style={{ position: "relative", height: "300px", width: "280px" }}>
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", opacity: wheelStep === 0 ? 1 : 0, transform: wheelStep === 0 ? "translateY(0)" : "translateY(10px)", transition: "opacity 0.55s ease, transform 0.55s ease" }}><WheelSVG size={270} /></div>
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", opacity: wheelStep === 1 ? 1 : 0, transform: wheelStep === 1 ? "translateY(0)" : "translateY(10px)", transition: "opacity 0.55s ease, transform 0.55s ease", pointerEvents: wheelStep === 1 ? "auto" : "none" }}><LotteryMockup animKey={wheelVisits.current[1]} /></div>
+              </div>
+              <p style={{ textAlign: "center", marginTop: "12px", fontSize: "13px", color: "#5C5C5C", fontWeight: 500, minHeight: "18px" }}>{["Roue de la fortune", "Loterie — grattez et révélez votre lot"][wheelStep]}</p>
+            </div>
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badgeStyle()}>Gamification + avis Google inclus</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>Vos clients jouent,<br />laissent un avis,<br />reviennent.</h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "20px" }}>La roue de la fortune et la loterie offrent un produit à votre client — en échange d&apos;un avis Google. Vos avis augmentent automatiquement, votre réputation aussi.</p>
+              <div style={{ background: "#F2EFE9", borderRadius: "16px", padding: "16px 20px", marginBottom: "24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                {[{ stat: "3×", text: "plus de visites pour les commerces avec 50+ avis Google" }, { stat: "88%", text: "des clients consultent les avis Google avant de visiter" }, { stat: "100%", text: "des joueurs laissent un avis — c'est la condition pour valider leur lot" }].map((s, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <span style={{ fontSize: "20px", fontWeight: 800, color: "#1d9e75", minWidth: "40px", flexShrink: 0 }}>{s.stat}</span>
+                    <span style={{ fontSize: "14px", color: "#5C5C5C", lineHeight: 1.4 }}>{s.text}</span>
                   </div>
                 ))}
               </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "28px" }}>
+                {["Lots 100% personnalisables (produit, réduction, café offert…)", "Échange automatique : lot contre avis Google en 1 clic", "Fréquence et probabilité configurables depuis le dashboard", "Roue + loterie — deux mécaniques, une seule interface"].map((item, i) => (
+                  <div key={i} style={checkItem}><span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span> {item}</div>
+                ))}
+              </div>
+              <Link href="/demos" style={outlineBtn}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+                Voir la démo →
+              </Link>
             </div>
-            {/* Right: mock browser */}
-            <div style={{ background: "#F5F0E8", borderRadius: 16, border: "1px solid #E2D9CC", overflow: "hidden", boxShadow: "0 16px 48px rgba(0,0,0,0.1)" }}>
-              <div style={{ background: "#E2D9CC", padding: "10px 16px", display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF6057" }} />
-                <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FEBC2E" }} />
-                <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28C840" }} />
-                <div style={{ flex: 1, background: "white", borderRadius: 6, padding: "4px 12px", marginLeft: 8, fontSize: 11, color: "#6B6259", display: "flex", alignItems: "center", gap: 4 }}>
-                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1z" stroke="#28C840" strokeWidth="1.5"/><path d="M5.5 8l1.5 1.5L10.5 6" stroke="#28C840" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  lessence-spa.stampify.ch
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 12 — SMS */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={{ ...badgeStyle(), background: "#E8F7F2", color: "#1d9e75" }}>Add-on à partir de 49 CHF/mois</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>Vos clients reviennent.<br />Automatiquement.</h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>15 triggers SMS configurables. Anniversaire, inactivité, récompense, promo flash. Zéro effort de votre part.</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {["SMS anniversaire automatique", "Relance client inactif (14/30/60 jours)", "Rappel réservation automatique", "Promo flash en 2 clics depuis le dashboard", "Notification récompense fidélité"].map((item, i) => (
+                  <div key={i} className="fade-up" style={{ ...checkItem, transitionDelay: `${i * 0.08}s` }}><span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span> {item}</div>
+                ))}
+              </div>
+            </div>
+            <div className="fade-up" style={{ flex: "0 0 auto" }}><SMSMockup /></div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 13 — COMPARATIF POINZ */}
+      <section style={{ background: "#FBF8F3", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "12px" }}>Pourquoi Stampify<br />plutôt que Poinz ?</h2>
+          <p className="fade-up" style={{ fontSize: "19px", color: "#5C5C5C", textAlign: "center", maxWidth: "560px", margin: "0 auto 40px", lineHeight: 1.5 }}>Poinz est un outil de fidélité gratuit. Stampify est différent — votre site, votre marque, votre relation client. 100% à vous.</p>
+          <div className="comparatif-mini" style={{ display: "flex", gap: "16px", maxWidth: "600px", margin: "0 auto 32px" }}>
+            <div style={{ flex: 1, background: "#F2EFE9", borderRadius: "16px", padding: "24px", opacity: 0.75 }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#5C5C5C", marginBottom: "10px" }}>Avec Poinz</div>
+              <div style={{ fontSize: "14px", color: "#ef4444" }}>❌ Logo Poinz imposé partout</div>
+              <div style={{ fontSize: "13px", color: "#5C5C5C", marginTop: "6px" }}>Votre commerce, leur marque.</div>
+            </div>
+            <div style={{ flex: 1, background: "#E8F7F2", borderRadius: "16px", padding: "24px", border: "2px solid #1d9e75" }}>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1d9e75", marginBottom: "10px" }}>Avec Stampify</div>
+              <div style={{ fontSize: "14px", color: "#1d9e75" }}>✓ 100% votre nom, votre marque</div>
+              <div style={{ fontSize: "13px", color: "#5C5C5C", marginTop: "6px" }}>Boulangerie Martin — votre site, votre carte.</div>
+            </div>
+          </div>
+          <div className="fade-up" style={{ maxWidth: "720px", margin: "0 auto", borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", background: "#1A1A1A", padding: "16px 24px" }}>
+              {["Fonctionnalité", "Stampify", "Poinz"].map((h) => (<div key={h} style={{ fontSize: "14px", fontWeight: 600, color: "white" }}>{h}</div>))}
+            </div>
+            {[["Site vitrine personnalisé","✓","✗"],["Votre propre branding","✓","✗ (logo Poinz)"],["Carte fidélité digitale","✓","✓"],["Plaquette NFC gravée","✓","✗"],["Domaine .ch à votre nom","✓","✗"],["SEO local optimisé","✓","✗"],["Campagnes SMS","✓","Limité"],["Dashboard analytics","✓","Limité"],["Prix","990 CHF · une fois","Gratuit mais limité"],["Propriétaire à 100%","✓","✗"]].map(([feature, stampify, poinz], i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", background: i % 2 === 0 ? "#FFFFFF" : "#FBF8F3", padding: "14px 24px", borderBottom: "1px solid #F2EFE9" }}>
+                <div style={{ fontSize: "14px", color: "#1A1A1A" }}>{feature}</div>
+                <div style={{ fontSize: "14px", color: stampify === "✓" ? "#1d9e75" : "#1A1A1A", fontWeight: stampify === "✓" ? 600 : 400 }}>{stampify}</div>
+                <div style={{ fontSize: "14px", color: poinz === "✗" || poinz.startsWith("✗") ? "#ef4444" : "#5C5C5C" }}>{poinz}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 14 — DÉMOS CARDS */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "12px" }}>Exemples de sites Stampify.</h2>
+          <p className="fade-up" style={{ fontSize: "17px", color: "#5C5C5C", textAlign: "center", margin: "0 auto 48px", maxWidth: "500px", lineHeight: 1.5 }}>Fonctionnels. Personnalisés. Livrés en 48h.</p>
+          <div className="demos-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "24px" }}>
+            {DEMOS.map((demo, i) => (
+              <div key={demo.name} className="fade-up demo-card" style={{ background: "#FFFFFF", borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", transition: "transform 0.3s ease, box-shadow 0.3s ease", transitionDelay: `${i * 0.06}s` }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.1)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.06)"; }}>
+                <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`https://images.unsplash.com/${demo.img}?auto=format&fit=crop&w=600&q=80`} alt={demo.name} loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+                <div style={{ padding: 20 }}>
+                  {demo.badge && (<div style={{ display: "inline-block", background: "#E8F7F2", color: "#1d9e75", fontSize: 11, borderRadius: 980, padding: "4px 12px", marginBottom: 8, fontWeight: 600 }}>{demo.badge}</div>)}
+                  <div style={{ fontSize: 17, fontWeight: 600, color: "#1A1A1A", lineHeight: 1.3, marginBottom: 4 }}>{demo.name}</div>
+                  <div style={{ fontSize: 14, color: "#5C5C5C", marginBottom: 12 }}>{demo.city} · {demo.cat}</div>
+                  <a href={demo.href} target={demo.href !== "#" ? "_blank" : undefined} rel={demo.href !== "#" ? "noopener noreferrer" : undefined} style={{ display: "inline-block", fontSize: 14, color: "#1d9e75", fontWeight: 500, textDecoration: "none" }}>Voir la démo →</a>
                 </div>
               </div>
-              <div style={{ position: "relative", height: 160, overflow: "hidden" }}>
-                <img
-                  src="https://images.unsplash.com/photo-1761470575018-135c213340eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800"
-                  alt="Spa Essence Genève - exemple de site créé par Stampify"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(27,67,50,0.5) 0%, rgba(27,67,50,0.8) 100%)" }} />
-                <div style={{ position: "absolute", inset: 0, padding: "16px 20px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-                  <div style={{ display: "inline-block", background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", borderRadius: 999, padding: "3px 10px", fontSize: 10, fontWeight: 600, color: "white", marginBottom: 6, width: "fit-content" }}>✓ Exemple réel créé avec Stampify</div>
-                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 20, fontWeight: 700, color: "white", marginBottom: 2 }}>Spa Essence</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>6 Rue des Alpes, 1201 Genève</div>
-                </div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: "40px" }}>
+            <Link href="/demos" style={{ ...outlineBtn, fontSize: "15px", padding: "14px 28px" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+              Voir tous les exemples →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 15 — TARIF */}
+      <section style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", padding: "80px 20px" }}>
+        <BrandPattern opacity={0.03} />
+        <StampMotif style={{ left: "50%", marginLeft: "-100px", top: "40px" }} />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>Un seul paiement.<br />Pour toujours.</h2>
+          <div className="fade-up" style={{ maxWidth: "580px", margin: "0 auto", background: "#FFFFFF", borderRadius: "24px", padding: "48px 40px", boxShadow: "0 8px 48px rgba(0,0,0,0.08)" }}>
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <div style={badgeStyle()}>✦ LE CHOIX DE NOS CLIENTS</div>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: "8px", marginTop: "16px" }}>
+                <span style={{ fontSize: "96px", fontWeight: 800, letterSpacing: "-4px", color: "#1A1A1A", lineHeight: 1 }}>990</span>
+                <span style={{ fontSize: "28px", fontWeight: 500, color: "#5C5C5C" }}>CHF</span>
               </div>
-              <div style={{ padding: "16px 24px 20px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
-                  {["🧖 Massages", "✨ Soins visage", "🌿 Enveloppements", "💆 Duo"].map((item) => (
-                    <div key={item} style={{ background: "#F0F7F4", borderRadius: 8, padding: "8px 12px", fontSize: 13, fontWeight: 500, color: "#1A1410", border: "1px solid #E2D9CC" }}>{item}</div>
-                  ))}
+              <p style={{ fontSize: "15px", color: "#5C5C5C", marginTop: "8px" }}>paiement unique · aucun abonnement</p>
+            </div>
+            <div style={{ borderTop: "1px solid #F2EFE9", margin: "24px 0" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              {["Site vitrine 5 pages sur mesure","Carte fidélité digitale 10 cases","Plaquette NFC en bois gravée à votre nom","Domaine .ch + hébergement 1ère année","SEO local optimisé","QR code imprimable A4/A5","1 campagne SMS offerte","2 retouches incluses","Guide vidéo d'utilisation","Livraison en 48h garantie"].map((item, i) => (
+                <div key={i} className="fade-up" style={{ ...checkItem, transitionDelay: `${i * 0.05}s` }}>
+                  <span style={{ color: "#1d9e75", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                  <span style={{ fontSize: "16px" }}>{item}</span>
                 </div>
-                <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer" style={{ display: "block", background: "#2D5A4E", color: "white", borderRadius: 8, padding: "10px", textAlign: "center", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
-                  Voir la démo complète →
+              ))}
+            </div>
+            <div style={{ background: "#F2EFE9", borderRadius: "12px", padding: "16px 20px", marginBottom: "24px", fontSize: "14px", color: "#5C5C5C", fontStyle: "italic", lineHeight: 1.6 }}>
+              Une agence suisse facture 1 500–5 000 CHF pour un site seul. Stampify livre site + carte + NFC + SEO. Pour 990 CHF. En 48h.
+            </div>
+            <Link href="/subscribe" style={{ ...greenBtn, display: "block", textAlign: "center" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
+              Obtenir mon site — 990 CHF
+            </Link>
+            <div style={{ textAlign: "center", fontSize: "13px", color: "#5C5C5C", margin: "32px 0 16px" }}>─── Suivi mensuel optionnel ───</div>
+            <div className="addon-cards" style={{ display: "flex", gap: "16px" }}>
+              <div style={{ flex: 1, background: "#F2EFE9", borderRadius: "16px", padding: "24px" }}>
+                <div style={{ fontSize: "22px", fontWeight: 700, color: "#1A1A1A", marginBottom: "4px" }}>49 CHF <span style={{ fontSize: "14px", fontWeight: 400 }}>/ mois</span></div>
+                <div style={{ fontSize: "12px", color: "#5C5C5C", marginBottom: "16px" }}>Sans engagement · résiliable à tout moment</div>
+                {["Campagnes SMS manuelles","15+ SMS automatiques","Rapport mensuel","Mises à jour mineures","Support email"].map((f, i) => (
+                  <div key={i} style={{ fontSize: "13px", color: "#1A1A1A", marginBottom: "6px", display: "flex", gap: "6px" }}><span style={{ color: "#1d9e75" }}>✓</span>{f}</div>
+                ))}
+                <a href={WA_MAIN} target="_blank" rel="noopener noreferrer"
+                  style={{ ...outlineBtn, display: "block", textAlign: "center", marginTop: "16px", padding: "12px 16px", fontSize: "14px" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+                  Ajouter l&apos;Essentiel
+                </a>
+              </div>
+              <div style={{ flex: 1, background: "#1A1A1A", borderRadius: "16px", padding: "24px", position: "relative" }}>
+                <div style={{ position: "absolute", top: "-10px", left: "50%", transform: "translateX(-50%)", background: "#1d9e75", color: "white", borderRadius: "980px", padding: "4px 12px", fontSize: "11px", fontWeight: 600, whiteSpace: "nowrap" }}>RECOMMANDÉ</div>
+                <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "4px" }}>79 CHF <span style={{ fontSize: "14px", fontWeight: 400 }}>/ mois</span></div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "16px" }}>Sans engagement</div>
+                {["Tout l'Essentiel","2 campagnes SMS/mois rédigées par nous","Support prioritaire sous 4h","Modifications avancées","Revue stratégique trimestrielle"].map((f, i) => (
+                  <div key={i} style={{ fontSize: "13px", color: "white", marginBottom: "6px", display: "flex", gap: "6px" }}><span style={{ color: "#1d9e75" }}>✓</span>{f}</div>
+                ))}
+                <a href={WA_MAIN} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "block", textAlign: "center", marginTop: "16px", padding: "12px 16px", fontSize: "14px", fontWeight: 600, borderRadius: "980px", background: "white", color: "#1A1A1A", textDecoration: "none", transition: "opacity 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.9"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}>
+                  Ajouter le Pro
                 </a>
               </div>
             </div>
@@ -302,379 +1084,105 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══ 4. CARTE FIDÉLITÉ ══ */}
-      <section style={{ background: "#F5F0E8", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }} className="max-[768px]:!grid-cols-1">
-            {/* Left: card visual */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-              <div style={{ background: "white", borderRadius: 20, boxShadow: "0 16px 48px rgba(0,0,0,0.12)", padding: "32px 36px", width: "100%", maxWidth: 320 }}>
-                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 18, fontWeight: 700, color: "#1A1410", marginBottom: 6 }}>Boulangerie Martin</div>
-                <div style={{ fontSize: 12, color: "#6B6259", marginBottom: 20 }}>1 café offert à la 10ème visite</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginBottom: 16 }}>
-                  {[0,1,2,3,4,5,6,7,8,9].map((i) => (
-                    <div key={i} style={{ width: 36, height: 36, borderRadius: "50%", background: i < 7 ? "#3D31B0" : "#EEF0FC", border: "2px solid " + (i < 7 ? "#3D31B0" : "#E2D9CC"), display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}>
-                      {i < 7 && <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3L12.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                    </div>
-                  ))}
-                </div>
-                <div style={{ fontSize: 12, color: "#6B6259", textAlign: "center" }}>7 / 10 tampons — encore 3 pour votre récompense</div>
-              </div>
-              <div style={{ background: "#EEF0FC", color: "#3D31B0", borderRadius: 20, padding: "8px 20px", fontSize: 13, fontWeight: 600 }}>✓ Aucune application requise</div>
-            </div>
-            {/* Right: text */}
-            <div>
-              <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 20 }}>Carte de fidélité digitale</div>
-              <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 600, color: "#1A1410", margin: "0 0 20px 0", letterSpacing: "-0.02em" }}>
-                La carte papier finit à la poubelle. La digitale, jamais.
-              </h2>
-              <p style={{ fontSize: 16, color: "#6B6259", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                Vos clients ne perdent plus leur carte. Chaque passage est enregistré. Vous choisissez la récompense, le nombre de tampons, les couleurs. La carte s&apos;adapte à votre commerce.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  "10 tampons personnalisables (couleurs, icônes)",
-                  "Campagne SMS offerte à la livraison",
-                  "Dashboard pour voir vos clients actifs",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 15, color: "#1A1410" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 5. SMS / PUSH ══ */}
-      <section style={{ background: "#1A1410", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }} className="max-[768px]:!grid-cols-1">
-            {/* Left: text */}
-            <div>
-              <div style={{ display: "inline-block", background: "rgba(61,49,176,0.4)", color: "#A89CF0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 20 }}>Campagnes SMS & push</div>
-              <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 600, color: "white", margin: "0 0 20px 0", letterSpacing: "-0.02em" }}>
-                Rappellez à vos clients que vous existez.
-              </h2>
-              <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                &ldquo;Ce weekend −20% sur toutes les viennoiseries.&rdquo; Envoyé à tous vos clients fidèles en 2 clics depuis votre tableau de bord. 1 campagne SMS offerte le premier mois.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  "Campagne SMS à tous vos clients en 2 clics",
-                  "Notifications push navigateur (sans app)",
-                  "1 campagne offerte le 1er mois",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#A89CF0", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 15, color: "rgba(255,255,255,0.8)" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Right: SMS mock */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {[
-                { time: "10:23", msg: "🥐 Ce weekend : viennoiseries à −20% à la Boulangerie Martin. À demain !" },
-                { time: "10:24", msg: "☕ Il vous reste 2 tampons pour votre café offert. On vous attend !" },
-                { time: "10:48", msg: "🎉 Votre café est prêt. Montrez ce message à la caisse." },
-              ].map((sms, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "16px 20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <div style={{ width: 36, height: 36, background: "#3D31B0", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="2"/></svg>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.9)" }}>Stampify</span>
-                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{sms.time}</span>
-                    </div>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.5 }}>{sms.msg}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 6. ANALYTICS ══ */}
-      <section style={{ background: "white", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }} className="max-[768px]:!grid-cols-1 max-[768px]:!flex max-[768px]:!flex-col-reverse">
-            {/* Left: text */}
-            <div>
-              <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 20 }}>Tableau de bord</div>
-              <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 600, color: "#1A1410", margin: "0 0 20px 0", letterSpacing: "-0.02em" }}>
-                Savoir qui revient. Et pourquoi.
-              </h2>
-              <p style={{ fontSize: 16, color: "#6B6259", lineHeight: 1.7, margin: "0 0 28px 0" }}>
-                Depuis votre tableau de bord, vous voyez en temps réel combien de clients sont actifs, combien de tampons ont été donnés ce mois-ci, et quels clients sont près d&apos;obtenir leur récompense.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[
-                  "Clients actifs, tampons donnés, récompenses utilisées",
-                  "Rapport mensuel automatique par email",
-                  "Accès depuis votre téléphone, tablette ou PC",
-                ].map((item) => (
-                  <div key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontSize: 15, color: "#1A1410" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Right: dashboard mock */}
-            <div style={{ background: "#F5F0E8", borderRadius: 16, border: "1px solid #E2D9CC", overflow: "hidden", boxShadow: "0 16px 48px rgba(0,0,0,0.08)" }}>
-              <div style={{ background: "#1A1410", padding: "16px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 24, height: 24, background: "#3D31B0", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="2"/></svg>
-                </div>
-                <span style={{ color: "white", fontWeight: 600, fontSize: 13 }}>Dashboard Stampify</span>
-              </div>
-              <div style={{ padding: 24 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
-                  {[
-                    { label: "Clients actifs", value: "247", delta: "+12 ce mois" },
-                    { label: "Tampons donnés", value: "1 834", delta: "+89 cette semaine" },
-                    { label: "Récompenses", value: "43", delta: "+6 ce mois" },
-                    { label: "Taux de retour", value: "68%", delta: "+4% vs mois dernier" },
-                  ].map((stat) => (
-                    <div key={stat.label} style={{ background: "white", borderRadius: 10, padding: "12px 16px", border: "1px solid #E2D9CC" }}>
-                      <div style={{ fontSize: 11, color: "#6B6259", marginBottom: 4 }}>{stat.label}</div>
-                      <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 22, fontWeight: 700, color: "#1A1410" }}>{stat.value}</div>
-                      <div style={{ fontSize: 11, color: "#3D31B0", marginTop: 2 }}>{stat.delta}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 7. HOW IT WORKS ══ */}
-      <section id="comment" style={{ background: "#3D31B0", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 64 }}>
-            <div style={{ display: "inline-block", background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Simple et rapide</div>
-            <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 4vw, 52px)", fontWeight: 600, color: "white", margin: 0, letterSpacing: "-0.02em" }}>De zéro à votre site en 48h</h2>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 48 }} className="md:!flex-row md:!gap-12">
+      {/* SECTION 16 — FAQ */}
+      <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>Questions fréquentes.</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxWidth: "680px", margin: "0 auto" }}>
             {[
-              { n: "1", e: "💬", t: "Parlez-nous de votre commerce", d: "Un échange rapide sur WhatsApp. On note vos couleurs, votre adresse, vos horaires, votre style. Réponse sous 2h, 7j/7." },
-              { n: "2", e: "⚡", t: "On crée tout en 48h", d: "Site, carte fidélité, plaquette NFC gravée, SEO local. Vous ne faites rien. On vous envoie le lien pour valider." },
-              { n: "3", e: "🚀", t: "Vos clients reviennent", d: "Votre commerce est en ligne sur Google. La plaquette est sur votre comptoir. Les clients scannent, les tampons s&apos;accumulent." },
-            ].map((s) => (
-              <div key={s.n} style={{ flex: 1, position: "relative" }}>
-                <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 80, fontWeight: 700, color: "rgba(255,255,255,0.08)", position: "absolute", top: -16, left: -8, lineHeight: 1, userSelect: "none" }}>{s.n}</div>
-                <div style={{ position: "relative" }}>
-                  <div style={{ fontSize: 32, marginBottom: 12 }}>{s.e}</div>
-                  <h3 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 22, fontWeight: 600, color: "white", margin: "0 0 10px 0" }}>{s.t}</h3>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: "rgba(255,255,255,0.65)", lineHeight: 1.65, margin: 0 }}>{s.d}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ textAlign: "center", marginTop: 64 }}>
-            <Link href="/subscribe" style={{ display: "inline-block", background: "white", color: "#3D31B0", padding: "16px 36px", borderRadius: 10, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
-              Commencer maintenant →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 8. TESTIMONIALS ══ */}
-      <section style={{ background: "#F5F0E8", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Ils nous font confiance</div>
-            <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 600, color: "#1A1410", margin: 0, letterSpacing: "-0.02em" }}>Ce que disent nos commerçants</h2>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            {[
-              {
-                quote: "J&apos;avais essayé de créer mon site sur Wix — j&apos;ai abandonné après 3 heures. Stampify m&apos;a livré un site complet en 2 jours. Mes clients adorent la carte fidélité.",
-                name: "Sophie M.",
-                role: "Boulangerie artisanale, Lausanne",
-                stars: 5,
-              },
-              {
-                quote: "La plaquette NFC sur mon comptoir fait souvent réagir les clients. Ils trouvent ça moderne. Et moi, j&apos;ai enfin une carte fidélité qui fonctionne — plus de cartes perdues.",
-                name: "Karim B.",
-                role: "Café & brunch, Genève",
-                stars: 5,
-              },
-              {
-                quote: "990 CHF pour le site, la carte, et la plaquette. Mon ancienne agence me demandait 3 500 CHF juste pour le site. Le rapport qualité-prix est imbattable.",
-                name: "Marie-Claire F.",
-                role: "Salon de coiffure, Fribourg",
-                stars: 5,
-              },
-            ].map((t, i) => (
-              <div key={i} style={{ background: "white", border: "1px solid #E2D9CC", borderRadius: 16, padding: 32 }}>
-                <div style={{ display: "flex", gap: 2, marginBottom: 16 }}>
-                  {[...Array(t.stars)].map((_, j) => (
-                    <span key={j} style={{ color: "#F59E0B", fontSize: 16 }}>★</span>
-                  ))}
-                </div>
-                <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, color: "#1A1410", lineHeight: 1.6, margin: "0 0 20px 0", fontStyle: "italic" }} dangerouslySetInnerHTML={{ __html: t.quote }} />
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: "#1A1410" }}>{t.name}</div>
-                  <div style={{ fontSize: 13, color: "#6B6259" }}>{t.role}</div>
-                </div>
+              { q: "Est-ce que mes clients doivent télécharger une application ?", a: "Non. La carte s'ouvre directement dans Safari ou Chrome via QR code ou NFC. Aucun téléchargement, aucun compte." },
+              { q: "Que se passe-t-il après la première année ?", a: "Domaine .ch ~25 CHF/an. Hébergement ~5 CHF/mois offert la 1ère année. Carte et dashboard : à vie. Aucun abonnement imposé." },
+              { q: "Est-ce que je suis propriétaire du site ?", a: "Oui, à 100%. Code source, domaine, contenu — tout est à vous. Liberté totale." },
+              { q: "Combien de temps pour mon site en ligne ?", a: "48h à partir de vos infos : photos, textes, horaires, couleurs. Garanti sans exception." },
+              { q: "Vous travaillez en France aussi ?", a: "Oui. Suisse romande et France. Même forfait, mêmes délais, même qualité." },
+              { q: "Quelle différence avec Poinz ?", a: "Poinz est gratuit mais tout reste sous leur marque. Avec Stampify : votre site, votre nom, votre relation client. 100% personnalisé." },
+            ].map((item, i) => (
+              <div key={i} className="fade-up" style={{ transitionDelay: `${i * 0.06}s` }}>
+                <FAQItem q={item.q} a={item.a} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ PRICING ══ */}
-      <section id="tarif" style={{ background: "white", padding: "96px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Tarif</div>
-            <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 4vw, 56px)", fontWeight: 600, color: "#1A1410", margin: "0 0 12px 0", letterSpacing: "-0.02em" }}>Un investissement unique. Zéro abonnement.</h2>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 17, color: "#6B6259", maxWidth: 520, margin: "0 auto" }}>Vous payez une fois, c&apos;est à vous pour toujours.</p>
+      {/* SECTION 17 — PROCESSUS */}
+      <section style={{ background: "#FBF8F3", padding: "80px 20px" }}>
+        <div style={maxW}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "64px" }}>De zéro à votre site en 48h.</h2>
+          <div className="process-steps" style={{ display: "flex", gap: "48px", alignItems: "flex-start", justifyContent: "center" }}>
+            {[
+              { n: "01", title: "Parlez-nous de votre commerce", desc: "Un échange WhatsApp de 10 minutes. Couleurs, horaires, style, logo." },
+              { n: "02", title: "On crée tout en 48h", desc: "Site, carte, plaquette NFC gravée, SEO. Vous validez. On met en ligne." },
+              { n: "03", title: "Vos clients reviennent", desc: "Sur Google. Plaquette sur votre comptoir. Fidélité automatique et SMS intelligents." },
+            ].map((s, i) => (
+              <div key={i} className="fade-up" style={{ flex: 1, maxWidth: "280px", transitionDelay: `${i * 0.12}s` }}>
+                <div style={{ fontSize: "64px", fontWeight: 800, color: "#E8F7F2", lineHeight: 1, marginBottom: "8px" }}>{s.n}</div>
+                <div style={{ fontSize: "21px", fontWeight: 700, color: "#1A1A1A", marginBottom: "8px", lineHeight: 1.3 }}>{s.title}</div>
+                <div style={{ fontSize: "15px", color: "#5C5C5C", lineHeight: 1.6 }}>{s.desc}</div>
+              </div>
+            ))}
           </div>
-          <div style={{ maxWidth: 512, margin: "0 auto", background: "#F5F0E8", border: "2px solid #3D31B0", borderRadius: 20, padding: "48px" }}>
-            <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "4px 12px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>⭐ Le seul forfait</div>
-            <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 72, fontWeight: 700, color: "#1A1410", lineHeight: 1 }}>990 CHF</div>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6B6259", marginTop: 4 }}>paiement unique — aucun abonnement</div>
-            <div style={{ borderTop: "1px solid #E2D9CC", margin: "28px 0" }} />
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {[
-                "Site web vitrine 5 pages (domaine .ch + hébergement 1ère année)",
-                "Carte de fidélité digitale 10 cases",
-                "Plaquette NFC en bois gravée à votre nom",
-                "SEO local complet",
-                "QR code imprimable A4/A5",
-                "1 campagne SMS offerte le premier mois",
-                "2 retouches gratuites incluses",
-                "Livraison en 48h garantie",
-              ].map((item) => (
-                <div key={item} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: "1px solid #E2D9CC", alignItems: "flex-start" }}>
-                  <span style={{ color: "#3D31B0", fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: "#1A1410" }}>{item}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: "#EEF0FC", borderRadius: 10, padding: 16, margin: "24px 0", fontSize: 14, fontStyle: "italic", color: "#3D31B0", lineHeight: 1.6 }}>
-              Une agence suisse facture 1 500 à 5 000 CHF pour un site seul. Nous livrons site + carte + plaquette NFC + SEO. Pour 990 CHF. En 48h.
-            </div>
-            <Link href="/subscribe" style={{ display: "block", background: "#3D31B0", color: "white", padding: "16px", borderRadius: 10, textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, textDecoration: "none" }}>
+        </div>
+      </section>
+
+      {/* CTA FINAL */}
+      <section style={{ background: "#1A1A1A", padding: "120px 20px", position: "relative", overflow: "hidden", textAlign: "center" }}>
+        <BrandPattern opacity={0.05} color="#FFFFFF" />
+        <StampMotif style={{ left: "50%", marginLeft: "-100px", top: "40px", opacity: 1 }} />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <h2 className="fade-up" style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, color: "white", marginBottom: "20px" }}>Votre commerce mérite<br />d&apos;être en ligne.</h2>
+          <p className="fade-up" style={{ fontSize: "19px", color: "rgba(255,255,255,0.55)", marginBottom: "40px", lineHeight: 1.5 }}>990 CHF. 48h. Propriétaire à 100%.<br />Réponse en moins de 2h, 7j/7.</p>
+          <div className="fade-up">
+            <Link href="/subscribe" style={{ ...greenBtn, padding: "20px 48px", fontSize: "18px" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
               Obtenir mon site maintenant →
             </Link>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6B6259", textAlign: "center", marginTop: 12, marginBottom: 0 }}>2.71 CHF par jour. Moins que votre café du matin.</p>
-          </div>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6B6259", textAlign: "center", marginTop: 16 }}>Add-on optionnel : 49 CHF/mois — campagnes SMS + mises à jour + rapport mensuel. Sans engagement.</p>
-        </div>
-      </section>
-
-      {/* ══ DEMOS PREVIEW ══ */}
-      <section id="demos" style={{ background: "#F5F0E8", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Démos interactives</div>
-            <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 600, color: "#1A1410", margin: "0 0 12px 0", letterSpacing: "-0.02em" }}>Voyez le résultat pour votre commerce</h2>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }} className="md:!grid-cols-3">
-            {[
-              { e: "☕", n: "Café", path: "/demos/cafe-lumiere.html", desc: "Tampons, carte fidélité, réservation" },
-              { e: "🥐", n: "Boulangerie", path: "/demos/boulangerie-martin.html", desc: "Carte fidélité, commandes, menu" },
-              { e: "✂️", n: "Barbershop", path: "/demos/black-scissors.html", desc: "Réservation en ligne, carte VIP" },
-              { e: "🍽️", n: "Restaurant", path: "/demos/bistrot-du-coin.html", desc: "Menu digital, réservations, fidélité" },
-              { e: "💅", n: "Manucure", path: "/demos/nail-studio.html", desc: "Prise de RDV, carte récompenses" },
-              { e: "🧖", n: "Spa", path: "https://loyalty-cards-rho.vercel.app/lessence-spa.html", desc: "Soins, carte fidélité, réservation", external: true },
-            ].map((d) => (
-              d.external ? (
-                <a
-                  key={d.path}
-                  href={d.path}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ display: "block", background: "white", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", transition: "border-color 0.2s, transform 0.2s" }}
-                  onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#3D31B0"; el.style.transform = "translateY(-4px)"; }}
-                  onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#E2D9CC"; el.style.transform = "none"; }}
-                >
-                  <div style={{ fontSize: 36 }}>{d.e}</div>
-                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#1A1410", marginTop: 10 }}>{d.n}</div>
-                  <div style={{ fontSize: 13, color: "#6B6259", marginTop: 4 }}>{d.desc}</div>
-                  <div style={{ fontSize: 13, color: "#3D31B0", marginTop: 12, fontWeight: 500 }}>Voir la démo →</div>
-                </a>
-              ) : (
-                <Link
-                  key={d.path}
-                  href={d.path}
-                  style={{ display: "block", background: "white", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", transition: "border-color 0.2s, transform 0.2s" }}
-                  onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#3D31B0"; el.style.transform = "translateY(-4px)"; }}
-                  onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "#E2D9CC"; el.style.transform = "none"; }}
-                >
-                  <div style={{ fontSize: 36 }}>{d.e}</div>
-                  <div style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 17, fontWeight: 600, color: "#1A1410", marginTop: 10 }}>{d.n}</div>
-                  <div style={{ fontSize: 13, color: "#6B6259", marginTop: 4 }}>{d.desc}</div>
-                  <div style={{ fontSize: 13, color: "#3D31B0", marginTop: 12, fontWeight: 500 }}>Voir la démo →</div>
-                </Link>
-              )
-            ))}
-          </div>
-          <div style={{ textAlign: "center", marginTop: 40 }}>
-            <Link href="/demos" style={{ display: "inline-block", border: "1.5px solid #3D31B0", color: "#3D31B0", padding: "12px 28px", borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
-              Voir toutes les démos →
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* ══ BLOG ══ */}
-      <section style={{ background: "white", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 1152, margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 600, color: "#1A1410", marginBottom: 40, letterSpacing: "-0.01em" }}>Conseils pour les commerçants</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }} className="md:!flex-row">
-            {blogPreviews.map((p) => (
-              <Link key={p.slug} href={`/blog/${p.slug}`} style={{ flex: 1, background: "#F5F0E8", border: "1px solid #E2D9CC", borderRadius: 12, padding: 24, textDecoration: "none", display: "block", transition: "border-color 0.2s" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#3D31B0"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "#E2D9CC"; }}
-              >
-                <span style={{ display: "inline-block", background: "#EEF0FC", color: "#3D31B0", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>{p.category}</span>
-                <h3 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 18, fontWeight: 600, color: "#1A1410", margin: "12px 0 0 0", lineHeight: 1.35 }}>{p.title}</h3>
-                <span style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#3D31B0", fontWeight: 500, marginTop: 16 }}>Lire →</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ 9. FINAL CTA ══ */}
-      <section style={{ background: "#1A1410", padding: "96px 24px", textAlign: "center" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
-          <div style={{ display: "inline-block", background: "rgba(61,49,176,0.3)", color: "#A89CF0", borderRadius: 999, padding: "6px 16px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>Prêt à vous lancer ?</div>
-          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 600, color: "white", margin: "0 0 20px 0", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-            Votre site en ligne<br /><em style={{ color: "#A89CF0" }}>en moins de 48h.</em>
-          </h2>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: "rgba(255,255,255,0.65)", margin: "0 0 40px 0", lineHeight: 1.65 }}>
-            Envoyez-nous un message maintenant. On échange en 10 minutes. Votre site, carte fidélité et plaquette NFC sont livrés en moins de 48h.
-          </p>
-          <Link href="/subscribe" style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "20px 48px", borderRadius: 12, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, textDecoration: "none", boxShadow: "0 8px 32px rgba(61,49,176,0.4)" }}>
-            Obtenir mon site → 990 CHF
-          </Link>
-          <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 24, flexWrap: "wrap" }}>
-            {["📱 Réponse sous 2h · 7j/7", "⚡ Livraison 48h garantie", "🔒 Paiement sécurisé"].map((item) => (
-              <span key={item} style={{ fontSize: 14, color: "rgba(255,255,255,0.4)" }}>{item}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-
-      {/* ══ WHATSAPP FLOATING BUTTON (mobile) ══ */}
-      <Link href={WA_CONTACT} aria-label="Contacter sur WhatsApp" className="md:hidden" style={{ position: "fixed", bottom: 20, right: 20, zIndex: 50, width: 56, height: 56, borderRadius: "50%", background: "#25D366", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(37,211,102,0.4)", textDecoration: "none" }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </Link>
-    </div>
+      <style>{`
+        @keyframes wordIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes smsBubble { 0% { opacity: 0; transform: translateY(8px); } 10%, 60% { opacity: 1; transform: translateY(0); } 68%, 100% { opacity: 0; transform: translateY(-4px); } }
+        @keyframes arcFade { 0% { opacity: 0; } 30%, 60% { opacity: 0.8; } 90%, 100% { opacity: 0; } }
+        @keyframes phoneApproach { from { transform: translateX(20px); } to { transform: translateX(2px); } }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes rippleAnim { 0% { transform: scale(0.8); opacity: 0.7; } 100% { transform: scale(2.8); opacity: 0; } }
+        @keyframes stampBounce { 0% { transform: scale(1); } 30% { transform: scale(1.55) rotate(-10deg); } 60% { transform: scale(1.12) rotate(4deg); } 100% { transform: scale(1) rotate(0deg); } }
+        @keyframes rewardPop { 0% { transform: scale(0.4) translateY(16px); opacity: 0; } 65% { transform: scale(1.06) translateY(-3px); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0) !important; }
+        .wheel-wrap { animation: spin 10s linear infinite; }
+        .wheel-wrap:hover { animation-duration: 3s; }
+        @media (max-width: 900px) {
+          .hero-split { flex-direction: column !important; }
+          .hero-img-col { flex: 0 0 100% !important; max-width: 100% !important; }
+          .spa-showcase { flex-direction: column !important; }
+          .spa-mock { max-width: 100% !important; }
+          .metrics-grid { grid-template-columns: 1fr 1fr !important; }
+          .charts-row { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 768px) {
+          .hero-btns { flex-direction: column !important; align-items: flex-start !important; }
+          .stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .demos-grid { grid-template-columns: 1fr !important; }
+          .features-grid { grid-template-columns: 1fr !important; }
+          .split-section { flex-direction: column !important; }
+          .split-section-reverse { flex-direction: column !important; }
+          .split-img { order: -1 !important; max-width: 100% !important; }
+          .addon-cards { flex-direction: column !important; }
+          .comparatif-mini { flex-direction: column !important; }
+          .process-steps { flex-direction: column !important; align-items: center !important; }
+          .metrics-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .stats-grid { grid-template-columns: 1fr !important; }
+          .metrics-grid { grid-template-columns: 1fr !important; }
+          .charts-row { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </>
   );
 }

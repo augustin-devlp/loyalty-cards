@@ -1,245 +1,528 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import DemoFilter, { type Demo } from "@/components/DemoFilter";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Démos Stampify — Exemples de sites et cartes fidélité pour commerçants",
-  description:
-    "Découvrez 6 exemples réels de sites livrés par Stampify : café, boulangerie, restaurant, barbershop, manucure, spa. Carte de fidélité digitale + plaquette NFC inclus. 990 CHF, livraison 48h.",
-  alternates: { canonical: "https://www.stampify.ch/demos" },
+import React, { useState, useEffect, useRef } from "react";
+
+const WA_MAIN =
+  "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
+
+const C = {
+  bg: "#FBF8F3",
+  bgAlt: "#F2EFE9",
+  green: "#1d9e75",
+  text: "#1A1A1A",
+  text2: "#5C5C5C",
 };
 
-const WA_GENERAL =
-  "https://wa.me/41791342997?text=Bonjour+%21+J%27ai+vu+vos+exemples+de+sites+sur+Stampify+et+je+suis+int%C3%A9ress%C3%A9+pour+mon+commerce.+Pouvez-vous+me+dire+ce+que+vous+pouvez+faire+pour+moi+%3F";
+type Cat = "Tous" | "Café" | "Boulangerie" | "Barbershop" | "Restaurant" | "Manucure" | "Spa";
 
-const demos: Demo[] = [
+interface Demo {
+  name: string;
+  city: string;
+  cat: Cat;
+  badge?: string;
+  img: string;
+  href: string;
+}
+
+const DEMOS: Demo[] = [
   {
     name: "Spa Essence",
-    type: "spa",
-    typeLabel: "Spa & bien-être",
     city: "Genève",
-    slug: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
-    external: true,
-    urlBar: "lessence-spa.stampify.ch",
-    badge: "⭐ Plus populaire",
-    gradientFrom: "#1B4332",
-    gradientTo: "#2D5A4E",
-    features: ["Réservation soins", "Carte fidélité", "Packages"],
+    cat: "Spa",
+    badge: "⭐ Le plus demandé",
+    img: "photo-1540555700478-4be289fbecef",
+    href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
   },
   {
     name: "Café Lumière",
-    type: "cafe",
-    typeLabel: "Café & brunch",
     city: "Genève",
-    slug: "/demos/cafe-lumiere.html",
-    external: false,
-    urlBar: "cafe-lumiere.stampify.ch",
-    badge: null,
-    gradientFrom: "#3E1F0A",
-    gradientTo: "#6B3F2A",
-    features: ["Réservation table", "Commande en avance", "Carte fidélité"],
-  },
-  {
-    name: "Black Scissors",
-    type: "barbershop",
-    typeLabel: "Barbershop premium",
-    city: "Genève",
-    slug: "/demos/black-scissors.html",
-    external: false,
-    urlBar: "black-scissors.stampify.ch",
-    badge: null,
-    gradientFrom: "#000000",
-    gradientTo: "#C41E3A",
-    features: ["Réservation coupe", "Carte VIP", "Galerie"],
+    cat: "Café",
+    img: "photo-1509042239860-f550ce710b93",
+    href: "#",
   },
   {
     name: "Bistrot du Coin",
-    type: "restaurant",
-    typeLabel: "Restaurant gastronomique",
-    city: "Fribourg",
-    slug: "/demos/bistrot-du-coin.html",
-    external: false,
-    urlBar: "bistrot-du-coin.stampify.ch",
-    badge: null,
-    gradientFrom: "#4E1620",
-    gradientTo: "#6B1F2A",
-    features: ["Résa table", "Carte des vins", "Menu QR · Fidélité"],
+    city: "Neuchâtel",
+    cat: "Restaurant",
+    img: "photo-1414235077428-338989a2e8c0",
+    href: "#",
   },
   {
     name: "Boulangerie Martin",
-    type: "boulangerie",
-    typeLabel: "Boulangerie artisanale",
     city: "Lausanne",
-    slug: "/demos/boulangerie-martin.html",
-    external: false,
-    urlBar: "boulangerie-martin.stampify.ch",
-    badge: null,
-    gradientFrom: "#5C4309",
-    gradientTo: "#8B6914",
-    features: ["Commande en ligne", "Retrait QR code", "Fidélité"],
+    cat: "Boulangerie",
+    img: "photo-1509440159596-0249088772ff",
+    href: "#",
   },
   {
-    name: "Nail Studio",
-    type: "manucure",
-    typeLabel: "Salon de manucure",
+    name: "Black Scissors",
+    city: "Fribourg",
+    cat: "Barbershop",
+    img: "photo-1503951914875-452162b0f3f1",
+    href: "#",
+  },
+  {
+    name: "Nail Studio Rose",
     city: "Lausanne",
-    slug: "/demos/nail-studio.html",
-    external: false,
-    urlBar: "nail-studio.stampify.ch",
-    badge: null,
-    gradientFrom: "#880E4F",
-    gradientTo: "#C2185B",
-    features: ["Prise de RDV", "Galerie poses", "Carte récompenses"],
+    cat: "Manucure",
+    img: "photo-1604654894610-df63bc536371",
+    href: "#",
   },
 ];
 
-export default function DemosPage() {
-  return (
-    <div style={{ background: "#F5F0E8", fontFamily: "'DM Sans', sans-serif" }}>
-      <Navbar />
+const FILTERS: Cat[] = ["Tous", "Café", "Boulangerie", "Barbershop", "Restaurant", "Manucure", "Spa"];
 
-      {/* Hero */}
-      <section
+function DemoCard({ demo, delay }: { demo: Demo; delay: number }) {
+  const [hovered, setHovered] = useState(false);
+  const [arrowHovered, setArrowHovered] = useState(false);
+
+  return (
+    <div
+      className="fade-up"
+      style={{
+        backgroundColor: "white",
+        borderRadius: 20,
+        overflow: "hidden",
+        boxShadow: hovered
+          ? "0 12px 40px rgba(0,0,0,0.1)"
+          : "0 4px 24px rgba(0,0,0,0.06)",
+        transform: hovered ? "translateY(-6px)" : "translateY(0)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        transitionDelay: `${delay}s`,
+        cursor: "default",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* 4:3 image */}
+      <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://images.unsplash.com/${demo.img}?auto=format&fit=crop&w=400&q=80`}
+          alt={demo.name}
+          loading="lazy"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
+      </div>
+
+      {/* Body */}
+      <div style={{ padding: 20 }}>
+        {demo.badge && (
+          <div
+            style={{
+              display: "inline-block",
+              backgroundColor: "#E8F7F2",
+              color: C.green,
+              fontSize: 11,
+              borderRadius: 980,
+              padding: "4px 12px",
+              marginBottom: 8,
+              fontWeight: 600,
+            }}
+          >
+            {demo.badge}
+          </div>
+        )}
+
+        <div
+          style={{
+            fontSize: 18,
+            fontWeight: 600,
+            color: C.text,
+            lineHeight: 1.3,
+            marginBottom: 4,
+          }}
+        >
+          {demo.name}
+        </div>
+
+        <div
+          style={{
+            fontSize: 14,
+            color: C.text2,
+            marginBottom: 12,
+          }}
+        >
+          {demo.city} · {demo.cat}
+        </div>
+
+        <a
+          href={demo.href}
+          target={demo.href !== "#" ? "_blank" : undefined}
+          rel={demo.href !== "#" ? "noopener noreferrer" : undefined}
+          style={{
+            display: "inline-block",
+            fontSize: 14,
+            color: C.green,
+            fontWeight: 500,
+            textDecoration: "none",
+          }}
+          onMouseEnter={() => setArrowHovered(true)}
+          onMouseLeave={() => setArrowHovered(false)}
+        >
+          Voir la démo{" "}
+          <span
+            style={{
+              display: "inline-block",
+              transform: arrowHovered ? "translateX(4px)" : "translateX(0)",
+              transition: "transform 0.2s ease",
+            }}
+          >
+            →
+          </span>
+        </a>
+
+        <div style={{ fontSize: 11, color: C.text2, marginTop: 8 }}>
+          Photo : Unsplash
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function DemosPage() {
+  const [activeFilter, setActiveFilter] = useState<Cat>("Tous");
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  const filtered =
+    activeFilter === "Tous" ? DEMOS : DEMOS.filter((d) => d.cat === activeFilter);
+
+  // Observe fade-up elements on mount
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const targets = el.querySelectorAll<HTMLElement>(".fade-up");
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Re-observe new cards after filter change
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const targets = el.querySelectorAll<HTMLElement>(".fade-up:not(.visible)");
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, [activeFilter]);
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
+        .fade-up {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-up.visible {
+          opacity: 1;
+          transform: translateY(0) !important;
+        }
+
+        @media (max-width: 768px) {
+          .demos-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .hero-title {
+            font-size: 40px !important;
+          }
+        }
+      `}</style>
+
+      <div
+        ref={pageRef}
         style={{
-          paddingTop: 128,
-          paddingBottom: 40,
-          paddingLeft: 24,
-          paddingRight: 24,
-          textAlign: "center",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          backgroundColor: C.bg,
+          color: C.text,
+          minHeight: "100vh",
         }}
       >
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+        {/* ── HERO ── */}
+        <section
+          style={{
+            backgroundColor: C.bg,
+            padding: "120px 20px 80px",
+            textAlign: "center",
+          }}
+        >
+          {/* Badge pill */}
           <div
+            className="fade-up"
             style={{
               display: "inline-block",
-              background: "#EEF0FC",
-              color: "#3D31B0",
-              borderRadius: 999,
-              padding: "6px 16px",
+              backgroundColor: "#E8F7F2",
+              color: C.green,
               fontSize: 13,
               fontWeight: 600,
-              marginBottom: 20,
-            }}
-          >
-            6 démos interactives
-          </div>
-          <h1
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: "clamp(40px, 5vw, 64px)",
-              fontWeight: 600,
-              color: "#1A1410",
-              margin: "0 0 20px 0",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.1,
-            }}
-          >
-            Ce que vous voyez est
-            <br />
-            <em style={{ fontStyle: "italic" }}>exactement ce que vous recevrez.</em>
-          </h1>
-          <p style={{ fontSize: 18, color: "#6B6259", lineHeight: 1.65, margin: 0 }}>
-            Des exemples réels livrés à des commerçants en Suisse romande. À vos couleurs, à votre
-            nom, en 48h.
-          </p>
-        </div>
-      </section>
-
-      {/* Filter + Cards (client component) */}
-      <DemoFilter demos={demos} />
-
-      {/* CTA section */}
-      <section style={{ background: "white", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <div
-            style={{
-              display: "inline-block",
-              background: "#EEF0FC",
-              color: "#3D31B0",
-              borderRadius: 999,
-              padding: "6px 16px",
-              fontSize: 13,
-              fontWeight: 600,
+              borderRadius: 980,
+              padding: "6px 18px",
               marginBottom: 24,
             }}
           >
-            Votre commerce
+            ✦ 6 exemples réels
           </div>
-          <h2
+
+          {/* Title */}
+          <h1
+            className="fade-up hero-title"
             style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: "clamp(28px, 4vw, 44px)",
-              fontWeight: 600,
-              color: "#1A1410",
-              margin: "0 0 16px 0",
-              letterSpacing: "-0.02em",
+              fontSize: 64,
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              color: C.text,
+              margin: "0 0 20px",
+              lineHeight: 1.1,
+              transitionDelay: "0.08s",
             }}
           >
-            Votre commerce n&apos;est pas dans la liste ?
-          </h2>
+            Voyez ce qu&apos;on peut faire.
+          </h1>
+
+          {/* Subtitle */}
           <p
+            className="fade-up"
             style={{
-              fontSize: 16,
-              color: "#6B6259",
-              lineHeight: 1.7,
-              margin: "0 0 32px 0",
+              fontSize: 19,
+              color: C.text2,
+              margin: "0 auto 40px",
+              maxWidth: 540,
+              lineHeight: 1.5,
+              transitionDelay: "0.16s",
             }}
           >
-            On fait des sites pour tous les commerces locaux en Suisse romande : fleuristes,
-            pharmacies, boutiques, kinésithérapeutes, coiffeurs, tatoueurs... Contactez-nous et on
-            vous montre ce qu&apos;on ferait pour vous spécifiquement.
+            6 exemples réels. Fonctionnels. Personnalisés. Livrés en 48h.
           </p>
+
+          {/* CTA buttons */}
           <div
+            className="fade-up"
             style={{
               display: "flex",
-              gap: 16,
+              gap: 12,
               justifyContent: "center",
               flexWrap: "wrap",
+              transitionDelay: "0.24s",
             }}
           >
             <a
-              href={WA_GENERAL}
+              href={WA_MAIN}
               target="_blank"
               rel="noopener noreferrer"
               style={{
                 display: "inline-block",
-                background: "#3D31B0",
+                backgroundColor: C.green,
                 color: "white",
-                padding: "16px 32px",
-                borderRadius: 10,
-                fontWeight: 600,
                 fontSize: 15,
+                fontWeight: 600,
+                padding: "14px 28px",
+                borderRadius: 980,
                 textDecoration: "none",
+                transition: "opacity 0.2s ease",
+                whiteSpace: "nowrap",
               }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "0.85")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "1")}
             >
-              Obtenir mon site en 48h — 990 CHF →
+              Obtenir mon site — 990 CHF
             </a>
-            <Link
+
+            <a
               href="/tarif"
               style={{
                 display: "inline-block",
-                background: "transparent",
-                border: "1.5px solid #3D31B0",
-                color: "#3D31B0",
-                padding: "16px 32px",
-                borderRadius: 10,
-                fontWeight: 600,
+                backgroundColor: "transparent",
+                color: C.text,
                 fontSize: 15,
+                fontWeight: 600,
+                padding: "13px 28px",
+                borderRadius: 980,
                 textDecoration: "none",
+                border: `2px solid ${C.text}`,
+                transition: "background-color 0.2s ease, color 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLAnchorElement;
+                el.style.backgroundColor = C.text;
+                el.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLAnchorElement;
+                el.style.backgroundColor = "transparent";
+                el.style.color = C.text;
               }}
             >
               Voir le tarif
-            </Link>
+            </a>
           </div>
-          <p style={{ fontSize: 13, color: "#6B6259", marginTop: 16 }}>
-            📱 Réponse sous 2h · 7j/7
-          </p>
-        </div>
-      </section>
+        </section>
 
-      <Footer />
-    </div>
+        {/* ── FILTER PILLS ── */}
+        <section
+          style={{
+            backgroundColor: C.bgAlt,
+            padding: "24px 20px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8,
+              justifyContent: "center",
+            }}
+          >
+            {FILTERS.map((f) => {
+              const isActive = activeFilter === f;
+              return (
+                <button
+                  key={f}
+                  onClick={() => setActiveFilter(f)}
+                  style={{
+                    backgroundColor: isActive ? C.text : C.bg,
+                    color: isActive ? "white" : C.text2,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    padding: "8px 20px",
+                    borderRadius: 980,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "background-color 0.2s ease, color 0.2s ease",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {f}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── DEMOS GRID ── */}
+        <section
+          style={{
+            backgroundColor: C.bg,
+            padding: "80px 20px",
+          }}
+        >
+          <div
+            className="demos-grid"
+            style={{
+              maxWidth: 900,
+              margin: "0 auto",
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 24,
+            }}
+          >
+            {filtered.map((demo, i) => (
+              <DemoCard key={demo.name} demo={demo} delay={i * 0.06} />
+            ))}
+          </div>
+        </section>
+
+        {/* ── CTA SECTION ── */}
+        <section
+          style={{
+            backgroundColor: C.bgAlt,
+            padding: "80px 20px",
+            textAlign: "center",
+          }}
+        >
+          <h2
+            className="fade-up"
+            style={{
+              fontSize: 21,
+              fontWeight: 700,
+              color: C.text,
+              margin: "0 0 12px",
+            }}
+          >
+            Votre commerce n&apos;est pas dans la liste&nbsp;?
+          </h2>
+
+          <p
+            className="fade-up"
+            style={{
+              fontSize: 17,
+              color: C.text2,
+              margin: "0 auto 32px",
+              maxWidth: 480,
+              lineHeight: 1.55,
+              transitionDelay: "0.1s",
+            }}
+          >
+            On crée votre site sur mesure en 48h, quel que soit votre secteur.
+          </p>
+
+          <div className="fade-up" style={{ transitionDelay: "0.18s" }}>
+            <a
+              href={WA_MAIN}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-block",
+                backgroundColor: C.green,
+                color: "white",
+                fontSize: 15,
+                fontWeight: 600,
+                padding: "14px 28px",
+                borderRadius: 980,
+                textDecoration: "none",
+                transition: "opacity 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "0.85")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = "1")}
+            >
+              Obtenir mon site — 990 CHF
+            </a>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
