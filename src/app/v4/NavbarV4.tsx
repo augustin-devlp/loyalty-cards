@@ -13,13 +13,9 @@ export default function NavbarV4() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const current = window.scrollY;
-      if (current > 80 && current > lastScrollY.current) {
-        setHidden(true);
-      } else {
-        setHidden(false);
-      }
-      lastScrollY.current = current;
+      const cur = window.scrollY;
+      setHidden(cur > 80 && cur > lastScrollY.current);
+      lastScrollY.current = cur;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -30,161 +26,138 @@ export default function NavbarV4() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
-  const navLinks = [
+  const links = [
     { label: "Fonctionnalités", href: "/v4/fonctionnalites" },
     { label: "Tarif", href: "/v4/tarif" },
     { label: "Démos", href: "/v4/demos" },
     { label: "Blog", href: "/blog" },
   ];
 
+  const baseNav: React.CSSProperties = {
+    position: "sticky",
+    top: 0,
+    zIndex: 1000,
+    height: "52px",
+    background: "rgba(250,250,248,0.9)",
+    backdropFilter: "blur(24px)",
+    WebkitBackdropFilter: "blur(24px)",
+    borderBottom: "1px solid rgba(0,0,0,0.06)",
+    transform: hidden ? "translateY(-100%)" : "translateY(0)",
+    transition: "transform 0.25s ease",
+    display: "flex",
+    alignItems: "center",
+    fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
+  };
+
   return (
     <>
-      <nav
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1000,
-          height: "52px",
-          background: "rgba(250,250,248,0.90)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(0,0,0,0.06)",
-          transform: hidden ? "translateY(-100%)" : "translateY(0)",
-          transition: "transform 0.3s ease",
-          display: "flex",
-          alignItems: "center",
-          fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "860px",
-            margin: "0 auto",
-            padding: "0 20px",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: "100%",
-          }}
-        >
+      <nav style={baseNav}>
+        <div style={{
+          maxWidth: "900px", margin: "0 auto", padding: "0 20px",
+          width: "100%", display: "flex", alignItems: "center",
+          justifyContent: "space-between", height: "100%",
+        }}>
           {/* Logo */}
           <Link href="/v4" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div
-              style={{
-                width: "22px",
-                height: "22px",
-                background: "#1d9e75",
-                borderRadius: "5px",
-                flexShrink: 0,
-              }}
-            />
-            <span style={{ fontSize: "15px", fontWeight: 700, color: "#1a1a1a", letterSpacing: "-0.02em" }}>
-              Stampify
-            </span>
+            <div style={{ width: "16px", height: "16px", background: "#1d9e75", borderRadius: "3px", flexShrink: 0 }} />
+            <span style={{ fontSize: "18px", fontWeight: 700, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Stampify</span>
           </Link>
 
           {/* Desktop links */}
-          <div className="nav4-desktop-links" style={{ display: "flex", alignItems: "center", gap: "28px" }}>
-            {navLinks.map((link) => (
+          <div className="nav4-links" style={{ display: "flex", alignItems: "center", gap: "28px" }}>
+            {links.map((l) => (
               <Link
-                key={link.href}
-                href={link.href}
-                style={{ fontSize: "14px", color: "#1a1a1a", textDecoration: "none", fontWeight: 400, opacity: 0.7, transition: "opacity 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+                key={l.href} href={l.href}
+                style={{ fontSize: "14px", color: "#555555", textDecoration: "none", fontWeight: 400, transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#1a1a1a")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#555555")}
               >
-                {link.label}
+                {l.label}
               </Link>
             ))}
           </div>
 
           {/* Desktop CTA */}
-          <div className="nav4-desktop-cta">
+          <div className="nav4-cta">
             <a
-              href={WA_MAIN}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={WA_MAIN} target="_blank" rel="noopener noreferrer"
               style={{
-                background: "#1d9e75",
-                color: "#ffffff",
-                borderRadius: "980px",
-                padding: "8px 18px",
-                fontSize: "13px",
-                fontWeight: 600,
-                textDecoration: "none",
-                display: "inline-block",
-                transition: "transform 0.2s ease, background 0.2s ease",
+                background: "#1d9e75", color: "#fff", borderRadius: "980px",
+                padding: "8px 20px", fontSize: "13px", fontWeight: 600,
+                textDecoration: "none", display: "inline-block",
+                transition: "background 0.2s, transform 0.2s",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.03)";
-                e.currentTarget.style.background = "#18875f";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.background = "#1d9e75";
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#17886a"; e.currentTarget.style.transform = "scale(1.02)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}
             >
               Obtenir mon site
             </a>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Hamburger */}
           <button
-            className="nav4-hamburger"
+            className="nav4-ham"
             onClick={() => setMobileOpen(true)}
             aria-label="Ouvrir le menu"
             style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", display: "none", flexDirection: "column", gap: "5px" }}
           >
-            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#1a1a1a", borderRadius: "2px" }} />
-            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#1a1a1a", borderRadius: "2px" }} />
-            <span style={{ display: "block", width: "22px", height: "1.5px", background: "#1a1a1a", borderRadius: "2px" }} />
+            {[0, 1, 2].map((i) => (
+              <span key={i} style={{ display: "block", width: "22px", height: "1.5px", background: "#1a1a1a", borderRadius: "2px" }} />
+            ))}
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 1100,
-          background: "rgba(250,250,248,0.97)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          display: "flex",
-          flexDirection: "column",
-          padding: "20px 24px 40px",
-          transform: mobileOpen ? "translateY(0)" : "translateY(-100%)",
-          transition: "transform 0.3s ease",
-          overflowY: "auto",
-          fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+      {/* Mobile fullscreen */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 1100,
+        background: "rgba(250,250,248,0.97)",
+        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
+        display: "flex", flexDirection: "column",
+        padding: "20px 24px 40px",
+        opacity: mobileOpen ? 1 : 0,
+        transform: mobileOpen ? "translateY(0)" : "translateY(-8px)",
+        transition: "opacity 0.25s ease, transform 0.25s ease",
+        pointerEvents: mobileOpen ? "auto" : "none",
+        overflowY: "auto",
+        fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "48px" }}>
           <Link href="/v4" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "22px", height: "22px", background: "#1d9e75", borderRadius: "5px" }} />
-            <span style={{ fontSize: "15px", fontWeight: 700, color: "#1a1a1a" }}>Stampify</span>
+            <div style={{ width: "16px", height: "16px", background: "#1d9e75", borderRadius: "3px" }} />
+            <span style={{ fontSize: "18px", fontWeight: 700, color: "#1a1a1a" }}>Stampify</span>
           </Link>
-          <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "24px", color: "#1a1a1a" }}>✕</button>
+          <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1a1a1a", lineHeight: 1 }}>✕</button>
         </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} style={{ fontSize: "24px", fontWeight: 600, color: "#1a1a1a", textDecoration: "none", padding: "12px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-              {link.label}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+          {links.map((l) => (
+            <Link
+              key={l.href} href={l.href}
+              onClick={() => setMobileOpen(false)}
+              style={{ fontSize: "28px", fontWeight: 600, color: "#1a1a1a", textDecoration: "none", padding: "14px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              {l.label}
             </Link>
           ))}
         </div>
-        <a href={WA_MAIN} target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} style={{ background: "#1d9e75", color: "#ffffff", borderRadius: "980px", padding: "16px 24px", fontSize: "17px", fontWeight: 600, textDecoration: "none", textAlign: "center", display: "block", marginTop: "32px" }}>
+        <a
+          href={WA_MAIN} target="_blank" rel="noopener noreferrer"
+          onClick={() => setMobileOpen(false)}
+          style={{
+            background: "#1d9e75", color: "#fff", borderRadius: "980px",
+            padding: "18px 24px", fontSize: "17px", fontWeight: 600,
+            textDecoration: "none", textAlign: "center", display: "block", marginTop: "32px",
+          }}
+        >
           Obtenir mon site — 990 CHF
         </a>
       </div>
 
       <style>{`
         @media (max-width: 767px) {
-          .nav4-desktop-links { display: none !important; }
-          .nav4-desktop-cta { display: none !important; }
-          .nav4-hamburger { display: flex !important; }
+          .nav4-links { display: none !important; }
+          .nav4-cta { display: none !important; }
+          .nav4-ham { display: flex !important; }
         }
       `}</style>
     </>

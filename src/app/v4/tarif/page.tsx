@@ -5,62 +5,59 @@ import { useEffect, useRef, useState } from "react";
 const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
-const FEATURES = [
-  "Site web professionnel",
-  "Carte fidélité digitale",
-  "Menu QR code",
-  "Réservations en ligne",
-  "SMS marketing (1er mois offert)",
-  "Tableau de bord",
-  "Hébergement 1 an inclus",
-  "SSL & sécurité inclus",
-  "Domaine personnalisé",
-  "Support 7j/7",
-  "Livraison en 48h",
+const MAIN_FEATURES = [
+  "Site vitrine 5 pages sur mesure",
+  "Carte fidélité digitale 10 cases",
+  "Plaquette NFC en bois gravée",
+  "Domaine .ch + hébergement 1ère année",
+  "SEO local optimisé",
+  "QR code imprimable A4/A5",
+  "1 campagne SMS offerte",
+  "2 retouches incluses",
+  "Guide vidéo d'utilisation",
+  "Livraison en 48h garantie",
 ];
 
-const ADDONS = [
-  {
-    name: "NFC Cards",
-    description: "3 cartes NFC personnalisées",
-    price: "+199 CHF",
-  },
-  {
-    name: "Pack SMS",
-    description: "500 SMS supplémentaires/mois",
-    price: "+49 CHF/mois",
-  },
-  {
-    name: "Maintenance",
-    description: "Mises à jour mensuelles",
-    price: "+79 CHF/mois",
-  },
+const ESSENTIEL_FEATURES = [
+  "SMS manuels débloqués",
+  "15+ triggers auto",
+  "Rapport mensuel",
+  "Mises à jour mineures",
+  "Support email",
+];
+
+const PRO_FEATURES = [
+  "Tout l'Essentiel",
+  "2 campagnes SMS/mois rédigées",
+  "Support prioritaire 4h",
+  "Modifications avancées",
+  "Revue trimestrielle",
 ];
 
 const FAQS = [
   {
-    q: "Qu'est-ce qui est inclus dans les 990 CHF ?",
-    a: "Tout : le site web, la carte fidélité, le menu QR, les réservations en ligne, l'hébergement pour 1 an, le domaine, et le support. Pas de frais cachés.",
+    q: "Est-ce que mes clients doivent télécharger une application ?",
+    a: "Non. La carte s'ouvre directement dans Safari ou Chrome via QR code ou NFC.",
   },
   {
-    q: "Y a-t-il un abonnement mensuel ?",
-    a: "Non. Le paiement est unique. Après la première année, l'hébergement est de 99 CHF/an seulement.",
+    q: "Que se passe-t-il après la première année ?",
+    a: "Domaine ~25 CHF/an. Hébergement ~5 CHF/mois (offert la 1ère année). Carte fidélité et dashboard : à vie.",
   },
   {
-    q: "En combien de temps mon site est-il prêt ?",
-    a: "48 heures ouvrables après validation de votre contenu. Souvent moins.",
+    q: "Est-ce que je suis propriétaire du site ?",
+    a: "Oui, à 100%. Code source, domaine, contenu — tout est à vous.",
   },
   {
-    q: "Puis-je modifier mon site moi-même ?",
-    a: "Oui, via un tableau de bord simple. Sinon, on s'en occupe gratuitement dans le cadre du support inclus.",
+    q: "Combien de temps pour mon site en ligne ?",
+    a: "48h à partir de vos infos : photos, textes, horaires, couleurs. Garanti.",
   },
   {
-    q: "Comment se passe le paiement ?",
-    a: "Par virement bancaire ou TWINT, après validation du devis. Aucune carte de crédit requise.",
+    q: "Vous travaillez en France aussi ?",
+    a: "Oui. Suisse romande et France. Contactez-nous pour en discuter.",
   },
   {
-    q: "Que se passe-t-il après 1 an ?",
-    a: "On vous envoie un rappel. Vous pouvez renouveler l'hébergement pour 99 CHF/an ou transférer votre site ailleurs.",
+    q: "Quelle différence avec Poinz ?",
+    a: "Poinz est gratuit mais tout reste sous leur marque. Avec Stampify : votre site, votre nom, votre relation client.",
   },
 ];
 
@@ -98,10 +95,10 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         </span>
         <span
           style={{
-            fontSize: 20,
+            fontSize: 18,
             color: "#555555",
             flexShrink: 0,
-            transition: "transform 0.2s ease",
+            transition: "transform 0.25s ease",
             display: "inline-block",
             transform: open ? "rotate(180deg)" : "rotate(0deg)",
           }}
@@ -113,7 +110,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         style={{
           maxHeight: open ? 300 : 0,
           overflow: "hidden",
-          transition: "max-height 0.3s ease",
+          transition: "max-height 0.35s ease",
         }}
       >
         <p
@@ -157,64 +154,66 @@ export default function TarifPage() {
   return (
     <>
       <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .fade-up {
           opacity: 0;
           transform: translateY(28px);
           transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        .pricing-card {
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-        .pricing-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 48px rgba(0,0,0,0.12) !important;
-        }
-        .addon-card {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .addon-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-        .cta-btn {
+        .btn-green {
           display: inline-block;
           background: #1d9e75;
           color: #ffffff;
           font-family: 'Plus Jakarta Sans', sans-serif;
-          font-weight: 700;
-          font-size: 16px;
-          border-radius: 999px;
+          font-weight: 600;
+          font-size: 17px;
+          border-radius: 980px;
           padding: 16px 32px;
           text-decoration: none;
           text-align: center;
-          transition: background 0.2s ease, transform 0.2s ease;
-          cursor: pointer;
           border: none;
-          width: 100%;
+          cursor: pointer;
+          transition: background 0.2s ease, transform 0.15s ease;
         }
-        .cta-btn:hover {
-          background: #179168;
+        .btn-green:hover {
+          background: #17886a;
           transform: translateY(-1px);
         }
-        .cta-btn-dark {
+        .btn-outline {
           display: inline-block;
-          background: #1d9e75;
-          color: #ffffff;
+          background: transparent;
+          color: #1a1a1a;
           font-family: 'Plus Jakarta Sans', sans-serif;
-          font-weight: 700;
+          font-weight: 600;
           font-size: 17px;
-          border-radius: 999px;
-          padding: 18px 40px;
+          border-radius: 980px;
+          padding: 16px 32px;
           text-decoration: none;
           text-align: center;
-          transition: background 0.2s ease, transform 0.2s ease;
-          max-width: 400px;
-          width: 100%;
+          border: 1.5px solid #1a1a1a;
+          cursor: pointer;
+          transition: background 0.2s ease, transform 0.15s ease;
         }
-        .cta-btn-dark:hover {
-          background: #179168;
+        .btn-outline:hover {
+          background: rgba(26,26,26,0.05);
+          transform: translateY(-1px);
+        }
+        .btn-white {
+          display: inline-block;
+          background: #ffffff;
+          color: #1a1a1a;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-weight: 600;
+          font-size: 17px;
+          border-radius: 980px;
+          padding: 16px 32px;
+          text-decoration: none;
+          text-align: center;
+          border: none;
+          cursor: pointer;
+          transition: background 0.2s ease, transform 0.15s ease;
+        }
+        .btn-white:hover {
+          background: #f0f0f0;
           transform: translateY(-1px);
         }
       `}</style>
@@ -223,25 +222,22 @@ export default function TarifPage() {
       <section
         style={{
           background: "#fafaf8",
-          padding: "140px 24px 80px",
+          padding: "120px 20px 80px",
           textAlign: "center",
         }}
       >
-        <div
-          className="fade-up"
-          style={{ maxWidth: 860, margin: "0 auto" }}
-        >
+        <div className="fade-up" style={{ maxWidth: 900, margin: "0 auto" }}>
           <h1
             style={{
               fontSize: 72,
               fontWeight: 800,
-              letterSpacing: "-0.03em",
+              letterSpacing: "-0.04em",
               color: "#1a1a1a",
               lineHeight: 1.05,
               marginBottom: 20,
             }}
           >
-            Simple. Transparent.
+            Un seul paiement.
           </h1>
           <p
             style={{
@@ -251,7 +247,7 @@ export default function TarifPage() {
               lineHeight: 1.5,
             }}
           >
-            Un seul forfait. Tout inclus.
+            Simple, transparent, et définitif.
           </p>
         </div>
       </section>
@@ -260,117 +256,143 @@ export default function TarifPage() {
       <section
         style={{
           background: "#f4f4f2",
-          padding: "80px 24px",
+          padding: "80px 20px",
           textAlign: "center",
         }}
       >
         <div
-          className="fade-up pricing-card"
+          className="fade-up"
           style={{
             background: "#ffffff",
             borderRadius: 24,
             padding: 48,
-            maxWidth: 560,
+            maxWidth: 580,
             margin: "0 auto",
-            boxShadow: "0 4px 40px rgba(0,0,0,0.08)",
-            position: "relative",
+            boxShadow: "0 8px 48px rgba(0,0,0,0.08)",
           }}
         >
-          {/* Popular pill */}
-          <div
-            style={{
-              position: "absolute",
-              top: -18,
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "#1d9e75",
-              color: "#ffffff",
-              borderRadius: 999,
-              padding: "6px 20px",
-              fontSize: 13,
-              fontWeight: 700,
-              whiteSpace: "nowrap",
-              letterSpacing: "0.02em",
-            }}
-          >
-            Le plus populaire
+          {/* Badge */}
+          <div style={{ marginBottom: 32 }}>
+            <span
+              style={{
+                display: "inline-block",
+                background: "#e8f7f2",
+                color: "#1d9e75",
+                borderRadius: 980,
+                padding: "6px 18px",
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+              }}
+            >
+              ✦ LE CHOIX DE NOS CLIENTS
+            </span>
           </div>
 
           {/* Price */}
           <div
             style={{
-              fontSize: 120,
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              color: "#1a1a1a",
-              lineHeight: 1,
-              marginTop: 16,
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "center",
+              gap: 8,
               marginBottom: 8,
             }}
           >
-            990{" "}
-            <span style={{ fontSize: 36, fontWeight: 700, letterSpacing: "-0.02em" }}>
+            <span
+              style={{
+                fontSize: 96,
+                fontWeight: 800,
+                letterSpacing: "-4px",
+                color: "#1a1a1a",
+                lineHeight: 1,
+              }}
+            >
+              990
+            </span>
+            <span
+              style={{
+                fontSize: 28,
+                fontWeight: 600,
+                color: "#555555",
+                letterSpacing: "-0.02em",
+              }}
+            >
               CHF
             </span>
           </div>
           <p
             style={{
-              fontSize: 14,
+              fontSize: 15,
               color: "#555555",
               marginBottom: 32,
             }}
           >
-            Paiement unique · Pas d&apos;abonnement
+            paiement unique · aucun abonnement
           </p>
 
-          {/* Separator */}
+          {/* Divider */}
           <div
             style={{
               height: 1,
-              background: "rgba(0,0,0,0.08)",
+              background: "#f4f4f2",
               marginBottom: 32,
             }}
           />
 
-          {/* Feature list */}
+          {/* Features */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: 16,
-              marginBottom: 40,
+              gap: 10,
+              marginBottom: 32,
               textAlign: "left",
             }}
           >
-            {FEATURES.map((f) => (
+            {MAIN_FEATURES.map((f) => (
               <div
                 key={f}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                }}
+                style={{ display: "flex", alignItems: "flex-start", gap: 10 }}
               >
                 <span
                   style={{
                     color: "#1d9e75",
                     fontWeight: 700,
-                    fontSize: 16,
+                    fontSize: 15,
                     flexShrink: 0,
+                    marginTop: 1,
                   }}
                 >
                   ✓
                 </span>
-                <span style={{ fontSize: 15, color: "#1a1a1a", fontWeight: 500 }}>
+                <span
+                  style={{ fontSize: 15, color: "#1a1a1a", fontWeight: 500, lineHeight: 1.5 }}
+                >
                   {f}
                 </span>
               </div>
             ))}
           </div>
 
+          {/* Context box */}
+          <div
+            style={{
+              background: "#f4f4f2",
+              borderRadius: 12,
+              padding: "16px 20px",
+              marginBottom: 32,
+              textAlign: "left",
+            }}
+          >
+            <p style={{ fontSize: 14, color: "#555555", lineHeight: 1.6 }}>
+              Une agence suisse facture 1 500–5 000 CHF pour un site seul. Stampify livre site + carte + NFC + SEO. Pour 990 CHF. En 48h.
+            </p>
+          </div>
+
           {/* CTA */}
-          <a href={WA_MAIN} className="cta-btn">
-            Obtenir mon site →
+          <a href={WA_MAIN} className="btn-green" style={{ width: "100%", display: "block" }}>
+            Obtenir mon site — 990 CHF
           </a>
         </div>
       </section>
@@ -379,76 +401,184 @@ export default function TarifPage() {
       <section
         style={{
           background: "#fafaf8",
-          padding: "80px 24px",
+          padding: "60px 20px",
         }}
       >
-        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <h2
             className="fade-up"
             style={{
               fontSize: 40,
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
+              fontWeight: 700,
               color: "#1a1a1a",
               textAlign: "center",
-              marginBottom: 48,
+              marginBottom: 40,
+              letterSpacing: "-0.02em",
             }}
           >
             Options supplémentaires
           </h2>
+
+          <p
+            className="fade-up"
+            style={{
+              fontSize: 13,
+              color: "#555555",
+              textAlign: "center",
+              marginBottom: 20,
+              letterSpacing: "0.02em",
+            }}
+          >
+            — Suivi mensuel optionnel —
+          </p>
+
           <div
+            className="fade-up"
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: 24,
+              gap: 16,
               justifyContent: "center",
+              maxWidth: 600,
+              margin: "0 auto",
             }}
           >
-            {ADDONS.map((addon) => (
-              <div
-                key={addon.name}
-                className="fade-up addon-card"
+            {/* Essentiel */}
+            <div
+              style={{
+                flex: "1 1 260px",
+                background: "#f4f4f2",
+                borderRadius: 16,
+                padding: 28,
+                display: "flex",
+                flexDirection: "column",
+                gap: 0,
+              }}
+            >
+              <p
                 style={{
-                  background: "#ffffff",
-                  borderRadius: 16,
-                  padding: 28,
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  flex: "1 1 220px",
-                  maxWidth: 260,
+                  fontSize: 24,
+                  fontWeight: 700,
+                  color: "#1a1a1a",
+                  marginBottom: 4,
+                  letterSpacing: "-0.02em",
                 }}
               >
-                <p
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: "#1a1a1a",
-                    marginBottom: 6,
-                  }}
-                >
-                  {addon.name}
-                </p>
-                <p
-                  style={{
-                    fontSize: 14,
-                    color: "#555555",
-                    marginBottom: 16,
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {addon.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: 32,
-                    fontWeight: 800,
-                    color: "#1d9e75",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {addon.price}
-                </p>
+                49 CHF / mois
+              </p>
+              <p style={{ fontSize: 12, color: "#555555", marginBottom: 20 }}>
+                Sans engagement
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  marginBottom: 24,
+                }}
+              >
+                {ESSENTIEL_FEATURES.map((f) => (
+                  <div
+                    key={f}
+                    style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
+                  >
+                    <span
+                      style={{
+                        color: "#1d9e75",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        flexShrink: 0,
+                        marginTop: 1,
+                      }}
+                    >
+                      ✓
+                    </span>
+                    <span style={{ fontSize: 14, color: "#1a1a1a", lineHeight: 1.5 }}>
+                      {f}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+              <a href={WA_MAIN} className="btn-outline" style={{ textAlign: "center" }}>
+                Choisir Essentiel
+              </a>
+            </div>
+
+            {/* Pro */}
+            <div
+              style={{
+                flex: "1 1 260px",
+                background: "#1a1a1a",
+                borderRadius: 16,
+                padding: 28,
+                display: "flex",
+                flexDirection: "column",
+                gap: 0,
+                position: "relative",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: 20,
+                  right: 20,
+                  background: "transparent",
+                  color: "#f5a623",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                }}
+              >
+                RECOMMANDÉ
+              </span>
+              <p
+                style={{
+                  fontSize: 24,
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  marginBottom: 4,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                79 CHF / mois
+              </p>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 20 }}>
+                Sans engagement
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  marginBottom: 24,
+                }}
+              >
+                {PRO_FEATURES.map((f) => (
+                  <div
+                    key={f}
+                    style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
+                  >
+                    <span
+                      style={{
+                        color: "#1d9e75",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        flexShrink: 0,
+                        marginTop: 1,
+                      }}
+                    >
+                      ✓
+                    </span>
+                    <span style={{ fontSize: 14, color: "#ffffff", lineHeight: 1.5 }}>
+                      {f}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <a href={WA_MAIN} className="btn-white" style={{ textAlign: "center" }}>
+                Choisir Pro
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -457,26 +587,32 @@ export default function TarifPage() {
       <section
         style={{
           background: "#f4f4f2",
-          padding: "80px 24px",
+          padding: "80px 20px",
         }}
       >
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <h2
             className="fade-up"
             style={{
               fontSize: 48,
-              fontWeight: 800,
+              fontWeight: 700,
               letterSpacing: "-0.02em",
               color: "#1a1a1a",
               textAlign: "center",
-              marginBottom: 48,
+              marginBottom: 40,
             }}
           >
-            Questions fréquentes
+            Questions fréquentes.
           </h2>
           <div
             className="fade-up"
-            style={{ display: "flex", flexDirection: "column", gap: 12 }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              maxWidth: 720,
+              margin: "0 auto",
+            }}
           >
             {FAQS.map((faq) => (
               <FAQItem key={faq.q} q={faq.q} a={faq.a} />
@@ -489,34 +625,25 @@ export default function TarifPage() {
       <section
         style={{
           background: "#1a1a1a",
-          padding: "120px 24px",
+          padding: "120px 20px",
           textAlign: "center",
         }}
       >
-        <div
-          className="fade-up"
-          style={{ maxWidth: 860, margin: "0 auto" }}
-        >
+        <div className="fade-up" style={{ maxWidth: 900, margin: "0 auto" }}>
           <h2
             style={{
               fontSize: 64,
               fontWeight: 800,
               letterSpacing: "-0.04em",
               color: "#ffffff",
-              marginBottom: 40,
+              marginBottom: 36,
               lineHeight: 1.05,
             }}
           >
             Lancez-vous.
           </h2>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: 16,
-            }}
-          >
-            <a href={WA_MAIN} className="cta-btn-dark">
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <a href={WA_MAIN} className="btn-green">
               Obtenir mon site — 990 CHF
             </a>
           </div>

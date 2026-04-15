@@ -5,7 +5,14 @@ import { useState, useEffect, useRef } from "react";
 const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
 
-type Category = "Tous" | "Café" | "Spa" | "Barbershop" | "Restaurant" | "Boulangerie" | "Manucure";
+type Category =
+  | "Tous"
+  | "Café"
+  | "Boulangerie"
+  | "Barbershop"
+  | "Restaurant"
+  | "Manucure"
+  | "Spa";
 
 interface Demo {
   name: string;
@@ -15,7 +22,6 @@ interface Demo {
   img: string;
   link: string;
   external?: boolean;
-  features: string[];
 }
 
 const demos: Demo[] = [
@@ -23,11 +29,10 @@ const demos: Demo[] = [
     name: "Spa Essence",
     type: "Spa",
     city: "Genève",
-    badge: "⭐ Plus populaire",
+    badge: "⭐ Le plus demandé",
     img: "photo-1540555700478-4be289fbecef",
     link: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
     external: true,
-    features: ["Réservation soins", "Carte fidélité", "Packages"],
   },
   {
     name: "Café Lumière",
@@ -35,15 +40,6 @@ const demos: Demo[] = [
     city: "Genève",
     img: "photo-1495474472287-4d71bcdd2085",
     link: "/demos/cafe-lumiere.html",
-    features: ["Réservation table", "Pré-commande", "Carte fidélité"],
-  },
-  {
-    name: "Black Scissors",
-    type: "Barbershop",
-    city: "Genève",
-    img: "photo-1503951914875-452162b0f3f1",
-    link: "/demos/black-scissors.html",
-    features: ["Réservation coupe", "Carte VIP", "Galerie"],
   },
   {
     name: "Bistrot du Coin",
@@ -51,7 +47,6 @@ const demos: Demo[] = [
     city: "Fribourg",
     img: "photo-1414235077428-338989a2e8c0",
     link: "/demos/bistrot-du-coin.html",
-    features: ["Résa table", "Carte des vins", "Menu QR · Fidélité"],
   },
   {
     name: "Boulangerie Martin",
@@ -59,7 +54,13 @@ const demos: Demo[] = [
     city: "Lausanne",
     img: "photo-1509440159596-0249088772ff",
     link: "/demos/boulangerie-martin.html",
-    features: ["Commande en ligne", "Retrait QR code", "Fidélité"],
+  },
+  {
+    name: "Black Scissors",
+    type: "Barbershop",
+    city: "Genève",
+    img: "photo-1503951914875-452162b0f3f1",
+    link: "/demos/black-scissors.html",
   },
   {
     name: "Nail Studio",
@@ -67,37 +68,37 @@ const demos: Demo[] = [
     city: "Lausanne",
     img: "photo-1604654894610-df63bc536371",
     link: "/demos/nail-studio.html",
-    features: ["Prise de RDV", "Galerie poses", "Carte récompenses"],
   },
 ];
 
 const categories: Category[] = [
   "Tous",
   "Café",
-  "Spa",
+  "Boulangerie",
   "Barbershop",
   "Restaurant",
-  "Boulangerie",
   "Manucure",
+  "Spa",
 ];
 
-function useFadeUp() {
-  const ref = useRef<HTMLDivElement>(null);
+export default function DemosPage() {
+  const [active, setActive] = useState<Category>("Tous");
+  const pageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = pageRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("fade-up-visible");
+            entry.target.classList.add("visible");
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.1 }
     );
 
     const targets = el.querySelectorAll<HTMLElement>(".fade-up");
@@ -106,12 +107,28 @@ function useFadeUp() {
     return () => observer.disconnect();
   }, []);
 
-  return ref;
-}
+  // Re-observe cards when filter changes
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return;
 
-export default function DemosPage() {
-  const [active, setActive] = useState<Category>("Tous");
-  const sectionRef = useFadeUp();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const targets = el.querySelectorAll<HTMLElement>(".fade-up:not(.visible)");
+    targets.forEach((t) => observer.observe(t));
+
+    return () => observer.disconnect();
+  }, [active]);
 
   const filtered =
     active === "Tous" ? demos : demos.filter((d) => d.type === active);
@@ -119,39 +136,35 @@ export default function DemosPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-        *, *::before, *::after {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
+        .fade-up {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-up.visible {
+          opacity: 1;
+          transform: translateY(0);
         }
 
-        body {
+        .demos-page {
           font-family: 'Plus Jakarta Sans', sans-serif;
+          color: #1a1a1a;
           background: #fafaf8;
-          color: #1a1a1a;
-          -webkit-font-smoothing: antialiased;
-        }
-
-        .page-wrap {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          color: #1a1a1a;
         }
 
         /* Hero */
-        .hero {
+        .demos-hero {
           background: #fafaf8;
-          padding: 140px 24px 80px;
+          padding: 120px 20px 80px;
           text-align: center;
         }
 
-        .hero-inner {
-          max-width: 860px;
+        .demos-hero-inner {
+          max-width: 900px;
           margin: 0 auto;
         }
 
-        .hero h1 {
+        .demos-hero h1 {
           font-size: 72px;
           font-weight: 800;
           letter-spacing: -0.03em;
@@ -160,31 +173,30 @@ export default function DemosPage() {
           margin-bottom: 24px;
         }
 
-        .hero-subtitle {
+        .demos-hero-subtitle {
           font-size: 21px;
           color: #555555;
           margin-bottom: 40px;
           line-height: 1.5;
         }
 
-        .cta-row {
+        .demos-cta-row {
           display: flex;
           gap: 14px;
           justify-content: center;
           flex-wrap: wrap;
         }
 
-        .btn-green {
+        .demos-btn-green {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
           background: #1d9e75;
           color: #fff;
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 16px;
           font-weight: 700;
           padding: 16px 32px;
-          border-radius: 100px;
+          border-radius: 980px;
           border: none;
           cursor: pointer;
           text-decoration: none;
@@ -192,22 +204,21 @@ export default function DemosPage() {
           white-space: nowrap;
         }
 
-        .btn-green:hover {
-          background: #179067;
+        .demos-btn-green:hover {
+          background: #17886a;
           transform: translateY(-1px);
         }
 
-        .btn-outline {
+        .demos-btn-outline {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
           background: transparent;
           color: #1d9e75;
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 16px;
           font-weight: 700;
           padding: 16px 32px;
-          border-radius: 100px;
+          border-radius: 980px;
           border: 1.5px solid #1d9e75;
           cursor: pointer;
           text-decoration: none;
@@ -215,282 +226,236 @@ export default function DemosPage() {
           white-space: nowrap;
         }
 
-        .btn-outline:hover {
-          background: #e8f6f1;
+        .demos-btn-outline:hover {
+          background: #e8f7f2;
           transform: translateY(-1px);
         }
 
-        /* Cards section */
-        .cards-section {
+        /* Filter + Cards section */
+        .demos-cards-section {
           background: #f4f4f2;
-          padding: 80px 24px;
+          padding: 80px 20px;
         }
 
-        .cards-inner {
-          max-width: 860px;
+        .demos-cards-inner {
+          max-width: 900px;
           margin: 0 auto;
         }
 
-        /* Filter pills */
-        .filter-row {
+        .demos-filter-row {
           display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: center;
           margin-bottom: 40px;
+          flex-wrap: wrap;
         }
 
-        .filter-pill {
+        .demos-filter-pill {
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 14px;
           font-weight: 600;
-          padding: 8px 20px;
-          border-radius: 100px;
-          border: 1.5px solid #d0d0cc;
-          background: transparent;
+          padding: 8px 18px;
+          border-radius: 980px;
+          border: none;
+          background: #fff;
           color: #555555;
           cursor: pointer;
-          transition: all 0.18s;
+          transition: background 0.18s, color 0.18s;
           white-space: nowrap;
         }
 
-        .filter-pill:hover {
-          border-color: #1d9e75;
+        .demos-filter-pill:hover {
+          background: #e8f7f2;
           color: #1d9e75;
         }
 
-        .filter-pill.active {
+        .demos-filter-pill.demos-active {
           background: #1d9e75;
-          border-color: #1d9e75;
           color: #fff;
         }
 
-        /* Grid */
-        .cards-grid {
+        .demos-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 24px;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 20px;
         }
 
-        /* Card */
-        .demo-card {
+        .demos-card {
           background: #fff;
-          border-radius: 18px;
+          border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
           transition: transform 0.22s, box-shadow 0.22s;
           display: flex;
           flex-direction: column;
         }
 
-        .demo-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+        .demos-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
         }
 
-        .card-img-wrap {
+        .demos-card-img-wrap {
           position: relative;
           width: 100%;
-          aspect-ratio: 16/9;
+          aspect-ratio: 4 / 3;
           overflow: hidden;
         }
 
-        .card-img-wrap img {
+        .demos-card-img-wrap img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
-          transition: transform 0.35s;
         }
 
-        .demo-card:hover .card-img-wrap img {
-          transform: scale(1.04);
-        }
-
-        .card-badge {
+        .demos-card-badge {
           position: absolute;
-          top: 12px;
-          left: 12px;
+          top: 10px;
+          left: 10px;
           background: #1d9e75;
           color: #fff;
           font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 12px;
-          font-weight: 700;
+          font-size: 11px;
+          font-weight: 600;
           padding: 5px 12px;
-          border-radius: 100px;
+          border-radius: 980px;
           z-index: 2;
         }
 
-        .card-body {
-          padding: 20px 22px 24px;
+        .demos-card-body {
+          padding: 20px;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 8px;
           flex: 1;
         }
 
-        .card-meta {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-
-        .type-pill {
+        .demos-type-pill {
+          display: inline-block;
           font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 700;
           padding: 4px 12px;
-          border-radius: 100px;
-          background: #e8f6f1;
+          border-radius: 980px;
+          background: #e8f7f2;
           color: #1d9e75;
-        }
-
-        .card-city {
-          font-size: 13px;
-          color: #555555;
-          font-weight: 500;
-        }
-
-        .card-name {
-          font-size: 20px;
-          font-weight: 800;
-          color: #1a1a1a;
-          letter-spacing: -0.02em;
-          line-height: 1.2;
-        }
-
-        .card-features {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 7px;
-        }
-
-        .feature-tag {
-          font-size: 12px;
-          font-weight: 600;
-          color: #555555;
-          background: #f4f4f2;
-          border-radius: 6px;
-          padding: 4px 10px;
-        }
-
-        .card-cta {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 14px;
-          font-weight: 700;
-          color: #1d9e75;
-          background: transparent;
-          border: 1.5px solid #1d9e75;
-          border-radius: 100px;
-          padding: 10px 20px;
-          text-decoration: none;
-          transition: background 0.18s, transform 0.15s;
-          margin-top: auto;
           align-self: flex-start;
         }
 
-        .card-cta:hover {
-          background: #e8f6f1;
-          transform: translateY(-1px);
+        .demos-card-name {
+          font-size: 17px;
+          font-weight: 600;
+          color: #1a1a1a;
+          line-height: 1.3;
+        }
+
+        .demos-card-city {
+          font-size: 13px;
+          color: #555555;
+        }
+
+        .demos-card-link {
+          display: inline-block;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          color: #1d9e75;
+          text-decoration: none;
+          margin-top: 4px;
+        }
+
+        .demos-card-link:hover {
+          text-decoration: underline;
         }
 
         /* CTA section */
-        .cta-section {
+        .demos-cta-section {
           background: #fafaf8;
-          padding: 140px 24px;
+          padding: 120px 20px;
           text-align: center;
         }
 
-        .cta-inner {
-          max-width: 860px;
+        .demos-cta-inner {
+          max-width: 900px;
           margin: 0 auto;
         }
 
-        .cta-section h2 {
+        .demos-cta-section h2 {
           font-size: 48px;
-          font-weight: 800;
+          font-weight: 700;
           letter-spacing: -0.02em;
           line-height: 1.12;
           color: #1a1a1a;
           margin-bottom: 20px;
         }
 
-        .cta-section p {
-          font-size: 18px;
+        .demos-cta-section p {
+          font-size: 16px;
           color: #555555;
           margin-bottom: 40px;
           line-height: 1.6;
-        }
-
-        /* Fade-up animation */
-        .fade-up {
-          opacity: 0;
-          transform: translateY(28px);
-          transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-                      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .fade-up-visible {
-          opacity: 1;
-          transform: translateY(0);
+          max-width: 560px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         @media (max-width: 700px) {
-          .hero h1 {
-            font-size: 40px;
+          .demos-hero h1 {
+            font-size: 42px;
           }
-
-          .cta-section h2 {
-            font-size: 32px;
-          }
-
-          .hero {
+          .demos-hero {
             padding: 100px 20px 60px;
           }
-
-          .cta-section {
-            padding: 100px 20px;
+          .demos-cta-section h2 {
+            font-size: 32px;
           }
-
-          .cards-section {
-            padding: 60px 20px;
+          .demos-cta-section {
+            padding: 80px 20px;
           }
         }
       `}</style>
 
-      <div className="page-wrap" ref={sectionRef}>
+      <div className="demos-page" ref={pageRef}>
         {/* Hero */}
-        <section className="hero">
-          <div className="hero-inner">
-            <h1 className="fade-up">
-              Voyez ce qu&apos;on peut faire pour votre commerce.
-            </h1>
-            <p className="hero-subtitle fade-up" style={{ transitionDelay: "0.08s" }}>
-              6 exemples réels. À vos couleurs. Livré en 48h.
+        <section className="demos-hero">
+          <div className="demos-hero-inner">
+            <h1 className="fade-up">Voyez ce qu&apos;on peut faire.</h1>
+            <p
+              className="demos-hero-subtitle fade-up"
+              style={{ transitionDelay: "0.1s" }}
+            >
+              6 exemples réels. Fonctionnels. À vos couleurs. En 48h.
             </p>
-            <div className="cta-row fade-up" style={{ transitionDelay: "0.16s" }}>
-              <a href={WA_MAIN} target="_blank" rel="noopener noreferrer" className="btn-green">
+            <div
+              className="demos-cta-row fade-up"
+              style={{ transitionDelay: "0.2s" }}
+            >
+              <a
+                href={WA_MAIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="demos-btn-green"
+              >
                 Obtenir mon site — 990 CHF
               </a>
-              <a href="/v4/tarif" className="btn-outline">
+              <a href="/v4/tarif" className="demos-btn-outline">
                 Voir le tarif
               </a>
             </div>
           </div>
         </section>
 
-        {/* Cards section */}
-        <section className="cards-section">
-          <div className="cards-inner">
-            {/* Filter pills */}
-            <div className="filter-row fade-up">
+        {/* Filter + Cards */}
+        <section className="demos-cards-section">
+          <div className="demos-cards-inner">
+            <div className="demos-filter-row fade-up">
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  className={`filter-pill${active === cat ? " active" : ""}`}
+                  className={`demos-filter-pill${
+                    active === cat ? " demos-active" : ""
+                  }`}
                   onClick={() => setActive(cat)}
                 >
                   {cat}
@@ -498,50 +463,37 @@ export default function DemosPage() {
               ))}
             </div>
 
-            {/* Grid */}
-            <div className="cards-grid">
+            <div className="demos-grid">
               {filtered.map((demo, i) => (
                 <div
                   key={demo.name}
-                  className="demo-card fade-up"
-                  style={{ transitionDelay: `${i * 0.07}s` }}
+                  className="demos-card fade-up"
+                  style={{ transitionDelay: `${i * 0.08}s` }}
                 >
-                  <div className="card-img-wrap">
+                  <div className="demos-card-img-wrap">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={`https://images.unsplash.com/${demo.img}?auto=format&fit=crop&w=600&q=80`}
+                      src={`https://images.unsplash.com/${demo.img}?w=600&q=80`}
                       alt={demo.name}
                       loading="lazy"
                     />
                     {demo.badge && (
-                      <span className="card-badge">{demo.badge}</span>
+                      <span className="demos-card-badge">{demo.badge}</span>
                     )}
                   </div>
 
-                  <div className="card-body">
-                    <div className="card-meta">
-                      <span className="type-pill">{demo.type}</span>
-                      <span className="card-city">{demo.city}</span>
-                    </div>
-
-                    <div className="card-name">{demo.name}</div>
-
-                    <div className="card-features">
-                      {demo.features.map((f) => (
-                        <span key={f} className="feature-tag">
-                          {f}
-                        </span>
-                      ))}
-                    </div>
-
+                  <div className="demos-card-body">
+                    <span className="demos-type-pill">{demo.type}</span>
+                    <div className="demos-card-name">{demo.name}</div>
+                    <div className="demos-card-city">{demo.city}</div>
                     <a
                       href={demo.link}
-                      className="card-cta"
+                      className="demos-card-link"
                       {...(demo.external
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
                     >
-                      Voir la démo interactive →
+                      Voir la démo →
                     </a>
                   </div>
                 </div>
@@ -550,20 +502,30 @@ export default function DemosPage() {
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="cta-section">
-          <div className="cta-inner">
+        {/* CTA section */}
+        <section className="demos-cta-section">
+          <div className="demos-cta-inner">
             <h2 className="fade-up">
               Votre commerce n&apos;est pas dans la liste&nbsp;?
             </h2>
-            <p className="fade-up" style={{ transitionDelay: "0.08s" }}>
-              On crée votre site sur mesure, quelle que soit votre activité.
+            <p className="fade-up" style={{ transitionDelay: "0.1s" }}>
+              On fait des sites pour tous les commerces locaux. Quel que soit
+              votre secteur, on s&apos;adapte à vos couleurs et votre
+              identité — livré en 48h.
             </p>
-            <div className="cta-row fade-up" style={{ transitionDelay: "0.16s" }}>
-              <a href={WA_MAIN} target="_blank" rel="noopener noreferrer" className="btn-green">
+            <div
+              className="demos-cta-row fade-up"
+              style={{ transitionDelay: "0.2s" }}
+            >
+              <a
+                href={WA_MAIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="demos-btn-green"
+              >
                 Obtenir mon site — 990 CHF
               </a>
-              <a href="/v4/tarif" className="btn-outline">
+              <a href="/v4/tarif" className="demos-btn-outline">
                 Voir le tarif
               </a>
             </div>
