@@ -66,115 +66,149 @@ function WordTitle({ text, style }: { text: string; style?: React.CSSProperties 
 
 /* ─── 4-step hero animation ─── */
 function HeroStepAnimation({ step }: { step: number }) {
+  // Track how many times each step has been entered — lets us restart CSS animations (e.g. typewriter)
+  const visits = useRef([0, 0, 0, 0]);
+  const prev = useRef(-1);
+  if (prev.current !== step) {
+    visits.current[step]++;
+    prev.current = step;
+  }
+  const v = visits.current;
+
+  const labels = [
+    "Client approche son téléphone — NFC tap",
+    "8ème tampon ajouté automatiquement",
+    "Récompense débloquée — soin offert !",
+    "SMS de rappel envoyé automatiquement",
+  ];
+
+  // All panels are always mounted — opacity+transform give smooth crossfades
+  const panel = (s: number, extra?: React.CSSProperties): React.CSSProperties => ({
+    position: "absolute", inset: 0,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    opacity: s === step ? 1 : 0,
+    transform: s === step ? "translateY(0)" : "translateY(10px)",
+    transition: "opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1)",
+    pointerEvents: "none",
+    ...extra,
+  });
+
   return (
     <div style={{ position: "relative", maxWidth: "420px", width: "100%" }}>
       {/* Step pills */}
       <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "20px" }}>
         {[0,1,2,3].map(i => (
           <div key={i} style={{
-            width: i === step ? "22px" : "6px", height: "6px", borderRadius: "3px",
-            background: i === step ? "#1d9e75" : "#C8E6DB", transition: "all 0.3s ease",
+            height: "6px", borderRadius: "3px",
+            width: i === step ? "22px" : "6px",
+            background: i === step ? "#1d9e75" : "#C8E6DB",
+            transition: "width 0.4s ease, background 0.4s ease",
           }} />
         ))}
       </div>
 
       <div style={{ height: "260px", position: "relative" }}>
 
-        {/* Step 0 — NFC tap */}
-        {step === 0 && (
-          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center", gap: "28px" }}>
-            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ width: "88px", height: "56px", borderRadius: "12px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px", position: "relative", zIndex: 2 }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                  <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                  <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-                  <circle cx="12" cy="12" r="1.8" fill="white"/>
-                </svg>
-                <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>Spa Essence</span>
-              </div>
-              {[0,1,2].map(i => (
-                <div key={i} style={{ position: "absolute", width: "88px", height: "56px", borderRadius: "50%", border: "2px solid rgba(29,158,117,0.5)", animation: `rippleAnim 1.8s ${i*0.55}s ease-out infinite` }} />
+        {/* ── Step 0 — NFC tap ── */}
+        <div style={{ ...panel(0), gap: "28px" }}>
+          <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: "88px", height: "56px", borderRadius: "12px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px", position: "relative", zIndex: 2 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                <circle cx="12" cy="12" r="1.8" fill="white"/>
+              </svg>
+              <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>Spa Essence</span>
+            </div>
+            {[0,1,2].map(i => (
+              <div key={i} style={{ position: "absolute", width: "88px", height: "56px", borderRadius: "50%", border: "2px solid rgba(29,158,117,0.5)", animation: `rippleAnim 1.8s ${i*0.55}s ease-out infinite` }} />
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+            {[0,1,2].map(i => (
+              <svg key={i} width="12" height="22" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
+                <path d="M2 2 Q7 11 2 20" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+              </svg>
+            ))}
+          </div>
+          <div style={{ width: "52px", height: "90px", borderRadius: "12px", background: "#1A1A1A", padding: "4px", animation: "phoneApproach 2s ease-in-out infinite alternate", flexShrink: 0 }}>
+            <div style={{ borderRadius: "8px", background: "#FBF8F3", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "26px", height: "16px", borderRadius: "3px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Step 1 — Stamp card (8th stamp bouncing) ── */}
+        <div style={panel(1)}>
+          <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "22px 24px", boxShadow: "0 24px 60px rgba(29,158,117,0.25)" }}>
+            <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.6)", marginBottom: "2px" }}>Stampify</div>
+            <div style={{ fontSize: "16px", fontWeight: 700, color: "white", marginBottom: "16px" }}>Spa Essence — Genève</div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {Array.from({ length: 10 }, (_, i) => (
+                // key on the bouncing stamp restarts animation each time we re-enter step 1
+                <div key={i === 7 ? `s7-${v[1]}` : i} style={{
+                  width: "22px", height: "22px", borderRadius: "50%",
+                  background: i < 8 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.2)",
+                  animation: i === 7 ? "stampBounce 0.7s 0.25s cubic-bezier(0.34,1.56,0.64,1) both" : "none",
+                }} />
               ))}
             </div>
-            <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
-              {[0,1,2].map(i => (
-                <svg key={i} width="12" height="22" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
-                  <path d="M2 2 Q7 11 2 20" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-                </svg>
+            <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", marginTop: "10px" }}>8 / 10 · encore 2 pour votre soin offert</div>
+          </div>
+        </div>
+
+        {/* ── Step 2 — Full card + reward popup ── */}
+        <div style={{ ...panel(2), flexDirection: "column", gap: "12px" }}>
+          <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "20px 24px" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {Array.from({ length: 10 }, (_, i) => (
+                <div key={i} style={{ width: "22px", height: "22px", borderRadius: "50%", background: "rgba(255,255,255,0.9)" }} />
               ))}
             </div>
-            <div style={{ width: "52px", height: "90px", borderRadius: "12px", background: "#1A1A1A", padding: "4px", animation: "phoneApproach 2s ease-in-out infinite alternate", flexShrink: 0 }}>
-              <div style={{ borderRadius: "8px", background: "#FBF8F3", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: "26px", height: "16px", borderRadius: "3px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
-              </div>
-            </div>
+            <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.65)", marginTop: "8px" }}>Carte complète ✓</div>
           </div>
-        )}
+          {/* key restarts the pop animation each time step 2 is entered */}
+          <div key={`reward-${v[2]}`} style={{ background: "white", borderRadius: "16px", padding: "16px 28px", textAlign: "center", boxShadow: "0 12px 40px rgba(0,0,0,0.12)", animation: "rewardPop 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards" }}>
+            <div style={{ fontSize: "28px", marginBottom: "4px" }}>🎉</div>
+            <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1A1A", marginBottom: "4px" }}>Soin offert !</div>
+            <div style={{ fontSize: "12px", color: "#5C5C5C" }}>Présentez ceci à l&apos;accueil</div>
+          </div>
+        </div>
 
-        {/* Step 1 — Stamp card (8th stamp bouncing) */}
-        {step === 1 && (
-          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "22px 24px", boxShadow: "0 24px 60px rgba(29,158,117,0.25)" }}>
-              <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.6)", marginBottom: "2px" }}>Stampify</div>
-              <div style={{ fontSize: "16px", fontWeight: 700, color: "white", marginBottom: "16px" }}>Spa Essence — Genève</div>
-              <div style={{ display: "flex", gap: "8px" }}>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} style={{
-                    width: "22px", height: "22px", borderRadius: "50%",
-                    background: i < 8 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.2)",
-                    animation: i === 7 ? "stampBounce 0.6s 0.2s ease both" : "none",
-                  }} />
-                ))}
+        {/* ── Step 3 — SMS typewriter ── */}
+        <div style={panel(3)}>
+          <div style={{ width: "230px", background: "#1A1A1A", borderRadius: "28px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
+            <div style={{ background: "#FBF8F3", borderRadius: "20px", padding: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 600, color: "#1A1A1A", textAlign: "center", borderBottom: "1px solid #F2EFE9", paddingBottom: "8px" }}>Messages</div>
+              <div style={{ background: "#E8F7F2", borderRadius: "10px 10px 10px 2px", padding: "10px 12px", fontSize: "11px", color: "#1A1A1A", lineHeight: 1.5 }}>
+                {/* key restarts typewriter each time step 3 is entered */}
+                <span key={`tw-${v[3]}`} style={{ display: "inline-block", overflow: "hidden", whiteSpace: "nowrap", animation: "typewriterAnim 2.2s steps(42) forwards" }}>
+                  2 tampons restants chez Spa Essence !
+                </span>
+                <span key={`cur-${v[3]}`} style={{ animation: "cursorBlink 0.7s 2.2s infinite", color: "#1d9e75", marginLeft: "1px", opacity: 0 }}>|</span>
               </div>
-              <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", marginTop: "10px" }}>8 / 10 · encore 2 pour votre soin offert</div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2 — Full card + reward popup */}
-        {step === 2 && (
-          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px" }}>
-            <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "20px 24px" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} style={{ width: "22px", height: "22px", borderRadius: "50%", background: "rgba(255,255,255,0.9)" }} />
-                ))}
-              </div>
-              <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.65)", marginTop: "8px" }}>Carte complète ✓</div>
-            </div>
-            <div style={{ background: "white", borderRadius: "16px", padding: "16px 28px", textAlign: "center", boxShadow: "0 12px 40px rgba(0,0,0,0.12)", animation: "rewardPop 0.5s ease forwards" }}>
-              <div style={{ fontSize: "28px", marginBottom: "4px" }}>🎉</div>
-              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1A1A", marginBottom: "4px" }}>Soin offert !</div>
-              <div style={{ fontSize: "12px", color: "#5C5C5C" }}>Présentez ceci à l&apos;accueil</div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3 — SMS typewriter */}
-        {step === 3 && (
-          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: "230px", background: "#1A1A1A", borderRadius: "28px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
-              <div style={{ background: "#FBF8F3", borderRadius: "20px", padding: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                <div style={{ fontSize: "11px", fontWeight: 600, color: "#1A1A1A", textAlign: "center", borderBottom: "1px solid #F2EFE9", paddingBottom: "8px" }}>Messages</div>
-                <div style={{ background: "#E8F7F2", borderRadius: "10px 10px 10px 2px", padding: "10px 12px", fontSize: "11px", color: "#1A1A1A", lineHeight: 1.5 }}>
-                  <span style={{ display: "inline-block", overflow: "hidden", whiteSpace: "nowrap", animation: "typewriterAnim 2s steps(40) forwards" }}>
-                    💆 2 tampons restants chez Spa Essence !
-                  </span>
-                  <span style={{ animation: "cursorBlink 0.7s infinite", color: "#1d9e75", marginLeft: "1px" }}>|</span>
-                </div>
-                <div style={{ background: "#1d9e75", borderRadius: "10px 10px 2px 10px", padding: "10px 12px", fontSize: "11px", color: "white", lineHeight: 1.5, opacity: 0, animation: "stepFadeIn 0.4s 1.8s ease forwards" }}>
-                  🎉 Votre soin est prêt !
-                </div>
+              <div key={`sms2-${v[3]}`} style={{ background: "#1d9e75", borderRadius: "10px 10px 2px 10px", padding: "10px 12px", fontSize: "11px", color: "white", lineHeight: 1.5, opacity: 0, animation: "smsFadeIn 0.4s 2s ease forwards" }}>
+                Votre soin est prêt — à bientôt !
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      <p style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#5C5C5C", fontWeight: 500, minHeight: "20px" }}>
-        {["Client approche son téléphone — NFC tap", "8ème tampon ajouté automatiquement", "Récompense débloquée — soin offert !", "SMS de rappel envoyé automatiquement"][step]}
-      </p>
+      {/* Step labels — all rendered, opacity transitions */}
+      <div style={{ position: "relative", height: "20px", marginTop: "16px" }}>
+        {labels.map((label, i) => (
+          <p key={i} style={{
+            position: "absolute", inset: 0, margin: 0,
+            textAlign: "center", fontSize: "13px", color: "#5C5C5C", fontWeight: 500,
+            opacity: i === step ? 1 : 0,
+            transition: "opacity 0.4s ease",
+          }}>
+            {label}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
@@ -587,7 +621,7 @@ export default function V4Page() {
       {/* ══════════════════════════════════════════
           SECTION 5b — SAAS METRICS (dark)
       ══════════════════════════════════════════ */}
-      <section className="sec-pad" style={{ background: "#0F1117", position: "relative", overflow: "hidden" }}>
+      <section className="sec-pad" style={{ background: "#1A1A1A", position: "relative", overflow: "hidden" }}>
         <BrandPattern opacity={0.05} color="#1d9e75" />
         <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
           <div style={{ textAlign: "center", marginBottom: "48px" }}>
@@ -607,7 +641,7 @@ export default function V4Page() {
               { n: "4.8★", label: "satisfaction client", sub: "sur 140+ avis Google" },
               { n: "2×", label: "panier moyen", sub: "clients fidèles vs nouveaux" },
             ].map((m, i) => (
-              <div key={i} className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px", transitionDelay: `${i*0.1}s` }}>
+              <div key={i} className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px", transitionDelay: `${i*0.1}s` }}>
                 <div style={{ fontSize: "clamp(36px,4vw,52px)", fontWeight: 800, color: "#1d9e75", lineHeight: 1, marginBottom: "8px" }}>{m.n}</div>
                 <div style={{ fontSize: "15px", fontWeight: 600, color: "white", marginBottom: "4px" }}>{m.label}</div>
                 <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>{m.sub}</div>
@@ -618,7 +652,7 @@ export default function V4Page() {
           {/* Chart + comparison */}
           <div className="charts-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
             {/* Line chart */}
-            <div className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px" }}>
+            <div className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px" }}>
               <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>TAUX DE RETOUR CLIENT</div>
               <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>+35% en 4 mois</div>
               <svg viewBox="0 0 260 90" width="100%" style={{ overflow: "visible" }}>
@@ -640,7 +674,7 @@ export default function V4Page() {
               </svg>
             </div>
             {/* Price comparison */}
-            <div className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px", transitionDelay: "0.1s" }}>
+            <div className="fade-up" style={{ background: "#252525", borderRadius: "20px", padding: "28px 24px", transitionDelay: "0.1s" }}>
               <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>PRIX DU MARCHÉ SUISSE</div>
               <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>5× moins cher</div>
               {[
@@ -1205,6 +1239,10 @@ export default function V4Page() {
         @keyframes stepFadeIn {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes smsFadeIn {
+          from { opacity: 0; transform: translateX(-6px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         .wheel-wrap { animation: spin 10s linear infinite; }
         .wheel-wrap:hover { animation-duration: 3s; }
