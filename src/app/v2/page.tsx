@@ -379,8 +379,8 @@ function Check({ green }: { green?: boolean }) {
 
 /* ═══════════════════════════════════════════ PAGE COMPONENT ══ */
 export default function V2Page() {
-  const [heroImg, setHeroImg] = useState<string>("/placeholder-spa.jpg");
-  const [browserImg, setBrowserImg] = useState<string>("/placeholder-spa2.jpg");
+  const [heroImg, setHeroImg] = useState<string>("https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=80");
+  const [browserImg, setBrowserImg] = useState<string>("https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=80");
   const observerSetup = useRef(false);
 
   /* Unsplash fetch */
@@ -1324,14 +1324,14 @@ export default function V2Page() {
           >
             {[
               {
-                img: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80",
+                img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80",
                 badge: "Spa & Beauté",
                 name: "L'Essence Spa",
                 city: "Lausanne",
                 href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html",
               },
               {
-                img: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
+                img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80",
                 badge: "Café",
                 name: "Café Lumière",
                 city: "Genève",

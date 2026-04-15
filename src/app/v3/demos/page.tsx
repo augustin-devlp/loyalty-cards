@@ -83,6 +83,20 @@ export default function DemosPage() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const cards = document.querySelectorAll<HTMLElement>('.demo-card-parallax')
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect()
+        const centerY = rect.top + rect.height / 2 - window.innerHeight / 2
+        const offset = centerY * 0.04 * (i % 2 === 0 ? 1 : -1)
+        card.style.transform = `translateY(${offset}px)`
+      })
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   const filtered = activeFilter === "Tous" ? demos : demos.filter(d => d.type === activeFilter)
 
   return (
@@ -122,7 +136,7 @@ export default function DemosPage() {
 
       {/* ── Hero ── */}
       <section style={{ background: "#ffffff", padding: "140px 24px 80px", textAlign: "center" }}>
-        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <h1 className="fade-up hero-title" style={{
             fontSize: 72,
             fontWeight: 700,
@@ -164,7 +178,7 @@ export default function DemosPage() {
               Obtenir mon site — 990 CHF
             </a>
             <a
-              href="/v2/tarif"
+              href="/v3/tarif"
               style={{
                 background: "transparent",
                 color: "#0071e3",
@@ -184,8 +198,8 @@ export default function DemosPage() {
       </section>
 
       {/* ── Filter + Cards ── */}
-      <section className="section-pad" style={{ background: "#f5f5f7", padding: "80px 24px" }}>
-        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+      <section className="section-pad" style={{ background: "#f5f5f7", padding: "180px 24px" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
 
           {/* Filter pills */}
           <div className="filter-row" style={{
@@ -223,7 +237,7 @@ export default function DemosPage() {
             {filtered.map((demo) => (
               <div
                 key={demo.name}
-                className="fade-up demo-card"
+                className="fade-up demo-card demo-card-parallax"
                 style={{
                   background: "#ffffff",
                   borderRadius: 18,
@@ -320,8 +334,8 @@ export default function DemosPage() {
       </section>
 
       {/* ── CTA Section ── */}
-      <section style={{ background: "#ffffff", padding: "140px 24px", textAlign: "center" }}>
-        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+      <section style={{ background: "#ffffff", padding: "180px 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <h2 className="fade-up cta-title" style={{
             fontSize: 48,
             fontWeight: 700,
@@ -362,7 +376,7 @@ export default function DemosPage() {
               Obtenir mon site en 48h — 990 CHF →
             </a>
             <a
-              href="/v2/tarif"
+              href="/v3/tarif"
               style={{
                 background: "transparent",
                 color: "#0071e3",
