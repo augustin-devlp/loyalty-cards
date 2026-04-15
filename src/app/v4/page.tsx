@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import BrandPattern from "../../components/BrandPattern";
 
 const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
@@ -309,6 +310,7 @@ export default function V4Page() {
           SECTION 1 — HERO
       ══════════════════════════════════════════ */}
       <section className="sec-pad" style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", paddingTop: "120px" }}>
+        <BrandPattern opacity={0.03} />
         <StampMotif style={{ right: "-60px", top: "80px" }} />
         <div style={{ ...maxW, textAlign: "center", position: "relative", zIndex: 1 }}>
           <div className="fade-up" style={badge()}>✦ Livraison en 48h garantie</div>
@@ -782,6 +784,7 @@ export default function V4Page() {
           SECTION 14 — TARIF
       ══════════════════════════════════════════ */}
       <section className="sec-pad" style={{ background: "#F2EFE9", position: "relative", overflow: "hidden" }}>
+        <BrandPattern opacity={0.03} />
         <StampMotif style={{ left: "50%", marginLeft: "-100px", top: "40px" }} />
         <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
           <h2 className="fade-up" style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>
@@ -908,6 +911,7 @@ export default function V4Page() {
           CTA FINAL
       ══════════════════════════════════════════ */}
       <section style={{ background: "#1A1A1A", padding: "120px 20px", position: "relative", overflow: "hidden", textAlign: "center" }}>
+        <BrandPattern opacity={0.05} color="#FFFFFF" />
         <StampMotif style={{ left: "50%", marginLeft: "-100px", top: "40px", opacity: 1 }} />
         <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
           <h2 className="fade-up" style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, color: "white", marginBottom: "20px" }}>

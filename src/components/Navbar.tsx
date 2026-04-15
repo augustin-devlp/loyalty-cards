@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import StampifyLogo from "./StampifyLogo";
 
 const WA_OBTENIR =
   "https://wa.me/41791342997?text=Bonjour%2C%20je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
@@ -52,47 +53,7 @@ export default function Navbar() {
             textDecoration: "none",
           }}
         >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              background: "#3D31B0",
-              borderRadius: 9,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="4"
-                stroke="white"
-                strokeWidth="1.8"
-              />
-              <circle cx="12" cy="9" r="3" stroke="white" strokeWidth="1.8" />
-              <path
-                d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"
-                stroke="white"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-          <span
-            style={{
-              color: "#1A1410",
-              fontWeight: 700,
-              fontSize: 18,
-              fontFamily: "'DM Sans', sans-serif",
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Stampify
-          </span>
+          <StampifyLogo size="md" color="dark" />
         </Link>
 
         {/* Desktop links */}

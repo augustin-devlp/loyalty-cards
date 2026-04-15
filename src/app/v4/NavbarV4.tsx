@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import StampifyLogo from "../../components/StampifyLogo";
 
 const WA_MAIN =
   "https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20obtenir%20mon%20site%20Stampify%20%28990%20CHF%29.%20Pouvez-vous%20me%20contacter%20%3F";
@@ -52,9 +53,8 @@ export default function NavbarV4() {
           justifyContent: "space-between", height: "100%",
         }}>
           {/* Logo */}
-          <Link href="/v4" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "8px", height: "8px", background: "#1d9e75", borderRadius: "2px", flexShrink: 0 }} />
-            <span style={{ fontSize: "18px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "-0.02em" }}>Stampify</span>
+          <Link href="/v4" style={{ textDecoration: "none" }}>
+            <StampifyLogo size="md" color="dark" />
           </Link>
 
           {/* Desktop links */}
@@ -117,9 +117,8 @@ export default function NavbarV4() {
         fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "48px" }}>
-          <Link href="/v4" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "8px", height: "8px", background: "#1d9e75", borderRadius: "2px" }} />
-            <span style={{ fontSize: "18px", fontWeight: 800, color: "#1A1A1A" }}>Stampify</span>
+          <Link href="/v4" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none" }}>
+            <StampifyLogo size="md" color="dark" />
           </Link>
           <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1A1A1A", lineHeight: 1 }}>✕</button>
         </div>

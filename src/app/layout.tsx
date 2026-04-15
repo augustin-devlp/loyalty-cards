@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "../styles/brand.css";
 
 export const metadata: Metadata = {
   title: "Stampify — Site web + carte fidélité pour commerçants | Suisse romande",
@@ -51,8 +52,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
-        <meta name="theme-color" content="#3D31B0" />
-        <link rel="apple-touch-icon" href="/icon-192.svg" />
+        <meta name="theme-color" content="#1d9e75" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="alternate" hrefLang="fr-CH" href="https://www.stampify.ch/" />
         <link rel="alternate" hrefLang="de-CH" href="https://www.stampify.ch/" />
         <link rel="alternate" hrefLang="x-default" href="https://www.stampify.ch/" />

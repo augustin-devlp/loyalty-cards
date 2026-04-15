@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import NavbarV4 from "./NavbarV4";
 import Link from "next/link";
+import StampifyLogo from "../../components/StampifyLogo";
+import "../../styles/brand.css";
 
 export const metadata: Metadata = {
   title: "Stampify — Site vitrine + Carte fidélité + NFC · 990 CHF · 48h",
@@ -75,9 +77,8 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           maxWidth: "900px", margin: "0 auto",
           display: "flex", flexDirection: "column", alignItems: "center", gap: "24px",
         }}>
-          <Link href="/v4" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "18px", height: "18px", background: "#1d9e75", borderRadius: "4px", flexShrink: 0 }} />
-            <span style={{ fontSize: "17px", fontWeight: 800, color: "#1A1A1A", letterSpacing: "-0.02em" }}>Stampify</span>
+          <Link href="/v4" style={{ textDecoration: "none" }}>
+            <StampifyLogo size="sm" color="dark" />
           </Link>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px", justifyContent: "center" }}>
             {[

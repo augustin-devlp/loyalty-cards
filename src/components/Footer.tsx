@@ -1,4 +1,5 @@
 import Link from "next/link";
+import StampifyLogo from "./StampifyLogo";
 
 export default function Footer() {
   return (
@@ -14,48 +15,7 @@ export default function Footer() {
           gap: 20,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              background: "#3D31B0",
-              borderRadius: 7,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="4"
-                stroke="white"
-                strokeWidth="2"
-              />
-              <circle cx="12" cy="9" r="3" stroke="white" strokeWidth="2" />
-              <path
-                d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-          <span
-            style={{
-              color: "white",
-              fontWeight: 700,
-              fontSize: 16,
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-          >
-            Stampify
-          </span>
-        </div>
+        <StampifyLogo size="sm" color="white" />
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           {[
             ["Fonctionnalités", "/fonctionnalites"],
