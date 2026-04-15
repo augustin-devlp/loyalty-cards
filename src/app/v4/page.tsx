@@ -64,6 +64,121 @@ function WordTitle({ text, style }: { text: string; style?: React.CSSProperties 
   );
 }
 
+/* ─── 4-step hero animation ─── */
+function HeroStepAnimation({ step }: { step: number }) {
+  return (
+    <div style={{ position: "relative", maxWidth: "420px", width: "100%" }}>
+      {/* Step pills */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginBottom: "20px" }}>
+        {[0,1,2,3].map(i => (
+          <div key={i} style={{
+            width: i === step ? "22px" : "6px", height: "6px", borderRadius: "3px",
+            background: i === step ? "#1d9e75" : "#C8E6DB", transition: "all 0.3s ease",
+          }} />
+        ))}
+      </div>
+
+      <div style={{ height: "260px", position: "relative" }}>
+
+        {/* Step 0 — NFC tap */}
+        {step === 0 && (
+          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center", gap: "28px" }}>
+            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "88px", height: "56px", borderRadius: "12px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "5px", position: "relative", zIndex: 2 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 12C6 8.686 8.686 6 12 6" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M3 12C3 7.029 7.029 3 12 3" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M9 12C9 10.343 10.343 9 12 9" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+                  <circle cx="12" cy="12" r="1.8" fill="white"/>
+                </svg>
+                <span style={{ fontSize: "8px", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>Spa Essence</span>
+              </div>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ position: "absolute", width: "88px", height: "56px", borderRadius: "50%", border: "2px solid rgba(29,158,117,0.5)", animation: `rippleAnim 1.8s ${i*0.55}s ease-out infinite` }} />
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+              {[0,1,2].map(i => (
+                <svg key={i} width="12" height="22" style={{ opacity: 0, animation: `arcFade 1.8s ${i*0.35}s infinite` }}>
+                  <path d="M2 2 Q7 11 2 20" stroke="#1d9e75" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+                </svg>
+              ))}
+            </div>
+            <div style={{ width: "52px", height: "90px", borderRadius: "12px", background: "#1A1A1A", padding: "4px", animation: "phoneApproach 2s ease-in-out infinite alternate", flexShrink: 0 }}>
+              <div style={{ borderRadius: "8px", background: "#FBF8F3", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "26px", height: "16px", borderRadius: "3px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)" }} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 1 — Stamp card (8th stamp bouncing) */}
+        {step === 1 && (
+          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "22px 24px", boxShadow: "0 24px 60px rgba(29,158,117,0.25)" }}>
+              <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.6)", marginBottom: "2px" }}>Stampify</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "white", marginBottom: "16px" }}>Spa Essence — Genève</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div key={i} style={{
+                    width: "22px", height: "22px", borderRadius: "50%",
+                    background: i < 8 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.2)",
+                    animation: i === 7 ? "stampBounce 0.6s 0.2s ease both" : "none",
+                  }} />
+                ))}
+              </div>
+              <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", marginTop: "10px" }}>8 / 10 · encore 2 pour votre soin offert</div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2 — Full card + reward popup */}
+        {step === 2 && (
+          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px" }}>
+            <div style={{ width: "300px", background: "linear-gradient(135deg,#1d9e75,#0D7A5A)", borderRadius: "18px", padding: "20px 24px" }}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div key={i} style={{ width: "22px", height: "22px", borderRadius: "50%", background: "rgba(255,255,255,0.9)" }} />
+                ))}
+              </div>
+              <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.65)", marginTop: "8px" }}>Carte complète ✓</div>
+            </div>
+            <div style={{ background: "white", borderRadius: "16px", padding: "16px 28px", textAlign: "center", boxShadow: "0 12px 40px rgba(0,0,0,0.12)", animation: "rewardPop 0.5s ease forwards" }}>
+              <div style={{ fontSize: "28px", marginBottom: "4px" }}>🎉</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#1A1A1A", marginBottom: "4px" }}>Soin offert !</div>
+              <div style={{ fontSize: "12px", color: "#5C5C5C" }}>Présentez ceci à l&apos;accueil</div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3 — SMS typewriter */}
+        {step === 3 && (
+          <div style={{ position: "absolute", inset: 0, animation: "stepFadeIn 0.4s ease", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: "230px", background: "#1A1A1A", borderRadius: "28px", padding: "14px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
+              <div style={{ background: "#FBF8F3", borderRadius: "20px", padding: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div style={{ fontSize: "11px", fontWeight: 600, color: "#1A1A1A", textAlign: "center", borderBottom: "1px solid #F2EFE9", paddingBottom: "8px" }}>Messages</div>
+                <div style={{ background: "#E8F7F2", borderRadius: "10px 10px 10px 2px", padding: "10px 12px", fontSize: "11px", color: "#1A1A1A", lineHeight: 1.5 }}>
+                  <span style={{ display: "inline-block", overflow: "hidden", whiteSpace: "nowrap", animation: "typewriterAnim 2s steps(40) forwards" }}>
+                    💆 2 tampons restants chez Spa Essence !
+                  </span>
+                  <span style={{ animation: "cursorBlink 0.7s infinite", color: "#1d9e75", marginLeft: "1px" }}>|</span>
+                </div>
+                <div style={{ background: "#1d9e75", borderRadius: "10px 10px 2px 10px", padding: "10px 12px", fontSize: "11px", color: "white", lineHeight: 1.5, opacity: 0, animation: "stepFadeIn 0.4s 1.8s ease forwards" }}>
+                  🎉 Votre soin est prêt !
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <p style={{ textAlign: "center", marginTop: "16px", fontSize: "13px", color: "#5C5C5C", fontWeight: 500, minHeight: "20px" }}>
+        {["Client approche son téléphone — NFC tap", "8ème tampon ajouté automatiquement", "Récompense débloquée — soin offert !", "SMS de rappel envoyé automatiquement"][step]}
+      </p>
+    </div>
+  );
+}
+
 /* ─── Hero CSS illustration ─── */
 function HeroIllustration() {
   return (
@@ -296,6 +411,13 @@ const checkItem: React.CSSProperties = { display: "flex", alignItems: "flex-star
 
 /* ─── Main page ─── */
 export default function V4Page() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const iv = setInterval(() => setStep(s => (s + 1) % 4), 3000);
+    return () => clearInterval(iv);
+  }, []);
+
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
@@ -312,58 +434,40 @@ export default function V4Page() {
       {/* ══════════════════════════════════════════
           SECTION 1 — HERO
       ══════════════════════════════════════════ */}
-      <section className="sec-pad" style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", paddingTop: "120px" }}>
+      <section className="sec-pad" style={{ background: "#FBF8F3", position: "relative", overflow: "hidden", paddingTop: "120px", paddingBottom: "80px" }}>
         <BrandPattern opacity={0.03} />
         <StampMotif style={{ right: "-60px", top: "80px" }} />
-        <div style={{ ...maxW, textAlign: "center", position: "relative", zIndex: 1 }}>
-          <div className="fade-up" style={badge()}>✦ Livraison en 48h garantie</div>
-          <WordTitle
-            text={"Vos clients reviennent.\nÀ chaque fois."}
-            style={{ fontSize: "clamp(48px,8vw,80px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.0, color: "#1A1A1A", marginBottom: "24px" }}
-          />
-          <p className="fade-up" style={{ fontSize: "21px", color: "#5C5C5C", maxWidth: "520px", margin: "0 auto 40px", lineHeight: 1.5, animationDelay: "0.3s" }}>
-            Site vitrine + carte fidélité digitale + plaquette NFC gravée. 990 CHF, une fois. À vous pour toujours.
-          </p>
-          <div className="fade-up hero-btns" style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginBottom: "24px", animationDelay: "0.4s" }}>
-            <a href={WA_MAIN} target="_blank" rel="noopener noreferrer" style={greenBtn}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
-              Obtenir mon site — 990 CHF
-            </a>
-            <Link href="/v4/demos" style={outlineBtn}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
-              Voir les démos →
-            </Link>
-          </div>
-          <p className="fade-up" style={{ fontSize: "13px", color: "#5C5C5C", letterSpacing: "0.04em", animationDelay: "0.5s" }}>
-            990 CHF · Paiement unique · 48h · Suisse romande
-          </p>
-
-          {/* CSS illustration */}
-          <div className="fade-up" style={{ marginTop: "64px", animationDelay: "0.6s" }}>
-            <HeroIllustration />
-          </div>
-
-          {/* Hero context image */}
-          <div className="fade-up" style={{ marginTop: "56px", animationDelay: "0.7s" }}>
-            <img
-              src={IMG.heroCtx}
-              alt="Stampify en action — client et commerçant au comptoir"
-              loading="eager"
-              decoding="async"
-              width={900}
-              height={600}
-              style={{ maxWidth: "800px", width: "100%", borderRadius: "20px", boxShadow: "0 32px 80px rgba(0,0,0,0.10)", margin: "0 auto", display: "block", objectFit: "cover", aspectRatio: "3/2" }}
-            />
-            <p style={{ fontSize: "13px", color: "#5C5C5C", textAlign: "center", marginTop: "12px" }}>
-              Exemple d&apos;utilisation réelle — Stampify
-            </p>
-            <div style={{ textAlign: "center", marginTop: "8px" }}>
-              <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "14px", color: "#1d9e75", textDecoration: "none", fontWeight: 500 }}>
-                Voir la démo complète →
-              </a>
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div className="hero-split" style={{ display: "flex", gap: "56px", alignItems: "center" }}>
+            {/* Left — text */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="fade-up" style={badge()}>✦ Livraison en 48h garantie</div>
+              <WordTitle
+                text={"Vos clients\nreviennent.\nÀ chaque fois."}
+                style={{ fontSize: "clamp(40px,6vw,68px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.0, color: "#1A1A1A", marginBottom: "24px" }}
+              />
+              <p className="fade-up" style={{ fontSize: "19px", color: "#5C5C5C", marginBottom: "32px", lineHeight: 1.5, animationDelay: "0.3s" }}>
+                Site vitrine + carte fidélité digitale + plaquette NFC gravée.<br/>990 CHF, une fois. À vous pour toujours.
+              </p>
+              <div className="fade-up hero-btns" style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "20px", animationDelay: "0.4s" }}>
+                <a href={WA_MAIN} target="_blank" rel="noopener noreferrer" style={greenBtn}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
+                  Obtenir mon site — 990 CHF
+                </a>
+                <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer" style={outlineBtn}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#1A1A1A"; }}>
+                  Voir la démo →
+                </a>
+              </div>
+              <p className="fade-up" style={{ fontSize: "13px", color: "#5C5C5C", letterSpacing: "0.04em", animationDelay: "0.5s" }}>
+                990 CHF · Paiement unique · 48h · Suisse romande
+              </p>
+            </div>
+            {/* Right — animated steps */}
+            <div className="fade-up hero-anim" style={{ flex: "0 0 auto", animationDelay: "0.4s" }}>
+              <HeroStepAnimation step={step} />
             </div>
           </div>
         </div>
@@ -481,43 +585,140 @@ export default function V4Page() {
       </section>
 
       {/* ══════════════════════════════════════════
-          SECTION 6 — DÉMOS
+          SECTION 5b — SAAS METRICS (dark)
       ══════════════════════════════════════════ */}
-      <section className="sec-pad" style={{ background: "#F2EFE9" }}>
-        <div style={maxW}>
-          <h2 className="fade-up" style={{ fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "12px" }}>
-            Voyez ce qu&apos;on peut faire<br />pour votre commerce.
-          </h2>
-          <p className="fade-up" style={{ fontSize: "19px", color: "#5C5C5C", textAlign: "center", marginBottom: "48px" }}>6 exemples réels. Fonctionnels. En 48h.</p>
-          <div className="demos-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "24px" }}>
-            {DEMOS.map((d, i) => (
-              <div key={i} className="fade-up demo-card" style={{ background: "#FFFFFF", borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)", transition: "transform 0.3s ease, box-shadow 0.3s ease", transitionDelay: `${i * 0.08}s` }}>
-                <div style={{ position: "relative", paddingBottom: "75%", overflow: "hidden" }}>
-                  <img
-                    src={`https://images.unsplash.com/${d.img}?auto=format&fit=crop&w=400&q=80`}
-                    alt={`${d.name} — démo Stampify`}
-                    loading="lazy"
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </div>
-                <div style={{ padding: "20px" }}>
-                  {d.badge && <div style={{ ...badge(), fontSize: "11px", marginBottom: "8px" }}>{d.badge}</div>}
-                  <div style={{ fontSize: "18px", fontWeight: 600, color: "#1A1A1A", marginBottom: "4px" }}>{d.name}</div>
-                  <div style={{ fontSize: "14px", color: "#5C5C5C", marginBottom: "12px" }}>{d.city} · {d.cat}</div>
-                  <a href={d.href} target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: "14px", color: "#1d9e75", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
-                    onMouseEnter={(e) => { (e.currentTarget.querySelector("span") as HTMLElement).style.transform = "translateX(4px)"; }}
-                    onMouseLeave={(e) => { (e.currentTarget.querySelector("span") as HTMLElement).style.transform = "translateX(0)"; }}>
-                    Voir la démo <span style={{ transition: "transform 0.2s" }}>→</span>
-                  </a>
-                </div>
+      <section className="sec-pad" style={{ background: "#0F1117", position: "relative", overflow: "hidden" }}>
+        <BrandPattern opacity={0.05} color="#1d9e75" />
+        <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <div className="fade-up" style={{ display: "inline-block", background: "rgba(29,158,117,0.15)", color: "#1d9e75", borderRadius: "980px", padding: "6px 16px", fontSize: "13px", fontWeight: 500, marginBottom: "20px" }}>Résultats prouvés</div>
+            <h2 className="fade-up" style={{ fontSize: "clamp(32px,5vw,52px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "white", marginBottom: "16px" }}>
+              Des chiffres qui parlent.
+            </h2>
+            <p className="fade-up" style={{ fontSize: "17px", color: "rgba(255,255,255,0.45)", maxWidth: "480px", margin: "0 auto", lineHeight: 1.6 }}>
+              Nos clients voient leurs clients revenir plus souvent, dès les premières semaines.
+            </p>
+          </div>
+
+          {/* Metrics row */}
+          <div className="metrics-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "20px", marginBottom: "24px" }}>
+            {[
+              { n: "67%", label: "taux de retour moyen", sub: "vs 32% sans fidélité" },
+              { n: "4.8★", label: "satisfaction client", sub: "sur 140+ avis Google" },
+              { n: "2×", label: "panier moyen", sub: "clients fidèles vs nouveaux" },
+            ].map((m, i) => (
+              <div key={i} className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px", transitionDelay: `${i*0.1}s` }}>
+                <div style={{ fontSize: "clamp(36px,4vw,52px)", fontWeight: 800, color: "#1d9e75", lineHeight: 1, marginBottom: "8px" }}>{m.n}</div>
+                <div style={{ fontSize: "15px", fontWeight: 600, color: "white", marginBottom: "4px" }}>{m.label}</div>
+                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>{m.sub}</div>
               </div>
             ))}
           </div>
-          <div className="fade-up" style={{ textAlign: "center", marginTop: "40px" }}>
-            <Link href="/v4/demos" style={{ fontSize: "16px", color: "#1d9e75", fontWeight: 500, textDecoration: "none" }}>
-              Voir toutes les démos →
-            </Link>
+
+          {/* Chart + comparison */}
+          <div className="charts-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+            {/* Line chart */}
+            <div className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>TAUX DE RETOUR CLIENT</div>
+              <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>+35% en 4 mois</div>
+              <svg viewBox="0 0 260 90" width="100%" style={{ overflow: "visible" }}>
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1d9e75" stopOpacity="0.28"/>
+                    <stop offset="100%" stopColor="#1d9e75" stopOpacity="0"/>
+                  </linearGradient>
+                </defs>
+                {[0,22,45,67,90].map(y => <line key={y} x1="0" y1={y} x2="260" y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1"/>)}
+                <path d="M0,78 L43,68 L87,52 L130,38 L173,24 L217,14 L260,6 L260,90 L0,90 Z" fill="url(#cg)"/>
+                <path d="M0,78 L43,68 L87,52 L130,38 L173,24 L217,14 L260,6" stroke="#1d9e75" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                {[[0,78],[43,68],[87,52],[130,38],[173,24],[217,14],[260,6]].map(([x,y],i) => (
+                  <circle key={i} cx={x} cy={y} r="3.5" fill="#1d9e75"/>
+                ))}
+                {["Jan","Fév","Mar","Avr","Mai","Jun","Jul"].map((m, i) => (
+                  <text key={i} x={i*43} y="105" fill="rgba(255,255,255,0.25)" fontSize="8" textAnchor="middle">{m}</text>
+                ))}
+              </svg>
+            </div>
+            {/* Price comparison */}
+            <div className="fade-up" style={{ background: "#1a1f2e", borderRadius: "20px", padding: "28px 24px", transitionDelay: "0.1s" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: "4px" }}>PRIX DU MARCHÉ SUISSE</div>
+              <div style={{ fontSize: "22px", fontWeight: 700, color: "white", marginBottom: "24px" }}>5× moins cher</div>
+              {[
+                { label: "Agence", price: "3 500–6 000 CHF", w: "100%", color: "#ef4444", sub: "site seul, sans fidélité" },
+                { label: "Freelance", price: "1 500–2 500 CHF", w: "60%", color: "#f59e0b", sub: "délais variables" },
+                { label: "Stampify", price: "990 CHF tout inclus", w: "25%", color: "#1d9e75", sub: "site + carte + NFC + 48h" },
+              ].map((r, i) => (
+                <div key={i} style={{ marginBottom: i < 2 ? "16px" : "0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                    <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", fontWeight: 500 }}>{r.label}</span>
+                    <span style={{ fontSize: "12px", color: r.color, fontWeight: 600 }}>{r.price}</span>
+                  </div>
+                  <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: "4px", height: "7px", overflow: "hidden" }}>
+                    <div style={{ width: r.w, height: "100%", background: r.color, borderRadius: "4px" }} />
+                  </div>
+                  <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)", marginTop: "3px" }}>{r.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          SECTION 6 — DÉMO SPA SHOWCASE
+      ══════════════════════════════════════════ */}
+      <section className="sec-pad" style={{ background: "#F2EFE9" }}>
+        <div style={maxW}>
+          <div className="spa-showcase" style={{ display: "flex", gap: "56px", alignItems: "center" }}>
+            {/* Left — browser mockup */}
+            <div className="fade-up spa-mock" style={{ flex: "0 0 auto", maxWidth: "460px", width: "100%" }}>
+              <div style={{ background: "#E2E2E2", borderRadius: "14px", overflow: "hidden", boxShadow: "0 32px 80px rgba(0,0,0,0.14)" }}>
+                {/* Browser chrome */}
+                <div style={{ background: "#F0F0F0", padding: "10px 14px", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ display: "flex", gap: "5px", flexShrink: 0 }}>
+                    {["#FF5F57","#FEBC2E","#28C840"].map((c,i) => (
+                      <div key={i} style={{ width: "10px", height: "10px", borderRadius: "50%", background: c }} />
+                    ))}
+                  </div>
+                  <div style={{ flex: 1, background: "white", borderRadius: "6px", padding: "4px 10px", fontSize: "10px", color: "#5C5C5C", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                    stampify.ch/lessence-spa
+                  </div>
+                </div>
+                {/* Spa photo */}
+                <img
+                  src={`https://images.unsplash.com/${DEMOS[0].img}?auto=format&fit=crop&w=500&q=80`}
+                  alt="Démo Spa Essence — site Stampify"
+                  loading="lazy"
+                  decoding="async"
+                  width={500}
+                  height={310}
+                  style={{ width: "100%", display: "block", objectFit: "cover", aspectRatio: "16/10" }}
+                />
+              </div>
+            </div>
+            {/* Right — text + CTA */}
+            <div className="fade-up" style={{ flex: 1 }}>
+              <div style={badge()}>⭐ Le plus demandé</div>
+              <h2 style={{ fontSize: "clamp(32px,4.5vw,52px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "16px" }}>
+                Voyez ce qu&apos;on<br/>peut faire pour<br/>votre commerce.
+              </h2>
+              <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "28px" }}>
+                Spa Essence, Genève — site vitrine 5 pages, carte fidélité &ldquo;soin offert&rdquo;, plaquette NFC gravée. Livré en 48h. Exactement ce que nous ferons pour vous.
+              </p>
+              <a href="https://loyalty-cards-rho.vercel.app/lessence-spa.html" target="_blank" rel="noopener noreferrer"
+                style={{ ...greenBtn, display: "inline-block", marginBottom: "20px" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
+                Accéder à la démo complète →
+              </a>
+              <div>
+                <Link href="/v4/demos" style={{ fontSize: "14px", color: "#5C5C5C", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "#1A1A1A"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "#5C5C5C"; }}>
+                  Voir d&apos;autres exemples (café, restaurant, barbershop…) →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -978,11 +1179,46 @@ export default function V4Page() {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        @keyframes rippleAnim {
+          0% { transform: scale(0.8); opacity: 0.7; }
+          100% { transform: scale(2.8); opacity: 0; }
+        }
+        @keyframes stampBounce {
+          0% { transform: scale(1); }
+          30% { transform: scale(1.55) rotate(-10deg); }
+          60% { transform: scale(1.12) rotate(4deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        @keyframes rewardPop {
+          0% { transform: scale(0.4) translateY(16px); opacity: 0; }
+          65% { transform: scale(1.06) translateY(-3px); opacity: 1; }
+          100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        @keyframes typewriterAnim {
+          from { width: 0; }
+          to { width: 100%; }
+        }
+        @keyframes cursorBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        @keyframes stepFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         .wheel-wrap { animation: spin 10s linear infinite; }
         .wheel-wrap:hover { animation-duration: 3s; }
         .demo-card:hover { transform: translateY(-6px) !important; box-shadow: 0 12px 40px rgba(0,0,0,0.1) !important; }
+        @media (max-width: 900px) {
+          .hero-split { flex-direction: column !important; }
+          .hero-anim { width: 100% !important; }
+          .spa-showcase { flex-direction: column !important; }
+          .spa-mock { max-width: 100% !important; }
+          .metrics-grid { grid-template-columns: 1fr 1fr !important; }
+          .charts-row { grid-template-columns: 1fr !important; }
+        }
         @media (max-width: 768px) {
-          .hero-btns { flex-direction: column !important; align-items: center !important; }
+          .hero-btns { flex-direction: column !important; align-items: flex-start !important; }
           .stats-grid { grid-template-columns: 1fr 1fr !important; }
           .demos-grid { grid-template-columns: 1fr !important; }
           .features-grid { grid-template-columns: 1fr !important; }
@@ -992,9 +1228,12 @@ export default function V4Page() {
           .addon-cards { flex-direction: column !important; }
           .comparatif-mini { flex-direction: column !important; }
           .process-steps { flex-direction: column !important; align-items: center !important; }
+          .metrics-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 480px) {
           .stats-grid { grid-template-columns: 1fr !important; }
+          .metrics-grid { grid-template-columns: 1fr !important; }
+          .charts-row { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </>
