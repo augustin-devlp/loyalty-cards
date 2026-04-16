@@ -1,39 +1,37 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { Inter } from "next/font/google";
-import V2Navbar from "./_components/V2Navbar";
-import V2Footer from "./_components/V2Footer";
+import V2Navbar from "@/components/v2/Navbar";
+import V2Footer from "@/components/v2/Footer";
+import "./v2.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  display: "swap",
-  variable: "--font-inter",
-});
+const inter = Inter({ subsets: ["latin"], weight: ["400","500","600","700","800"], display: "swap", variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Stampify v2 — Site vitrine + Carte fidélité + NFC | 990 CHF",
-  description:
-    "Site vitrine professionnel, carte fidélité digitale et plaquette NFC gravée en bois. 990 CHF une seule fois. Livré en 48h. Pour les commerçants de Suisse romande.",
+  title: "Stampify — Site vitrine + carte fidélité digitale | Suisse romande",
+  description: "Site vitrine professionnel + carte de fidélité digitale + plaquette NFC gravée en bois. 990 CHF, livraison en 48h. Pour les commerçants locaux de Suisse romande.",
   robots: "noindex, nofollow",
+  themeColor: "#1d9e75",
+  openGraph: {
+    title: "Stampify — 990 CHF tout inclus",
+    description: "Site vitrine + carte fidélité + NFC. 48h. Suisse.",
+    type: "website",
+  },
 };
 
-export default function V2Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const wrapStyle: CSSProperties = {
+  fontFamily: "var(--font-inter), Inter, -apple-system, sans-serif",
+  background: "#FFFFFF",
+  color: "#0A0A0A",
+  WebkitFontSmoothing: "antialiased",
+  MozOsxFontSmoothing: "grayscale",
+};
+
+export default function V2Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={inter.className}
-      style={{
-        fontFamily:
-          "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        background: "#FFFFFF",
-        color: "#0A0A0A",
-      }}
-    >
+    <div className={inter.variable} style={wrapStyle}>
       <V2Navbar />
-      <main style={{ paddingTop: "64px" }}>{children}</main>
+      <main>{children}</main>
       <V2Footer />
     </div>
   );
