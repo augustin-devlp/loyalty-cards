@@ -1,0 +1,66 @@
+<svg viewBox="0 0 260 320"
+  xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <filter id="hs">
+      <feDropShadow dx="0" dy="10"
+        stdDeviation="16"
+        flood-color="rgba(0,0,0,0.18)"/>
+    </filter>
+  </defs>
+  <g filter="url(#hs)" transform="translate(260, 0) scale(-1, 1)">
+    <!-- Wrist -->
+    <rect x="90" y="240" width="80" height="80"
+      rx="18" fill="#F2C9A0"/>
+    <!-- Palm -->
+    <rect x="70" y="155" width="120" height="100"
+      rx="22" fill="#F2C9A0"/>
+    <!-- Thumb -->
+    <ellipse cx="68" cy="185" rx="22" ry="32"
+      transform="rotate(-25 68 185)"
+      fill="#F2C9A0"/>
+    <!-- Index -->
+    <rect x="73" y="75" width="24" height="92"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Middle -->
+    <rect x="103" y="68" width="24" height="98"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Ring -->
+    <rect x="133" y="75" width="24" height="90"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Pinky -->
+    <rect x="160" y="90" width="22" height="76"
+      rx="11" fill="#F2C9A0"/>
+    <!-- Palm shadow -->
+    <ellipse cx="130" cy="180" rx="55" ry="18"
+      fill="#D4A070" opacity="0.25"/>
+    
+    <!-- Smartphone -->
+    <rect x="58" y="108" width="144" height="88"
+      rx="14" fill="#1C1C1E" stroke="#3A3A3C" stroke-width="2"/>
+    
+    <!-- Screen -->
+    <rect x="65" y="115" width="130" height="74"
+      rx="8" fill="#E8F7F2"/>
+      
+    <!-- Screen content: Mirrored back so it's readable when the group is mirrored! -->
+    <!-- Wait, if the whole group is mirrored, text will be backwards inside it. Let's un-mirror the text group. -->
+    <g transform="translate(130, 152) scale(-1, 1) translate(-130, -152)">
+      <!-- Checkmark circle -->
+      <circle cx="130" cy="140" r="12" fill="#1d9e75"/>
+      <path d="M125 140 L129 144 L136 136" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <!-- Text -->
+      <text x="130" y="162"
+        text-anchor="middle"
+        font-family="Inter, sans-serif"
+        font-size="10" font-weight="600"
+        fill="#1d9e75">✓ Carte ouverte</text>
+        
+      <text x="130" y="174"
+        text-anchor="middle"
+        font-family="Inter, sans-serif"
+        font-size="8" font-weight="500"
+        fill="#1d9e75">8/10 tampons</text>
+    </g>
+  </g>
+</svg>

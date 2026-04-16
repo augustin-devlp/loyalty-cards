@@ -510,28 +510,26 @@ export default function HomePage() {
         <BrandPattern opacity={0.03} />
         <StampMotif style={{ right: "-60px", top: "80px" }} />
         <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
-          <div className="hero-split" style={{ display: "flex", gap: "56px", alignItems: "center" }}>
+          <div className="hero-split" style={{ display: "flex", gap: "56px", alignItems: "center", flexDirection: "row" }}>
             {/* Left — text */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="fade-up" style={{
-                display: "inline-flex", alignItems: "center",
-                background: "#E8F7F2", color: "#1d9e75",
-                borderRadius: "999px", padding: "6px 14px",
-                fontSize: "13px", fontWeight: 700,
+                fontFamily: "'Playfair Display', serif", fontStyle: "italic",
+                fontSize: "16px", color: "#C9A84C",
                 marginBottom: "18px", letterSpacing: "0.01em",
-              }}>✦ Livraison en 48h garantie</div>
+              }}>L'artisan du digital suisse</div>
               <WordTitle
                 text={"Vos clients\nreviennent.\nÀ chaque fois."}
                 style={{ fontSize: "80px", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1.0, color: "#1A1A1A", marginBottom: "24px", fontFamily: "'Plus Jakarta Sans', sans-serif", margin: "0 0 24px" }}
               />
               <p className="fade-up" style={{ fontSize: "19px", color: "#5C5C5C", marginBottom: "32px", lineHeight: 1.5, maxWidth: "440px" }}>
-                Site vitrine + carte fidélité digitale<br/>+ plaquette NFC. 990 CHF, une fois,<br/>à vous pour toujours.
+                Site vitrine professionnel + carte fidélité digitale + plaquette NFC gravée en bois. 990 CHF. Livré en 48h.
               </p>
               <div className="fade-up hero-btns" style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "20px" }}>
                 <Link href="/subscribe" style={greenBtn}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}>
-                  Obtenir mon site — 990 CHF
+                  Obtenir mon site →
                 </Link>
                 <Link href="/demos" style={outlineBtn}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "#1A1A1A"; e.currentTarget.style.color = "white"; }}
@@ -540,7 +538,7 @@ export default function HomePage() {
                 </Link>
               </div>
               <p className="fade-up" style={{ fontSize: "13px", color: "#5C5C5C", letterSpacing: "0.04em" }}>
-                990 CHF · 48h · Suisse romande
+                990 CHF · Paiement unique · 48h · Suisse romande & France
               </p>
             </div>
             {/* Right — image */}
@@ -552,10 +550,10 @@ export default function HomePage() {
                 loading="eager"
                 style={{
                   width: "100%",
-                  borderRadius: "20px",
-                  boxShadow: "0 32px 80px rgba(0,0,0,0.12)",
+                  borderRadius: "24px",
+                  boxShadow: "0 40px 100px rgba(0,0,0,0.15)",
                   objectFit: "cover",
-                  aspectRatio: "4/3",
+                  aspectRatio: "3/4",
                   display: "block",
                 }}
               />
@@ -830,13 +828,29 @@ export default function HomePage() {
       <section style={{ background: "#F2EFE9", padding: "80px 20px" }}>
         <div style={maxW}>
           <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
-            <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={IMG.plaque} alt="Paiement digital par carte — expérience client fluide" loading="lazy" decoding="async" width={800} height={533} style={{ width: "100%", borderRadius: "20px", boxShadow: "0 24px 60px rgba(0,0,0,0.10)", aspectRatio: "3/2", objectFit: "cover", display: "block" }} />
-              <p style={{ fontSize: "11px", color: "#5C5C5C", marginTop: "8px" }}>Photo : Unsplash</p>
+            <div className="fade-up split-img" style={{ flex: "0 0 auto", maxWidth: "440px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", padding: "80px 0", background: "linear-gradient(to bottom right, rgba(232, 247, 242, 0.4), rgba(255,255,255,0.5))", borderRadius: "24px", border: "1px solid rgba(29, 158, 117, 0.1)" }}>
+              <div style={{
+                width: "200px", height: "120px",
+                background: "linear-gradient(135deg, #8B6914 0%, #C9A84C 40%, #8B6914 100%)",
+                borderRadius: "12px",
+                boxShadow: "0 20px 60px rgba(139,105,20,0.3), inset 0 1px 0 rgba(255,255,255,0.2)",
+                border: "1px solid rgba(201,168,76,0.4)",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px",
+                animation: "floatAnim 4s ease-in-out infinite"
+              }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4 Q12 12 4 20" stroke="#F5EDD6" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+                  <path d="M9 7 Q15 12 9 17" stroke="#F5EDD6" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+                  <path d="M14 10 Q17 12 14 14" stroke="#F5EDD6" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+                </svg>
+                <div style={{
+                  fontSize: "13px", letterSpacing: "0.15em", color: "rgba(255,255,255,0.85)",
+                  fontWeight: 600, textTransform: "uppercase", textShadow: "0 1px 2px rgba(0,0,0,0.2)"
+                }}>Café Lumière</div>
+              </div>
             </div>
             <div className="fade-up" style={{ flex: 1 }}>
-              <div style={badgeStyle()}>✦ Incluse dans le forfait</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "15px", color: "#C9A84C", marginBottom: "16px" }}>Excellence suisse</div>
               <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>En bois.<br />Gravée à votre nom.<br />Livrée avec votre commande.</h2>
               <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>La plaquette est posée sur votre comptoir. Vos clients approchent leur téléphone. Leur carte fidélité s&apos;ouvre instantanément. Sans app. Sans compte. Sans friction.</p>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
@@ -879,7 +893,7 @@ export default function HomePage() {
           <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
             <div className="fade-up" style={{ flex: "0 0 auto" }}><LoyaltyCardAnimated /></div>
             <div className="fade-up" style={{ flex: 1 }}>
-              <div style={badgeStyle()}>✦ Zéro application requise</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "15px", color: "#C9A84C", marginBottom: "16px" }}>Sans friction</div>
               <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>La carte papier<br />finit à la poubelle.<br />La digitale, jamais.</h2>
               <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>Vos clients ne perdent plus leur carte. Chaque passage est enregistré automatiquement. Vous choisissez la récompense, le nombre de tampons, les couleurs.</p>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -939,7 +953,7 @@ export default function HomePage() {
         <div style={maxW}>
           <div className="split-section" style={{ display: "flex", gap: "64px", alignItems: "center" }}>
             <div className="fade-up" style={{ flex: 1 }}>
-              <div style={{ ...badgeStyle(), background: "#E8F7F2", color: "#1d9e75" }}>Add-on à partir de 49 CHF/mois</div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "15px", color: "#C9A84C", marginBottom: "16px" }}>Restez présent</div>
               <h2 style={{ fontSize: "clamp(32px,4.5vw,56px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", marginBottom: "20px" }}>Vos clients reviennent.<br />Automatiquement.</h2>
               <p style={{ fontSize: "17px", color: "#5C5C5C", lineHeight: 1.7, marginBottom: "24px" }}>15 triggers SMS configurables. Anniversaire, inactivité, récompense, promo flash. Zéro effort de votre part.</p>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -1023,6 +1037,7 @@ export default function HomePage() {
         <BrandPattern opacity={0.03} />
         <StampMotif style={{ left: "50%", marginLeft: "-100px", top: "40px" }} />
         <div style={{ ...maxW, position: "relative", zIndex: 1 }}>
+          <div className="fade-up" style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "15px", color: "#C9A84C", marginBottom: "16px", textAlign: "center" }}>Transparence totale</div>
           <h2 className="fade-up" style={{ fontSize: "clamp(40px,6vw,64px)", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#1A1A1A", textAlign: "center", marginBottom: "48px" }}>Un seul paiement.<br />Pour toujours.</h2>
           <div className="fade-up" style={{ maxWidth: "580px", margin: "0 auto", background: "#FFFFFF", borderRadius: "24px", padding: "48px 40px", boxShadow: "0 8px 48px rgba(0,0,0,0.08)" }}>
             <div style={{ textAlign: "center", marginBottom: "24px" }}>
@@ -1151,6 +1166,7 @@ export default function HomePage() {
         @keyframes rippleAnim { 0% { transform: scale(0.8); opacity: 0.7; } 100% { transform: scale(2.8); opacity: 0; } }
         @keyframes stampBounce { 0% { transform: scale(1); } 30% { transform: scale(1.55) rotate(-10deg); } 60% { transform: scale(1.12) rotate(4deg); } 100% { transform: scale(1) rotate(0deg); } }
         @keyframes rewardPop { 0% { transform: scale(0.4) translateY(16px); opacity: 0; } 65% { transform: scale(1.06) translateY(-3px); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        @keyframes floatAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .fade-up.visible { opacity: 1; transform: translateY(0) !important; }

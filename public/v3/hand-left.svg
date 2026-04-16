@@ -1,0 +1,90 @@
+<svg viewBox="0 0 260 320"
+  xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <filter id="hs">
+      <feDropShadow dx="0" dy="10"
+        stdDeviation="16"
+        flood-color="rgba(0,0,0,0.18)"/>
+    </filter>
+    <linearGradient id="wg"
+      x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C8A060"/>
+      <stop offset="45%" stop-color="#A07040"/>
+      <stop offset="100%" stop-color="#C8A060"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#hs)">
+    <!-- Wrist -->
+    <rect x="90" y="240" width="80" height="80"
+      rx="18" fill="#F2C9A0"/>
+    <!-- Palm -->
+    <rect x="70" y="155" width="120" height="100"
+      rx="22" fill="#F2C9A0"/>
+    <!-- Thumb -->
+    <ellipse cx="68" cy="185" rx="22" ry="32"
+      transform="rotate(-25 68 185)"
+      fill="#F2C9A0"/>
+    <!-- Index -->
+    <rect x="73" y="75" width="24" height="92"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Middle -->
+    <rect x="103" y="68" width="24" height="98"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Ring -->
+    <rect x="133" y="75" width="24" height="90"
+      rx="12" fill="#F2C9A0"/>
+    <!-- Pinky -->
+    <rect x="160" y="90" width="22" height="76"
+      rx="11" fill="#F2C9A0"/>
+    <!-- Palm shadow -->
+    <ellipse cx="130" cy="180" rx="55" ry="18"
+      fill="#D4A070" opacity="0.25"/>
+    <!-- NFC Plaque wood -->
+    <rect x="58" y="108" width="144" height="88"
+      rx="14" fill="url(#wg)"/>
+    <!-- Wood grain lines -->
+    <line x1="78" y1="116" x2="78" y2="188"
+      stroke="rgba(0,0,0,0.05)" stroke-width="1.5"/>
+    <line x1="108" y1="113" x2="108" y2="191"
+      stroke="rgba(0,0,0,0.05)" stroke-width="1.5"/>
+    <line x1="138" y1="113" x2="138" y2="191"
+      stroke="rgba(0,0,0,0.05)" stroke-width="1.5"/>
+    <line x1="168" y1="116" x2="168" y2="188"
+      stroke="rgba(0,0,0,0.05)" stroke-width="1.5"/>
+    <!-- Engraved text -->
+    <text x="130" y="145"
+      text-anchor="middle"
+      font-family="Inter, sans-serif"
+      font-size="11" font-weight="700"
+      letter-spacing="3"
+      fill="rgba(0,0,0,0.28)">STAMPIFY</text>
+    <!-- Stamp dots -->
+    <rect x="104" y="158" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="114" y="158" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="124" y="158" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="104" y="168" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="114" y="168" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="124" y="168" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <rect x="104" y="178" width="6" height="6"
+      rx="1.5" fill="#1d9e75" opacity="0.65"/>
+    <!-- Empty stamp dots -->
+    <rect x="114" y="178" width="6" height="6"
+      rx="1.5" fill="none"
+      stroke="#1d9e75" stroke-width="1.2"
+      opacity="0.45"/>
+    <rect x="124" y="178" width="6" height="6"
+      rx="1.5" fill="none"
+      stroke="#1d9e75" stroke-width="1.2"
+      opacity="0.45"/>
+    <!-- Plaque border -->
+    <rect x="58" y="108" width="144" height="88"
+      rx="14" fill="none"
+      stroke="rgba(0,0,0,0.10)" stroke-width="1.5"/>
+  </g>
+</svg>
