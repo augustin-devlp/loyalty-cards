@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atelier Blanc — Salon Premium · Épalinges</title>
+<meta name="description" content="Atelier Blanc, votre salon de coiffure premium à Épalinges. Coupe, soin, coloration naturelle. Prenez rendez-vous en ligne.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FAFAF8;
+    --alt: #F5F2ED;
+    --text: #1A1A1A;
+    --secondary: #6B6B6B;
+    --accent: #1d9e75;
+    --accent-hover: #178a65;
+    --card: #FFFFFF;
+    --oak: #D4B896;
+    --border: rgba(26,26,26,0.08);
+    --font-title: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --ease-silk: cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ─── STAMPIFY BANNER ─── */
+  #stampify-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  #stampify-banner a {
+    background: #fff;
+    color: var(--accent);
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  #stampify-banner a:hover { opacity: 0.85; }
+
+  /* ─── NAVIGATION ─── */
+  nav {
+    position: fixed;
+    top: 38px; left: 0; right: 0;
+    z-index: 1000;
+    padding: 0 48px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.5s var(--ease-silk), box-shadow 0.5s var(--ease-silk);
+  }
+  nav.scrolled {
+    background: rgba(250,250,248,0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--card);
+    text-decoration: none;
+    transition: color 0.4s;
+  }
+  nav.scrolled .nav-logo { color: var(--text); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  nav.scrolled .nav-links a { color: var(--secondary); }
+  .nav-links a:hover { color: var(--accent) !important; }
+  .nav-cta {
+    background: var(--accent);
+    color: #fff !important;
+    padding: 9px 22px;
+    border-radius: 30px;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.04em !important;
+    transition: background 0.3s, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent-hover) !important; transform: translateY(-1px); }
+
+  @media(max-width:768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 38px;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: -6%;
+    background-image: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    animation: heroZoom 22s var(--ease-silk) forwards;
+    will-change: transform;
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.0); }
+    to   { transform: scale(1.07); }
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(15,15,12,0.28) 0%,
+      rgba(15,15,12,0.42) 60%,
+      rgba(15,15,12,0.55) 100%
+    );
+  }
+  .hero-content {
+    position: relative;
+    text-align: center;
+    color: #fff;
+    padding: 0 24px;
+    max-width: 700px;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+    animation: fadeUp 1.2s var(--ease-silk) 0.3s both;
+  }
+  .hero-title {
+    font-family: var(--font-title);
+    font-size: clamp(54px, 8vw, 88px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 20px;
+    animation: fadeUp 1.2s var(--ease-silk) 0.5s both;
+  }
+  .hero-subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 40px;
+    animation: fadeUp 1.2s var(--ease-silk) 0.7s both;
+  }
+  .hero-cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 36px;
+    border-radius: 40px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s var(--ease-silk);
+    animation: fadeUp 1.2s var(--ease-silk) 0.9s both;
+  }
+  .hero-cta:hover { background: var(--accent-hover); transform: translateY(-2px); }
+  .hero-scroll {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: fadeUp 1.2s var(--ease-silk) 1.2s both;
+  }
+  .hero-scroll span {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.3);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 0.8; transform: scaleY(0.7); }
+  }
+
+  /* ─── REVEAL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s var(--ease-silk), transform 0.8s var(--ease-silk);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: 0.1s; }
+  .reveal-d2 { transition-delay: 0.2s; }
+  .reveal-d3 { transition-delay: 0.3s; }
+  .reveal-d4 { transition-delay: 0.4s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 110px 48px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--font-title);
+    font-size: clamp(36px, 4.5vw, 52px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--secondary);
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  @media(max-width:768px) {
+    section { padding: 80px 24px; }
+  }
+
+  /* ─── PHILOSOPHY QUOTE ─── */
+  #philosophy {
+    background: var(--alt);
+    text-align: center;
+    padding: 120px 48px;
+  }
+  .quote-mark {
+    font-family: var(--font-title);
+    font-size: 80px;
+    color: var(--accent);
+    opacity: 0.25;
+    line-height: 0.5;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .quote-text {
+    font-family: var(--font-title);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.35;
+    max-width: 780px;
+    margin: 0 auto 28px;
+  }
+  .quote-attr {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    font-weight: 400;
+  }
+
+  /* ─── SERVICES ─── */
+  #services { background: var(--bg); }
+  .services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 56px;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s var(--ease-silk);
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-silk);
+  }
+  .service-card:hover {
+    border-color: transparent;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+    transform: translateY(-3px);
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 20px;
+    opacity: 0.35;
+  }
+  .service-name {
+    font-family: var(--font-title);
+    font-size: 22px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .service-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--secondary);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .service-price {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  @media(max-width:900px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .services-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+  @media(max-width:540px) {
+    .services-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── LOYALTY CARD ─── */
+  #fidelite { background: var(--alt); }
+  .fidelite-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .fidelite-text .section-sub { max-width: 380px; }
+  .fidelite-features {
+    list-style: none;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .fidelite-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--secondary);
+    font-weight: 300;
+  }
+  .fidelite-features li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Phone mockup */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: 240px;
+    height: 480px;
+    background: #1a1a1a;
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 5px;
+    background: #2a2a2a;
+    border-radius: 3px;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: #f0ede8;
+    border-radius: 26px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-statusbar {
+    height: 32px;
+    background: #f0ede8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+  .phone-statusbar span { font-size: 10px; color: #333; font-weight: 600; }
+  .phone-app {
+    flex: 1;
+    background: #f0ede8;
+    padding: 8px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .loyalty-card {
+    background: var(--accent);
+    border-radius: 14px;
+    padding: 18px 16px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(29,158,117,0.35);
+  }
+  .lc-brand {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .lc-name {
+    font-family: var(--font-title);
+    font-size: 17px;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+  .lc-stamps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .lc-stamp {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lc-stamp.filled { background: rgba(255,255,255,0.95); }
+  .lc-stamp.filled svg { width: 13px; height: 13px; }
+  .lc-stamp.empty { border: 1.5px solid rgba(255,255,255,0.35); }
+  .lc-progress {
+    font-size: 9px;
+    opacity: 0.8;
+    letter-spacing: 0.06em;
+  }
+  .lc-reward {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lc-reward-icon { font-size: 16px; }
+  .lc-reward-text { font-size: 9px; line-height: 1.4; opacity: 0.9; }
+  .lc-reward-text strong { display: block; font-size: 10px; opacity: 1; }
+  .stampify-badge-phone {
+    text-align: center;
+    font-size: 8px;
+    color: var(--secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @media(max-width:768px) {
+    .fidelite-inner { grid-template-columns: 1fr; gap: 48px; }
+    .phone-wrap { order: -1; }
+  }
+
+  /* ─── NFC PLAQUE SECTION ─── */
+  #nfc {
+    background: var(--bg);
+    text-align: center;
+  }
+  .nfc-inner { max-width: 900px; margin: 0 auto; }
+  #nfc-canvas-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 52px auto;
+    position: relative;
+  }
+  #nfc-canvas {
+    display: block;
+    border-radius: 8px;
+  }
+  .nfc-hint {
+    font-size: 12px;
+    color: var(--secondary);
+    letter-spacing: 0.1em;
+    margin-top: 0;
+    opacity: 0.65;
+  }
+  .nfc-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+    text-align: left;
+  }
+  .nfc-feature {
+    padding: 28px;
+    background: var(--alt);
+    border-radius: 4px;
+  }
+  .nfc-feature-title {
+    font-family: var(--font-title);
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .nfc-feature-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--secondary);
+    line-height: 1.65;
+  }
+
+  @media(max-width:768px) {
+    .nfc-features { grid-template-columns: 1fr; }
+    #nfc-canvas { width: 300px !important; height: 220px !important; }
+  }
+
+  /* ─── RESERVATION ─── */
+  #reservation { background: var(--alt); }
+  .resa-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .resa-form {
+    background: var(--card);
+    border-radius: 4px;
+    padding: 48px 40px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.05);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--secondary);
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent);
+  }
+  .form-group textarea { resize: none; height: 90px; }
+  .form-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 3px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.3s, transform 0.2s var(--ease-silk);
+  }
+  .form-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .form-success-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(29,158,117,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--accent);
+    font-size: 22px;
+  }
+  .form-success h3 {
+    font-family: var(--font-title);
+    font-size: 26px;
+    font-style: italic;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .form-success p { font-size: 14px; color: var(--secondary); font-weight: 300; }
+
+  @media(max-width:768px) {
+    .resa-inner { grid-template-columns: 1fr; gap: 40px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .resa-form { padding: 32px 24px; }
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--text);
+    color: rgba(255,255,255,0.75);
+    padding: 72px 48px 40px;
+  }
+  .footer-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 56px;
+  }
+  .footer-brand-name {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .footer-brand-tagline {
+    font-family: var(--font-title);
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .footer-address {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.5);
+  }
+  .footer-col-title {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-links a {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-hours-item {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+  .footer-hours-highlight {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+  }
+  .footer-bottom {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-bottom-text { font-size: 12px; color: rgba(255,255,255,0.3); }
+  .footer-stampify {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-stampify:hover { color: var(--accent); }
+
+  @media(max-width:768px) {
+    footer { padding: 56px 24px 32px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+
+  /* ─── NFC FEATURES RESPONSIVE ─── */
+  @media(max-width:768px) {
+    .nfc-features { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     STAMPIFY BANNER
+═══════════════════════════════════════ -->
+<div id="stampify-banner">
+  <span>Ceci est un exemple de site livré par Stampify en 48h</span>
+  <a href="https://www.stampify.ch/subscribe" target="_blank" rel="noopener">Obtenir le mien →</a>
+</div>
+
+<!-- ═══════════════════════════════════════
+     NAVIGATION
+═══════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Atelier Blanc</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#fidelite">Fidélité</a></li>
+    <li><a href="#nfc">NFC</a></li>
+    <li><a href="#reservation" class="nav-cta">Rendez-vous</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Atelier Blanc · Épalinges</p>
+    <h1 class="hero-title">Le soin du détail.</h1>
+    <p class="hero-subtitle">Atelier capillaire — Épalinges</p>
+    <a href="#reservation" class="hero-cta">Prendre rendez-vous →</a>
+  </div>
+  <div class="hero-scroll">
+    <span>Défiler</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PHILOSOPHY
+═══════════════════════════════════════ -->
+<section id="philosophy">
+  <div class="reveal">
+    <span class="quote-mark">"</span>
+    <p class="quote-text">Chaque client mérite<br>une attention singulière.</p>
+    <p class="quote-attr">— Atelier Blanc, Épalinges</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SERVICES
+═══════════════════════════════════════ -->
+<section id="services">
+  <div class="section-inner">
+    <div class="services-header">
+      <div class="reveal">
+        <span class="section-label">Nos prestations</span>
+        <h2 class="section-title">L'excellence, à chaque visite.</h2>
+      </div>
+      <p class="section-sub reveal reveal-d1" style="text-align:right">Tous nos soins sont réalisés avec des produits sélectionnés pour leur qualité et leur respect de vos cheveux.</p>
+    </div>
+    <div class="services-grid">
+
+      <!-- Card 1 -->
+      <div class="service-card reveal reveal-d1">
+        <svg class="service-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 4 C12 4 8 10 8 16 C8 22 12 24 12 30 L28 30 C28 24 32 22 32 16 C32 10 28 4 20 4Z"/>
+          <line x1="20" y1="30" x2="20" y2="36"/>
+          <line x1="14" y1="36" x2="26" y2="36"/>
+        </svg>
+        <h3 class="service-name">Coupe & Styling</h3>
+        <p class="service-desc">Coupe personnalisée suivie d'un brushing sur mesure. Conseils coiffure inclus.</p>
+        <span class="service-price">CHF 120</span>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card reveal reveal-d2">
+        <svg class="service-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <ellipse cx="20" cy="16" rx="10" ry="8"/>
+          <path d="M10 16 C10 24 14 32 20 34 C26 32 30 24 30 16"/>
+          <line x1="20" y1="34" x2="20" y2="38"/>
+        </svg>
+        <h3 class="service-name">Soin Kérastase</h3>
+        <p class="service-desc">Traitement intense pour des cheveux nourris, brillants et fortifiés en profondeur.</p>
+        <span class="service-price">CHF 85</span>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="service-card reveal reveal-d3">
+        <svg class="service-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="20" cy="20" r="12"/>
+          <path d="M20 8 Q26 14 20 20 Q14 26 20 32"/>
+          <circle cx="20" cy="20" r="3" fill="currentColor" opacity="0.4"/>
+        </svg>
+        <h3 class="service-name">Coloration naturelle</h3>
+        <p class="service-desc">Couleurs végétales et formules respectueuses pour un résultat lumineux et durable.</p>
+        <span class="service-price">CHF 180</span>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="service-card reveal reveal-d4">
+        <svg class="service-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 6 C14 6 10 10 10 15 C10 20 13 22 13 26 L27 26 C27 22 30 20 30 15 C30 10 26 6 20 6Z"/>
+          <line x1="20" y1="26" x2="20" y2="30"/>
+          <path d="M15 30 Q20 28 25 30"/>
+        </svg>
+        <h3 class="service-name">Coupe enfant</h3>
+        <p class="service-desc">Un moment tout doux pour les petits, avec patience et douceur garanties.</p>
+        <span class="service-price">CHF 65</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     LOYALTY CARD
+═══════════════════════════════════════ -->
+<section id="fidelite">
+  <div class="section-inner">
+    <div class="fidelite-inner">
+
+      <div class="fidelite-text reveal">
+        <span class="section-label">Programme fidélité</span>
+        <h2 class="section-title">Votre loyauté,<br>récompensée.</h2>
+        <p class="section-sub">Cumulez vos visites directement depuis votre smartphone. Pas de carte papier — tout est dans votre poche.</p>
+        <ul class="fidelite-features">
+          <li>10 visites = 1 soin offert au choix</li>
+          <li>Notifications de rappel automatiques</li>
+          <li>Historique complet de vos soins</li>
+          <li>Accessible sur iOS & Android</li>
+        </ul>
+      </div>
+
+      <div class="phone-wrap reveal reveal-d2">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-statusbar">
+              <span>9:41</span>
+              <span>●●●</span>
+            </div>
+            <div class="phone-app">
+              <div class="loyalty-card">
+                <p class="lc-brand">Stampify · Fidélité</p>
+                <p class="lc-name">Atelier Blanc</p>
+                <div class="lc-stamps">
+                  <!-- 6 filled -->
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <!-- row 2 -->
+                  <div class="lc-stamp filled">
+                    <svg viewBox="0 0 13 13" fill="none"><path d="M2 7L5 10L11 3" stroke="#1d9e75" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <!-- 4 empty -->
+                  <div class="lc-stamp empty"></div>
+                  <div class="lc-stamp empty"></div>
+                  <div class="lc-stamp empty"></div>
+                  <div class="lc-stamp empty"></div>
+                </div>
+                <p class="lc-progress">6 / 10 tampons · Encore 4 soins</p>
+              </div>
+              <div class="lc-reward">
+                <span class="lc-reward-icon">🎁</span>
+                <div class="lc-reward-text">
+                  <strong>Récompense à venir</strong>
+                  1 soin Kérastase offert après 10 visites
+                </div>
+              </div>
+              <p class="stampify-badge-phone">Propulsé par Stampify</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     NFC PLAQUE — THREE.JS
+═══════════════════════════════════════ -->
+<section id="nfc">
+  <div class="nfc-inner">
+    <div class="reveal">
+      <span class="section-label">Technologie NFC</span>
+      <h2 class="section-title">Une plaque.<br>Une expérience sans friction.</h2>
+      <p class="section-sub" style="margin:0 auto;text-align:center;max-width:520px">
+        Posée sur votre comptoir, cette plaque en chêne massif permet à vos clients d'enregistrer leur visite en un simple effleurement.
+      </p>
+    </div>
+
+    <div id="nfc-canvas-wrap" class="reveal reveal-d2">
+      <canvas id="nfc-canvas" width="480" height="300"></canvas>
+    </div>
+    <p class="nfc-hint reveal reveal-d3">Faites défiler pour voir la plaque s'animer doucement.</p>
+
+    <div class="nfc-features">
+      <div class="nfc-feature reveal reveal-d1">
+        <h3 class="nfc-feature-title">Zéro application requise</h3>
+        <p class="nfc-feature-desc">Compatible avec tous les smartphones récents. Le client effleure, le tampon s'enregistre.</p>
+      </div>
+      <div class="nfc-feature reveal reveal-d2">
+        <h3 class="nfc-feature-title">Chêne massif gravé</h3>
+        <p class="nfc-feature-desc">Fabriquée en Suisse, la plaque s'intègre discrètement dans votre espace avec élégance.</p>
+      </div>
+      <div class="nfc-feature reveal reveal-d3">
+        <h3 class="nfc-feature-title">Plug & play</h3>
+        <p class="nfc-feature-desc">Livrée préconfigurée. Posez-la, branchez-la, c'est prêt. Sans installation technique.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     RESERVATION FORM
+═══════════════════════════════════════ -->
+<section id="reservation">
+  <div class="section-inner">
+    <div class="resa-inner">
+
+      <div class="reveal">
+        <span class="section-label">Prise de rendez-vous</span>
+        <h2 class="section-title">Réservez votre moment.</h2>
+        <p class="section-sub">Choisissez votre prestation et votre créneau. Confirmation par SMS dans les minutes suivantes.</p>
+        <div style="margin-top:36px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(29,158,117,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm.5 10.5h-1v-5h1v5zm0-6.5h-1V4h1v1z" fill="#1d9e75"/></svg>
+            </div>
+            <p style="font-size:13px;color:var(--secondary);font-weight:300">Confirmation SMS en moins de 5 minutes</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(29,158,117,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12 2H4C3.45 2 3 2.45 3 3v10c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 8H5V9h6v1zm0-2H5V7h6v1zm0-2H5V5h6v1z" fill="#1d9e75"/></svg>
+            </div>
+            <p style="font-size:13px;color:var(--secondary);font-weight:300">Annulation gratuite jusqu'à 24h avant</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(29,158,117,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L2 5.5V15h4v-5h4v5h4V5.5L8 1z" fill="#1d9e75"/></svg>
+            </div>
+            <p style="font-size:13px;color:var(--secondary);font-weight:300">Route de Berne 12, 1066 Épalinges</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="resa-form reveal reveal-d2" id="form-wrap">
+        <h3 style="font-family:var(--font-title);font-size:22px;font-style:italic;font-weight:400;margin-bottom:28px;color:var(--text)">Votre réservation</h3>
+        <form id="resa-form" onsubmit="submitForm(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nom">Nom</label>
+              <input type="text" id="nom" placeholder="Dupont" required>
+            </div>
+            <div class="form-group">
+              <label for="prenom">Prénom</label>
+              <input type="text" id="prenom" placeholder="Marie" required>
+            </div>
+            <div class="form-group">
+              <label for="tel">Téléphone</label>
+              <input type="tel" id="tel" placeholder="+41 79 000 00 00" required>
+            </div>
+            <div class="form-group">
+              <label for="service">Prestation</label>
+              <select id="service" required>
+                <option value="">Choisir...</option>
+                <option>Coupe & Styling — CHF 120</option>
+                <option>Soin Kérastase — CHF 85</option>
+                <option>Coloration naturelle — CHF 180</option>
+                <option>Coupe enfant — CHF 65</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="date">Date souhaitée</label>
+              <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+              <label for="heure">Heure</label>
+              <select id="heure" required>
+                <option value="">Choisir...</option>
+                <option>09:00</option>
+                <option>09:30</option>
+                <option>10:00</option>
+                <option>10:30</option>
+                <option>11:00</option>
+                <option>11:30</option>
+                <option>14:00</option>
+                <option>14:30</option>
+                <option>15:00</option>
+                <option>15:30</option>
+                <option>16:00</option>
+                <option>17:00</option>
+                <option>17:30</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="note">Note (optionnel)</label>
+              <textarea id="note" placeholder="Longueur des cheveux, particularités..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="form-submit">Confirmer le rendez-vous →</button>
+        </form>
+        <div class="form-success" id="form-success">
+          <div class="form-success-icon">✓</div>
+          <h3>Demande envoyée !</h3>
+          <p>Nous vous confirmons votre rendez-vous par SMS dans les 5 prochaines minutes.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <p class="footer-brand-name">Atelier Blanc</p>
+      <p class="footer-brand-tagline">Le soin du détail,<br>à chaque visite.</p>
+      <div class="footer-address">
+        Route de Berne 12<br>
+        1066 Épalinges, Vaud<br>
+        <br>
+        +41 21 000 00 00<br>
+        contact@atelierblanc.ch
+      </div>
+    </div>
+    <div>
+      <span class="footer-col-title">Navigation</span>
+      <ul class="footer-links">
+        <li><a href="#services">Services & tarifs</a></li>
+        <li><a href="#fidelite">Programme fidélité</a></li>
+        <li><a href="#nfc">Plaque NFC</a></li>
+        <li><a href="#reservation">Réservation</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-title">Horaires</span>
+      <p class="footer-hours-item">
+        <span class="footer-hours-highlight">Mardi – Samedi</span><br>
+        9h00 – 18h30
+      </p>
+      <p class="footer-hours-item" style="margin-top:8px">Dimanche & Lundi<br>Fermé</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-bottom-text">© 2025 Atelier Blanc · Épalinges, Suisse</p>
+    <a href="https://www.stampify.ch" target="_blank" rel="noopener" class="footer-stampify">
+      Site réalisé par Stampify →
+    </a>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ── Nav scroll ── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Intersection Observer (reveal) ── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ── Form submit ── */
+function submitForm(e) {
+  e.preventDefault();
+  document.getElementById('resa-form').style.display = 'none';
+  document.getElementById('form-success').style.display = 'flex';
+  document.getElementById('form-success').style.flexDirection = 'column';
+  document.getElementById('form-success').style.alignItems = 'center';
+}
+
+/* ── Set min date for date input ── */
+(function() {
+  const d = document.getElementById('date');
+  if (d) {
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    d.min = today.toISOString().split('T')[0];
+  }
+})();
+
+/* ════════════════════════════════════
+   THREE.JS — NFC Plaque
+════════════════════════════════════ */
+(function initPlaque() {
+  const canvas = document.getElementById('nfc-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  const W = canvas.width, H = canvas.height;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(32, W / H, 0.1, 100);
+  camera.position.set(0, 0, 7);
+
+  /* ── Lights ── */
+  const ambientLight = new THREE.AmbientLight(0xfaf7f2, 0.7);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xfff5e8, 1.0);
+  dirLight.position.set(3, 5, 5);
+  scene.add(dirLight);
+
+  const rimLight = new THREE.DirectionalLight(0xe8f0ff, 0.3);
+  rimLight.position.set(-4, -2, 2);
+  scene.add(rimLight);
+
+  /* ── Oak texture via CanvasTexture ── */
+  function makePlaqueTexture() {
+    const tc = document.createElement('canvas');
+    tc.width = 1024; tc.height = 600;
+    const ctx = tc.getContext('2d');
+
+    // Base oak color
+    const grad = ctx.createLinearGradient(0, 0, 1024, 600);
+    grad.addColorStop(0,   '#D9BC9A');
+    grad.addColorStop(0.3, '#C9AB85');
+    grad.addColorStop(0.6, '#D4B896');
+    grad.addColorStop(1,   '#C8A87E');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1024, 600);
+
+    // Wood grain lines
+    ctx.strokeStyle = 'rgba(160,120,70,0.12)';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 22; i++) {
+      const y = 20 + i * 26 + Math.random() * 8;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x < 1024; x += 40) {
+        ctx.quadraticCurveTo(x + 20, y + (Math.random() - 0.5) * 6, x + 40, y + (Math.random() - 0.5) * 3);
+      }
+      ctx.stroke();
+    }
+
+    // Subtle vignette
+    const vign = ctx.createRadialGradient(512, 300, 100, 512, 300, 580);
+    vign.addColorStop(0, 'rgba(0,0,0,0)');
+    vign.addColorStop(1, 'rgba(0,0,0,0.18)');
+    ctx.fillStyle = vign;
+    ctx.fillRect(0, 0, 1024, 600);
+
+    // Brand name engraving
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = 'rgba(90,60,30,0.55)';
+    ctx.font = '300 68px "Cormorant Garamond", Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.letterSpacing = '8px';
+    ctx.fillText('Atelier Blanc', 512, 270);
+    ctx.restore();
+
+    // Subtitle
+    ctx.fillStyle = 'rgba(90,60,30,0.32)';
+    ctx.font = '400 24px "Plus Jakarta Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ÉPALINGES · SALON PREMIUM', 512, 340);
+
+    // NFC icon area
+    ctx.strokeStyle = 'rgba(90,60,30,0.2)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(462, 386, 100, 54, 6);
+    ctx.stroke();
+
+    // NFC waves
+    const cx = 512, cy = 413;
+    for (let r = 8; r <= 22; r += 7) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -Math.PI * 0.6, Math.PI * 0.6);
+      ctx.strokeStyle = `rgba(90,60,30,${0.25 - r * 0.006})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    // NFC dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(90,60,30,0.3)';
+    ctx.fill();
+
+    return new THREE.CanvasTexture(tc);
+  }
+
+  /* ── Plaque geometry ── */
+  const geo = new THREE.BoxGeometry(4.8, 2.8, 0.14, 2, 2, 1);
+
+  // Round corners by slightly modifying geometry (visual approximation via shader)
+  const mat = new THREE.MeshStandardMaterial({
+    map: makePlaqueTexture(),
+    roughness: 0.72,
+    metalness: 0.04,
+    color: 0xfaf5ee,
+  });
+
+  // Side/back material
+  const sideColor = new THREE.MeshStandardMaterial({
+    color: 0xb89060,
+    roughness: 0.8,
+    metalness: 0.02,
+  });
+
+  const materials = [sideColor, sideColor, sideColor, sideColor, mat, sideColor];
+  const plaque = new THREE.Mesh(geo, materials);
+  scene.add(plaque);
+
+  // Subtle edge bevel effect via second thin mesh
+  const edgeMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(4.88, 2.88, 0.12),
+    new THREE.MeshStandardMaterial({ color: 0xa07840, roughness: 0.9, metalness: 0.05 })
+  );
+  edgeMesh.position.z = -0.005;
+  scene.add(edgeMesh);
+
+  /* ── Scroll-driven animation state ── */
+  let nfcVisible = false;
+  let scrollProgress = 0;
+  const nfcSection = document.getElementById('nfc');
+
+  const nfcObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { nfcVisible = e.isIntersecting; });
+  }, { threshold: 0 });
+  nfcObs.observe(nfcSection);
+
+  window.addEventListener('scroll', () => {
+    if (!nfcVisible) return;
+    const rect = nfcSection.getBoundingClientRect();
+    const sectionH = nfcSection.offsetHeight;
+    scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionH));
+  }, { passive: true });
+
+  /* ── Render loop ── */
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.016;
+
+    // Gentle float — barely perceptible
+    plaque.position.y = Math.sin(t * 0.55) * 0.045;
+    edgeMesh.position.y = plaque.position.y;
+
+    // Scroll-driven rotation — max ±3 degrees (0.0524 rad)
+    const targetRotY = (scrollProgress - 0.5) * 0.105; // ±0.0525 rad = ±3°
+    plaque.rotation.y += (targetRotY - plaque.rotation.y) * 0.06;
+    edgeMesh.rotation.y = plaque.rotation.y;
+
+    // Very subtle tilt
+    plaque.rotation.x = Math.sin(t * 0.3) * 0.012;
+    edgeMesh.rotation.x = plaque.rotation.x;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  /* ── Responsive resize ── */
+  function resizePlaque() {
+    const maxW = Math.min(480, window.innerWidth - 48);
+    const ratio = maxW / 480;
+    canvas.style.width  = maxW + 'px';
+    canvas.style.height = (300 * ratio) + 'px';
+  }
+  window.addEventListener('resize', resizePlaque, { passive: true });
+  resizePlaque();
+})();
+</script>
+</body>
+</html>
