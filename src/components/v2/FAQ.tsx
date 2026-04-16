@@ -33,6 +33,8 @@ export default function FAQ() {
       {ITEMS.map((item, i) => (
         <div
           key={i}
+          data-animate="fade-up"
+          data-delay={String(i + 1)}
           style={{
             border: "1px solid",
             borderColor: open === i ? "rgba(29,158,117,0.35)" : "#E5E7EB",
@@ -62,20 +64,27 @@ export default function FAQ() {
               color: open === i ? "#fff" : "#6B7280",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 16, flexShrink: 0,
-              transition: "background 0.2s, color 0.2s, transform 0.2s",
+              transition: "background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)",
               transform: open === i ? "rotate(45deg)" : "rotate(0deg)",
             }}>
               +
             </span>
           </button>
 
-          {open === i && (
-            <div style={{ padding: "0 24px 20px" }}>
-              <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.7, margin: 0 }}>
-                {item.a}
-              </p>
+          {/* Grid trick for smooth height animation */}
+          <div style={{
+            display: "grid",
+            gridTemplateRows: open === i ? "1fr" : "0fr",
+            transition: "grid-template-rows 0.32s cubic-bezier(0.16,1,0.3,1)",
+          }}>
+            <div style={{ overflow: "hidden" }}>
+              <div style={{ padding: "0 24px 20px" }}>
+                <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.7, margin: 0 }}>
+                  {item.a}
+                </p>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       ))}
     </div>

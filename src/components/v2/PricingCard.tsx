@@ -71,14 +71,20 @@ export default function PricingCard() {
       {/* LEFT: Pricing card */}
       <div
         className="v2-animate v2-d1"
+        data-animate="scale-spring"
         style={{
           border: "2px solid #1d9e75",
           borderRadius: 20, padding: 36,
           background: "#fff",
           boxShadow: "0 16px 64px rgba(29,158,117,0.12)",
           position: "relative",
+          overflow: "hidden",
+          animation: "pricingBreath 3.5s ease-in-out infinite",
+          animationDelay: "-1s",
         }}
       >
+        {/* Shimmer effect on reveal */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.26) 50%,transparent 100%)", animation: "pricingShimmer 0.9s ease-out 1 forwards", animationDelay: "0.85s", width: "55%", top: 0, bottom: 0, left: 0, pointerEvents: "none", zIndex: 20 }} />
         {/* Badge */}
         <div style={{
           display: "inline-block",

@@ -13,23 +13,18 @@ const BADGES = [
 
 export default function MarqueeBar() {
   return (
-    <section style={{ background: "#F9FAFB", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", padding: "20px 0" }}>
+    <section
+      data-animate="fade-up-sm"
+      style={{ background: "#F9FAFB", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", padding: "20px 0" }}
+    >
       <p style={{ textAlign: "center", fontSize: 12, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 16 }}>
         Ils nous font confiance pour leur présence digitale
       </p>
-      <div style={{ overflow: "hidden", position: "relative" }}>
-        {/* Fade masks */}
-        <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: 80, zIndex: 1,
-          background: "linear-gradient(to right, #F9FAFB, transparent)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute", right: 0, top: 0, bottom: 0, width: 80, zIndex: 1,
-          background: "linear-gradient(to left, #F9FAFB, transparent)",
-          pointerEvents: "none",
-        }} />
-
+      <div style={{
+        overflow: "hidden", position: "relative",
+        maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+      }}>
         <div
           style={{ display: "flex", gap: 16, animation: "v2-marquee 30s linear infinite", width: "max-content" }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.animationPlayState = "paused"; }}

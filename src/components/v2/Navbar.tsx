@@ -55,7 +55,7 @@ export default function V2Navbar() {
   useEffect(() => {
     const handler = () => {
       const y = window.scrollY;
-      setScrolled(y > 80);
+      setScrolled(y > 16);
       const prog = document.getElementById("v2-progress");
       if (prog) {
         const total = document.body.scrollHeight - window.innerHeight;
@@ -109,11 +109,12 @@ export default function V2Navbar() {
         {/* Navbar */}
         <nav style={{
           height: 64,
-          background: scrolled ? "rgba(255,255,255,0.93)" : "rgba(255,255,255,0.85)",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(0,0,0,0.06)" : "1px solid transparent",
-          transition: "background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
+          background: scrolled ? "rgba(255,255,255,0.88)" : "transparent",
+          backdropFilter: scrolled ? "blur(16px) saturate(180%)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(16px) saturate(180%)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(0,0,0,0.07)" : "1px solid transparent",
+          boxShadow: scrolled ? "0 1px 24px rgba(0,0,0,0.05)" : "none",
+          transition: "background 0.30s ease, border-color 0.30s ease, box-shadow 0.30s ease",
           display: "flex",
           alignItems: "center",
         }}>
