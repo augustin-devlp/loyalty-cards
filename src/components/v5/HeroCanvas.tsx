@@ -44,8 +44,10 @@ export default function HeroCanvas() {
 
     // Mobile : désactive les beams pour préserver la perf
     // ITER 33 — mobile: orbs ×1.4 pour compenser l'absence de beams
+    // ITER 68 — tablet: orbs ×1.15 (viewport étroit, beams moins couvrants)
     const isMobile = window.innerWidth < 768;
-    const orbBoost = isMobile ? 1.4 : 1.0;
+    const isTablet = !isMobile && window.innerWidth < 1024;
+    const orbBoost = isMobile ? 1.4 : isTablet ? 1.15 : 1.0;
 
     let W = 0;
     let H = 0;
