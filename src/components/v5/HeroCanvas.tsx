@@ -228,7 +228,7 @@ export default function HeroCanvas() {
       ctx.strokeStyle = glow;
       ctx.lineWidth = 12; // ITER 76: 10→12px glow plus épais (séparation chromatique)
       ctx.shadowBlur = 24; // ITER 47: 20→24 diffusion atmosphérique renforcée
-      ctx.shadowColor = "rgba(22,168,130,0.50)"; // ITER 47: 0.45→0.50 (plus d'éclat autour du beam)
+      ctx.shadowColor = `rgba(22,168,130,${0.50 * beam.opacity})`; // ITER 85: scale avec opacity
       tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 
