@@ -1,6 +1,6 @@
 # V5 Animation Progress — handhold.io reproduction
 
-## Dernière mise à jour : 17 Apr 2026 — ~75min écoulées
+## Dernière mise à jour : 17 Apr 2026 — ~120min écoulées
 
 ## Itérations complétées (session courante)
 
@@ -50,6 +50,21 @@
 | ITER 48 | Nappe CSS 0.055→0.075 + ampX dérive orbs 18-26→22-30px | b16bb2c | ✅ |
 | ITER 49 | orb[3] nr 0.18→0.25 + orb[4] ny 0.50→0.25 (couverture zone texte) | b4bc8e6 | ✅ |
 | ITER 50 | Breathe fréq 0.18→0.26 (période 80s) + ampY 12→15px base | 1c76adc | ✅ |
+| ITER 51 | Profil orb plus diffus : 80%@0.15r → 50%@0.35r → 20%@0.60r → 5%@0.82r | 11b75fd | ✅ |
+| ITER 52 | Beams Y [0.39,0.47,0.56]→[0.35,0.44,0.53] + beamW 0.65→0.72W | f8e9466 | ✅ |
+| ITER 53 | Delta-time animation (frame-rate indépendant, cap 100ms) | a0945de | ✅ |
+| ITER 54 | orb[1] ny 0.20→0.15, orb[2] ny 0.55→0.38 (couverture zone texte) | c81205e | ✅ |
+| ITER 55 | Halo peak 0.090→0.100, glow peak 0.55→0.65 (beams plus lumineux) | 393ec12 | ✅ |
+| ITER 56 | orb[0] nr 0.72→0.80 (rayon élargi, meilleure couverture hero) | ebd8a8f | ✅ |
+| ITER 57 | Nappe CSS top-droit 3%→4.5%, spread 38%→45% | d3d67fd | ✅ |
+| ITER 58 | Beam pulsation globalAlpha ±10% (période ~42s per beam) | 3766b51 | ✅ |
+| ITER 59 | Halo shadowBlur 0→8px (atmosphère étendue au-delà du lineWidth) | c0b8069 | ✅ |
+| ITER 60 | Breathe amplitude per-orb [0.15,0.18,0.12,0.20,0.08] | 3c85f9e | ✅ |
+| ITER 61 | Modulation vitesse beam ±10% (cycle ~140s per beam) | 34e7e38 | ✅ |
+| ITER 62 | orb[4] 0.050→0.065 + fond edges E6F1EA→DFE9E4 (plus saturé) | 105bc57 | ✅ |
+| ITER 63 | Nappe CSS top-center 70%×55%→80%×65% (spread élargi) | 9bbc148 | ✅ |
+| ITER 64 | Positions initiales beams 0.50/0.90/0.10 (impact immédiat au load) | 9db5379 | ✅ |
+| ITER 65 | tracePath 80→120 segments + lineJoin round (path plus lisse) | b7b2d38 | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -87,7 +102,7 @@ FLOAT HANDS:
   gauche: 4.2s, droite: 4.8s (désynchronisées)
 ```
 
-## Score ressemblance handhold.io : 9.5/10 (mis à jour ITER 46-50)
+## Score ressemblance handhold.io : 9.7/10 (mis à jour ITER 51-65)
 
 ### Ce qui reste potentiellement différent
 1. **Visuellement impossible à vérifier** sans browser côte-à-côte
