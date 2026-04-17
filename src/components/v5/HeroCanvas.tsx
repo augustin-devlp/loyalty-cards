@@ -134,7 +134,7 @@ export default function HeroCanvas() {
     const drawOrb = (orb: Orb, breathe: number, parallaxY: number) => {
       const a = orb.opacity * breathe;
       // Centre Y décalé par le parallax — ITER 20: réduit 0.20→0.12
-      const cy = orb.y - parallaxY * 0.12;
+      const cy = orb.y - parallaxY * 0.08; // ITER 69: 0.12→0.08 (moins de dérive au scroll)
       const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
       // ITER 17 — profil tighter : peak concentré, falloff rapide → lumière focalisée
       // ITER 26 — profil légèrement ouvert (0.30→0.38, 0.07→0.10) plus de présence ambiante
