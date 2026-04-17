@@ -324,8 +324,8 @@ export default function HeroCanvas() {
           b.progress += b.speed * speedMod * (delta * TIME_PER_MS / 0.005);
           // ITER 45 — dead zone réduit → beams visibles 83% du temps (vs 62%)
           if (b.progress > 1.1) b.progress = -0.1;
-          // Dérive verticale quasi-imperceptible (amplitude 5px, ~18s)
-          b.y = b.ny * H + Math.sin(time * 0.22 + bi * 1.7) * 5;
+          // ITER 74 — dérive Y ±8px (vs ±5px), période ~65s (vs 95s)
+          b.y = b.ny * H + Math.sin(time * 0.32 + bi * 1.7) * 8;
           // ITER 58 — pulsation ±10% par beam (~42s période, phases décalées)
           ctx.globalAlpha = 1.0 + Math.sin(time * 0.50 + bi * 2.1) * 0.10;
           drawBeam(b);
