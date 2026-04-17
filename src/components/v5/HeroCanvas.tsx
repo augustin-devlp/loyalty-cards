@@ -193,13 +193,16 @@ export default function HeroCanvas() {
       // 1) halo large diffus
       const halo = ctx.createLinearGradient(startX, 0, endX, 0);
       halo.addColorStop(0.00, "rgba(29,158,117,0)");
-      // ITER 41 — halo peak 0.070→0.090 (diffusion atmosphérique renforcée)
+      // ITER 41 — halo peak 0.090, ITER 55 — 0.100
+      // ITER 71 — stops intermédiaires 0.10 et 0.90 pour ramp plus graduelle
       halo.addColorStop(0.03, `rgba(29,158,117,${0.010 * beam.opacity})`);
+      halo.addColorStop(0.10, `rgba(29,158,117,${0.022 * beam.opacity})`);
       halo.addColorStop(0.18, `rgba(29,158,117,${0.038 * beam.opacity})`);
       halo.addColorStop(0.38, `rgba(29,158,117,${0.068 * beam.opacity})`);
-      halo.addColorStop(0.50, `rgba(29,158,117,${0.100 * beam.opacity})`); // ITER 55: 0.090→0.100
+      halo.addColorStop(0.50, `rgba(29,158,117,${0.100 * beam.opacity})`);
       halo.addColorStop(0.62, `rgba(29,158,117,${0.068 * beam.opacity})`);
       halo.addColorStop(0.82, `rgba(29,158,117,${0.038 * beam.opacity})`);
+      halo.addColorStop(0.90, `rgba(29,158,117,${0.022 * beam.opacity})`);
       halo.addColorStop(0.97, `rgba(29,158,117,${0.010 * beam.opacity})`);
       halo.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = halo;
