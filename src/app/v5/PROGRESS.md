@@ -142,3 +142,89 @@ FLOAT HANDS:
 - `fa71ef6` — ITER 18
 - `7123437` — ITER 19
 - `fd09110` — ITER 20
+
+
+---
+
+## ITER 89 — DARK PIVOT (18 Apr 2026)
+
+**Source d'inspiration changée** : handhold.io → altitude.so, antimetal.com, topanga.io.
+On part d'un fond quasi-noir avec orbs lumineux type SaaS premium.
+
+### HeroSection.tsx (rewrite)
+- Background : 2-layer radial — `radial-gradient(80% 60% at 50% 35%, rgba(29,158,117,0.20) 0%, ... transparent 72%)` + base `#0F1815 → #0A0E0C → #06090A`.
+- Grille antimetal-like : 48×48 px, opacity 3.5%, masquée en ellipse.
+- Fade-to-white bas 140 px (zIndex 2) pour jonction avec marquee.
+- Padding : 140/120 vertical, minHeight 720.
+- Text color : `#F5F7F6` (off-white).
+- Badge : glass `rgba(255,255,255,0.06)` + border `rgba(255,255,255,0.12)` + backdrop-blur 8px.
+- Ping dot : `#3EE5A8` avec box-shadow glow 12px.
+- Title : "reviennent" en gradient text `#3EE5A8 → #B8F0D9 → #3EE5A8`.
+- CTA primaire : `#1d9e75` + triple box-shadow (ring teal + drop + outer glow 32px).
+- CTA secondaire : rgba blanc 4% + border blanc 18% + hover teal.
+- Avatar : gradient `#3EE5A8 → #1d9e75` + box-shadow teal 18px.
+
+### HeroCanvas.tsx (DARK adjustements)
+- Opacités orbs ×2.6 : 0.15→0.42, 0.10→0.28, 0.08→0.22, 0.10→0.28, 0.065→0.18.
+- Couleur orbs : `rgba(29,158,117)` → `rgba(64,212,160)` au cœur, redescente progressive vers `rgba(29,158,117)` dans les bords.
+- Shadow orb : 30px → **38px**, `rgba(29,158,117, a*0.20)` → **`rgba(62,229,168, a*0.35)`**.
+- Halo beam : couleur unifiée `rgba(62,229,168)`, opacités ×1.8 (peak 0.100→0.180). shadowBlur 8→12, shadowColor opacity 0.15→0.28.
+- Glow beam : `rgba(22,168,130)` → gradient `rgba(64,212,160) → rgba(96,224,176) → rgba(128,236,192)`. shadowBlur 24→28.
+- Core : conservé (déjà quasi-blanc au pic 0.50, parfait sur fond noir).
+
+### Réparations préalables
+- `HeroCanvas.tsx` restauré à **4135c80** (ITER 88) avant modif.
+- `HeroSection.tsx` / `DashboardMockup.tsx` / `FloatingHands.tsx` restaurés depuis HEAD (working tree tronquée).
+- `PROGRESS.md` restauré depuis HEAD puis append ITER 89.
+
+### Prochaines itérations (ITER 90+)
+- +20 % opacity orbs si encore discret sur le noir
+- Grille 3.5 % → 2-4 % si trop visible
+- Grain noise 1 % pour casser le banding radial
+- Shimmer sur mot "reviennent" (2 cycles / 10s)
+- Fade bas 140 → 100 px si mange le mockup
+
+
+---
+
+## ITER 90 — PIVOT mockup iPhone (18 Apr 2026)
+
+**Direction changée** : le brief pivote vers un hero minimaliste blanc avec mockup iPhone qui flotte, type topanga.io / searchable.com / karumi.ai. On abandonne orbs, beams, fond sombre.
+
+### Nouveau composant : `src/components/v5/PhoneMockup.tsx`
+- **Châssis** : dégradé linéaire 145° 4 stops (`#DADCE0 → #F5F6F8 → #B8BDC6 → #8A8F99`) pour l'effet titanium brossé, padding 10px, borderRadius 46px. Inset box-shadows blanc haut/noir bas pour le relief.
+- **Écran** : dégradé vertical sombre `#0B0D10 → #141619`, borderRadius interne 38px, inset stroke noir 2px.
+- **Notch Dynamic Island** : barre 96×28px black, z-index 3, centrée top 12px.
+- **Status bar** : "9:41" + "••• 100%" en blanc 13px.
+- **Card fidélité à l'écran** (absolute top 68 bottom 24) : dégradé `#FFFFFF → #F6FBF9`, shadow teal 12 36 px, header "STAMPIFY / Café Lumière" + mark "S" gradient teal, barre progression 70% avec box-shadow teal 8px, grille 5×2 tampons (7 filled/3 empty), CTA "Prochain café / Offert dans 3 tampons".
+- **Animations** (CSS keyframes inline) :
+  - `v5PhoneFloat` 6.4s easeInOut — translateY 0→-16px, rotateX 5-6°, rotateY -7/-8°, rotateZ -0.4/-1.2°
+  - `v5PhoneShadow` 6.4s synchrone inverse — scale 1→0.82, opacity 0.55→0.32, blur 10→16px
+  - `v5StampPop` — scale 0.6→1.08→1, opacity 0→1, stagger 0.06s par tampon, cubic-bezier overshoot (0.34, 1.56, 0.64, 1)
+- `prefers-reduced-motion` : animations désactivées.
+
+### HeroSection.tsx (rewrite complet)
+- Fond `#FFFFFF`, padding `120px 24px 96px`, minHeight 720.
+- Halo vert derrière phone : `radial-gradient(50% 50% at 50% 50%, rgba(29,158,117,0.10)...)`, filter blur 40px, top 10% right -8%, width 48%, height 90%.
+- Grille 2 colonnes 1fr/1fr, gap 72px.
+- Badge `#E8F7F2` avec ping teal `#1d9e75`.
+- Titre 3 lignes, "reviennent" en gradient text `#1d9e75 → #3EE5A8 → #1d9e75`.
+- CTA primaire teal avec box-shadow accentuée au hover (`-4px 10px 24px`).
+- CTA secondaire outline gris clair, hover teal.
+- Social proof avatar gradient + étoiles 5⭐.
+
+### Fichiers supprimés du chemin hero (mais conservés disque)
+- `HeroCanvas.tsx` : plus importé par HeroSection. Reste en place pour historique / éventuel retour.
+- `HeroBackground.tsx`, `HeroOrbs.tsx`, `FloatingHands.tsx` : pas touchés cette session, toujours disponibles pour les autres pages v5 (ex: CTA section).
+
+### Validation
+- `npx tsc --noEmit` : zero erreur sur tout le projet, v5 inclus.
+- `npm run build` local ne peut pas s'exécuter depuis le sandbox (permissions NTFS sur `.next/`). Vercel fera foi.
+
+### Prochaines itérations possibles (ITER 91+)
+- Ajuster la rotation 3D du phone (trop / pas assez penché)
+- Ajouter un reflet sur le verre de l'écran (linear-gradient blanc 8%)
+- Boutons physiques sur les côtés du châssis (silent switch, volume, power)
+- Camera cutout dans le notch pour plus de réalisme
+- Animation tilt au mouseover du phone (parallax léger au scroll ou à la souris)
+- Changer le nom du commerce sur la card au hover (Café Lumière → Bistrot du Coin)
