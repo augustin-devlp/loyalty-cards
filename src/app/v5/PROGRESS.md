@@ -36,7 +36,8 @@
 | ITER 34 | Beams Y resserrés [0.39,0.47,0.56] bande lumineuse cohérente ~17%H | 5142ca2 | ✅ |
 | ITER 35 | Séparation chromatique: glow rgba(22,168,130) teal vs halo/core vert | 5439426 | ✅ |
 | ITER 36 | Stagger 0.53→0.50 : toujours 2 beams visibles, overlap propre | 2cd8053 | ✅ |
-| ITER 37 | Breathe orbs ±12%→±15%, période 140→116s (plus vivant) | pending | ✅ |
+| ITER 37 | Breathe orbs ±12%→±15%, période 140→116s (plus vivant) | 565c460 | ✅ |
+| ITER 38 | orb[2] ny:0.68→0.55, orb[3] nx:0.75→0.78 ny:-0.05→0.05 (dans viewport) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
