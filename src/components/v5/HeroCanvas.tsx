@@ -298,10 +298,11 @@ export default function HeroCanvas() {
       ctx.globalCompositeOperation = "screen";
       for (let oi = 0; oi < orbsBase.length; oi++) {
         const o = orbsBase[oi];
-        // ITER 37 — breathe ±15%, ITER 50 — fréq 0.26 (~80s)
-        // ITER 60 — amplitude per-orb : [0.15, 0.18, 0.12, 0.20, 0.08] → personnalité propre
-        const breatheAmp = [0.15, 0.18, 0.12, 0.20, 0.08][oi];
-        const breathe = (1 + Math.sin(time * 0.26 + oi * 1.2) * breatheAmp) * orbBoost;
+        // ITER 37 — breathe ±15%, ITER 50/60 — amplitude + fréquence per-orb (ITER 66)
+        // ITER 66 — fréquence per-orb [0.26,0.22,0.30,0.20,0.18] → battements complexes
+        const breatheAmp  = [0.15, 0.18, 0.12, 0.20, 0.08][oi];
+        const breatheFreq = [0.26, 0.22, 0.30, 0.20, 0.18][oi];
+        const breathe = (1 + Math.sin(time * breatheFreq + oi * 1.2) * breatheAmp) * orbBoost;
         drawOrb(o, breathe, parallaxY);
       }
       ctx.globalCompositeOperation = "source-over";
