@@ -146,9 +146,13 @@ export default function HeroCanvas() {
       grad.addColorStop(0.82, `rgba(29,158,117,${a * 0.05})`);
       grad.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.fillStyle = grad;
+      // ITER 70 — shadow sur fill orb : aura douce au-delà du gradient (30px)
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = `rgba(29,158,117,${a * 0.12})`;
       ctx.beginPath();
       ctx.arc(orb.x, cy, orb.r, 0, Math.PI * 2);
       ctx.fill();
+      ctx.shadowBlur = 0;
     };
 
     // Chemin sinusoïdal subtil + légère inclinaison descendante (~0.8°)
