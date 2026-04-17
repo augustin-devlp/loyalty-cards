@@ -42,7 +42,9 @@ export default function HeroCanvas() {
     }, 120);
 
     // Mobile : désactive les beams pour préserver la perf
+    // ITER 33 — mobile: orbs ×1.4 pour compenser l'absence de beams
     const isMobile = window.innerWidth < 768;
+    const orbBoost = isMobile ? 1.4 : 1.0;
 
     let W = 0;
     let H = 0;
@@ -275,7 +277,7 @@ export default function HeroCanvas() {
       ctx.globalCompositeOperation = "screen";
       for (let oi = 0; oi < orbsBase.length; oi++) {
         const o = orbsBase[oi];
-        const breathe = 1 + Math.sin(time * 0.15 + oi * 1.2) * 0.12;
+        const breathe = (1 + Math.sin(time * 0.15 + oi * 1.2) * 0.12) * orbBoost;
         drawOrb(o, breathe, parallaxY);
       }
       ctx.globalCompositeOperation = "source-over";
