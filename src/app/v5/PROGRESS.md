@@ -33,7 +33,8 @@
 | ITER 31 | DashboardMockup: green ambient glow shadow rgba(29,158,117,0.09) | 78a84fc | ✅ |
 | ITER 32 | Amplitude arc beam 2.0→3.5px (arc visible avec freq spatiale 0.0030) | f8d5de1 | ✅ |
 | ITER 33 | Mobile: orbBoost ×1.4 (compense l'absence de beams <768px) | b162f5d | ✅ |
-| ITER 34 | Beams Y resserrés [0.39,0.47,0.56] bande lumineuse cohérente ~17%H | pending | ✅ |
+| ITER 34 | Beams Y resserrés [0.39,0.47,0.56] bande lumineuse cohérente ~17%H | 5142ca2 | ✅ |
+| ITER 35 | Séparation chromatique: glow rgba(22,168,130) teal vs halo/core vert | pending | ✅ |
 
 ## Paramètres finaux actuels
 

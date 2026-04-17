@@ -190,21 +190,21 @@ export default function HeroCanvas() {
       tracePath(startX, endX, beam.y);
       ctx.stroke();
 
-      // 2) glow intermédiaire
+      // 2) glow intermédiaire — ITER 35: légèrement plus cyan (séparation chromatique)
       const glow = ctx.createLinearGradient(startX, 0, endX, 0);
-      glow.addColorStop(0.00, "rgba(29,158,117,0)");
-      glow.addColorStop(0.03, `rgba(29,158,117,${0.04 * beam.opacity})`);
-      glow.addColorStop(0.18, `rgba(29,158,117,${0.18 * beam.opacity})`);
-      glow.addColorStop(0.38, `rgba(29,158,117,${0.42 * beam.opacity})`);
-      glow.addColorStop(0.50, `rgba(29,158,117,${0.52 * beam.opacity})`);
-      glow.addColorStop(0.62, `rgba(29,158,117,${0.42 * beam.opacity})`);
-      glow.addColorStop(0.82, `rgba(29,158,117,${0.18 * beam.opacity})`);
-      glow.addColorStop(0.97, `rgba(29,158,117,${0.04 * beam.opacity})`);
-      glow.addColorStop(1.00, "rgba(29,158,117,0)");
+      glow.addColorStop(0.00, "rgba(22,168,130,0)");
+      glow.addColorStop(0.03, `rgba(22,168,130,${0.04 * beam.opacity})`);
+      glow.addColorStop(0.18, `rgba(22,168,130,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.38, `rgba(22,168,130,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.50, `rgba(22,168,130,${0.55 * beam.opacity})`);
+      glow.addColorStop(0.62, `rgba(22,168,130,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.82, `rgba(22,168,130,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.97, `rgba(22,168,130,${0.04 * beam.opacity})`);
+      glow.addColorStop(1.00, "rgba(22,168,130,0)");
       ctx.strokeStyle = glow;
       ctx.lineWidth = 8;
       ctx.shadowBlur = 20; // ITER 28: 14→20 glow plus étendu
-      ctx.shadowColor = "rgba(29,158,117,0.42)"; // légèrement plus opaque
+      ctx.shadowColor = "rgba(22,168,130,0.45)"; // ITER 35: teal shadow
       tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 
