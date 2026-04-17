@@ -134,10 +134,12 @@ export default function HeroCanvas() {
       const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
       // ITER 17 — profil tighter : peak concentré, falloff rapide → lumière focalisée
       // ITER 26 — profil légèrement ouvert (0.30→0.38, 0.07→0.10) plus de présence ambiante
+      // ITER 51 — profil plus diffus : falloff plus graduel → glow atmosphérique (type handhold)
       grad.addColorStop(0.00, `rgba(29,158,117,${a})`);
-      grad.addColorStop(0.18, `rgba(29,158,117,${a * 0.72})`);
-      grad.addColorStop(0.38, `rgba(29,158,117,${a * 0.38})`);
-      grad.addColorStop(0.62, `rgba(29,158,117,${a * 0.10})`);
+      grad.addColorStop(0.15, `rgba(29,158,117,${a * 0.80})`);
+      grad.addColorStop(0.35, `rgba(29,158,117,${a * 0.50})`);
+      grad.addColorStop(0.60, `rgba(29,158,117,${a * 0.20})`);
+      grad.addColorStop(0.82, `rgba(29,158,117,${a * 0.05})`);
       grad.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
