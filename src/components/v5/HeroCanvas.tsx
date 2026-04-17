@@ -78,7 +78,7 @@ export default function HeroCanvas() {
       { nx: 0.85, ny:  0.15, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 54: ny 0.20→0.15 (haut-droit, zone contenu)
       { nx: 0.15, ny:  0.38, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 }, // ITER 54: ny 0.55→0.38 (gauche-milieu, moins bas)
       { nx: 0.78, ny:  0.05, nr: 0.25, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 }, // ITER 49: nr 0.18→0.25 (plus de présence haut-droit)
-      { nx: 0.50, ny:  0.25, nr: 0.88, opacity: 0.050, phase: 5.1, x: 0, y: 0, r: 0 }, // ITER 49: ny 0.50→0.25 (nappe ambiante couvre zone texte)
+      { nx: 0.50, ny:  0.25, nr: 0.88, opacity: 0.065, phase: 5.1, x: 0, y: 0, r: 0 }, // ITER 62: opacity 0.050→0.065 (nappe ambiante plus marquée)
     ];
 
     // ITER 19 — vitesse corrigée: 3.5s traversée viewport (speed = 1/(3.5×60))
