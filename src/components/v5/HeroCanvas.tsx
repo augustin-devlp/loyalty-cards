@@ -86,11 +86,12 @@ export default function HeroCanvas() {
     //           (entre 36% et 64% de hauteur, évite de passer trop haut)
     // ITER 22 — 3 beams (comme handhold.io)
     // ITER 34 — Y positions resserrées [0.39,0.47,0.56] bande lumineuse cohérente (~17%H)
-    // ITER 36 — stagger 0.53→0.50 : overlap propre, toujours 2 beams visibles
+    // ITER 36 — stagger 0.53→0.50 : overlap propre
+    // ITER 45 — dead zone réduit (1.3/-0.3 → 1.1/-0.1), stagger 0.40 → 83% visible
     const beams: Beam[] = [
       { progress:  0.00, ny: 0.39, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.50, ny: 0.47, y: 0, speed: 0.00400, opacity: 0.72 }, // 4.2s
-      { progress: -0.50, ny: 0.56, y: 0, speed: 0.00510, opacity: 0.52 }, // 3.3s
+      { progress:  0.40, ny: 0.47, y: 0, speed: 0.00400, opacity: 0.72 }, // 4.2s
+      { progress: -0.40, ny: 0.56, y: 0, speed: 0.00510, opacity: 0.52 }, // 3.3s
     ];
 
     // Parallax scroll — ITER 13
@@ -291,7 +292,8 @@ export default function HeroCanvas() {
         for (let bi = 0; bi < beams.length; bi++) {
           const b = beams[bi];
           b.progress += b.speed;
-          if (b.progress > 1.3) b.progress = -0.3;
+          // ITER 45 — dead zone réduit → beams visibles 83% du temps (vs 62%)
+          if (b.progress > 1.1) b.progress = -0.1;
           // Dérive verticale quasi-imperceptible (amplitude 5px, ~18s)
           b.y = b.ny * H + Math.sin(time * 0.22 + bi * 1.7) * 5;
           drawBeam(b);
