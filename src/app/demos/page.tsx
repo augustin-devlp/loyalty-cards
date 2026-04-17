@@ -4,11 +4,11 @@ import Link from "next/link";
 import { useRef } from "react";
 
 const cards = [
-  { name: "Boulangerie du Valentin", city: "Lausanne", type: "Boulangerie", note: "4.9", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80", href: "#" },
-  { name: "Café Lumière", city: "Genève", type: "Café", note: "5.0", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80", href: "#" },
-  { name: "Best Cut Barbershop", city: "Fribourg", type: "Barbier", note: "4.8", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80", href: "#" },
-  { name: "Institut Rose", city: "Nyon", type: "Institut beauté", note: "4.7", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=80", href: "#" },
-  { name: "Pizzeria Da Marco", city: "Morges", type: "Restaurant", note: "4.9", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80", href: "#" },
+  { name: "Boulangerie du Valentin", city: "Lausanne", type: "Boulangerie", note: "4.9", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80", href: "/boulangerie-martin.html", live: true },
+  { name: "Café Lumière", city: "Genève", type: "Café", note: "5.0", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80", href: "/cafe-lumiere.html", live: true },
+  { name: "Best Cut Barbershop", city: "Fribourg", type: "Barbier", note: "4.8", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80", href: "/black-scissors.html", live: true },
+  { name: "Institut Rose", city: "Nyon", type: "Institut beauté", note: "4.7", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=80", href: "/nail-studio.html", live: true },
+  { name: "Pizzeria Da Marco", city: "Morges", type: "Restaurant", note: "4.9", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80", href: "/bistrot-du-coin.html", live: true },
   { name: "L'Essence Spa", city: "Lausanne", type: "Spa", note: "4.8", img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80", href: "/lessence-spa.html", live: true },
 ];
 

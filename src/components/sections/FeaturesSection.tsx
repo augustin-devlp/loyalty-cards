@@ -14,42 +14,100 @@ const features = [
     title: "Tes clients scannent. Les tampons s'ajoutent. En 3 secondes.",
     text: "Fini les cartes papier perdues. Un QR code à ta caisse, un scan de l'appareil photo, et c'est dans le téléphone pour toujours. Zéro app, zéro friction.",
     checks: ["QR code prêt à afficher en caisse", "Zéro application à installer"],
-    // Phone scanning QR code / loyalty interaction
     img: "https://images.unsplash.com/photo-1598128558393-70ff21433be0?w=800&q=85",
     bg: "#fff",
     imgLeft: true,
+    visual: null,
   },
   {
     tag: "SITE VITRINE",
     title: "Ton site, livré clé en main. Sans une ligne de code.",
     text: "5 pages soignées avec tes horaires, photos, menu et carte fidélité — tout en un. Tu valides, on publie. Hébergé, référencé, en ligne en 48h.",
     checks: ["Design adapté à ton image de marque", "Hébergement + domaine .ch inclus"],
-    // Beautiful website on MacBook
-    img: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=85",
+    // Happy team in a bar / brasserie
+    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85",
     bg: "#FBF8F3",
     imgLeft: false,
+    visual: null,
   },
   {
     tag: "SEO LOCAL",
     title: "Les gens du quartier te trouvent en premier sur Google.",
     text: "On optimise ta fiche Google, tes mots-clés locaux et ta présence en ligne pour que les clients autour de toi te trouvent avant la concurrence.",
     checks: ["Optimisation Google My Business", "Résultats visibles en 4 à 6 semaines"],
-    // Google Maps / local search on phone
-    img: "https://images.unsplash.com/photo-1553484771-371a605b060b?w=800&q=85",
+    img: null,
     bg: "#fff",
     imgLeft: true,
+    visual: "seo",
   },
   {
     tag: "SOCLE NFC EN BOIS",
     title: "Posé sur ton comptoir. Tes clients tapent et c'est fait.",
     text: "Le socle NFC gravé à ton nom remplace des centaines de cartes papier. Beau, durable, discret — il s'intègre à n'importe quel comptoir en 2 minutes.",
     checks: ["Bois naturel, gravure laser personnalisée", "Livré et installé avec le pack"],
-    // NFC / contactless payment wood
     img: "https://images.unsplash.com/photo-1612810806695-30f7a8258391?w=800&q=85",
     bg: "#FBF8F3",
     imgLeft: false,
+    visual: null,
   },
 ];
+
+function SEOSearchMockup() {
+  return (
+    <div style={{
+      background: "#fff",
+      borderRadius: 16,
+      overflow: "hidden",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.08)",
+      padding: 24,
+      fontFamily: "Arial, sans-serif",
+    }}>
+      {/* Search bar */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 12, marginBottom: 24,
+        background: "#f8f9fa", borderRadius: 24, padding: "10px 18px",
+        border: "1px solid #dadce0",
+      }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9aa0a6" strokeWidth="2"/><path d="M20 20l-3-3" stroke="#9aa0a6" strokeWidth="2" strokeLinecap="round"/></svg>
+        <span style={{ fontSize: 15, color: "#202124" }}>boulangerie lausanne centre</span>
+      </div>
+
+      {/* Sponsored label */}
+      <div style={{ fontSize: 11, color: "#70757a", marginBottom: 8 }}>Environ 4 230 résultats</div>
+
+      {/* #1 result — highlighted */}
+      <div style={{
+        border: "2px solid #1d9e75", borderRadius: 12, padding: "14px 18px", marginBottom: 10,
+        background: "#f0fdf8",
+        position: "relative",
+      }}>
+        <div style={{ position: "absolute", top: -10, right: 12, background: "#1d9e75", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 20, padding: "2px 8px", letterSpacing: "0.05em" }}>1ER RÉSULTAT</div>
+        <div style={{ fontSize: 12, color: "#1d9e75", marginBottom: 2 }}>stampify.ch › boulangerie-martin</div>
+        <div style={{ fontSize: 16, color: "#1a0dab", fontWeight: 500, marginBottom: 4 }}>Boulangerie Martin — Lausanne Centre · Carte fidélité</div>
+        <div style={{ fontSize: 13, color: "#4d5156", lineHeight: 1.5 }}>Boulangerie artisanale au cœur de Lausanne. Pains, viennoiseries, carte fidélité digitale. Ouvert 7j/7. ★ 4.9 (238 avis)</div>
+        <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+          {["Horaires", "Menu", "Carte fidélité", "Avis"].map(tag => (
+            <span key={tag} style={{ background: "#e8f0fe", color: "#1967d2", borderRadius: 12, padding: "2px 10px", fontSize: 12 }}>{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* #2 result */}
+      <div style={{ borderRadius: 8, padding: "12px 18px", marginBottom: 8 }}>
+        <div style={{ fontSize: 12, color: "#202124", marginBottom: 2 }}>lacigogneblanche.ch</div>
+        <div style={{ fontSize: 15, color: "#1a0dab", marginBottom: 3 }}>La Cigogne Blanche – Boulangerie Lausanne</div>
+        <div style={{ fontSize: 13, color: "#4d5156" }}>Boulangerie traditionnelle. Ouvert du lundi au samedi.</div>
+      </div>
+
+      {/* #3 result */}
+      <div style={{ borderRadius: 8, padding: "12px 18px", opacity: 0.6 }}>
+        <div style={{ fontSize: 12, color: "#202124", marginBottom: 2 }}>leboulanger.ch</div>
+        <div style={{ fontSize: 15, color: "#1a0dab", marginBottom: 3 }}>Le Boulanger – Pains & Pâtisseries</div>
+        <div style={{ fontSize: 13, color: "#4d5156" }}>Artisan boulanger depuis 1987. Lausanne.</div>
+      </div>
+    </div>
+  );
+}
 
 export default function FeaturesSection() {
   return (
@@ -66,15 +124,21 @@ export default function FeaturesSection() {
               flexDirection: f.imgLeft ? "row" : "row-reverse",
             }}
           >
-            {/* Image */}
-            <div style={{ flex: 1, borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.08)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={f.img}
-                alt={f.title}
-                loading="lazy"
-                style={{ width: "100%", height: 380, objectFit: "cover", display: "block" }}
-              />
+            {/* Image or visual */}
+            <div style={{ flex: 1 }}>
+              {f.visual === "seo" ? (
+                <SEOSearchMockup />
+              ) : (
+                <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.08)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={f.img!}
+                    alt={f.title}
+                    loading="lazy"
+                    style={{ width: "100%", height: 380, objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Text */}
