@@ -42,7 +42,8 @@
 | ITER 40 | Canvas fade-in 120ms→50ms delay, 1.5s→1.2s transition (warmup rapide) | 2eccc13 | ✅ |
 | ITER 41 | Halo peak 0.070→0.090 (diffusion atmosphérique +29%) | dd15b38 | ✅ |
 | ITER 42 | HeroSection minHeight:640px (proportions canvas stables) | f432422 | ✅ |
-| ITER 43 | Glow 8→10px, core 1.5→2.0px + fix indent tracePath | pending | ✅ |
+| ITER 43 | Glow 8→10px, core 1.5→2.0px + fix indent tracePath | e3f6693 | ✅ |
+| ITER 44 | CSS nappe top-droit 3% (reinforcement orb[1]+orb[3] zone haut-droit) | pending | ✅ |
 
 ## Paramètres finaux actuels
 

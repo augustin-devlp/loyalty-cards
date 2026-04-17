@@ -20,8 +20,12 @@ export default function HeroSection() {
         // verts ressortent davantage (comme handhold.io : blanc pur au centre,
         // légèrement vert-foncé aux bords).
         // ITER 23 — nappe verte subtile en haut (reinforcement orb[0] dominant)
-        background:
-          "radial-gradient(70% 55% at 50% 0%, rgba(29,158,117,0.055) 0%, transparent 100%), radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
+        // ITER 44 — 2ème nappe top-droite (reinforcement orb[1]+orb[3] haut-droit)
+        background: [
+          "radial-gradient(70% 55% at 50% 0%, rgba(29,158,117,0.055) 0%, transparent 100%)",
+          "radial-gradient(38% 32% at 82% 8%, rgba(29,158,117,0.030) 0%, transparent 100%)",
+          "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
+        ].join(", "),
         padding: "100px 24px",
         minHeight: 640, // ITER 42: hauteur minimale stable pour canvas proportions
       }}
