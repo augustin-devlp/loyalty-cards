@@ -28,6 +28,12 @@ export default function HeroCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // ITER 18 — prefers-reduced-motion : désactive tout si l'OS le demande
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      canvas.style.display = "none";
+      return;
+    }
+
     // Fade-in au chargement — ITER 12
     canvas.style.opacity = "0";
     canvas.style.transition = "opacity 1.5s ease";
@@ -259,11 +265,22 @@ export default function HeroCanvas() {
 
     animate();
 
+    // ITER 18 — pause rAF quand onglet masqué → 0% CPU en arrière-plan
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else {
+        animate();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       clearTimeout(fadeTimer);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
