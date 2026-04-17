@@ -258,10 +258,17 @@ export default function HeroCanvas() {
       ctx.shadowBlur = 0;
     };
 
-    const animate = () => {
+    // ITER 53 — delta-time : vitesse constante quel que soit le refresh rate
+    // 0.005 par frame à 60fps = 0.005 * 60 = 0.3 rad/s normalisé
+    let lastTs = 0;
+    const TIME_PER_MS = 0.005 / (1000 / 60); // 0.0003 par milliseconde
+
+    const animate = (ts: number) => {
       raf = requestAnimationFrame(animate);
+      const delta = lastTs ? Math.min(ts - lastTs, 100) : 16.67; // cap 100ms (onglet caché)
+      lastTs = ts;
       ctx.clearRect(0, 0, W, H);
-      time += 0.005;
+      time += delta * TIME_PER_MS;
 
       // ITER 5  — mouvement orbs harmoniques, amplitude réduite pour subtilité
       // ITER 27 — fréquences primaires per-orb légèrement différentes
@@ -297,7 +304,7 @@ export default function HeroCanvas() {
       if (!isMobile) {
         for (let bi = 0; bi < beams.length; bi++) {
           const b = beams[bi];
-          b.progress += b.speed;
+          b.progress += b.speed * (delta * TIME_PER_MS / 0.005); // normalisé par delta
           // ITER 45 — dead zone réduit → beams visibles 83% du temps (vs 62%)
           if (b.progress > 1.1) b.progress = -0.1;
           // Dérive verticale quasi-imperceptible (amplitude 5px, ~18s)
@@ -307,14 +314,15 @@ export default function HeroCanvas() {
       }
     };
 
-    animate();
+    animate(0);
 
     // ITER 18 — pause rAF quand onglet masqué → 0% CPU en arrière-plan
     const onVisibility = () => {
       if (document.hidden) {
         cancelAnimationFrame(raf);
       } else {
-        animate();
+        lastTs = 0; // reset pour éviter saut au retour
+        animate(0);
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
