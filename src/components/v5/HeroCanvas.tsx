@@ -189,7 +189,7 @@ export default function HeroCanvas() {
       halo.addColorStop(0.03, `rgba(29,158,117,${0.010 * beam.opacity})`);
       halo.addColorStop(0.18, `rgba(29,158,117,${0.038 * beam.opacity})`);
       halo.addColorStop(0.38, `rgba(29,158,117,${0.068 * beam.opacity})`);
-      halo.addColorStop(0.50, `rgba(29,158,117,${0.090 * beam.opacity})`);
+      halo.addColorStop(0.50, `rgba(29,158,117,${0.100 * beam.opacity})`); // ITER 55: 0.090→0.100
       halo.addColorStop(0.62, `rgba(29,158,117,${0.068 * beam.opacity})`);
       halo.addColorStop(0.82, `rgba(29,158,117,${0.038 * beam.opacity})`);
       halo.addColorStop(0.97, `rgba(29,158,117,${0.010 * beam.opacity})`);
@@ -206,7 +206,7 @@ export default function HeroCanvas() {
       glow.addColorStop(0.03, `rgba(22,168,130,${0.04 * beam.opacity})`);
       glow.addColorStop(0.18, `rgba(22,168,130,${0.18 * beam.opacity})`);
       glow.addColorStop(0.38, `rgba(22,168,130,${0.42 * beam.opacity})`);
-      glow.addColorStop(0.50, `rgba(22,168,130,${0.55 * beam.opacity})`);
+      glow.addColorStop(0.50, `rgba(22,168,130,${0.65 * beam.opacity})`); // ITER 55: 0.55→0.65
       glow.addColorStop(0.62, `rgba(22,168,130,${0.42 * beam.opacity})`);
       glow.addColorStop(0.82, `rgba(22,168,130,${0.18 * beam.opacity})`);
       glow.addColorStop(0.97, `rgba(22,168,130,${0.04 * beam.opacity})`);
