@@ -307,7 +307,9 @@ export default function HeroCanvas() {
       if (!isMobile) {
         for (let bi = 0; bi < beams.length; bi++) {
           const b = beams[bi];
-          b.progress += b.speed * (delta * TIME_PER_MS / 0.005); // normalisé par delta
+          // ITER 61 — modulation vitesse ±10% per beam (~140s cycle, phases décalées)
+          const speedMod = 1.0 + Math.sin(time * 0.15 + bi * 1.1) * 0.10;
+          b.progress += b.speed * speedMod * (delta * TIME_PER_MS / 0.005);
           // ITER 45 — dead zone réduit → beams visibles 83% du temps (vs 62%)
           if (b.progress > 1.1) b.progress = -0.1;
           // Dérive verticale quasi-imperceptible (amplitude 5px, ~18s)
