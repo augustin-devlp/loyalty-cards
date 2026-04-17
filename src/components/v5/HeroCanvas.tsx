@@ -129,21 +129,27 @@ export default function HeroCanvas() {
       ctx.fill();
     };
 
-    // Chemin sinusoïdal subtil — ITER 4 (amplitude 2.5px, basse fréquence)
+    // Chemin sinusoïdal subtil + légère inclinaison descendante (~0.8°)
+    // ITER 4 : amplitude 2.5px, basse fréquence
+    // ITER 16: slope 0.012 → donne une légère inclinaison type handhold
     const tracePath = (startX: number, endX: number, yBase: number) => {
       const steps = 80;
       const amp = 2.5;
+      const slope = 0.012; // pente légère (tan ≈ 0.7°)
+      const span = endX - startX;
       ctx.beginPath();
       for (let i = 0; i <= steps; i++) {
-        const px = startX + (endX - startX) * (i / steps);
-        const py = yBase + Math.sin(px * 0.0065 + time * 1.6) * amp;
+        const t = i / steps;
+        const px = startX + span * t;
+        const py = yBase + span * slope * t + Math.sin(px * 0.0065 + time * 1.6) * amp;
         if (i === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
     };
 
     const drawBeam = (beam: Beam) => {
-      const beamW = W * 0.45;
+      // ITER 16: beams plus longs (0.45→0.65W) — traversée plus ample
+      const beamW = W * 0.65;
       const startX = -beamW + (W + beamW) * beam.progress;
       const endX   = startX + beamW;
 
@@ -270,6 +276,8 @@ export default function HeroCanvas() {
         height: "100%",
         pointerEvents: "none",
         zIndex: 0,
+        willChange: "transform", // GPU layer isolation — ITER 11
+        contain: "paint layout",  // perf: empêche repaints hors canvas
       }}
     />
   );
