@@ -24,7 +24,7 @@ export default function HeroSection() {
         background: [
           "radial-gradient(80% 65% at 50% 0%, rgba(29,158,117,0.075) 0%, transparent 100%)", // ITER 63: spread 70%→80%, 55%→65%
           "radial-gradient(45% 36% at 82% 8%, rgba(29,158,117,0.045) 0%, transparent 100%)", // ITER 57: 0.030→0.045, spread élargi
-          "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F2F8F5 40%, #DFE9E4 100%)", // ITER 62: bords légèrement plus saturés
+          "radial-gradient(140% 90% at 50% 32%, #FDFFFE 0%, #F2F8F5 40%, #DFE9E4 100%)", // ITER 81: centre 38%→32% (proche headline)
         ].join(", "),
         padding: "100px 24px",
         minHeight: 680, // ITER 77: 640→680px (plus d'espace vertical pour canvas/orbs)
