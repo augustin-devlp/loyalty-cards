@@ -13,7 +13,16 @@ export default function HeroSection() {
   return (
     <section
       ref={heroRef}
-      style={{ position: "relative", overflow: "hidden", background: "#FFFFFF", padding: "100px 24px" }}
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        // ITER 10 — fond légèrement plus profond aux bords pour que les orbs
+        // verts ressortent davantage (comme handhold.io : blanc pur au centre,
+        // légèrement vert-foncé aux bords).
+        background:
+          "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
+        padding: "100px 24px",
+      }}
       onMouseMove={handleMouseMove as React.MouseEventHandler<HTMLElement>}
       onMouseLeave={handleMouseLeave}
     >

@@ -62,23 +62,24 @@ export default function HeroCanvas() {
     };
 
     // Positions inspirées du hero handhold.io :
-    // flood dominant décentré haut-gauche, accent droit, secondaire bas-gauche,
-    // hotspot petit haut-droite, nappe ambiante très large.
+    // ITER 8 — orb[0] recentré à 0.50 (dominant haut-centre comme handhold)
+    // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
-      { nx: 0.38, ny: -0.10, nr: 0.62, opacity: 0.12,  phase: 0.0, x: 0, y: 0, r: 0 },
-      { nx: 0.82, ny:  0.22, nr: 0.38, opacity: 0.09,  phase: 1.4, x: 0, y: 0, r: 0 },
-      { nx: 0.14, ny:  0.72, nr: 0.34, opacity: 0.075, phase: 2.7, x: 0, y: 0, r: 0 },
-      { nx: 0.72, ny: -0.05, nr: 0.18, opacity: 0.10,  phase: 3.9, x: 0, y: 0, r: 0 },
-      { nx: 0.50, ny:  0.55, nr: 0.85, opacity: 0.038, phase: 5.1, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny: -0.08, nr: 0.65, opacity: 0.11,  phase: 0.0, x: 0, y: 0, r: 0 },
+      { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.085, phase: 1.4, x: 0, y: 0, r: 0 },
+      { nx: 0.12, ny:  0.68, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 },
+      { nx: 0.75, ny: -0.05, nr: 0.18, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny:  0.50, nr: 0.88, opacity: 0.035, phase: 5.1, x: 0, y: 0, r: 0 },
     ];
 
-    // ITER 1 — vitesse corrigée.
-    // Traversée de -0.3 à 1.3 (range = 1.6) en ~3.5s à 60fps
-    // → speed cible = 1.6 / (3.5 × 60) ≈ 0.00762
+    // ITER 15 — 4 beams distribués équitablement (stagger 0.40 = range 1.6 / 4)
+    // → 2-3 beams toujours visibles simultanément comme handhold.io
+    // vitesse légèrement variée pour éviter la synchronisation
     const beams: Beam[] = [
-      { progress: 0.00, ny: 0.35, y: 0, speed: 0.0076, opacity: 1.00 },
-      { progress: 0.53, ny: 0.54, y: 0, speed: 0.0069, opacity: 0.62 },
-      { progress: 1.06, ny: 0.69, y: 0, speed: 0.0082, opacity: 0.40 },
+      { progress:  0.00, ny: 0.32, y: 0, speed: 0.0076, opacity: 1.00 },
+      { progress:  0.40, ny: 0.50, y: 0, speed: 0.0069, opacity: 0.65 },
+      { progress:  0.80, ny: 0.66, y: 0, speed: 0.0082, opacity: 0.42 },
+      { progress: -0.40, ny: 0.42, y: 0, speed: 0.0073, opacity: 0.55 },
     ];
 
     // Parallax scroll — ITER 13
