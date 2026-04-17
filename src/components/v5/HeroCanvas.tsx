@@ -150,7 +150,7 @@ export default function HeroCanvas() {
       ctx.fillStyle = grad;
       // ITER 70 — shadow sur fill orb : aura douce au-delà du gradient (30px)
       ctx.shadowBlur = 30;
-      ctx.shadowColor = `rgba(29,158,117,${a * 0.12})`;
+      ctx.shadowColor = `rgba(29,158,117,${a * 0.20})`; // ITER 84: 0.12→0.20 (aura plus visible)
       ctx.beginPath();
       ctx.arc(orb.x, cy, orb.r, 0, Math.PI * 2);
       ctx.fill();
