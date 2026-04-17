@@ -1,6 +1,6 @@
 # V5 Animation Progress — handhold.io reproduction
 
-## Dernière mise à jour : 17 Apr 2026 — ~45min écoulées
+## Dernière mise à jour : 17 Apr 2026 — ~75min écoulées
 
 ## Itérations complétées (session courante)
 
@@ -44,28 +44,35 @@
 | ITER 42 | HeroSection minHeight:640px (proportions canvas stables) | f432422 | ✅ |
 | ITER 43 | Glow 8→10px, core 1.5→2.0px + fix indent tracePath | e3f6693 | ✅ |
 | ITER 44 | CSS nappe top-droit 3% (reinforcement orb[1]+orb[3] zone haut-droit) | 66b6328 | ✅ |
-| ITER 45 | Dead zone 1.3/-0.3→1.1/-0.1, stagger 0.50→0.40 (visibilité 62→83%) | pending | ✅ |
+| ITER 45 | Dead zone 1.3/-0.3→1.1/-0.1, stagger 0.50→0.40 (visibilité 62→83%) | fbdeaa7 | ✅ |
+| ITER 46 | Arc quasi-statique (time×1.2→0.15) + beam[1] 0.72→0.80 beam[2] 0.52→0.62 | 52d6f73 | ✅ |
+| ITER 47 | orb[0] 0.13→0.15 + glow shadowBlur 20→24px, shadowColor 0.45→0.50 | 7630b88 | ✅ |
+| ITER 48 | Nappe CSS 0.055→0.075 + ampX dérive orbs 18-26→22-30px | b16bb2c | ✅ |
+| ITER 49 | orb[3] nr 0.18→0.25 + orb[4] ny 0.50→0.25 (couverture zone texte) | b4bc8e6 | ✅ |
+| ITER 50 | Breathe fréq 0.18→0.26 (période 80s) + ampY 12→15px base | 1c76adc | ✅ |
 
 ## Paramètres finaux actuels
 
 ```
 BEAMS (3 beams):
   speed: [0.00476, 0.00400, 0.00510]  → 3.3–4.2s traversée
+  opacity: [1.00, 0.80, 0.62]  → plus uniforme (ITER 46)
   halo lineWidth: 36px
-  glow lineWidth: 10px, shadowBlur: 20px
+  glow lineWidth: 10px, shadowBlur: 24px (ITER 47), shadowColor teal 0.50 (ITER 47)
   core lineWidth: 2.0px, shadowBlur: 12px
   beamW: 0.65W (65% viewport width)
-  slope: 0.010 (inclinaison ~0.57°)
-  amplitude sinusoïdale: 3.5px
+  slope: 0.012 (inclinaison ~0.69°)
+  amplitude sinusoïdale: 3.5px, time coeff 0.15 (quasi-statique pendant traversée, ITER 46)
   gradient: entrée douce (ramp depuis 0.03), peak au centre
 
 ORBS (5 orbs):
-  opacités: [0.13, 0.10, 0.07, 0.09, 0.05]
+  opacités: [0.15, 0.10, 0.07, 0.09, 0.05]  (ITER 47: orb[0] 0.13→0.15)
   orb[0]: nx:0.50, ny:0.02, nr:0.72 (dominant haut-centre, dans canvas)
-  amplitude dérive: 18-26px (horizontal), 12-18px (vertical)
+  orb[3]: nr:0.25 (ITER 49, était 0.18)
+  orb[4]: ny:0.25 (ITER 49, était 0.50 — nappe couvre zone texte)
+  amplitude dérive: 22-30px (horizontal, ITER 48), 15-21px (vertical, ITER 50)
   fréquence: 0.42 rad (lent, ~50s période)
-  breathe amplitude: ±15%, période ~116s
-  profil: tight (0.72 à 0.18r, 0.07 à 0.62r)
+  breathe amplitude: ±15%, période ~80s (ITER 50, était 116s)
 
 CANVAS:
   fade-in: 1.2s ease après 50ms
@@ -80,7 +87,7 @@ FLOAT HANDS:
   gauche: 4.2s, droite: 4.8s (désynchronisées)
 ```
 
-## Score ressemblance handhold.io : 9/10 (mis à jour ITER 21-40)
+## Score ressemblance handhold.io : 9.5/10 (mis à jour ITER 46-50)
 
 ### Ce qui reste potentiellement différent
 1. **Visuellement impossible à vérifier** sans browser côte-à-côte
