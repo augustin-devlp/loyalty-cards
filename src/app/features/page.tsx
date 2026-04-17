@@ -4,6 +4,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import DashboardMockup from "@/components/DashboardMockup";
 import NFCStandMockup from "@/components/NFCStandMockup";
+import LoyaltyFlowMockup from "@/components/LoyaltyFlowMockup";
 
 const CHECK = (label: string) => (
   <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
@@ -123,9 +124,9 @@ const features = [
     title: "La carte que tes clients gardent vraiment.",
     text: "Fini les cartes papier perdues. Tes clients scannent un QR code et leurs tampons s'ajoutent en 3 secondes. Pas d'app à télécharger.",
     checks: ["QR code prêt à afficher en caisse", "Zéro application à installer"],
-    img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=85",
+    img: null,
     bg: "#fff", imgLeft: true,
-    visual: null,
+    visual: "loyalty",
   },
   {
     tag: "SITE VITRINE",
@@ -229,7 +230,9 @@ export default function FeaturesPage() {
             }}>
               {/* Visual */}
               <div style={{ flex: 1 }}>
-                {f.visual === "sms" ? (
+                {f.visual === "loyalty" ? (
+                  <LoyaltyFlowMockup />
+                ) : f.visual === "sms" ? (
                   <SMSPhoneMockup />
                 ) : f.visual === "nfc" ? (
                   <NFCStandMockup />

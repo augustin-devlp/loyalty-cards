@@ -1,4 +1,5 @@
 import NFCStandMockup from "@/components/NFCStandMockup";
+import LoyaltyFlowMockup from "@/components/LoyaltyFlowMockup";
 
 const CHECK = (label: string) => (
   <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
@@ -16,10 +17,10 @@ const features = [
     title: "Tes clients scannent. Les tampons s'ajoutent. En 3 secondes.",
     text: "Fini les cartes papier perdues. Un QR code à ta caisse, un scan de l'appareil photo, et c'est dans le téléphone pour toujours. Zéro app, zéro friction.",
     checks: ["QR code prêt à afficher en caisse", "Zéro application à installer"],
-    img: "https://images.unsplash.com/photo-1598128558393-70ff21433be0?w=800&q=85",
+    img: null,
     bg: "#fff",
     imgLeft: true,
-    visual: null,
+    visual: "loyalty",
   },
   {
     tag: "SITE VITRINE",
@@ -127,7 +128,9 @@ export default function FeaturesSection() {
           >
             {/* Image or visual */}
             <div style={{ flex: 1 }}>
-              {f.visual === "seo" ? (
+              {f.visual === "loyalty" ? (
+                <LoyaltyFlowMockup />
+              ) : f.visual === "seo" ? (
                 <SEOSearchMockup />
               ) : f.visual === "nfc" ? (
                 <NFCStandMockup />
