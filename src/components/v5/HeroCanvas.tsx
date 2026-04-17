@@ -75,8 +75,8 @@ export default function HeroCanvas() {
     // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
       { nx: 0.50, ny:  0.02, nr: 0.72, opacity: 0.15,  phase: 0.0, x: 0, y: 0, r: 0 }, // ITER 47: 0.13→0.15 présence haut-centre plus forte
-      { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 26 0.085→0.10
-      { nx: 0.15, ny:  0.55, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 }, // ITER 38: ny 0.68→0.55 dans viewport
+      { nx: 0.85, ny:  0.15, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 54: ny 0.20→0.15 (haut-droit, zone contenu)
+      { nx: 0.15, ny:  0.38, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 }, // ITER 54: ny 0.55→0.38 (gauche-milieu, moins bas)
       { nx: 0.78, ny:  0.05, nr: 0.25, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 }, // ITER 49: nr 0.18→0.25 (plus de présence haut-droit)
       { nx: 0.50, ny:  0.25, nr: 0.88, opacity: 0.050, phase: 5.1, x: 0, y: 0, r: 0 }, // ITER 49: ny 0.50→0.25 (nappe ambiante couvre zone texte)
     ];
