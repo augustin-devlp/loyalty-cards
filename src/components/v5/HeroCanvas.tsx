@@ -180,7 +180,7 @@ export default function HeroCanvas() {
       halo.addColorStop(0.97, `rgba(29,158,117,${0.008 * beam.opacity})`);
       halo.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = halo;
-      ctx.lineWidth = 28;
+      ctx.lineWidth = 36; // ITER 28: 28→36 halo plus diffus, atmosphérique
       ctx.shadowBlur = 0;
       tracePath(startX, endX, beam.y);
       ctx.stroke();
@@ -198,8 +198,8 @@ export default function HeroCanvas() {
       glow.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = glow;
       ctx.lineWidth = 8;
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = "rgba(29,158,117,0.35)";
+      ctx.shadowBlur = 20; // ITER 28: 14→20 glow plus étendu
+      ctx.shadowColor = "rgba(29,158,117,0.42)"; // légèrement plus opaque
       tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 

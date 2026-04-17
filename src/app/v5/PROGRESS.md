@@ -26,15 +26,16 @@
 | ITER 24 | Core beam peak near-white (220,252,238) + shadowColor plus brillant | 070c858 | ✅ |
 | ITER 25 | 4ème couche ultra-core blanc pur 0.75px au pic (optique laser réelle) | 54c9e08 | ✅ |
 | ITER 26 | orb[1] 0.085→0.10, orb[4] 0.035→0.05 + profil radial légèrement ouvert | 4e938b6 | ✅ |
-| ITER 27 | Fréquences primaires per-orb [0.400..0.460] → patterns Lissajous uniques | pending | ✅ |
+| ITER 27 | Fréquences primaires per-orb [0.400..0.460] → patterns Lissajous uniques | e839066 | ✅ |
+| ITER 28 | Halo 28→36px + glow shadowBlur 14→20 (atmosphère plus diffuse) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
 ```
 BEAMS (3 beams):
   speed: [0.00476, 0.00400, 0.00510]  → 3.3–4.2s traversée
-  halo lineWidth: 28px
-  glow lineWidth: 8px, shadowBlur: 14px
+  halo lineWidth: 36px
+  glow lineWidth: 8px, shadowBlur: 20px
   core lineWidth: 1.5px, shadowBlur: 10px
   beamW: 0.65W (65% viewport width)
   slope: 0.010 (inclinaison ~0.57°)
