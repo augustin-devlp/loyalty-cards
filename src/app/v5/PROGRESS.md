@@ -22,7 +22,8 @@
 | ITER 20 | Positions Y beams [0.36,0.48,0.60,0.70] + entrée douce | fd09110 | ✅ |
 | ITER 21 | orb[0] opacity 0.11→0.13 (plus de présence haut-centre) | 36d191d | ✅ |
 | ITER 22 | 3 beams (comme handhold) stagger 0.53 → 1-2 beams simultanés | 9fd6725 | ✅ |
-| ITER 23 | Nappe verte top-center 5.5% sur fond hero (renforce orb[0]) | pending | ✅ |
+| ITER 23 | Nappe verte top-center 5.5% sur fond hero (renforce orb[0]) | 3beda9d | ✅ |
+| ITER 24 | Core beam peak near-white (220,252,238) + shadowColor plus brillant | pending | ✅ |
 
 ## Paramètres finaux actuels
 

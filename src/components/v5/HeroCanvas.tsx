@@ -202,21 +202,23 @@ export default function HeroCanvas() {
       tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 
-      // 3) core fin très lumineux — teinte légèrement plus claire au peak
+      // 3) core fin très lumineux — ITER 24: pic quasi-blanc au centre (optique réelle)
       const core = ctx.createLinearGradient(startX, 0, endX, 0);
       core.addColorStop(0.00, "rgba(29,158,117,0)");
       core.addColorStop(0.03, `rgba(29,158,117,${0.10 * beam.opacity})`);
       core.addColorStop(0.18, `rgba(54,191,147,${0.60 * beam.opacity})`);
       core.addColorStop(0.38, `rgba(96,210,167,${0.88 * beam.opacity})`);
-      core.addColorStop(0.50, `rgba(124,224,186,${1.00 * beam.opacity})`);
+      core.addColorStop(0.46, `rgba(160,235,200,${0.96 * beam.opacity})`);
+      core.addColorStop(0.50, `rgba(220,252,238,${1.00 * beam.opacity})`); // pic near-white
+      core.addColorStop(0.54, `rgba(160,235,200,${0.96 * beam.opacity})`);
       core.addColorStop(0.62, `rgba(96,210,167,${0.88 * beam.opacity})`);
       core.addColorStop(0.82, `rgba(54,191,147,${0.60 * beam.opacity})`);
       core.addColorStop(0.97, `rgba(29,158,117,${0.10 * beam.opacity})`);
       core.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = core;
       ctx.lineWidth = 1.5;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "rgba(29,158,117,0.90)";
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = "rgba(29,200,140,0.95)"; // ITER 24: légèrement plus lumineux
       tracePath(startX, endX, beam.y);
       ctx.stroke();
 
