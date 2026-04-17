@@ -148,7 +148,7 @@ export default function HeroCanvas() {
     const tracePath = (startX: number, endX: number, yBase: number) => {
       const steps = 80;
       const amp = 3.5; // ITER 32: 2.0→3.5px — arc visible avec la basse fréquence (0.0030)
-      const slope = 0.010; // pente légère (tan ≈ 0.57°) — réduite pour subtilité
+      const slope = 0.012; // ITER 39: 0.010→0.012 (tan ≈ 0.69°) — type handhold.io
       const span = endX - startX;
       ctx.beginPath();
       for (let i = 0; i <= steps; i++) {
