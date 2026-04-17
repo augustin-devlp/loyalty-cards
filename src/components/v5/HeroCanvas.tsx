@@ -95,10 +95,11 @@ export default function HeroCanvas() {
     // ITER 46 — beam[1] 0.72→0.80, beam[2] 0.52→0.62 : luminosité plus uniforme (type handhold)
     // ITER 52 — Y remontés [0.39,0.47,0.56]→[0.35,0.44,0.53] : zone headline du hero
     // ITER 64 — positions initiales : beam[0] au centre (visible dès le fade-in 50ms)
+    // ITER 87 — vitesses +15% : 3.3-4.2s → 2.85-3.6s (tempo handhold.io)
     const beams: Beam[] = [
-      { progress:  0.50, ny: 0.35, y: 0, speed: 0.00476, opacity: 1.00 }, // peak centre canvas dès load
-      { progress:  0.90, ny: 0.44, y: 0, speed: 0.00400, opacity: 0.80 }, // droite, sort rapidement
-      { progress:  0.10, ny: 0.53, y: 0, speed: 0.00510, opacity: 0.62 }, // gauche, entre ~1s
+      { progress:  0.50, ny: 0.35, y: 0, speed: 0.00547, opacity: 1.00 }, // ~3.0s
+      { progress:  0.90, ny: 0.44, y: 0, speed: 0.00460, opacity: 0.80 }, // ~3.6s
+      { progress:  0.10, ny: 0.53, y: 0, speed: 0.00587, opacity: 0.62 }, // ~2.85s
     ];
 
     // Parallax scroll — ITER 13
