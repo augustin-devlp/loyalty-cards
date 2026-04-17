@@ -72,10 +72,10 @@ export default function HeroCanvas() {
     // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
       { nx: 0.50, ny: -0.08, nr: 0.65, opacity: 0.13,  phase: 0.0, x: 0, y: 0, r: 0 },
-      { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.085, phase: 1.4, x: 0, y: 0, r: 0 },
+      { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 26 0.085→0.10
       { nx: 0.12, ny:  0.68, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 },
       { nx: 0.75, ny: -0.05, nr: 0.18, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 },
-      { nx: 0.50, ny:  0.50, nr: 0.88, opacity: 0.035, phase: 5.1, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny:  0.50, nr: 0.88, opacity: 0.050, phase: 5.1, x: 0, y: 0, r: 0 }, // ITER 26 0.035→0.05
     ];
 
     // ITER 19 — vitesse corrigée: 3.5s traversée viewport (speed = 1/(3.5×60))
@@ -126,10 +126,11 @@ export default function HeroCanvas() {
       const cy = orb.y - parallaxY * 0.12;
       const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
       // ITER 17 — profil tighter : peak concentré, falloff rapide → lumière focalisée
+      // ITER 26 — profil légèrement ouvert (0.30→0.38, 0.07→0.10) plus de présence ambiante
       grad.addColorStop(0.00, `rgba(29,158,117,${a})`);
       grad.addColorStop(0.18, `rgba(29,158,117,${a * 0.72})`);
-      grad.addColorStop(0.38, `rgba(29,158,117,${a * 0.30})`);
-      grad.addColorStop(0.62, `rgba(29,158,117,${a * 0.07})`);
+      grad.addColorStop(0.38, `rgba(29,158,117,${a * 0.38})`);
+      grad.addColorStop(0.62, `rgba(29,158,117,${a * 0.10})`);
       grad.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();

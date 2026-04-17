@@ -24,7 +24,8 @@
 | ITER 22 | 3 beams (comme handhold) stagger 0.53 → 1-2 beams simultanés | 9fd6725 | ✅ |
 | ITER 23 | Nappe verte top-center 5.5% sur fond hero (renforce orb[0]) | 3beda9d | ✅ |
 | ITER 24 | Core beam peak near-white (220,252,238) + shadowColor plus brillant | 070c858 | ✅ |
-| ITER 25 | 4ème couche ultra-core blanc pur 0.75px au pic (optique laser réelle) | pending | ✅ |
+| ITER 25 | 4ème couche ultra-core blanc pur 0.75px au pic (optique laser réelle) | 54c9e08 | ✅ |
+| ITER 26 | orb[1] 0.085→0.10, orb[4] 0.035→0.05 + profil radial légèrement ouvert | pending | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -40,7 +41,7 @@ BEAMS (3 beams):
   gradient: entrée douce (ramp depuis 0.03), peak au centre
 
 ORBS (5 orbs):
-  opacités: [0.13, 0.085, 0.07, 0.09, 0.035]
+  opacités: [0.13, 0.10, 0.07, 0.09, 0.05]
   orb[0]: nx:0.50, ny:-0.08, nr:0.65 (dominant haut-centre)
   amplitude dérive: 18-26px (horizontal), 12-18px (vertical)
   fréquence: 0.42 rad (lent, ~50s période)
