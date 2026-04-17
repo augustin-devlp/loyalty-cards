@@ -263,7 +263,7 @@ export default function HeroCanvas() {
       ultra.addColorStop(0.58, "rgba(255,255,255,0)");
       ultra.addColorStop(1.00, "rgba(255,255,255,0)");
       ctx.strokeStyle = ultra;
-      ctx.lineWidth = 0.75;
+      ctx.lineWidth = 1.0; // ITER 86: 0.75→1.0px (2 pixels physiques Retina)
       ctx.shadowBlur = 6;
       ctx.shadowColor = "rgba(255,255,255,0.75)";
       tracePath(startX, endX, beam.y);
