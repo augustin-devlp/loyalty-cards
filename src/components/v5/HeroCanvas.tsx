@@ -78,14 +78,15 @@ export default function HeroCanvas() {
       { nx: 0.50, ny:  0.50, nr: 0.88, opacity: 0.035, phase: 5.1, x: 0, y: 0, r: 0 },
     ];
 
-    // ITER 15 — 4 beams distribués équitablement (stagger 0.40 = range 1.6 / 4)
-    // → 2-3 beams toujours visibles simultanément comme handhold.io
-    // vitesse légèrement variée pour éviter la synchronisation
+    // ITER 19 — CORRECTION vitesse beams.
+    // Visible viewport traversal = progress 0→1.0 (1.0 unit).
+    // Target 3.5s → speed = 1.0 / (3.5 × 60fps) = 0.00476
+    // Les 4 beams varient légèrement autour de cette cible (3.2–4.0s)
     const beams: Beam[] = [
-      { progress:  0.00, ny: 0.32, y: 0, speed: 0.0076, opacity: 1.00 },
-      { progress:  0.40, ny: 0.50, y: 0, speed: 0.0069, opacity: 0.65 },
-      { progress:  0.80, ny: 0.66, y: 0, speed: 0.0082, opacity: 0.42 },
-      { progress: -0.40, ny: 0.42, y: 0, speed: 0.0073, opacity: 0.55 },
+      { progress:  0.00, ny: 0.32, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
+      { progress:  0.40, ny: 0.50, y: 0, speed: 0.00417, opacity: 0.65 }, // 4.0s
+      { progress:  0.80, ny: 0.66, y: 0, speed: 0.00521, opacity: 0.42 }, // 3.2s
+      { progress: -0.40, ny: 0.42, y: 0, speed: 0.00455, opacity: 0.55 }, // 3.7s
     ];
 
     // Parallax scroll — ITER 13
