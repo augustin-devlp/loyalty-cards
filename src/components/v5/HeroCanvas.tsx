@@ -150,7 +150,9 @@ export default function HeroCanvas() {
       for (let i = 0; i <= steps; i++) {
         const t = i / steps;
         const px = startX + span * t;
-        const py = yBase + span * slope * t + Math.sin(px * 0.0065 + time * 1.6) * amp;
+        // ITER 30 — fréq spatiale 0.0065→0.0030 : ondulation plus lente (≈0.7 cycle/W),
+      //           arc majestueux plutôt que serpent — plus proche handhold.io
+      const py = yBase + span * slope * t + Math.sin(px * 0.0030 + time * 1.2) * amp;
         if (i === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
