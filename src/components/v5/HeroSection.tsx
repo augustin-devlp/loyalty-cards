@@ -23,7 +23,7 @@ export default function HeroSection() {
         // ITER 44 — 2ème nappe top-droite (reinforcement orb[1]+orb[3] haut-droit)
         background: [
           "radial-gradient(70% 55% at 50% 0%, rgba(29,158,117,0.075) 0%, transparent 100%)", // ITER 48: 0.055→0.075
-          "radial-gradient(38% 32% at 82% 8%, rgba(29,158,117,0.030) 0%, transparent 100%)",
+          "radial-gradient(45% 36% at 82% 8%, rgba(29,158,117,0.045) 0%, transparent 100%)", // ITER 57: 0.030→0.045, spread élargi
           "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
         ].join(", "),
         padding: "100px 24px",
