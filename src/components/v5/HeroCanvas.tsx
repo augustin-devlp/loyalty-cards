@@ -268,7 +268,7 @@ export default function HeroCanvas() {
         const baseY = o.ny * H;
         // ITER 48 — ampX 18-26→22-30px : dérive plus organique, mouvement perceptible
         const ampX = 22 + i * 2;
-        const ampY = 12 + i * 1.5;
+        const ampY = 15 + i * 1.5; // ITER 50: 12→15 base (15-21px vertical)
         const fX = 0.40 + i * 0.015; // 0.400, 0.415, 0.430, 0.445, 0.460
         const fY = 0.33 + i * 0.012; // 0.330, 0.342, 0.354, 0.366, 0.378
         o.x = baseX
@@ -284,8 +284,8 @@ export default function HeroCanvas() {
       ctx.globalCompositeOperation = "screen";
       for (let oi = 0; oi < orbsBase.length; oi++) {
         const o = orbsBase[oi];
-        // ITER 37 — breathe ±15% à 0.18 rad/t (période ~116s) plus vivant
-        const breathe = (1 + Math.sin(time * 0.18 + oi * 1.2) * 0.15) * orbBoost;
+        // ITER 37 — breathe ±15%, ITER 50 — fréq 0.18→0.26 (période ~80s, plus perceptible)
+        const breathe = (1 + Math.sin(time * 0.26 + oi * 1.2) * 0.15) * orbBoost;
         drawOrb(o, breathe, parallaxY);
       }
       ctx.globalCompositeOperation = "source-over";
