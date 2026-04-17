@@ -244,7 +244,7 @@ export default function HeroCanvas() {
       core.addColorStop(0.97, `rgba(29,158,117,${0.10 * beam.opacity})`);
       core.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = core;
-      ctx.lineWidth = 2.0; // ITER 43: 1.5→2.0px core plus visible au pic
+      ctx.lineWidth = 2.5; // ITER 73: 2.0→2.5px core légèrement plus épais
       ctx.shadowBlur = 12;
       ctx.shadowColor = "rgba(29,200,140,0.95)"; // ITER 24: légèrement plus lumineux
       tracePath(startX, endX, beam.y);
