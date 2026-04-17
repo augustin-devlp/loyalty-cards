@@ -29,7 +29,8 @@
 | ITER 27 | Fréquences primaires per-orb [0.400..0.460] → patterns Lissajous uniques | e839066 | ✅ |
 | ITER 28 | Halo 28→36px + glow shadowBlur 14→20 (atmosphère plus diffuse) | 5e1963d | ✅ |
 | ITER 29 | orb[0] ny:-0.08→0.02 nr:0.65→0.72 (centre dans canvas, couverture hero) | 41654fc | ✅ |
-| ITER 30 | Ondulation beam 0.0065→0.0030 (arc majestueux 0.7 cycle/W vs serpent) | pending | ✅ |
+| ITER 30 | Ondulation beam 0.0065→0.0030 (arc majestueux 0.7 cycle/W vs serpent) | 34abe1f | ✅ |
+| ITER 31 | DashboardMockup: green ambient glow shadow rgba(29,158,117,0.09) | pending | ✅ |
 
 ## Paramètres finaux actuels
 

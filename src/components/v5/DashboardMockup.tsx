@@ -50,7 +50,8 @@ export default function DashboardMockup() {
       className="v2-hero-mockup v2-float"
       style={{
         borderRadius: 20, border: "1px solid rgba(0,0,0,0.08)",
-        boxShadow: "0 32px 80px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04)",
+        // ITER 31 — green ambient glow: mockup feels bathed in orb light
+        boxShadow: "0 32px 80px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04), 0 0 60px rgba(29,158,117,0.09)",
         overflow: "hidden", background: "#FFFFFF",
         maxWidth: 520, width: "100%",
         position: "relative",
