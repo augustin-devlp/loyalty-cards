@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 const CHECK = (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
@@ -10,17 +9,35 @@ const CHECK = (
   </svg>
 );
 
-export default function SpaPreviewSection() {
-  const [iframeError, setIframeError] = useState(false);
+// Facteur de dézoom : le site est rendu à 65% → on voit plus de contenu
+const SCALE = 0.65;
 
+export default function SpaPreviewSection() {
   return (
     <section style={{ background: "#fff", padding: "120px 24px" }}>
+      <style>{`
+        .spa-iframe-wrap {
+          position: relative;
+          overflow: hidden;
+          border-radius: 0 0 8px 8px;
+          /* hauteur visuelle souhaitée */
+          height: 480px;
+        }
+        .spa-iframe-wrap iframe {
+          width: ${Math.round(100 / SCALE)}%;
+          height: ${Math.round(480 / SCALE)}px;
+          border: none;
+          display: block;
+          transform: scale(${SCALE});
+          transform-origin: top left;
+          pointer-events: auto;
+        }
+      `}</style>
+
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 80 }}>
-        {/* Text left */}
+        {/* Texte gauche */}
         <div style={{ flex: "0 0 40%", maxWidth: "40%" }}>
-          <div style={{
-            width: 40, height: 2, background: "#1d9e75", marginBottom: 12,
-          }} />
+          <div style={{ width: 40, height: 2, background: "#1d9e75", marginBottom: 12 }} />
           <p style={{
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontSize: 11, fontWeight: 500,
@@ -78,7 +95,7 @@ export default function SpaPreviewSection() {
           </Link>
         </div>
 
-        {/* Browser mockup right */}
+        {/* Browser mockup droite — iframe interactive */}
         <div style={{ flex: 1 }}>
           <div style={{
             borderRadius: "12px 12px 8px 8px",
@@ -93,6 +110,7 @@ export default function SpaPreviewSection() {
               alignItems: "center",
               padding: "0 14px",
               gap: 8,
+              flexShrink: 0,
             }}>
               <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
                 {["#ef4444","#f59e0b","#22c55e"].map((c,i) => (
@@ -105,59 +123,35 @@ export default function SpaPreviewSection() {
                 paddingLeft: 10, fontSize: 11,
                 color: "#9ca3af",
                 fontFamily: "var(--font-dm-sans), sans-serif",
-                overflow: "hidden", whiteSpace: "nowrap",
               }}>
-                lessence-spa.stampify.ch
+                stampify.ch/demos/lessence-spa
               </div>
+              <a
+                href="/lessence-spa.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 11, color: "#1d9e75",
+                  textDecoration: "none",
+                  flexShrink: 0,
+                  padding: "2px 8px",
+                  background: "#E8F8F3",
+                  borderRadius: 4,
+                }}
+              >
+                ↗ Ouvrir
+              </a>
             </div>
 
-            {iframeError ? (
-              <div style={{
-                background: "#f9fafb",
-                height: 460,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 16,
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80"
-                  alt="L'Essence Spa"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute" }}
-                />
-                <a
-                  href="https://loyalty-cards-rho.vercel.app/lessence-spa.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    position: "relative",
-                    background: "#1d9e75",
-                    color: "#fff",
-                    borderRadius: 8,
-                    padding: "12px 24px",
-                    fontFamily: "var(--font-dm-sans), sans-serif",
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    zIndex: 1,
-                  }}
-                >
-                  Ouvrir en direct →
-                </a>
-              </div>
-            ) : (
+            {/* iframe interactive + dezoomée */}
+            <div className="spa-iframe-wrap">
               <iframe
-                src="https://loyalty-cards-rho.vercel.app/lessence-spa.html"
-                width="100%"
-                height="460"
-                style={{ border: "none", display: "block" }}
-                loading="lazy"
-                scrolling="no"
-                onError={() => setIframeError(true)}
+                src="/lessence-spa.html"
                 title="L'Essence Spa — démo Stampify"
+                loading="lazy"
               />
-            )}
+            </div>
           </div>
         </div>
       </div>

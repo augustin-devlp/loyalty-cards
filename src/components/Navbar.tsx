@@ -98,7 +98,7 @@ export default function Navbar() {
           <div className="nav-desktop" style={{ flex: 1, justifyContent: "center" }}>
             <Link href="/#produit" className="nav-link-item">Produit</Link>
             <Link href="/demos" className="nav-link-item">Démos</Link>
-            <Link href="/#tarif" className="nav-link-item">Tarif</Link>
+            <Link href="/pricing" className="nav-link-item">Tarif</Link>
             <Link href="/features" className="nav-link-item">Fonctionnalités</Link>
           </div>
 
@@ -152,7 +152,7 @@ export default function Navbar() {
             {[
               { href: "/#produit", label: "Produit" },
               { href: "/demos", label: "Démos" },
-              { href: "/#tarif", label: "Tarif" },
+              { href: "/pricing", label: "Tarif" },
               { href: "/features", label: "Fonctionnalités" },
             ].map(item => (
               <Link key={item.label} href={item.href} onClick={() => setMenuOpen(false)} style={{

@@ -9,7 +9,7 @@ const cards = [
   { name: "Best Cut Barbershop", city: "Fribourg", type: "Barbier", note: "4.8", img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80", href: "#" },
   { name: "Institut Rose", city: "Nyon", type: "Institut beauté", note: "4.7", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=80", href: "#" },
   { name: "Pizzeria Da Marco", city: "Morges", type: "Restaurant", note: "4.9", img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80", href: "#" },
-  { name: "L'Essence Spa", city: "Lausanne", type: "Spa", note: "4.8", img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80", href: "https://loyalty-cards-rho.vercel.app/lessence-spa.html", live: true },
+  { name: "L'Essence Spa", city: "Lausanne", type: "Spa", note: "4.8", img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80", href: "/lessence-spa.html", live: true },
 ];
 
 export default function DemosPage() {
@@ -81,7 +81,7 @@ export default function DemosPage() {
               </div>
             </div>
             <iframe
-              src="https://loyalty-cards-rho.vercel.app/lessence-spa.html"
+              src="/lessence-spa.html"
               width="100%"
               height="600"
               style={{ border: "none", display: "block" }}

@@ -30,10 +30,24 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
+    ],
+  },
   async headers() {
     return [
+      // Static demo HTML files — pas de X-Frame-Options pour l'embedding
       {
-        source: "/(.*)",
+        source: "/:file*.html",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+      // Toutes les autres routes
+      {
+        source: "/((?!.*\\.html$).*)",
         headers: securityHeaders,
       },
     ];

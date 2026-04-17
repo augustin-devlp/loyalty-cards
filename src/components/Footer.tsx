@@ -44,7 +44,7 @@ export default function Footer() {
             {[
               { href: "/#produit", label: "Produit" },
               { href: "/demos", label: "Démos" },
-              { href: "/#tarif", label: "Tarif" },
+              { href: "/pricing", label: "Tarif" },
               { href: "/features", label: "Fonctionnalités" },
             ].map(l => <Link key={l.label} href={l.href} style={colLink}>{l.label}</Link>)}
           </div>

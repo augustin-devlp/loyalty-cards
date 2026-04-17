@@ -10,21 +10,24 @@ const CHECK = (label: string) => (
 );
 
 const essItems = [
-  "Site vitrine 5 pages", "Carte fidélité 10 tampons", "SEO local optimisé",
-  "Hébergement 1 an inclus", "Domaine .ch inclus", "QR code + affichage A4/A5",
-  "1 campagne SMS offerte", "Guide vidéo d'utilisation", "2 révisions incluses", "Mise en ligne en 48h",
-];
-const mensItems = [
-  "1 campagne SMS par mois", "Rapport mensuel d'activité",
-  "Mises à jour mineures", "Support prioritaire 4h", "Renouvellement domaine inclus",
+  "Site vitrine 5 pages",
+  "Carte fidélité 10 tampons",
+  "SEO local optimisé",
+  "Hébergement 1 an inclus",
+  "Domaine .ch inclus",
+  "QR code + affichage A4/A5",
+  "1 campagne SMS offerte",
+  "Guide vidéo d'utilisation",
+  "2 révisions incluses",
+  "Mis en ligne en 48h",
 ];
 
 const compareRows = [
-  { label: "Prix", agence: "2000–5000 CHF", freelance: "800–2000 CHF", stampify: "990 CHF" },
-  { label: "Délai", agence: "4–8 semaines", freelance: "2–4 semaines", stampify: "48h" },
-  { label: "Fidélité", agence: "Non", freelance: "Non", stampify: "Oui" },
-  { label: "SEO local", agence: "Option", freelance: "Rarement", stampify: "Inclus" },
-  { label: "Support", agence: "Non", freelance: "Non", stampify: "Inclus" },
+  { label: "Prix",     agence: "2000–5000 CHF",  freelance: "800–2000 CHF",  stampify: "990 CHF" },
+  { label: "Délai",   agence: "4–8 semaines",    freelance: "2–4 semaines",  stampify: "48h" },
+  { label: "Fidélité",agence: "Non",              freelance: "Non",           stampify: "Oui" },
+  { label: "SEO local",agence: "Option payante", freelance: "Rarement",      stampify: "Inclus" },
+  { label: "Support", agence: "Non",              freelance: "Non",           stampify: "Inclus" },
 ];
 
 export default function PricingSection() {
@@ -57,15 +60,16 @@ export default function PricingSection() {
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontSize: 17, color: "#64748b",
           }}>
-            Pas de frais cachés. Pas de surprise.
+            Pas de frais cachés. Pas d&rsquo;abonnement. Pas de surprise.
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="pricing-2col" style={{ display: "flex", gap: 24, maxWidth: 880, margin: "0 auto 56px" }}>
-          {/* Essentiel */}
+        {/* 2 cards */}
+        <div style={{ display: "flex", gap: 24, maxWidth: 880, margin: "0 auto 56px", flexWrap: "wrap" }}>
+
+          {/* Pack Essentiel */}
           <div style={{
-            flex: 1.1,
+            flex: "1 1 400px",
             border: "2px solid #1d9e75",
             borderRadius: 20,
             padding: 40,
@@ -88,40 +92,33 @@ export default function PricingSection() {
             <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 4 }}>
               <span style={{
                 fontFamily: "var(--font-fraunces), serif",
-                fontWeight: 900, fontSize: 60,
+                fontWeight: 900, fontSize: 64,
                 color: "#1d9e75", lineHeight: 1,
               }}>990</span>
-              <span style={{
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: 24, color: "#1d9e75",
-              }}> CHF</span>
+              <span style={{ fontFamily: "var(--font-dm-sans), sans-serif", fontSize: 26, color: "#1d9e75" }}> CHF</span>
             </div>
-            <p style={{
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 13, color: "#94a3b8",
-              marginBottom: 24,
-            }}>paiement unique · sans abonnement</p>
+            <p style={{ fontFamily: "var(--font-dm-sans), sans-serif", fontSize: 13, color: "#94a3b8", marginBottom: 24 }}>
+              paiement unique · sans abonnement
+            </p>
 
-            <div style={{ borderTop: "1px solid #f0f0f0", paddingTop: 24, marginBottom: 24 }}>
+            <div style={{ borderTop: "1px solid #f0f0f0", paddingTop: 24, marginBottom: 28 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px" }}>
                 {essItems.map(item => CHECK(item))}
               </div>
             </div>
 
-            <Link href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29." style={{
-              display: "block",
-              width: "100%",
-              textAlign: "center",
-              background: "#1d9e75",
-              color: "#fff",
-              borderRadius: 10,
-              padding: "16px 0",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 16, fontWeight: 500,
-              textDecoration: "none",
-              marginBottom: 12,
-              transition: "background 0.15s",
-            }}>
+            <Link
+              href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29."
+              style={{
+                display: "block", textAlign: "center",
+                background: "#1d9e75", color: "#fff",
+                borderRadius: 10, padding: "16px 0",
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                fontSize: 16, fontWeight: 500,
+                textDecoration: "none",
+                marginBottom: 12,
+              }}
+            >
               Démarrer maintenant
             </Link>
             <p style={{
@@ -133,83 +130,73 @@ export default function PricingSection() {
             </p>
           </div>
 
-          {/* Mensuel */}
+          {/* Devis sur mesure */}
           <div style={{
-            flex: 1,
+            flex: "1 1 280px",
             background: "#FAFAFA",
             border: "1px solid #e5e7eb",
             borderRadius: 20,
             padding: 40,
-            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}>
-            <div style={{
-              position: "absolute", top: -14, left: 32,
-              background: "#f1f5f9", color: "#64748b",
-              borderRadius: 50, padding: "4px 14px",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 13, fontWeight: 500,
-            }}>Optionnel</div>
-
-            <h3 style={{
-              fontFamily: "var(--font-fraunces), serif",
-              fontWeight: 700, fontSize: 28,
-              color: "#0f172a", marginBottom: 16,
-            }}>Suivi mensuel</h3>
-
-            <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 4 }}>
+            <div>
               <span style={{
-                fontFamily: "var(--font-fraunces), serif",
-                fontWeight: 900, fontSize: 60,
-                color: "#0f172a", lineHeight: 1,
-              }}>49</span>
-              <span style={{
+                background: "#f1f5f9", color: "#64748b",
+                borderRadius: 50, padding: "4px 12px",
                 fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: 24, color: "#0f172a",
-              }}> CHF</span>
-            </div>
-            <p style={{
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 13, color: "#94a3b8",
-              marginBottom: 24,
-            }}>par mois · après le pack Essentiel</p>
+                fontSize: 12, fontWeight: 500,
+                display: "inline-block",
+                marginBottom: 20,
+              }}>Pour les projets sur mesure</span>
 
-            <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: 24, marginBottom: 24 }}>
-              {mensItems.map(item => CHECK(item))}
+              <h3 style={{
+                fontFamily: "var(--font-fraunces), serif",
+                fontWeight: 700, fontSize: 28,
+                color: "#0f172a", marginBottom: 16,
+              }}>Devis personnalisé</h3>
+
+              <p style={{
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                fontSize: 16, color: "#64748b", lineHeight: 1.7, marginBottom: 24,
+              }}>
+                Tu as un projet plus complexe — plusieurs points de vente, des besoins spécifiques ou une enseigne avec plusieurs équipes ? On te fait un devis sur mesure.
+              </p>
+
+              {["Multi-points de vente", "Intégrations personnalisées", "Branding avancé", "Accompagnement dédié"].map(item => CHECK(item))}
             </div>
 
-            <Link href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20en%20savoir%20plus%20sur%20le%20suivi%20mensuel%20Stampify." style={{
-              display: "block",
-              width: "100%",
-              textAlign: "center",
-              background: "#fff",
-              color: "#1d9e75",
-              border: "1px solid #1d9e75",
-              borderRadius: 10,
-              padding: "16px 0",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 16, fontWeight: 500,
-              textDecoration: "none",
-              transition: "background 0.15s",
-            }}>
-              En savoir plus
+            <Link
+              href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20un%20devis%20sur%20mesure%20Stampify."
+              style={{
+                display: "block", textAlign: "center",
+                background: "#fff",
+                color: "#1d9e75",
+                border: "1px solid #1d9e75",
+                borderRadius: 10, padding: "16px 0",
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                fontSize: 16, fontWeight: 500,
+                textDecoration: "none",
+                marginTop: 24,
+              }}
+            >
+              Demander un devis →
             </Link>
           </div>
         </div>
 
-        {/* Comparison table */}
+        {/* Comparatif */}
         <div style={{ maxWidth: 680, margin: "0 auto" }}>
           <p style={{
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontSize: 15, fontWeight: 500,
-            color: "#94a3b8", textAlign: "center",
-            marginBottom: 24,
+            color: "#94a3b8", textAlign: "center", marginBottom: 24,
           }}>
             Pourquoi pas une agence ?
           </p>
-
           <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #f0f0f0" }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr" }}>
-              {/* Header */}
               {["", "Agence", "Freelance", "Stampify"].map((h, i) => (
                 <div key={i} style={{
                   padding: "12px 16px",
@@ -221,8 +208,6 @@ export default function PricingSection() {
                   textAlign: i > 0 ? "center" : "left",
                 }}>{h}</div>
               ))}
-
-              {/* Rows */}
               {compareRows.map((row, ri) => (
                 [row.label, row.agence, row.freelance, row.stampify].map((cell, ci) => (
                   <div key={`${ri}-${ci}`} style={{
@@ -239,6 +224,17 @@ export default function PricingSection() {
               ))}
             </div>
           </div>
+
+          {/* Lien vers la page tarifs complète */}
+          <p style={{ textAlign: "center", marginTop: 24 }}>
+            <Link href="/pricing" style={{
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              fontSize: 14, color: "#64748b",
+              textDecoration: "underline",
+            }}>
+              Voir toutes les options (suivi mensuel, SMS…) →
+            </Link>
+          </p>
         </div>
       </div>
     </section>
