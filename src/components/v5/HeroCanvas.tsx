@@ -76,11 +76,12 @@ export default function HeroCanvas() {
     // ITER 8 — orb[0] recentré à 0.50 (dominant haut-centre comme handhold)
     // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
-      { nx: 0.50, ny:  0.02, nr: 0.80, opacity: 0.15,  phase: 0.0, x: 0, y: 0, r: 0 }, // ITER 56: nr 0.72→0.80 (couverture hero élargie)
-      { nx: 0.85, ny:  0.15, nr: 0.44, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 67: nr 0.38→0.44 (484px rayon, plus de couverture haut-droit)
-      { nx: 0.15, ny:  0.38, nr: 0.34, opacity: 0.08,  phase: 2.7, x: 0, y: 0, r: 0 }, // ITER 78: 0.07→0.08
-      { nx: 0.78, ny:  0.05, nr: 0.25, opacity: 0.10,  phase: 3.9, x: 0, y: 0, r: 0 }, // ITER 78: 0.09→0.10 (équilibrage)
-      { nx: 0.50, ny:  0.25, nr: 0.88, opacity: 0.065, phase: 5.1, x: 0, y: 0, r: 0 }, // ITER 62: opacity 0.050→0.065 (nappe ambiante plus marquée)
+      // ITER 80 — phases équidistantes 2π/5 = 1.2566 rad (max séparation pairwise)
+      { nx: 0.50, ny:  0.02, nr: 0.80, opacity: 0.15,  phase: 0.000, x: 0, y: 0, r: 0 },
+      { nx: 0.85, ny:  0.15, nr: 0.44, opacity: 0.10,  phase: 1.257, x: 0, y: 0, r: 0 },
+      { nx: 0.15, ny:  0.38, nr: 0.34, opacity: 0.08,  phase: 2.513, x: 0, y: 0, r: 0 },
+      { nx: 0.78, ny:  0.05, nr: 0.25, opacity: 0.10,  phase: 3.770, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny:  0.25, nr: 0.88, opacity: 0.065, phase: 5.027, x: 0, y: 0, r: 0 },
     ];
 
     // ITER 19 — vitesse corrigée: 3.5s traversée viewport (speed = 1/(3.5×60))
