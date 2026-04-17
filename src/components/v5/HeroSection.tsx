@@ -19,8 +19,9 @@ export default function HeroSection() {
         // ITER 10 — fond légèrement plus profond aux bords pour que les orbs
         // verts ressortent davantage (comme handhold.io : blanc pur au centre,
         // légèrement vert-foncé aux bords).
+        // ITER 23 — nappe verte subtile en haut (reinforcement orb[0] dominant)
         background:
-          "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
+          "radial-gradient(70% 55% at 50% 0%, rgba(29,158,117,0.055) 0%, transparent 100%), radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F3F9F5 40%, #E6F1EA 100%)",
         padding: "100px 24px",
       }}
       onMouseMove={handleMouseMove as React.MouseEventHandler<HTMLElement>}
