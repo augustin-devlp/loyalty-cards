@@ -222,6 +222,23 @@ export default function HeroCanvas() {
       tracePath(startX, endX, beam.y);
       ctx.stroke();
 
+      // 4) ultra-core — ITER 25: flash blanc pur au pic absolu (0.75px)
+      //    Simule le point le plus chaud du faisceau — transition chromatique réelle
+      const ultra = ctx.createLinearGradient(startX, 0, endX, 0);
+      ultra.addColorStop(0.00, "rgba(255,255,255,0)");
+      ultra.addColorStop(0.42, "rgba(255,255,255,0)");
+      ultra.addColorStop(0.46, `rgba(255,255,255,${0.18 * beam.opacity})`);
+      ultra.addColorStop(0.50, `rgba(255,255,255,${0.42 * beam.opacity})`);
+      ultra.addColorStop(0.54, `rgba(255,255,255,${0.18 * beam.opacity})`);
+      ultra.addColorStop(0.58, "rgba(255,255,255,0)");
+      ultra.addColorStop(1.00, "rgba(255,255,255,0)");
+      ctx.strokeStyle = ultra;
+      ctx.lineWidth = 0.75;
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "rgba(255,255,255,0.75)";
+      tracePath(startX, endX, beam.y);
+      ctx.stroke();
+
       ctx.shadowBlur = 0;
     };
 
