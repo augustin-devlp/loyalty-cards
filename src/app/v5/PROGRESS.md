@@ -35,7 +35,8 @@
 | ITER 33 | Mobile: orbBoost ×1.4 (compense l'absence de beams <768px) | b162f5d | ✅ |
 | ITER 34 | Beams Y resserrés [0.39,0.47,0.56] bande lumineuse cohérente ~17%H | 5142ca2 | ✅ |
 | ITER 35 | Séparation chromatique: glow rgba(22,168,130) teal vs halo/core vert | 5439426 | ✅ |
-| ITER 36 | Stagger 0.53→0.50 : toujours 2 beams visibles, overlap propre | pending | ✅ |
+| ITER 36 | Stagger 0.53→0.50 : toujours 2 beams visibles, overlap propre | 2cd8053 | ✅ |
+| ITER 37 | Breathe orbs ±12%→±15%, période 140→116s (plus vivant) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -55,7 +56,7 @@ ORBS (5 orbs):
   orb[0]: nx:0.50, ny:0.02, nr:0.72 (dominant haut-centre, dans canvas)
   amplitude dérive: 18-26px (horizontal), 12-18px (vertical)
   fréquence: 0.42 rad (lent, ~50s période)
-  breathe amplitude: ±12%, période ~140s
+  breathe amplitude: ±15%, période ~116s
   profil: tight (0.72 à 0.18r, 0.07 à 0.62r)
 
 CANVAS:

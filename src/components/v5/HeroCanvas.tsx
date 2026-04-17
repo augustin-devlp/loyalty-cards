@@ -279,7 +279,8 @@ export default function HeroCanvas() {
       ctx.globalCompositeOperation = "screen";
       for (let oi = 0; oi < orbsBase.length; oi++) {
         const o = orbsBase[oi];
-        const breathe = (1 + Math.sin(time * 0.15 + oi * 1.2) * 0.12) * orbBoost;
+        // ITER 37 — breathe ±15% à 0.18 rad/t (période ~116s) plus vivant
+        const breathe = (1 + Math.sin(time * 0.18 + oi * 1.2) * 0.15) * orbBoost;
         drawOrb(o, breathe, parallaxY);
       }
       ctx.globalCompositeOperation = "source-over";
