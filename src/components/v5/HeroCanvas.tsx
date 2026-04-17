@@ -248,7 +248,9 @@ export default function HeroCanvas() {
       ctx.clearRect(0, 0, W, H);
       time += 0.005;
 
-      // ITER 5 — mouvement orbs harmoniques, amplitude réduite pour subtilité
+      // ITER 5  — mouvement orbs harmoniques, amplitude réduite pour subtilité
+      // ITER 27 — fréquences primaires per-orb légèrement différentes
+      //           → patterns Lissajous uniques, jamais synchronisés
       for (let i = 0; i < orbsBase.length; i++) {
         const o = orbsBase[i];
         const baseX = o.nx * W;
@@ -256,11 +258,13 @@ export default function HeroCanvas() {
         // Amplitude réduite : 18-26px horizontal, 12-18px vertical
         const ampX = 18 + i * 2;
         const ampY = 12 + i * 1.5;
+        const fX = 0.40 + i * 0.015; // 0.400, 0.415, 0.430, 0.445, 0.460
+        const fY = 0.33 + i * 0.012; // 0.330, 0.342, 0.354, 0.366, 0.378
         o.x = baseX
-          + Math.sin(time * 0.42 + o.phase)        * ampX
+          + Math.sin(time * fX   + o.phase)        * ampX
           + Math.sin(time * 0.17 + o.phase * 1.6)  * (ampX * 0.30);
         o.y = baseY
-          + Math.cos(time * 0.35 + o.phase * 0.8)  * ampY
+          + Math.cos(time * fY   + o.phase * 0.8)  * ampY
           + Math.cos(time * 0.14 + o.phase * 2.0)  * (ampY * 0.35);
       }
 
