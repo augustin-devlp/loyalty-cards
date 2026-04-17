@@ -20,13 +20,14 @@
 | ITER 18 | prefers-reduced-motion + pause visibilitychange | fa71ef6 | ✅ |
 | ITER 19 | CORRECTION vitesse: 0.0076→0.00476 (3.5s traversée) | 7123437 | ✅ |
 | ITER 20 | Positions Y beams [0.36,0.48,0.60,0.70] + entrée douce | fd09110 | ✅ |
-| ITER 21 | orb[0] opacity 0.11→0.13 (plus de présence haut-centre) | pending | ✅ |
+| ITER 21 | orb[0] opacity 0.11→0.13 (plus de présence haut-centre) | 36d191d | ✅ |
+| ITER 22 | 3 beams (comme handhold) stagger 0.53 → 1-2 beams simultanés | pending | ✅ |
 
 ## Paramètres finaux actuels
 
 ```
-BEAMS (4 beams):
-  speed: [0.00476, 0.00417, 0.00521, 0.00455]  → 3.2–4.0s traversée
+BEAMS (3 beams):
+  speed: [0.00476, 0.00400, 0.00510]  → 3.3–4.2s traversée
   halo lineWidth: 28px
   glow lineWidth: 8px, shadowBlur: 14px
   core lineWidth: 1.5px, shadowBlur: 10px
@@ -65,7 +66,7 @@ FLOAT HANDS:
 
 ### Prochaines itérations possibles
 - ~~ITER 21: Augmenter légèrement opacity orb[0] (0.11→0.13) pour plus de présence~~ ✅ FAIT
-- ITER 22: Tester 3 beams vs 4 (revenir à 3 si trop dense)
+- ~~ITER 22: Tester 3 beams vs 4 (revenir à 3 si trop dense)~~ ✅ FAIT — 3 beams
 - ITER 23: Ajuster la couleur du fond hero si orbs pas assez visibles
 - ITER 24: Vérifier que le canvas ne crée pas de scroll horizontal
 

@@ -80,12 +80,12 @@ export default function HeroCanvas() {
 
     // ITER 19 — vitesse corrigée: 3.5s traversée viewport (speed = 1/(3.5×60))
     // ITER 20 — positions Y calées sur la zone texte/mockup du hero
-    //           (entre 36% et 70% de hauteur, évite de passer trop haut)
+    //           (entre 36% et 64% de hauteur, évite de passer trop haut)
+    // ITER 22 — 3 beams (comme handhold.io), stagger 1.6/3≈0.53 → 1-2 beams simultanés
     const beams: Beam[] = [
       { progress:  0.00, ny: 0.36, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.40, ny: 0.48, y: 0, speed: 0.00417, opacity: 0.65 }, // 4.0s
-      { progress:  0.80, ny: 0.60, y: 0, speed: 0.00521, opacity: 0.42 }, // 3.2s
-      { progress: -0.40, ny: 0.70, y: 0, speed: 0.00455, opacity: 0.55 }, // 3.7s
+      { progress:  0.53, ny: 0.50, y: 0, speed: 0.00400, opacity: 0.70 }, // 4.2s
+      { progress: -0.53, ny: 0.64, y: 0, speed: 0.00510, opacity: 0.50 }, // 3.3s
     ];
 
     // Parallax scroll — ITER 13
