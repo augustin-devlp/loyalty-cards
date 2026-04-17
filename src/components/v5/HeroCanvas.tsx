@@ -156,8 +156,8 @@ export default function HeroCanvas() {
         const t = i / steps;
         const px = startX + span * t;
         // ITER 30 — fréq spatiale 0.0065→0.0030 : ondulation plus lente (≈0.7 cycle/W),
-      //           arc majestueux plutôt que serpent — plus proche handhold.io
-      const py = yBase + span * slope * t + Math.sin(px * 0.0030 + time * 1.2) * amp;
+        //           arc majestueux plutôt que serpent — plus proche handhold.io
+        const py = yBase + span * slope * t + Math.sin(px * 0.0030 + time * 1.2) * amp;
         if (i === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
@@ -205,7 +205,7 @@ export default function HeroCanvas() {
       glow.addColorStop(0.97, `rgba(22,168,130,${0.04 * beam.opacity})`);
       glow.addColorStop(1.00, "rgba(22,168,130,0)");
       ctx.strokeStyle = glow;
-      ctx.lineWidth = 8;
+      ctx.lineWidth = 10; // ITER 43: 8→10px glow plus épais
       ctx.shadowBlur = 20; // ITER 28: 14→20 glow plus étendu
       ctx.shadowColor = "rgba(22,168,130,0.45)"; // ITER 35: teal shadow
       tracePath(startX, endX, beam.y - 0.5);
@@ -225,7 +225,7 @@ export default function HeroCanvas() {
       core.addColorStop(0.97, `rgba(29,158,117,${0.10 * beam.opacity})`);
       core.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = core;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2.0; // ITER 43: 1.5→2.0px core plus visible au pic
       ctx.shadowBlur = 12;
       ctx.shadowColor = "rgba(29,200,140,0.95)"; // ITER 24: légèrement plus lumineux
       tracePath(startX, endX, beam.y);
