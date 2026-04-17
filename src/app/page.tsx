@@ -1,25 +1,27 @@
-import Hero from '@/components/Hero';
-import ProblemSection from '@/components/ProblemSection';
-import SolutionSection from '@/components/SolutionSection';
-import DemoSection from '@/components/DemoSection';
-import PricingSection from '@/components/PricingSection';
-import TestimonialsSection from '@/components/TestimonialsSection';
-import ForWhoSection from '@/components/ForWhoSection';
-import FAQSection from '@/components/FAQSection';
-import CTASection from '@/components/CTASection';
+import HeroSection from "@/components/sections/HeroSection";
+import StatsSection from "@/components/sections/StatsSection";
+import DashboardSection from "@/components/sections/DashboardSection";
+import SpaPreviewSection from "@/components/sections/SpaPreviewSection";
+import FeaturesSection from "@/components/sections/FeaturesSection";
+import MetricsSection from "@/components/sections/MetricsSection";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import PricingSection from "@/components/sections/PricingSection";
+import FAQSection from "@/components/sections/FAQSection";
+import FinalCTASection from "@/components/sections/FinalCTASection";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main>
-      <Hero />
-      <ProblemSection />
-      <SolutionSection />
-      <DemoSection />
-      <PricingSection />
+      <HeroSection />
+      <StatsSection />
+      <DashboardSection />
+      <SpaPreviewSection />
+      <FeaturesSection />
+      <MetricsSection />
       <TestimonialsSection />
-      <ForWhoSection />
+      <PricingSection />
       <FAQSection />
-      <CTASection />
+      <FinalCTASection />
     </main>
   );
 }

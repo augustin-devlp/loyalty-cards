@@ -1,8 +1,23 @@
 import type { Metadata } from 'next';
+import { Fraunces, DM_Sans } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollAnimationInit from '@/components/ScrollAnimationInit';
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '900'],
+  variable: '--font-fraunces',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Stampify — Carte fidélité digitale pour commerçants locaux | Suisse romande',
@@ -22,12 +37,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${fraunces.variable} ${dmSans.variable}`}>
       <head>
         <meta name="theme-color" content="#1d9e75" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased">
         <Navbar />
