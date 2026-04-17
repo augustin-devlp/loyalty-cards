@@ -27,7 +27,7 @@ export default function HeroSection() {
           "radial-gradient(140% 90% at 50% 38%, #FDFFFE 0%, #F2F8F5 40%, #DFE9E4 100%)", // ITER 62: bords légèrement plus saturés
         ].join(", "),
         padding: "100px 24px",
-        minHeight: 640, // ITER 42: hauteur minimale stable pour canvas proportions
+        minHeight: 680, // ITER 77: 640→680px (plus d'espace vertical pour canvas/orbs)
       }}
       onMouseMove={handleMouseMove as React.MouseEventHandler<HTMLElement>}
       onMouseLeave={handleMouseLeave}
