@@ -119,9 +119,11 @@ export default function HeroCanvas() {
       // Centre Y décalé par le parallax (facteur 0.20 pour subtilité)
       const cy = orb.y - parallaxY * 0.20;
       const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
+      // ITER 17 — profil tighter : peak concentré, falloff rapide → lumière focalisée
       grad.addColorStop(0.00, `rgba(29,158,117,${a})`);
-      grad.addColorStop(0.35, `rgba(29,158,117,${a * 0.42})`);
-      grad.addColorStop(0.65, `rgba(29,158,117,${a * 0.10})`);
+      grad.addColorStop(0.18, `rgba(29,158,117,${a * 0.72})`);
+      grad.addColorStop(0.38, `rgba(29,158,117,${a * 0.30})`);
+      grad.addColorStop(0.62, `rgba(29,158,117,${a * 0.07})`);
       grad.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
@@ -134,8 +136,8 @@ export default function HeroCanvas() {
     // ITER 16: slope 0.012 → donne une légère inclinaison type handhold
     const tracePath = (startX: number, endX: number, yBase: number) => {
       const steps = 80;
-      const amp = 2.5;
-      const slope = 0.012; // pente légère (tan ≈ 0.7°)
+      const amp = 2.0; // ITER 17: amplitude ondulation légèrement réduite (2.5→2.0)
+      const slope = 0.010; // pente légère (tan ≈ 0.57°) — réduite pour subtilité
       const span = endX - startX;
       ctx.beginPath();
       for (let i = 0; i <= steps; i++) {
