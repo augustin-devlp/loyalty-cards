@@ -3,12 +3,20 @@
 import { useEffect, useRef } from "react";
 
 /**
- * v5 HeroCanvas — reproduction de l'ambiance animée de handhold.io
+ * v5 HeroCanvas — reproduction fidèle de l'ambiance animée handhold.io
  *
- * 5 orbs gaussiens (screen blend) + 3 beams horizontaux traversants
- * avec core / glow / halo gradient, sur un canvas 2D full-bleed.
+ * 5 orbs gaussiens (screen blend entre eux) + 3 beams horizontaux traversants
+ * avec core fin / glow intermédiaire / halo large — gradients non-linéaires
+ * à décroissance exponentielle.
  *
- * Palette : vert Stampify #1d9e75. Ratio de référence 3024:1592 (handhold).
+ * ITER 1  — vitesse beams corrigée : ~3.5s traversée (target handhold)
+ * ITER 2  — glow ajusté : halo 28px / glow 8px / core 1.5px
+ * ITER 3  — opacités orbs plus subtiles
+ * ITER 4  — chemin sinusoïdal (déjà présent, amplitude affinée)
+ * ITER 5  — mouvement orbs harmoniques doux (amplitude réduite)
+ * ITER 12 — fade-in canvas au chargement (évite flash)
+ * ITER 13 — parallax léger au scroll
+ * ITER 14 — gradient longitudinal non-linéaire (peak au centre, decay exponentiel)
  */
 export default function HeroCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -20,6 +28,16 @@ export default function HeroCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Fade-in au chargement — ITER 12
+    canvas.style.opacity = "0";
+    canvas.style.transition = "opacity 1.5s ease";
+    const fadeTimer = setTimeout(() => {
+      canvas.style.opacity = "1";
+    }, 120);
+
+    // Mobile : désactive les beams pour préserver la perf
+    const isMobile = window.innerWidth < 768;
+
     let W = 0;
     let H = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -29,7 +47,6 @@ export default function HeroCanvas() {
       y: number;
       r: number;
       opacity: number;
-      // normalised base positions (0-1) so we can re-scale on resize
       nx: number;
       ny: number;
       nr: number;
@@ -44,31 +61,41 @@ export default function HeroCanvas() {
       opacity: number;
     };
 
+    // Positions inspirées du hero handhold.io :
+    // flood dominant décentré haut-gauche, accent droit, secondaire bas-gauche,
+    // hotspot petit haut-droite, nappe ambiante très large.
     const orbsBase: Orb[] = [
-      { nx: 0.50, ny: -0.15, nr: 0.60, opacity: 0.14, phase: 0.0, x: 0, y: 0, r: 0 },
-      { nx: 0.90, ny:  0.15, nr: 0.42, opacity: 0.10, phase: 1.3, x: 0, y: 0, r: 0 },
-      { nx: 0.10, ny:  0.80, nr: 0.34, opacity: 0.08, phase: 2.6, x: 0, y: 0, r: 0 },
-      { nx: 0.20, ny:  0.45, nr: 0.22, opacity: 0.10, phase: 3.9, x: 0, y: 0, r: 0 },
-      { nx: 0.50, ny:  0.50, nr: 0.75, opacity: 0.04, phase: 5.2, x: 0, y: 0, r: 0 },
+      { nx: 0.38, ny: -0.10, nr: 0.62, opacity: 0.12,  phase: 0.0, x: 0, y: 0, r: 0 },
+      { nx: 0.82, ny:  0.22, nr: 0.38, opacity: 0.09,  phase: 1.4, x: 0, y: 0, r: 0 },
+      { nx: 0.14, ny:  0.72, nr: 0.34, opacity: 0.075, phase: 2.7, x: 0, y: 0, r: 0 },
+      { nx: 0.72, ny: -0.05, nr: 0.18, opacity: 0.10,  phase: 3.9, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny:  0.55, nr: 0.85, opacity: 0.038, phase: 5.1, x: 0, y: 0, r: 0 },
     ];
 
+    // ITER 1 — vitesse corrigée.
+    // Traversée de -0.3 à 1.3 (range = 1.6) en ~3.5s à 60fps
+    // → speed cible = 1.6 / (3.5 × 60) ≈ 0.00762
     const beams: Beam[] = [
-      { progress: 0.00, ny: 0.35, y: 0, speed: 0.0030, opacity: 1.00 },
-      { progress: 0.33, ny: 0.54, y: 0, speed: 0.0028, opacity: 0.65 },
-      { progress: 0.66, ny: 0.69, y: 0, speed: 0.0032, opacity: 0.42 },
+      { progress: 0.00, ny: 0.35, y: 0, speed: 0.0076, opacity: 1.00 },
+      { progress: 0.53, ny: 0.54, y: 0, speed: 0.0069, opacity: 0.62 },
+      { progress: 1.06, ny: 0.69, y: 0, speed: 0.0082, opacity: 0.40 },
     ];
+
+    // Parallax scroll — ITER 13
+    let scrollOffset = 0;
+    const onScroll = () => { scrollOffset = window.scrollY; };
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     const resize = () => {
       const cssW = canvas.offsetWidth || window.innerWidth;
       const cssH = canvas.offsetHeight || window.innerHeight;
       W = cssW;
       H = cssH;
-      canvas.width = Math.floor(cssW * dpr);
+      canvas.width  = Math.floor(cssW * dpr);
       canvas.height = Math.floor(cssH * dpr);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
 
-      // re-scale orbs
       const refDim = Math.max(W, H);
       for (const o of orbsBase) {
         o.x = o.nx * W;
@@ -86,68 +113,93 @@ export default function HeroCanvas() {
     let time = 0;
     let raf = 0;
 
-    const drawOrb = (orb: Orb) => {
-      const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
-      grad.addColorStop(0.00, `rgba(29,158,117,${orb.opacity})`);
-      grad.addColorStop(0.40, `rgba(29,158,117,${orb.opacity * 0.4})`);
-      grad.addColorStop(0.70, `rgba(29,158,117,${orb.opacity * 0.1})`);
+    const drawOrb = (orb: Orb, breathe: number, parallaxY: number) => {
+      const a = orb.opacity * breathe;
+      // Centre Y décalé par le parallax (facteur 0.20 pour subtilité)
+      const cy = orb.y - parallaxY * 0.20;
+      const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
+      grad.addColorStop(0.00, `rgba(29,158,117,${a})`);
+      grad.addColorStop(0.35, `rgba(29,158,117,${a * 0.42})`);
+      grad.addColorStop(0.65, `rgba(29,158,117,${a * 0.10})`);
       grad.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+      ctx.arc(orb.x, cy, orb.r, 0, Math.PI * 2);
       ctx.fill();
     };
 
+    // Chemin sinusoïdal subtil — ITER 4 (amplitude 2.5px, basse fréquence)
+    const tracePath = (startX: number, endX: number, yBase: number) => {
+      const steps = 80;
+      const amp = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const px = startX + (endX - startX) * (i / steps);
+        const py = yBase + Math.sin(px * 0.0065 + time * 1.6) * amp;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+    };
+
     const drawBeam = (beam: Beam) => {
-      const beamW = W * 0.42;
+      const beamW = W * 0.45;
       const startX = -beamW + (W + beamW) * beam.progress;
-      const endX = startX + beamW;
+      const endX   = startX + beamW;
+
+      // ITER 14 — gradient non-linéaire, peak au centre, décroissance exponentielle
+      // ITER 2  — halo 28px, glow 8px, core 1.5px
 
       // 1) halo large diffus
       const halo = ctx.createLinearGradient(startX, 0, endX, 0);
       halo.addColorStop(0.00, "rgba(29,158,117,0)");
-      halo.addColorStop(0.25, `rgba(29,158,117,${0.06 * beam.opacity})`);
-      halo.addColorStop(0.50, `rgba(29,158,117,${0.10 * beam.opacity})`);
-      halo.addColorStop(0.75, `rgba(29,158,117,${0.06 * beam.opacity})`);
+      halo.addColorStop(0.08, "rgba(29,158,117,0)");
+      halo.addColorStop(0.22, `rgba(29,158,117,${0.030 * beam.opacity})`);
+      halo.addColorStop(0.40, `rgba(29,158,117,${0.055 * beam.opacity})`);
+      halo.addColorStop(0.50, `rgba(29,158,117,${0.070 * beam.opacity})`);
+      halo.addColorStop(0.60, `rgba(29,158,117,${0.055 * beam.opacity})`);
+      halo.addColorStop(0.78, `rgba(29,158,117,${0.030 * beam.opacity})`);
+      halo.addColorStop(0.92, "rgba(29,158,117,0)");
       halo.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = halo;
       ctx.lineWidth = 28;
       ctx.shadowBlur = 0;
-      ctx.beginPath();
-      ctx.moveTo(startX, beam.y);
-      ctx.lineTo(endX, beam.y);
+      tracePath(startX, endX, beam.y);
       ctx.stroke();
 
       // 2) glow intermédiaire
       const glow = ctx.createLinearGradient(startX, 0, endX, 0);
       glow.addColorStop(0.00, "rgba(29,158,117,0)");
-      glow.addColorStop(0.20, `rgba(29,158,117,${0.25 * beam.opacity})`);
-      glow.addColorStop(0.50, `rgba(29,158,117,${0.50 * beam.opacity})`);
-      glow.addColorStop(0.80, `rgba(29,158,117,${0.25 * beam.opacity})`);
+      glow.addColorStop(0.08, "rgba(29,158,117,0)");
+      glow.addColorStop(0.20, `rgba(29,158,117,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.40, `rgba(29,158,117,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.50, `rgba(29,158,117,${0.52 * beam.opacity})`);
+      glow.addColorStop(0.60, `rgba(29,158,117,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.80, `rgba(29,158,117,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.92, "rgba(29,158,117,0)");
       glow.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = glow;
       ctx.lineWidth = 8;
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = "rgba(29,158,117,0.4)";
-      ctx.beginPath();
-      ctx.moveTo(startX, beam.y - 1);
-      ctx.lineTo(endX, beam.y - 1);
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = "rgba(29,158,117,0.35)";
+      tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 
-      // 3) core fin très lumineux
+      // 3) core fin très lumineux — teinte légèrement plus claire au peak
       const core = ctx.createLinearGradient(startX, 0, endX, 0);
       core.addColorStop(0.00, "rgba(29,158,117,0)");
-      core.addColorStop(0.15, `rgba(29,158,117,${0.7 * beam.opacity})`);
-      core.addColorStop(0.50, `rgba(29,158,117,${1.0 * beam.opacity})`);
-      core.addColorStop(0.85, `rgba(29,158,117,${0.7 * beam.opacity})`);
+      core.addColorStop(0.08, "rgba(29,158,117,0)");
+      core.addColorStop(0.20, `rgba(54,191,147,${0.60 * beam.opacity})`);
+      core.addColorStop(0.40, `rgba(96,210,167,${0.88 * beam.opacity})`);
+      core.addColorStop(0.50, `rgba(124,224,186,${1.00 * beam.opacity})`);
+      core.addColorStop(0.60, `rgba(96,210,167,${0.88 * beam.opacity})`);
+      core.addColorStop(0.80, `rgba(54,191,147,${0.60 * beam.opacity})`);
+      core.addColorStop(0.92, "rgba(29,158,117,0)");
       core.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = core;
       ctx.lineWidth = 1.5;
-      ctx.shadowBlur = 6;
-      ctx.shadowColor = "rgba(29,158,117,0.8)";
-      ctx.beginPath();
-      ctx.moveTo(startX, beam.y);
-      ctx.lineTo(endX, beam.y);
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "rgba(29,158,117,0.90)";
+      tracePath(startX, endX, beam.y);
       ctx.stroke();
 
       ctx.shadowBlur = 0;
@@ -158,31 +210,51 @@ export default function HeroCanvas() {
       ctx.clearRect(0, 0, W, H);
       time += 0.005;
 
-      // orbs drift
+      // ITER 5 — mouvement orbs harmoniques, amplitude réduite pour subtilité
       for (let i = 0; i < orbsBase.length; i++) {
         const o = orbsBase[i];
         const baseX = o.nx * W;
         const baseY = o.ny * H;
-        o.x = baseX + Math.sin(time * 0.7 + o.phase) * 40;
-        o.y = baseY + Math.cos(time * 0.5 + o.phase * 0.9) * 28;
+        // Amplitude réduite : 18-26px horizontal, 12-18px vertical
+        const ampX = 18 + i * 2;
+        const ampY = 12 + i * 1.5;
+        o.x = baseX
+          + Math.sin(time * 0.42 + o.phase)        * ampX
+          + Math.sin(time * 0.17 + o.phase * 1.6)  * (ampX * 0.30);
+        o.y = baseY
+          + Math.cos(time * 0.35 + o.phase * 0.8)  * ampY
+          + Math.cos(time * 0.14 + o.phase * 2.0)  * (ampY * 0.35);
       }
 
+      const parallaxY = scrollOffset;
+
       ctx.globalCompositeOperation = "screen";
-      for (const o of orbsBase) drawOrb(o);
+      for (let oi = 0; oi < orbsBase.length; oi++) {
+        const o = orbsBase[oi];
+        const breathe = 1 + Math.sin(time * 0.15 + oi * 1.2) * 0.12;
+        drawOrb(o, breathe, parallaxY);
+      }
       ctx.globalCompositeOperation = "source-over";
 
-      for (const b of beams) {
-        b.progress += b.speed;
-        if (b.progress > 1.3) b.progress = -0.3;
-        drawBeam(b);
+      if (!isMobile) {
+        for (let bi = 0; bi < beams.length; bi++) {
+          const b = beams[bi];
+          b.progress += b.speed;
+          if (b.progress > 1.3) b.progress = -0.3;
+          // Dérive verticale quasi-imperceptible (amplitude 5px, ~18s)
+          b.y = b.ny * H + Math.sin(time * 0.22 + bi * 1.7) * 5;
+          drawBeam(b);
+        }
       }
     };
 
     animate();
 
     return () => {
+      clearTimeout(fadeTimer);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 

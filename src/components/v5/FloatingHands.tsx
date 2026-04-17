@@ -3,18 +3,32 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
+/**
+ * ITER 9 — FloatingHands revisitées pour le fond vert #1d9e75
+ *
+ * - mixBlendMode: multiply → les mains s'intègrent organiquement au fond vert
+ * - filter: sepia(12%) saturate(80%) hue-rotate(100deg) brightness(0.88)
+ *   → légère teinte verte pour fusionner avec la section CTA
+ * - Amplitudes ajustées : gauche 14px, droite 11px (désynchronisées)
+ * - Entrée spring depuis les coins exacts
+ */
 export default function FloatingHands() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef as React.RefObject<Element>, { once: true, amount: 0.25 });
 
   return (
     <div ref={sectionRef} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-      {/* MAIN GAUCHE */}
+      {/* MAIN GAUCHE — coin haut-gauche */}
       <motion.div
         style={{
-          position: "absolute", top: "-20px", left: "-30px", width: 280, zIndex: 1, pointerEvents: "none",
-          filter: "sepia(15%) saturate(85%) hue-rotate(95deg) brightness(0.92)",
+          position: "absolute",
+          top: "-20px",
+          left: "-30px",
+          width: 280,
+          zIndex: 1,
+          pointerEvents: "none",
           mixBlendMode: "multiply",
+          filter: "sepia(12%) saturate(80%) hue-rotate(100deg) brightness(0.88)",
         }}
         initial={{ x: -65, y: -65, rotate: 18, opacity: 0, scale: 0.80 }}
         animate={isInView ? { x: 0, y: 0, rotate: -10, opacity: 1, scale: 1 } : {}}
@@ -23,13 +37,13 @@ export default function FloatingHands() {
         <motion.div
           animate={isInView ? {
             x: [0, -3, -5, -4, -2, 1, 0],
-            y: [0, -5, -11, -13, -10, -4, 0],
-            rotate: [-10, -9, -8.5, -9, -10.2, -10.8, -10],
+            y: [0, -5, -10, -14, -10, -4, 0],
+            rotate: [-10, -8.8, -8.2, -8.8, -10.2, -10.8, -10],
           } : {}}
           transition={{
             duration: 4.2,
             delay: 1.25,
-            ease: "easeInOut",
+            ease: [0.4, 0, 0.4, 1],
             repeat: Infinity,
             repeatType: "loop",
             times: [0, 0.15, 0.35, 0.5, 0.65, 0.85, 1],
@@ -37,16 +51,16 @@ export default function FloatingHands() {
         >
           <svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" fill="none" width={280} height={340}>
             <defs>
-              <filter id="handShadowL">
+              <filter id="handShadowL5">
                 <feDropShadow dx="0" dy="10" stdDeviation="16" floodColor="rgba(0,0,0,0.15)" floodOpacity="1"/>
               </filter>
-              <linearGradient id="woodGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="woodGradL5" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#C8A060"/>
                 <stop offset="45%" stopColor="#A07040"/>
                 <stop offset="100%" stopColor="#C8A060"/>
               </linearGradient>
             </defs>
-            <g filter="url(#handShadowL)">
+            <g filter="url(#handShadowL5)">
               <rect x="90" y="240" width="80" height="80" rx="18" fill="#F2C9A0"/>
               <rect x="70" y="155" width="120" height="100" rx="22" fill="#F2C9A0"/>
               <ellipse cx="68" cy="185" rx="22" ry="32" transform="rotate(-25 68 185)" fill="#F2C9A0"/>
@@ -55,7 +69,7 @@ export default function FloatingHands() {
               <rect x="133" y="75" width="24" height="90" rx="12" fill="#F2C9A0"/>
               <rect x="160" y="90" width="22" height="76" rx="11" fill="#F2C9A0"/>
               <ellipse cx="130" cy="180" rx="55" ry="18" fill="#D4A070" opacity="0.3"/>
-              <rect x="58" y="108" width="144" height="88" rx="14" fill="url(#woodGradL)"/>
+              <rect x="58" y="108" width="144" height="88" rx="14" fill="url(#woodGradL5)"/>
               <line x1="68" y1="120" x2="68" y2="184" stroke="rgba(0,0,0,0.06)" strokeWidth="1.5"/>
               <line x1="88" y1="116" x2="88" y2="188" stroke="rgba(0,0,0,0.06)" strokeWidth="1.5"/>
               <line x1="108" y1="114" x2="108" y2="190" stroke="rgba(0,0,0,0.06)" strokeWidth="1.5"/>
@@ -78,12 +92,17 @@ export default function FloatingHands() {
         </motion.div>
       </motion.div>
 
-      {/* MAIN DROITE */}
+      {/* MAIN DROITE — coin bas-droit */}
       <motion.div
         style={{
-          position: "absolute", bottom: "-30px", right: "-20px", width: 240, zIndex: 1, pointerEvents: "none",
-          filter: "sepia(15%) saturate(85%) hue-rotate(95deg) brightness(0.92)",
+          position: "absolute",
+          bottom: "-30px",
+          right: "-20px",
+          width: 240,
+          zIndex: 1,
+          pointerEvents: "none",
           mixBlendMode: "multiply",
+          filter: "sepia(12%) saturate(80%) hue-rotate(100deg) brightness(0.88)",
         }}
         initial={{ x: 65, y: 65, rotate: -18, opacity: 0, scale: 0.80 }}
         animate={isInView ? { x: 0, y: 0, rotate: 10, opacity: 1, scale: 1 } : {}}
@@ -91,14 +110,14 @@ export default function FloatingHands() {
       >
         <motion.div
           animate={isInView ? {
-            x: [0, 3, 4, 2, -1, 0],
-            y: [0, -4, -10, -13, -6, 0],
-            rotate: [10, 9, 8.5, 9, 10.5, 10],
+            x: [0, 4, 6, 3, -1, 0],
+            y: [0, -4, -11, -13, -7, 0],
+            rotate: [10, 8.8, 8.2, 8.8, 10.4, 10],
           } : {}}
           transition={{
             duration: 4.8,
-            delay: 1.45,
-            ease: "easeInOut",
+            delay: 1.55,
+            ease: [0.4, 0, 0.4, 1],
             repeat: Infinity,
             repeatType: "loop",
             times: [0, 0.2, 0.4, 0.55, 0.75, 1],
@@ -106,16 +125,16 @@ export default function FloatingHands() {
         >
           <svg viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg" fill="none" width={240} height={300}>
             <defs>
-              <filter id="handShadowR">
+              <filter id="handShadowR5">
                 <feDropShadow dx="0" dy="8" stdDeviation="14" floodColor="rgba(0,0,0,0.15)" floodOpacity="1"/>
               </filter>
-              <linearGradient id="woodGradR" x1="100%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="woodGradR5" x1="100%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#C8A060"/>
                 <stop offset="45%" stopColor="#A07040"/>
                 <stop offset="100%" stopColor="#C8A060"/>
               </linearGradient>
             </defs>
-            <g filter="url(#handShadowR)">
+            <g filter="url(#handShadowR5)">
               <rect x="80" y="220" width="80" height="72" rx="16" fill="#F2C9A0"/>
               <rect x="60" y="140" width="120" height="95" rx="20" fill="#F2C9A0"/>
               <ellipse cx="172" cy="170" rx="20" ry="30" transform="rotate(25 172 170)" fill="#F2C9A0"/>
@@ -124,8 +143,7 @@ export default function FloatingHands() {
               <rect x="121" y="68" width="22" height="82" rx="11" fill="#F2C9A0"/>
               <rect x="148" y="82" width="20" height="70" rx="10" fill="#F2C9A0"/>
               <ellipse cx="120" cy="165" rx="52" ry="16" fill="#D4A070" opacity="0.3"/>
-              {/* Smartphone */}
-              <rect x="52" y="95" width="136" height="82" rx="12" fill="url(#woodGradR)"/>
+              <rect x="52" y="95" width="136" height="82" rx="12" fill="url(#woodGradR5)"/>
               <rect x="58" y="101" width="124" height="70" rx="10" fill="#1a1a2e"/>
               <text x="120" y="128" textAnchor="middle" fontFamily="Inter,sans-serif" fontSize="10" fontWeight="600" fill="#1d9e75">✓ Carte ouverte</text>
               <text x="120" y="142" textAnchor="middle" fontFamily="Inter,sans-serif" fontSize="9" fill="rgba(255,255,255,0.6)">8/10 tampons</text>
