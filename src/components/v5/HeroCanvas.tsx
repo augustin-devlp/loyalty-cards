@@ -143,7 +143,7 @@ export default function HeroCanvas() {
     // ITER 16: slope 0.012 → donne une légère inclinaison type handhold
     const tracePath = (startX: number, endX: number, yBase: number) => {
       const steps = 80;
-      const amp = 2.0; // ITER 17: amplitude ondulation légèrement réduite (2.5→2.0)
+      const amp = 3.5; // ITER 32: 2.0→3.5px — arc visible avec la basse fréquence (0.0030)
       const slope = 0.010; // pente légère (tan ≈ 0.57°) — réduite pour subtilité
       const span = endX - startX;
       ctx.beginPath();

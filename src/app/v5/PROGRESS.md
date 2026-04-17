@@ -30,7 +30,8 @@
 | ITER 28 | Halo 28→36px + glow shadowBlur 14→20 (atmosphère plus diffuse) | 5e1963d | ✅ |
 | ITER 29 | orb[0] ny:-0.08→0.02 nr:0.65→0.72 (centre dans canvas, couverture hero) | 41654fc | ✅ |
 | ITER 30 | Ondulation beam 0.0065→0.0030 (arc majestueux 0.7 cycle/W vs serpent) | 34abe1f | ✅ |
-| ITER 31 | DashboardMockup: green ambient glow shadow rgba(29,158,117,0.09) | pending | ✅ |
+| ITER 31 | DashboardMockup: green ambient glow shadow rgba(29,158,117,0.09) | 78a84fc | ✅ |
+| ITER 32 | Amplitude arc beam 2.0→3.5px (arc visible avec freq spatiale 0.0030) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -42,7 +43,7 @@ BEAMS (3 beams):
   core lineWidth: 1.5px, shadowBlur: 10px
   beamW: 0.65W (65% viewport width)
   slope: 0.010 (inclinaison ~0.57°)
-  amplitude sinusoïdale: 2.0px
+  amplitude sinusoïdale: 3.5px
   gradient: entrée douce (ramp depuis 0.03), peak au centre
 
 ORBS (5 orbs):
