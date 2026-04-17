@@ -89,10 +89,11 @@ export default function HeroCanvas() {
     // ITER 36 — stagger 0.53→0.50 : overlap propre
     // ITER 45 — dead zone réduit (1.3/-0.3 → 1.1/-0.1), stagger 0.40 → 83% visible
     // ITER 46 — beam[1] 0.72→0.80, beam[2] 0.52→0.62 : luminosité plus uniforme (type handhold)
+    // ITER 52 — Y remontés [0.39,0.47,0.56]→[0.35,0.44,0.53] : zone headline du hero
     const beams: Beam[] = [
-      { progress:  0.00, ny: 0.39, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.40, ny: 0.47, y: 0, speed: 0.00400, opacity: 0.80 }, // 4.2s
-      { progress: -0.40, ny: 0.56, y: 0, speed: 0.00510, opacity: 0.62 }, // 3.3s
+      { progress:  0.00, ny: 0.35, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
+      { progress:  0.40, ny: 0.44, y: 0, speed: 0.00400, opacity: 0.80 }, // 4.2s
+      { progress: -0.40, ny: 0.53, y: 0, speed: 0.00510, opacity: 0.62 }, // 3.3s
     ];
 
     // Parallax scroll — ITER 13
@@ -170,7 +171,8 @@ export default function HeroCanvas() {
 
     const drawBeam = (beam: Beam) => {
       // ITER 16: beams plus longs (0.45→0.65W) — traversée plus ample
-      const beamW = W * 0.65;
+      // ITER 52: 0.65→0.72W — couverture latérale élargie
+      const beamW = W * 0.72;
       const startX = -beamW + (W + beamW) * beam.progress;
       const endX   = startX + beamW;
 
