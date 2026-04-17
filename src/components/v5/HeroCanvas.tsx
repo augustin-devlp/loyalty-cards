@@ -71,7 +71,7 @@ export default function HeroCanvas() {
     // ITER 8 — orb[0] recentré à 0.50 (dominant haut-centre comme handhold)
     // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
-      { nx: 0.50, ny: -0.08, nr: 0.65, opacity: 0.13,  phase: 0.0, x: 0, y: 0, r: 0 },
+      { nx: 0.50, ny:  0.02, nr: 0.72, opacity: 0.13,  phase: 0.0, x: 0, y: 0, r: 0 }, // ITER 29: centre dans canvas, r 0.65→0.72
       { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 26 0.085→0.10
       { nx: 0.12, ny:  0.68, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 },
       { nx: 0.75, ny: -0.05, nr: 0.18, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 },

@@ -27,7 +27,8 @@
 | ITER 25 | 4ème couche ultra-core blanc pur 0.75px au pic (optique laser réelle) | 54c9e08 | ✅ |
 | ITER 26 | orb[1] 0.085→0.10, orb[4] 0.035→0.05 + profil radial légèrement ouvert | 4e938b6 | ✅ |
 | ITER 27 | Fréquences primaires per-orb [0.400..0.460] → patterns Lissajous uniques | e839066 | ✅ |
-| ITER 28 | Halo 28→36px + glow shadowBlur 14→20 (atmosphère plus diffuse) | pending | ✅ |
+| ITER 28 | Halo 28→36px + glow shadowBlur 14→20 (atmosphère plus diffuse) | 5e1963d | ✅ |
+| ITER 29 | orb[0] ny:-0.08→0.02 nr:0.65→0.72 (centre dans canvas, couverture hero) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -44,7 +45,7 @@ BEAMS (3 beams):
 
 ORBS (5 orbs):
   opacités: [0.13, 0.10, 0.07, 0.09, 0.05]
-  orb[0]: nx:0.50, ny:-0.08, nr:0.65 (dominant haut-centre)
+  orb[0]: nx:0.50, ny:0.02, nr:0.72 (dominant haut-centre, dans canvas)
   amplitude dérive: 18-26px (horizontal), 12-18px (vertical)
   fréquence: 0.42 rad (lent, ~50s période)
   breathe amplitude: ±12%, période ~140s
