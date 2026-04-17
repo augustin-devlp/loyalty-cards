@@ -6,6 +6,18 @@
   --background: #ffffff;
   --foreground: #171717;
 
+  /* Brand Palette */
+  --brand-green: #1d9e75;
+  --brand-green-dark: #0D7A5A;
+  --brand-green-light: #E8F7F2;
+  --brand-bg: #FBF8F3;
+  --brand-bg-alt: #F2EFE9;
+  --brand-text: #1A1A1A;
+  --brand-text-secondary: #5C5C5C;
+  --brand-gold: #C9A84C;
+  --brand-gold-light: #F5EDD6;
+  --brand-wood: #8B6914;
+
   /* Dashboard theme variables — overridden at runtime by ThemeApplier */
   --dash-accent:     #534AB7;
   --dash-accent-sub: rgba(83,74,183,0.12);
