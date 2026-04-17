@@ -196,7 +196,8 @@ export default function HeroCanvas() {
       halo.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = halo;
       ctx.lineWidth = 36; // ITER 28: 28→36 halo plus diffus, atmosphérique
-      ctx.shadowBlur = 0;
+      ctx.shadowBlur = 8; // ITER 59: léger shadow pour étendre l'atmosphère au-delà du lineWidth
+      ctx.shadowColor = `rgba(29,158,117,${0.15 * beam.opacity})`;
       tracePath(startX, endX, beam.y);
       ctx.stroke();
 
