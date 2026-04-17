@@ -1,3 +1,5 @@
+import NFCStandMockup from "@/components/NFCStandMockup";
+
 const CHECK = (label: string) => (
   <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
@@ -24,8 +26,7 @@ const features = [
     title: "Ton site, livré clé en main. Sans une ligne de code.",
     text: "5 pages soignées avec tes horaires, photos, menu et carte fidélité — tout en un. Tu valides, on publie. Hébergé, référencé, en ligne en 48h.",
     checks: ["Design adapté à ton image de marque", "Hébergement + domaine .ch inclus"],
-    // Happy team in a bar / brasserie
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85",
+    img: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=85",
     bg: "#FBF8F3",
     imgLeft: false,
     visual: null,
@@ -45,10 +46,10 @@ const features = [
     title: "Posé sur ton comptoir. Tes clients tapent et c'est fait.",
     text: "Le socle NFC gravé à ton nom remplace des centaines de cartes papier. Beau, durable, discret — il s'intègre à n'importe quel comptoir en 2 minutes.",
     checks: ["Bois naturel, gravure laser personnalisée", "Livré et installé avec le pack"],
-    img: "https://images.unsplash.com/photo-1612810806695-30f7a8258391?w=800&q=85",
+    img: null,
     bg: "#FBF8F3",
     imgLeft: false,
-    visual: null,
+    visual: "nfc",
   },
 ];
 
@@ -128,6 +129,8 @@ export default function FeaturesSection() {
             <div style={{ flex: 1 }}>
               {f.visual === "seo" ? (
                 <SEOSearchMockup />
+              ) : f.visual === "nfc" ? (
+                <NFCStandMockup />
               ) : (
                 <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.08)" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}

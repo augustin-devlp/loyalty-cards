@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import DashboardMockup from "@/components/DashboardMockup";
+import NFCStandMockup from "@/components/NFCStandMockup";
 
 const CHECK = (label: string) => (
   <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
@@ -131,7 +132,7 @@ const features = [
     title: "Un site qui te représente vraiment.",
     text: "5 pages soignées avec tes horaires, photos, menu et carte fidélité — tout en un. Livré en 48h, sans que tu aies à faire quoi que ce soit.",
     checks: ["Design adapté à ton image", "Hébergement + domaine .ch inclus"],
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85",
+    img: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=85",
     bg: "#FBF8F3", imgLeft: false,
     visual: null,
   },
@@ -149,9 +150,9 @@ const features = [
     title: "Gravé à ton nom. Chaque client, une expérience unique.",
     text: "Le socle NFC en bois est personnalisé avec le nom de ton commerce, gravé au laser. Tes clients posent leur téléphone — le tampon s'ajoute. Premium, durable, sans aucun effort.",
     checks: ["Bois naturel, gravure laser personnalisée", "Livré et installé avec le pack"],
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=85",
+    img: null,
     bg: "#FBF8F3", imgLeft: false,
-    visual: null,
+    visual: "nfc",
   },
   {
     tag: "CAMPAGNES SMS",
@@ -230,6 +231,8 @@ export default function FeaturesPage() {
               <div style={{ flex: 1 }}>
                 {f.visual === "sms" ? (
                   <SMSPhoneMockup />
+                ) : f.visual === "nfc" ? (
+                  <NFCStandMockup />
                 ) : f.visual === "dashboard" ? (
                   <div style={{ borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.08)" }}>
                     <DashboardMockup />
