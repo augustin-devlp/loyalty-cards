@@ -153,7 +153,7 @@ export default function HeroCanvas() {
     // ITER 4 : amplitude 2.5px, basse fréquence
     // ITER 16: slope 0.012 → donne une légère inclinaison type handhold
     const tracePath = (startX: number, endX: number, yBase: number) => {
-      const steps = 80;
+      const steps = 120; // ITER 65: 80→120 segments pour courbe plus lisse
       const amp = 3.5; // ITER 32: 2.0→3.5px — arc visible avec la basse fréquence (0.0030)
       const slope = 0.012; // ITER 39: 0.010→0.012 (tan ≈ 0.69°) — type handhold.io
       const span = endX - startX;
@@ -171,6 +171,7 @@ export default function HeroCanvas() {
     };
 
     const drawBeam = (beam: Beam) => {
+      ctx.lineJoin = "round"; // ITER 65: joints arrondis entre segments polyline
       // ITER 16: beams plus longs (0.45→0.65W) — traversée plus ample
       // ITER 52: 0.65→0.72W — couverture latérale élargie
       const beamW = W * 0.72;
