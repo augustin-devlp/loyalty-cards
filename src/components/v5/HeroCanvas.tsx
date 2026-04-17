@@ -78,15 +78,14 @@ export default function HeroCanvas() {
       { nx: 0.50, ny:  0.50, nr: 0.88, opacity: 0.035, phase: 5.1, x: 0, y: 0, r: 0 },
     ];
 
-    // ITER 19 — CORRECTION vitesse beams.
-    // Visible viewport traversal = progress 0→1.0 (1.0 unit).
-    // Target 3.5s → speed = 1.0 / (3.5 × 60fps) = 0.00476
-    // Les 4 beams varient légèrement autour de cette cible (3.2–4.0s)
+    // ITER 19 — vitesse corrigée: 3.5s traversée viewport (speed = 1/(3.5×60))
+    // ITER 20 — positions Y calées sur la zone texte/mockup du hero
+    //           (entre 36% et 70% de hauteur, évite de passer trop haut)
     const beams: Beam[] = [
-      { progress:  0.00, ny: 0.32, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.40, ny: 0.50, y: 0, speed: 0.00417, opacity: 0.65 }, // 4.0s
-      { progress:  0.80, ny: 0.66, y: 0, speed: 0.00521, opacity: 0.42 }, // 3.2s
-      { progress: -0.40, ny: 0.42, y: 0, speed: 0.00455, opacity: 0.55 }, // 3.7s
+      { progress:  0.00, ny: 0.36, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
+      { progress:  0.40, ny: 0.48, y: 0, speed: 0.00417, opacity: 0.65 }, // 4.0s
+      { progress:  0.80, ny: 0.60, y: 0, speed: 0.00521, opacity: 0.42 }, // 3.2s
+      { progress: -0.40, ny: 0.70, y: 0, speed: 0.00455, opacity: 0.55 }, // 3.7s
     ];
 
     // Parallax scroll — ITER 13
@@ -123,8 +122,8 @@ export default function HeroCanvas() {
 
     const drawOrb = (orb: Orb, breathe: number, parallaxY: number) => {
       const a = orb.opacity * breathe;
-      // Centre Y décalé par le parallax (facteur 0.20 pour subtilité)
-      const cy = orb.y - parallaxY * 0.20;
+      // Centre Y décalé par le parallax — ITER 20: réduit 0.20→0.12
+      const cy = orb.y - parallaxY * 0.12;
       const grad = ctx.createRadialGradient(orb.x, cy, 0, orb.x, cy, orb.r);
       // ITER 17 — profil tighter : peak concentré, falloff rapide → lumière focalisée
       grad.addColorStop(0.00, `rgba(29,158,117,${a})`);
@@ -165,16 +164,19 @@ export default function HeroCanvas() {
       // ITER 14 — gradient non-linéaire, peak au centre, décroissance exponentielle
       // ITER 2  — halo 28px, glow 8px, core 1.5px
 
+      // ITER 20 — entrée/sortie plus douces : ramp commence à 0.03 (était 0.08)
+      // → apparition/disparition plus graduelle, moins abrupte
+
       // 1) halo large diffus
       const halo = ctx.createLinearGradient(startX, 0, endX, 0);
       halo.addColorStop(0.00, "rgba(29,158,117,0)");
-      halo.addColorStop(0.08, "rgba(29,158,117,0)");
-      halo.addColorStop(0.22, `rgba(29,158,117,${0.030 * beam.opacity})`);
-      halo.addColorStop(0.40, `rgba(29,158,117,${0.055 * beam.opacity})`);
+      halo.addColorStop(0.03, `rgba(29,158,117,${0.008 * beam.opacity})`);
+      halo.addColorStop(0.18, `rgba(29,158,117,${0.030 * beam.opacity})`);
+      halo.addColorStop(0.38, `rgba(29,158,117,${0.055 * beam.opacity})`);
       halo.addColorStop(0.50, `rgba(29,158,117,${0.070 * beam.opacity})`);
-      halo.addColorStop(0.60, `rgba(29,158,117,${0.055 * beam.opacity})`);
-      halo.addColorStop(0.78, `rgba(29,158,117,${0.030 * beam.opacity})`);
-      halo.addColorStop(0.92, "rgba(29,158,117,0)");
+      halo.addColorStop(0.62, `rgba(29,158,117,${0.055 * beam.opacity})`);
+      halo.addColorStop(0.82, `rgba(29,158,117,${0.030 * beam.opacity})`);
+      halo.addColorStop(0.97, `rgba(29,158,117,${0.008 * beam.opacity})`);
       halo.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = halo;
       ctx.lineWidth = 28;
@@ -185,13 +187,13 @@ export default function HeroCanvas() {
       // 2) glow intermédiaire
       const glow = ctx.createLinearGradient(startX, 0, endX, 0);
       glow.addColorStop(0.00, "rgba(29,158,117,0)");
-      glow.addColorStop(0.08, "rgba(29,158,117,0)");
-      glow.addColorStop(0.20, `rgba(29,158,117,${0.18 * beam.opacity})`);
-      glow.addColorStop(0.40, `rgba(29,158,117,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.03, `rgba(29,158,117,${0.04 * beam.opacity})`);
+      glow.addColorStop(0.18, `rgba(29,158,117,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.38, `rgba(29,158,117,${0.42 * beam.opacity})`);
       glow.addColorStop(0.50, `rgba(29,158,117,${0.52 * beam.opacity})`);
-      glow.addColorStop(0.60, `rgba(29,158,117,${0.42 * beam.opacity})`);
-      glow.addColorStop(0.80, `rgba(29,158,117,${0.18 * beam.opacity})`);
-      glow.addColorStop(0.92, "rgba(29,158,117,0)");
+      glow.addColorStop(0.62, `rgba(29,158,117,${0.42 * beam.opacity})`);
+      glow.addColorStop(0.82, `rgba(29,158,117,${0.18 * beam.opacity})`);
+      glow.addColorStop(0.97, `rgba(29,158,117,${0.04 * beam.opacity})`);
       glow.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = glow;
       ctx.lineWidth = 8;
@@ -203,13 +205,13 @@ export default function HeroCanvas() {
       // 3) core fin très lumineux — teinte légèrement plus claire au peak
       const core = ctx.createLinearGradient(startX, 0, endX, 0);
       core.addColorStop(0.00, "rgba(29,158,117,0)");
-      core.addColorStop(0.08, "rgba(29,158,117,0)");
-      core.addColorStop(0.20, `rgba(54,191,147,${0.60 * beam.opacity})`);
-      core.addColorStop(0.40, `rgba(96,210,167,${0.88 * beam.opacity})`);
+      core.addColorStop(0.03, `rgba(29,158,117,${0.10 * beam.opacity})`);
+      core.addColorStop(0.18, `rgba(54,191,147,${0.60 * beam.opacity})`);
+      core.addColorStop(0.38, `rgba(96,210,167,${0.88 * beam.opacity})`);
       core.addColorStop(0.50, `rgba(124,224,186,${1.00 * beam.opacity})`);
-      core.addColorStop(0.60, `rgba(96,210,167,${0.88 * beam.opacity})`);
-      core.addColorStop(0.80, `rgba(54,191,147,${0.60 * beam.opacity})`);
-      core.addColorStop(0.92, "rgba(29,158,117,0)");
+      core.addColorStop(0.62, `rgba(96,210,167,${0.88 * beam.opacity})`);
+      core.addColorStop(0.82, `rgba(54,191,147,${0.60 * beam.opacity})`);
+      core.addColorStop(0.97, `rgba(29,158,117,${0.10 * beam.opacity})`);
       core.addColorStop(1.00, "rgba(29,158,117,0)");
       ctx.strokeStyle = core;
       ctx.lineWidth = 1.5;
