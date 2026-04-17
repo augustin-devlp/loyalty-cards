@@ -90,10 +90,11 @@ export default function HeroCanvas() {
     // ITER 45 — dead zone réduit (1.3/-0.3 → 1.1/-0.1), stagger 0.40 → 83% visible
     // ITER 46 — beam[1] 0.72→0.80, beam[2] 0.52→0.62 : luminosité plus uniforme (type handhold)
     // ITER 52 — Y remontés [0.39,0.47,0.56]→[0.35,0.44,0.53] : zone headline du hero
+    // ITER 64 — positions initiales : beam[0] au centre (visible dès le fade-in 50ms)
     const beams: Beam[] = [
-      { progress:  0.00, ny: 0.35, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.40, ny: 0.44, y: 0, speed: 0.00400, opacity: 0.80 }, // 4.2s
-      { progress: -0.40, ny: 0.53, y: 0, speed: 0.00510, opacity: 0.62 }, // 3.3s
+      { progress:  0.50, ny: 0.35, y: 0, speed: 0.00476, opacity: 1.00 }, // peak centre canvas dès load
+      { progress:  0.90, ny: 0.44, y: 0, speed: 0.00400, opacity: 0.80 }, // droite, sort rapidement
+      { progress:  0.10, ny: 0.53, y: 0, speed: 0.00510, opacity: 0.62 }, // gauche, entre ~1s
     ];
 
     // Parallax scroll — ITER 13
