@@ -294,12 +294,15 @@ export default function HeroCanvas() {
         const ampY = 15 + i * 1.5; // ITER 50: 12→15 base (15-21px vertical)
         const fX = 0.40 + i * 0.015; // 0.400, 0.415, 0.430, 0.445, 0.460
         const fY = 0.33 + i * 0.012; // 0.330, 0.342, 0.354, 0.366, 0.378
+        // ITER 75 — 3ème harmonique très lente (~330s) pour éviter toute répétition visible
         o.x = baseX
-          + Math.sin(time * fX   + o.phase)        * ampX
-          + Math.sin(time * 0.17 + o.phase * 1.6)  * (ampX * 0.30);
+          + Math.sin(time * fX    + o.phase)          * ampX
+          + Math.sin(time * 0.17  + o.phase * 1.6)    * (ampX * 0.30)
+          + Math.sin(time * 0.060 + o.phase * 0.7)    * (ampX * 0.15);
         o.y = baseY
-          + Math.cos(time * fY   + o.phase * 0.8)  * ampY
-          + Math.cos(time * 0.14 + o.phase * 2.0)  * (ampY * 0.35);
+          + Math.cos(time * fY    + o.phase * 0.8)    * ampY
+          + Math.cos(time * 0.14  + o.phase * 2.0)    * (ampY * 0.35)
+          + Math.cos(time * 0.045 + o.phase * 1.4)    * (ampY * 0.20);
       }
 
       const parallaxY = scrollOffset;
