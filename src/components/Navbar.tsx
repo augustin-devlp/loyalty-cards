@@ -1,155 +1,198 @@
-"use client";
+'use client';
+import { useState } from 'react';
+import Link from 'next/link';
+import { useNavbarScroll } from '@/hooks/useNavbarScroll';
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import StampifyLogo from "./StampifyLogo";
+function StampifyLogo({ white = false }: { white?: boolean }) {
+  const color = white ? '#ffffff' : '#1d9e75';
+  const textColor = white ? '#ffffff' : '#1a1a1a';
+  return (
+    <div className="flex items-center gap-2.5">
+      {/* 3×3 stamp grid */}
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        {/* Row 1 */}
+        <circle cx="6"  cy="6"  r="4" fill={color} />
+        <circle cx="16" cy="6"  r="4" fill={color} />
+        <circle cx="26" cy="6"  r="4" fill={color} />
+        {/* Row 2 */}
+        <circle cx="6"  cy="16" r="4" fill={color} />
+        <circle cx="16" cy="16" r="4" fill={color} />
+        <circle cx="26" cy="16" r="4" fill={color} />
+        {/* Row 3 */}
+        <circle cx="6"  cy="26" r="4" fill={color} />
+        <circle cx="16" cy="26" r="4" fill={color} />
+        <circle cx="26" cy="26" r="4" fill={color} />
+      </svg>
+      <span
+        className="text-xl font-bold tracking-tight"
+        style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          color: textColor,
+          letterSpacing: '-0.02em',
+        }}
+      >
+        Stampify
+      </span>
+    </div>
+  );
+}
+
+const navLinks = [
+  { label: 'Accueil', href: '#' },
+  { label: 'Comment ça marche', href: '#solution' },
+  { label: 'Tarif', href: '#pricing' },
+  { label: 'Démos', href: '#demos' },
+];
 
 export default function Navbar() {
-  const [hidden, setHidden] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const cur = window.scrollY;
-      setHidden(cur > 80 && cur > lastScrollY.current);
-      lastScrollY.current = cur;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [mobileOpen]);
-
-  const links = [
-    { label: "Fonctionnalités", href: "/fonctionnalites" },
-    { label: "Tarif", href: "/tarif" },
-    { label: "Démos", href: "/demos" },
-    { label: "Blog", href: "/blog" },
-  ];
+  const scrolled = useNavbarScroll();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <>
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 1000,
-        height: "52px",
-        background: "rgba(251,248,243,0.9)",
-        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
-        borderBottom: "1px solid rgba(0,0,0,0.06)",
-        transform: hidden ? "translateY(-100%)" : "translateY(0)",
-        transition: "transform 0.25s ease",
-        display: "flex", alignItems: "center",
-        fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
-      }}>
-        <div style={{
-          maxWidth: "900px", margin: "0 auto", padding: "0 20px",
-          width: "100%", display: "flex", alignItems: "center",
-          justifyContent: "space-between", height: "100%",
-        }}>
-          {/* Logo */}
-          <Link href="/" style={{ textDecoration: "none" }}>
-            <StampifyLogo size="md" color="dark" />
-          </Link>
-
-          {/* Desktop links */}
-          <div className="nav4-links" style={{ display: "flex", alignItems: "center", gap: "28px" }}>
-            {links.map((l) => (
-              <Link
-                key={l.href} href={l.href}
-                style={{ fontSize: "14px", color: "#5C5C5C", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#1A1A1A")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#5C5C5C")}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="nav4-cta">
-            <Link
-              href="/subscribe"
-              style={{
-                background: "#1d9e75", color: "#fff", borderRadius: "980px",
-                padding: "8px 20px", fontSize: "13px", fontWeight: 600,
-                textDecoration: "none", display: "inline-block",
-                transition: "background 0.2s, transform 0.2s",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#0D7A5A"; e.currentTarget.style.transform = "scale(1.02)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "#1d9e75"; e.currentTarget.style.transform = "scale(1)"; }}
-            >
-              Obtenir mon site
-            </Link>
-          </div>
-
-          {/* Hamburger */}
-          <button
-            className="nav4-ham"
-            onClick={() => setMobileOpen(true)}
-            aria-label="Ouvrir le menu"
-            style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", display: "none", flexDirection: "column", gap: "5px" }}
-          >
-            {[0, 1, 2].map((i) => (
-              <span key={i} style={{ display: "block", width: "22px", height: "1.5px", background: "#1A1A1A", borderRadius: "2px" }} />
-            ))}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile fullscreen */}
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 1100,
-        background: "rgba(251,248,243,0.97)",
-        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
-        display: "flex", flexDirection: "column",
-        padding: "20px 24px 40px",
-        opacity: mobileOpen ? 1 : 0,
-        transform: mobileOpen ? "translateY(0)" : "translateY(-8px)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
-        pointerEvents: mobileOpen ? "auto" : "none",
-        overflowY: "auto",
-        fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif",
-      }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "48px" }}>
-          <Link href="/" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none" }}>
-            <StampifyLogo size="md" color="dark" />
-          </Link>
-          <button onClick={() => setMobileOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1A1A1A", lineHeight: 1 }}>✕</button>
-        </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
-          {links.map((l) => (
-            <Link
-              key={l.href} href={l.href}
-              onClick={() => setMobileOpen(false)}
-              style={{ fontSize: "28px", fontWeight: 700, color: "#1A1A1A", textDecoration: "none", padding: "14px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-        <Link
-          href="/subscribe"
-          onClick={() => setMobileOpen(false)}
-          style={{
-            background: "#1d9e75", color: "#fff", borderRadius: "980px",
-            padding: "18px 24px", fontSize: "17px", fontWeight: 600,
-            textDecoration: "none", textAlign: "center", display: "block", marginTop: "32px",
-          }}
-        >
-          Obtenir mon site — 990 CHF
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled ? 'rgba(255,255,255,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(0,0,0,0.07)' : '1px solid transparent',
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex-shrink-0">
+          <StampifyLogo />
         </Link>
+
+        {/* Desktop nav links */}
+        <ul className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => (
+            <li key={link.label}>
+              <Link
+                href={link.href}
+                className="relative px-4 py-2 text-sm font-medium text-gray-700 hover:text-[#1d9e75] transition-colors duration-200 group"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {link.label}
+                <span
+                  className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-[#1d9e75] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
+                />
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        {/* Desktop CTA buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/login"
+            className="text-sm font-medium transition-colors duration-200"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              color: '#1d9e75',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#0d7a5a')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#1d9e75')}
+          >
+            Se connecter
+          </Link>
+          <Link
+            href="#pricing"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              background: '#1d9e75',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#0d7a5a')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#1d9e75')}
+          >
+            Démarrer
+          </Link>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-expanded={menuOpen}
+        >
+          <span
+            className="block h-0.5 w-5 bg-gray-700 rounded-full transition-all duration-300 origin-center"
+            style={{
+              transform: menuOpen ? 'translateY(7px) rotate(45deg)' : 'none',
+            }}
+          />
+          <span
+            className="block h-0.5 w-5 bg-gray-700 rounded-full transition-all duration-300"
+            style={{
+              opacity: menuOpen ? 0 : 1,
+              transform: menuOpen ? 'scaleX(0)' : 'none',
+            }}
+          />
+          <span
+            className="block h-0.5 w-5 bg-gray-700 rounded-full transition-all duration-300 origin-center"
+            style={{
+              transform: menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none',
+            }}
+          />
+        </button>
       </div>
 
-      <style>{`
-        @media (max-width: 767px) {
-          .nav4-links { display: none !important; }
-          .nav4-cta { display: none !important; }
-          .nav4-ham { display: flex !important; }
-        }
-      `}</style>
-    </>
+      {/* Mobile dropdown menu */}
+      <div
+        className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+        style={{
+          maxHeight: menuOpen ? '400px' : '0px',
+          opacity: menuOpen ? 1 : 0,
+        }}
+      >
+        <div
+          className="px-5 pb-5 pt-2 flex flex-col gap-1"
+          style={{
+            background: 'rgba(255,255,255,0.97)',
+            backdropFilter: 'blur(12px)',
+            borderBottom: '1px solid rgba(0,0,0,0.07)',
+          }}
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="py-3 px-2 text-sm font-medium text-gray-700 hover:text-[#1d9e75] border-b border-gray-100 last:border-b-0 transition-colors duration-200"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <div className="flex flex-col gap-2 pt-3">
+            <Link
+              href="/login"
+              className="py-2.5 px-4 text-sm font-medium text-center rounded-xl border transition-colors duration-200"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                color: '#1d9e75',
+                borderColor: '#1d9e75',
+              }}
+              onClick={() => setMenuOpen(false)}
+            >
+              Se connecter
+            </Link>
+            <Link
+              href="#pricing"
+              className="py-2.5 px-4 text-sm font-semibold text-center text-white rounded-xl transition-all duration-200"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                background: '#1d9e75',
+              }}
+              onClick={() => setMenuOpen(false)}
+            >
+              Démarrer
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 }
