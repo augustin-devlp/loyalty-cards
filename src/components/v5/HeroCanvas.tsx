@@ -266,8 +266,8 @@ export default function HeroCanvas() {
         const o = orbsBase[i];
         const baseX = o.nx * W;
         const baseY = o.ny * H;
-        // Amplitude réduite : 18-26px horizontal, 12-18px vertical
-        const ampX = 18 + i * 2;
+        // ITER 48 — ampX 18-26→22-30px : dérive plus organique, mouvement perceptible
+        const ampX = 22 + i * 2;
         const ampY = 12 + i * 1.5;
         const fX = 0.40 + i * 0.015; // 0.400, 0.415, 0.430, 0.445, 0.460
         const fY = 0.33 + i * 0.012; // 0.330, 0.342, 0.354, 0.366, 0.378
