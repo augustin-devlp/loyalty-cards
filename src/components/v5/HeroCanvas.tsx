@@ -74,7 +74,7 @@ export default function HeroCanvas() {
     // ITER 8 — orb[0] recentré à 0.50 (dominant haut-centre comme handhold)
     // orb[4] nappe ambiante très large quasi-invisible
     const orbsBase: Orb[] = [
-      { nx: 0.50, ny:  0.02, nr: 0.72, opacity: 0.13,  phase: 0.0, x: 0, y: 0, r: 0 }, // ITER 29: centre dans canvas, r 0.65→0.72
+      { nx: 0.50, ny:  0.02, nr: 0.72, opacity: 0.15,  phase: 0.0, x: 0, y: 0, r: 0 }, // ITER 47: 0.13→0.15 présence haut-centre plus forte
       { nx: 0.85, ny:  0.20, nr: 0.38, opacity: 0.10,  phase: 1.4, x: 0, y: 0, r: 0 }, // ITER 26 0.085→0.10
       { nx: 0.15, ny:  0.55, nr: 0.34, opacity: 0.07,  phase: 2.7, x: 0, y: 0, r: 0 }, // ITER 38: ny 0.68→0.55 dans viewport
       { nx: 0.78, ny:  0.05, nr: 0.18, opacity: 0.09,  phase: 3.9, x: 0, y: 0, r: 0 }, // ITER 38: ny -0.05→0.05 dans canvas
@@ -209,8 +209,8 @@ export default function HeroCanvas() {
       glow.addColorStop(1.00, "rgba(22,168,130,0)");
       ctx.strokeStyle = glow;
       ctx.lineWidth = 10; // ITER 43: 8→10px glow plus épais
-      ctx.shadowBlur = 20; // ITER 28: 14→20 glow plus étendu
-      ctx.shadowColor = "rgba(22,168,130,0.45)"; // ITER 35: teal shadow
+      ctx.shadowBlur = 24; // ITER 47: 20→24 diffusion atmosphérique renforcée
+      ctx.shadowColor = "rgba(22,168,130,0.50)"; // ITER 47: 0.45→0.50 (plus d'éclat autour du beam)
       tracePath(startX, endX, beam.y - 0.5);
       ctx.stroke();
 
