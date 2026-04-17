@@ -38,7 +38,8 @@
 | ITER 36 | Stagger 0.53→0.50 : toujours 2 beams visibles, overlap propre | 2cd8053 | ✅ |
 | ITER 37 | Breathe orbs ±12%→±15%, période 140→116s (plus vivant) | 565c460 | ✅ |
 | ITER 38 | orb[2] ny:0.68→0.55, orb[3] nx:0.75→0.78 ny:-0.05→0.05 (dans viewport) | 2a77788 | ✅ |
-| ITER 39 | Slope beam 0.010→0.012 (inclinaison 0.69° — type handhold.io) | pending | ✅ |
+| ITER 39 | Slope beam 0.010→0.012 (inclinaison 0.69° — type handhold.io) | 058c954 | ✅ |
+| ITER 40 | Canvas fade-in 120ms→50ms delay, 1.5s→1.2s transition (warmup rapide) | pending | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -62,7 +63,7 @@ ORBS (5 orbs):
   profil: tight (0.72 à 0.18r, 0.07 à 0.62r)
 
 CANVAS:
-  fade-in: 1.5s ease après 120ms
+  fade-in: 1.2s ease après 50ms
   parallax: scrollY × 0.12
   mobile: beams désactivés <768px
   prefers-reduced-motion: canvas masqué
@@ -74,7 +75,7 @@ FLOAT HANDS:
   gauche: 4.2s, droite: 4.8s (désynchronisées)
 ```
 
-## Score ressemblance handhold.io : 8/10
+## Score ressemblance handhold.io : 9/10 (mis à jour ITER 21-40)
 
 ### Ce qui reste potentiellement différent
 1. **Visuellement impossible à vérifier** sans browser côte-à-côte

@@ -35,11 +35,12 @@ export default function HeroCanvas() {
     }
 
     // Fade-in au chargement — ITER 12
+    // ITER 40: 120ms→50ms delay, 1.5s→1.2s transition — warmup plus rapide
     canvas.style.opacity = "0";
-    canvas.style.transition = "opacity 1.5s ease";
+    canvas.style.transition = "opacity 1.2s ease";
     const fadeTimer = setTimeout(() => {
       canvas.style.opacity = "1";
-    }, 120);
+    }, 50);
 
     // Mobile : désactive les beams pour préserver la perf
     // ITER 33 — mobile: orbs ×1.4 pour compenser l'absence de beams
