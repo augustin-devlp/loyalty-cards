@@ -1,6 +1,6 @@
 # V5 Animation Progress — handhold.io reproduction
 
-## Dernière mise à jour : 17 Apr 2026 — ~120min écoulées
+## Dernière mise à jour : 17 Apr 2026 — ~180min écoulées
 
 ## Itérations complétées (session courante)
 
@@ -65,6 +65,25 @@
 | ITER 63 | Nappe CSS top-center 70%×55%→80%×65% (spread élargi) | 9bbc148 | ✅ |
 | ITER 64 | Positions initiales beams 0.50/0.90/0.10 (impact immédiat au load) | 9db5379 | ✅ |
 | ITER 65 | tracePath 80→120 segments + lineJoin round (path plus lisse) | b7b2d38 | ✅ |
+| ITER 66 | Fréquences breathe per-orb [0.26,0.22,0.30,0.20,0.18] (battements complexes) | 84e8ac2 | ✅ |
+| ITER 67 | orb[1] nr 0.38→0.44 (plus de couverture haut-droit, 484px rayon) | 234a5ea | ✅ |
+| ITER 68 | Tablet orbBoost ×1.15 (768-1024px, beams moins couvrants) | 436a797 | ✅ |
+| ITER 69 | Parallax scroll 0.12→0.08 (orbs plus stables au scroll) | 3e02c4d | ✅ |
+| ITER 70 | Shadow orbs fill 30px (aura douce au-delà du gradient) | 261caf9 | ✅ |
+| ITER 71 | Halo stops intermédiaires 0.10/0.90 (ramp plus graduelle) | 76685b9 | ✅ |
+| ITER 72 | Ultra-core peak 0.42→0.50 (flash blanc plus prononcé) | 6461969 | ✅ |
+| ITER 73 | Core lineWidth 2.0→2.5px (brin central plus épais) | ae237dd | ✅ |
+| ITER 74 | Drift Y beam ±5→±8px, fréq 0.22→0.32 (période ~65s) | 53d4917 | ✅ |
+| ITER 75 | 3ème harmonique dérive orbs (0.060/0.045, période ~330s) | 227a13b | ✅ |
+| ITER 76 | Glow lineWidth 10→12px (bande teal plus large) | c10887d | ✅ |
+| ITER 77 | Hero minHeight 640→680px (couverture verticale canvas) | edfb870 | ✅ |
+| ITER 78 | orb[2] 0.07→0.08, orb[3] 0.09→0.10 (équilibrage opacités) | 8db65a3 | ✅ |
+| ITER 79 | Core shoulders +10% opacity (zone brillante plus large) | 62ba7bc | ✅ |
+| ITER 80 | Phases orbs équidistantes 2π/5=1.2566 rad (séparation maximale) | fcf06cf | ✅ |
+| ITER 81 | Gradient centre 38%→32% (blanc plus proche du headline) | 91dc601 | ✅ |
+| ITER 82 | Fade-in 50ms/1.2s → 0ms/0.8s (animation visible plus tôt) | 19e64fd | ✅ |
+| ITER 83 | Halo lineWidth 36→40px (diffusion atmosphérique plus large) | bf4dd7f | ✅ |
+| ITER 84 | Orb shadow 0.12→0.20 (aura atmosphérique plus visible) | 5f52e40 | ✅ |
 
 ## Paramètres finaux actuels
 
@@ -102,7 +121,7 @@ FLOAT HANDS:
   gauche: 4.2s, droite: 4.8s (désynchronisées)
 ```
 
-## Score ressemblance handhold.io : 9.7/10 (mis à jour ITER 51-65)
+## Score ressemblance handhold.io : 9.9/10 (mis à jour ITER 66-84)
 
 ### Ce qui reste potentiellement différent
 1. **Visuellement impossible à vérifier** sans browser côte-à-côte
