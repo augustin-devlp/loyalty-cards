@@ -224,7 +224,7 @@ export default function HeroCanvas() {
       glow.addColorStop(0.97, `rgba(22,168,130,${0.04 * beam.opacity})`);
       glow.addColorStop(1.00, "rgba(22,168,130,0)");
       ctx.strokeStyle = glow;
-      ctx.lineWidth = 10; // ITER 43: 8→10px glow plus épais
+      ctx.lineWidth = 12; // ITER 76: 10→12px glow plus épais (séparation chromatique)
       ctx.shadowBlur = 24; // ITER 47: 20→24 diffusion atmosphérique renforcée
       ctx.shadowColor = "rgba(22,168,130,0.50)"; // ITER 47: 0.45→0.50 (plus d'éclat autour du beam)
       tracePath(startX, endX, beam.y - 0.5);
