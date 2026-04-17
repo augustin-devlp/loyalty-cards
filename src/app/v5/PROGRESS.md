@@ -34,7 +34,8 @@
 | ITER 32 | Amplitude arc beam 2.0→3.5px (arc visible avec freq spatiale 0.0030) | f8d5de1 | ✅ |
 | ITER 33 | Mobile: orbBoost ×1.4 (compense l'absence de beams <768px) | b162f5d | ✅ |
 | ITER 34 | Beams Y resserrés [0.39,0.47,0.56] bande lumineuse cohérente ~17%H | 5142ca2 | ✅ |
-| ITER 35 | Séparation chromatique: glow rgba(22,168,130) teal vs halo/core vert | pending | ✅ |
+| ITER 35 | Séparation chromatique: glow rgba(22,168,130) teal vs halo/core vert | 5439426 | ✅ |
+| ITER 36 | Stagger 0.53→0.50 : toujours 2 beams visibles, overlap propre | pending | ✅ |
 
 ## Paramètres finaux actuels
 
