@@ -84,10 +84,11 @@ export default function HeroCanvas() {
     // ITER 20 — positions Y calées sur la zone texte/mockup du hero
     //           (entre 36% et 64% de hauteur, évite de passer trop haut)
     // ITER 22 — 3 beams (comme handhold.io), stagger 1.6/3≈0.53 → 1-2 beams simultanés
+    // ITER 34 — Y positions resserrées [0.39,0.47,0.56] bande lumineuse cohérente (~17%H)
     const beams: Beam[] = [
-      { progress:  0.00, ny: 0.36, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
-      { progress:  0.53, ny: 0.50, y: 0, speed: 0.00400, opacity: 0.70 }, // 4.2s
-      { progress: -0.53, ny: 0.64, y: 0, speed: 0.00510, opacity: 0.50 }, // 3.3s
+      { progress:  0.00, ny: 0.39, y: 0, speed: 0.00476, opacity: 1.00 }, // 3.5s
+      { progress:  0.53, ny: 0.47, y: 0, speed: 0.00400, opacity: 0.72 }, // 4.2s
+      { progress: -0.53, ny: 0.56, y: 0, speed: 0.00510, opacity: 0.52 }, // 3.3s
     ];
 
     // Parallax scroll — ITER 13
