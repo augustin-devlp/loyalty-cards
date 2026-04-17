@@ -12,7 +12,6 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.2",
     "@types/three": "^0.184.0",
-    "animejs": "^4.3.6",
     "framer-motion": "^12.38.0",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.3",
