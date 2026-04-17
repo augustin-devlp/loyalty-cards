@@ -256,7 +256,7 @@ export default function HeroCanvas() {
       ultra.addColorStop(0.00, "rgba(255,255,255,0)");
       ultra.addColorStop(0.42, "rgba(255,255,255,0)");
       ultra.addColorStop(0.46, `rgba(255,255,255,${0.18 * beam.opacity})`);
-      ultra.addColorStop(0.50, `rgba(255,255,255,${0.42 * beam.opacity})`);
+      ultra.addColorStop(0.50, `rgba(255,255,255,${0.50 * beam.opacity})`); // ITER 72: 0.42→0.50
       ultra.addColorStop(0.54, `rgba(255,255,255,${0.18 * beam.opacity})`);
       ultra.addColorStop(0.58, "rgba(255,255,255,0)");
       ultra.addColorStop(1.00, "rgba(255,255,255,0)");
