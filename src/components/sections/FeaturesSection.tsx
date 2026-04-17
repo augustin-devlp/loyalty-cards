@@ -114,15 +114,24 @@ function SEOSearchMockup() {
 export default function FeaturesSection() {
   return (
     <div>
+      <style>{`
+        .feat-row { display: flex; align-items: center; gap: 80px; }
+        @media (max-width: 900px) {
+          .feat-row { flex-direction: column !important; gap: 40px; }
+          .feat-section { padding: 72px 20px !important; }
+          .feat-text h2 { font-size: clamp(22px,6vw,32px) !important; }
+        }
+        @media (max-width: 480px) {
+          .feat-section { padding: 56px 16px !important; }
+        }
+      `}</style>
       {features.map((f, i) => (
-        <section key={i} style={{ background: f.bg, padding: "120px 24px" }}>
+        <section key={i} className="feat-section" style={{ background: f.bg, padding: "120px 24px" }}>
           <div
+            className="feat-row"
             style={{
               maxWidth: 1200,
               margin: "0 auto",
-              display: "flex",
-              alignItems: "center",
-              gap: 80,
               flexDirection: f.imgLeft ? "row" : "row-reverse",
             }}
           >

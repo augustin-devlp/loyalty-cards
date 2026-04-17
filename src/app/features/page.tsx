@@ -218,14 +218,23 @@ export default function FeaturesPage() {
           </p>
         </section>
 
+        <style>{`
+          .fp-row { display: flex; align-items: center; gap: 80px; }
+          @media (max-width: 900px) {
+            .fp-row { flex-direction: column !important; gap: 40px; }
+            .fp-section { padding: 72px 20px !important; }
+            .fp-section h2 { font-size: clamp(22px,6vw,32px) !important; }
+          }
+          @media (max-width: 480px) {
+            .fp-section { padding: 56px 16px !important; }
+          }
+        `}</style>
+
         {/* Feature alternating sections */}
         {features.map((f, i) => (
-          <section key={i} style={{ background: f.bg, padding: "120px 24px" }}>
-            <div style={{
+          <section key={i} className="fp-section" style={{ background: f.bg, padding: "120px 24px" }}>
+            <div className="fp-row" style={{
               maxWidth: 1200, margin: "0 auto",
-              display: "flex",
-              alignItems: "center",
-              gap: 80,
               flexDirection: f.imgLeft ? "row" : "row-reverse",
             }}>
               {/* Visual */}

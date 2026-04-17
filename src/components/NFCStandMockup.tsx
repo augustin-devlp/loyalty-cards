@@ -2,210 +2,164 @@
 
 export default function NFCStandMockup() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "20px 0", userSelect: "none" }}>
+    <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", padding: "16px 0", userSelect: "none" }}>
       <style>{`
-        @keyframes nfcPhoneFloat {
-          0%,100% { transform: translateX(-50%) translateY(-60px); }
-          38%,62% { transform: translateX(-50%) translateY(4px); }
+        @keyframes nfcPhone {
+          0%,100% { transform: translateY(-52px); }
+          38%,62% { transform: translateY(6px); }
         }
-        @keyframes nfcArc1 {
-          0%,28% { opacity: 0; transform: scaleX(0.6) scaleY(0.6); }
-          42%,56% { opacity: 1; transform: scaleX(1) scaleY(1); }
-          68%,100% { opacity: 0; transform: scaleX(1.6) scaleY(1.6); }
+        @keyframes nfcW1 {
+          0%,28%{ opacity:0; transform:scaleX(0.55) scaleY(0.55); }
+          42%,56%{ opacity:1; transform:scaleX(1) scaleY(1); }
+          70%,100%{ opacity:0; transform:scaleX(1.7) scaleY(1.7); }
         }
-        @keyframes nfcArc2 {
-          0%,34% { opacity: 0; transform: scaleX(0.6) scaleY(0.6); }
-          48%,60% { opacity: 0.65; transform: scaleX(1) scaleY(1); }
-          74%,100% { opacity: 0; transform: scaleX(1.7) scaleY(1.7); }
+        @keyframes nfcW2 {
+          0%,34%{ opacity:0; transform:scaleX(0.55) scaleY(0.55); }
+          48%,60%{ opacity:0.6; transform:scaleX(1) scaleY(1); }
+          76%,100%{ opacity:0; transform:scaleX(1.8) scaleY(1.8); }
         }
-        @keyframes nfcArc3 {
-          0%,40% { opacity: 0; transform: scaleX(0.6) scaleY(0.6); }
-          54%,64% { opacity: 0.38; transform: scaleX(1) scaleY(1); }
-          80%,100% { opacity: 0; transform: scaleX(1.8) scaleY(1.8); }
+        @keyframes nfcW3 {
+          0%,40%{ opacity:0; transform:scaleX(0.55) scaleY(0.55); }
+          54%,64%{ opacity:0.35; transform:scaleX(1) scaleY(1); }
+          82%,100%{ opacity:0; transform:scaleX(1.9) scaleY(1.9); }
         }
-        @keyframes nfcStampPop {
-          0%,50%  { opacity: 0; transform: scale(0) rotate(-15deg); }
-          62%,84% { opacity: 1; transform: scale(1) rotate(0deg); }
-          94%,100%{ opacity: 0; transform: scale(1.1) rotate(0deg); }
+        @keyframes nfcCheck {
+          0%,50%{ opacity:0; transform:scale(0) rotate(-15deg); }
+          62%,84%{ opacity:1; transform:scale(1) rotate(0deg); }
+          94%,100%{ opacity:0; transform:scale(1.1); }
         }
-        @keyframes standGlow {
-          0%,30%  { filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18)); }
-          45%,65% { filter: drop-shadow(0 8px 32px rgba(29,158,117,0.35)) drop-shadow(0 0 12px rgba(29,158,117,0.2)); }
-          80%,100%{ filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18)); }
+        @keyframes nfcGlow {
+          0%,30%{ filter:drop-shadow(0 12px 28px rgba(0,0,0,0.2)); }
+          45%,65%{ filter:drop-shadow(0 12px 36px rgba(29,158,117,0.4)) drop-shadow(0 0 16px rgba(29,158,117,0.18)); }
+          80%,100%{ filter:drop-shadow(0 12px 28px rgba(0,0,0,0.2)); }
         }
       `}</style>
 
-      <div style={{ position: "relative", width: 340, height: 420 }}>
+      {/* Outer container — scales with parent, max width */}
+      <div style={{ width: "100%", maxWidth: 380, position: "relative" }}>
 
-        {/* Phone */}
-        <div style={{
-          position: "absolute",
-          top: 0,
-          left: "50%",
-          transform: "translateX(-50%) translateY(-60px)",
-          animation: "nfcPhoneFloat 3.4s cubic-bezier(0.45,0,0.55,1) infinite",
-          width: 100,
-          zIndex: 10,
-        }}>
-          <svg width="100" height="188" viewBox="0 0 100 188" fill="none">
+        {/* SVG — full width, fixed viewBox */}
+        <svg
+          width="100%"
+          viewBox="0 0 380 430"
+          fill="none"
+          style={{ overflow: "visible", display: "block" }}
+        >
+          <defs>
+            <linearGradient id="nfcWood2" x1="40" y1="230" x2="340" y2="360" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#d4956a"/>
+              <stop offset="45%" stopColor="#b07035"/>
+              <stop offset="100%" stopColor="#7a4f2a"/>
+            </linearGradient>
+            <linearGradient id="nfcWoodTop2" x1="40" y1="230" x2="340" y2="265" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#e8b07a"/>
+              <stop offset="100%" stopColor="#c4843a"/>
+            </linearGradient>
+            <linearGradient id="nfcWoodSide2" x1="40" y1="350" x2="340" y2="375" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#8a5230"/>
+              <stop offset="100%" stopColor="#5a3018"/>
+            </linearGradient>
+            <linearGradient id="nfcCounter2" x1="0" y1="370" x2="380" y2="420" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#e8d5b7"/>
+              <stop offset="100%" stopColor="#ccb898"/>
+            </linearGradient>
+            <linearGradient id="nfcCardShine" x1="100" y1="30" x2="280" y2="190" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.18)"/>
+              <stop offset="100%" stopColor="rgba(0,0,0,0.06)"/>
+            </linearGradient>
+          </defs>
+
+          {/* ── PHONE ── */}
+          <g style={{ animation: "nfcPhone 3.6s cubic-bezier(0.45,0,0.55,1) infinite", transformOrigin: "190px 120px" }}>
             {/* Phone body */}
-            <rect x="2" y="2" width="96" height="184" rx="20" fill="#1a1a2e"/>
-            <rect x="2" y="2" width="96" height="184" rx="20" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5"/>
+            <rect x="130" y="10" width="120" height="218" rx="22" fill="#1a1a2e"/>
+            <rect x="130" y="10" width="120" height="218" rx="22" stroke="rgba(255,255,255,0.07)" strokeWidth="1.5"/>
             {/* Side buttons */}
-            <rect x="98" y="52" width="4" height="24" rx="2" fill="#2a2a3e"/>
-            <rect x="-2" y="60" width="4" height="18" rx="2" fill="#2a2a3e"/>
-            <rect x="-2" y="84" width="4" height="18" rx="2" fill="#2a2a3e"/>
+            <rect x="250" y="62" width="5" height="28" rx="2.5" fill="#2a2a3e"/>
+            <rect x="125" y="72" width="5" height="20" rx="2.5" fill="#2a2a3e"/>
+            <rect x="125" y="98" width="5" height="20" rx="2.5" fill="#2a2a3e"/>
             {/* Screen */}
-            <rect x="10" y="18" width="80" height="148" rx="10" fill="#f2f2f7"/>
+            <rect x="140" y="28" width="100" height="180" rx="10" fill="#f2f2f7"/>
             {/* Notch */}
-            <rect x="32" y="8" width="36" height="10" rx="5" fill="#111"/>
-            {/* Loyalty card on screen */}
-            <rect x="14" y="26" width="72" height="48" rx="8" fill="#1d9e75"/>
-            <rect x="14" y="26" width="72" height="48" rx="8" fill="url(#cardShine)"/>
-            <defs>
-              <linearGradient id="cardShine" x1="14" y1="26" x2="86" y2="74" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="rgba(255,255,255,0.15)"/>
-                <stop offset="100%" stopColor="rgba(0,0,0,0.1)"/>
-              </linearGradient>
-            </defs>
-            <text x="50" y="40" textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.9)" fontFamily="Georgia, serif" fontWeight="bold">Boulangerie Martin</text>
-            {/* Stamp grid 5x2 */}
-            {Array.from({ length: 10 }, (_, i) => {
-              const c = i % 5; const r = Math.floor(i / 5);
-              return (
-                <circle key={i}
-                  cx={20 + c * 12} cy={50 + r * 12} r="4.5"
-                  fill={i < 9 ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.15)"}
-                  stroke="rgba(255,255,255,0.4)" strokeWidth="0.8"
-                />
-              );
+            <rect x="168" y="16" width="44" height="11" rx="5.5" fill="#111"/>
+            {/* Loyalty card */}
+            <rect x="144" y="36" width="92" height="70" rx="10" fill="#1d9e75"/>
+            <rect x="144" y="36" width="92" height="70" rx="10" fill="url(#nfcCardShine)"/>
+            {/* card content */}
+            <circle cx="158" cy="52" r="8" fill="rgba(255,255,255,0.18)"/>
+            <text x="158" y="56" textAnchor="middle" fontSize="9" fill="#fff">☕</text>
+            <text x="173" y="50" fontSize="10" fill="rgba(255,255,255,0.95)" fontFamily="Georgia,serif" fontWeight="bold">Boulangerie</text>
+            <text x="173" y="62" fontSize="9" fill="rgba(255,255,255,0.85)" fontFamily="Georgia,serif">Martin</text>
+            <text x="148" y="75" fontSize="7" fill="rgba(255,255,255,0.55)" fontFamily="sans-serif" letterSpacing="0.8">10 TAMPONS · CARTE FIDÉLITÉ</text>
+            {/* stamp grid 5×2 — perfectly contained */}
+            {Array.from({length:10},(_,i)=>{
+              const c=i%5, r=Math.floor(i/5);
+              return <circle key={i} cx={152+c*16} cy={84+r*14} r="5.5"
+                fill={i<9?"rgba(255,255,255,0.82)":"rgba(255,255,255,0.15)"}
+                stroke="rgba(255,255,255,0.3)" strokeWidth="0.8"/>;
             })}
-            {/* Notification badge */}
-            <rect x="14" y="82" width="72" height="22" rx="6" fill="rgba(255,255,255,0.92)"/>
-            <text x="50" y="96" textAnchor="middle" fontSize="7.5" fill="#1d9e75" fontFamily="sans-serif" fontWeight="600">Plus que 1 tampon ! ☕</text>
-            {/* Home indicator */}
-            <rect x="35" y="158" width="30" height="3" rx="1.5" fill="rgba(0,0,0,0.12)"/>
-          </svg>
-        </div>
+            {/* notification */}
+            <rect x="144" y="114" width="92" height="22" rx="6" fill="rgba(255,255,255,0.92)"/>
+            <text x="190" y="128" textAnchor="middle" fontSize="8" fill="#1d9e75" fontFamily="sans-serif" fontWeight="600">Plus que 1 tampon ! 🎉</text>
+            {/* home bar */}
+            <rect x="168" y="200" width="44" height="3" rx="1.5" fill="rgba(0,0,0,0.1)"/>
+          </g>
 
-        {/* NFC waves — centered between phone bottom and stand top */}
-        <div style={{
-          position: "absolute",
-          top: 202,
-          left: "50%",
-          transform: "translateX(-50%)",
-          pointerEvents: "none",
-          zIndex: 5,
-        }}>
-          <svg width="160" height="70" viewBox="0 0 160 70" fill="none" overflow="visible">
-            <g style={{ transformOrigin: "80px 35px", animation: "nfcArc1 3.4s ease-in-out infinite" }}>
-              <path d="M52 42 Q80 16 108 42" stroke="#1d9e75" strokeWidth="3" fill="none" strokeLinecap="round"/>
-            </g>
-            <g style={{ transformOrigin: "80px 42px", animation: "nfcArc2 3.4s ease-in-out infinite" }}>
-              <path d="M36 50 Q80 10 124 50" stroke="#1d9e75" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
-            </g>
-            <g style={{ transformOrigin: "80px 49px", animation: "nfcArc3 3.4s ease-in-out infinite" }}>
-              <path d="M20 58 Q80 4 140 58" stroke="#1d9e75" strokeWidth="1.4" fill="none" strokeLinecap="round"/>
-            </g>
-          </svg>
-        </div>
+          {/* ── NFC WAVES ── centered between phone and stand */}
+          <g style={{ transformOrigin: "190px 298px", animation: "nfcW1 3.6s ease-in-out infinite" }}>
+            <path d="M140 298 Q190 258 240 298" stroke="#1d9e75" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+          </g>
+          <g style={{ transformOrigin: "190px 308px", animation: "nfcW2 3.6s ease-in-out infinite" }}>
+            <path d="M118 310 Q190 252 262 310" stroke="#1d9e75" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+          </g>
+          <g style={{ transformOrigin: "190px 318px", animation: "nfcW3 3.6s ease-in-out infinite" }}>
+            <path d="M96 322 Q190 246 284 322" stroke="#1d9e75" strokeWidth="1.6" fill="none" strokeLinecap="round"/>
+          </g>
 
-        {/* Stamp pop badge */}
-        <div style={{
-          position: "absolute",
-          top: 160,
-          right: 40,
-          zIndex: 20,
-          animation: "nfcStampPop 3.4s ease-in-out infinite",
-          background: "#1d9e75",
-          color: "#fff",
-          borderRadius: "50%",
-          width: 48,
-          height: 48,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 22,
-          fontWeight: 700,
-          boxShadow: "0 8px 24px rgba(29,158,117,0.55)",
-        }}>✓</div>
+          {/* ── CHECKMARK BADGE ── */}
+          <g style={{ animation: "nfcCheck 3.6s ease-in-out infinite", transformOrigin: "276px 236px" }}>
+            <circle cx="276" cy="236" r="24" fill="#1d9e75" filter="url(#ckShadow)"/>
+            <text x="276" y="244" textAnchor="middle" fontSize="22" fill="#fff" fontWeight="bold">✓</text>
+          </g>
+          <defs>
+            <filter id="ckShadow"><feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="rgba(29,158,117,0.5)"/></filter>
+          </defs>
 
-        {/* NFC Wood Stand — large, detailed */}
-        <div style={{
-          position: "absolute",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          animation: "standGlow 3.4s ease-in-out infinite",
-        }}>
-          <svg width="300" height="150" viewBox="0 0 300 150" fill="none">
-            <defs>
-              <linearGradient id="nfcWood" x1="30" y1="18" x2="270" y2="110" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#d4956a"/>
-                <stop offset="40%" stopColor="#b87340"/>
-                <stop offset="100%" stopColor="#7a4f2a"/>
-              </linearGradient>
-              <linearGradient id="nfcWoodTop" x1="30" y1="18" x2="270" y2="42" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#e8b07a"/>
-                <stop offset="100%" stopColor="#c4843a"/>
-              </linearGradient>
-              <linearGradient id="nfcWoodSide" x1="30" y1="100" x2="270" y2="120" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#8a5230"/>
-                <stop offset="100%" stopColor="#5a3018"/>
-              </linearGradient>
-              <linearGradient id="nfcCounter" x1="0" y1="110" x2="300" y2="150" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#e8d5b7"/>
-                <stop offset="100%" stopColor="#ccb898"/>
-              </linearGradient>
-              <filter id="nfcShadow">
-                <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="rgba(0,0,0,0.2)"/>
-              </filter>
-            </defs>
-
+          {/* ── NFC WOOD STAND ── */}
+          <g style={{ animation: "nfcGlow 3.6s ease-in-out infinite" }}>
             {/* Counter surface */}
-            <rect x="0" y="110" width="300" height="40" rx="4" fill="url(#nfcCounter)"/>
-            <rect x="0" y="110" width="300" height="3" rx="2" fill="rgba(255,255,255,0.35)"/>
-
-            {/* Stand shadow on counter */}
-            <ellipse cx="150" cy="116" rx="100" ry="8" fill="rgba(0,0,0,0.14)"/>
-
-            {/* Stand — 3D look with side face */}
-            {/* Side face (bottom darker) */}
-            <rect x="30" y="100" width="240" height="14" rx="0" fill="url(#nfcWoodSide)"/>
-            <rect x="30" y="108" width="240" height="6" rx="0" fill="rgba(0,0,0,0.15)"/>
-
-            {/* Main body */}
-            <rect x="30" y="18" width="240" height="90" rx="14" fill="url(#nfcWood)" filter="url(#nfcShadow)"/>
-
+            <rect x="0" y="378" width="380" height="52" rx="6" fill="url(#nfcCounter2)"/>
+            <rect x="0" y="378" width="380" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+            {/* Stand shadow */}
+            <ellipse cx="190" cy="385" rx="130" ry="9" fill="rgba(0,0,0,0.14)"/>
+            {/* Stand bottom face */}
+            <rect x="40" y="358" width="300" height="25" rx="0" fill="url(#nfcWoodSide2)"/>
+            <rect x="40" y="370" width="300" height="13" rx="0" fill="rgba(0,0,0,0.18)"/>
+            {/* Stand main body */}
+            <rect x="40" y="230" width="300" height="132" rx="16" fill="url(#nfcWood2)"/>
             {/* Top face highlight */}
-            <rect x="30" y="18" width="240" height="28" rx="14" fill="url(#nfcWoodTop)"/>
-            <rect x="30" y="32" width="240" height="14" fill="url(#nfcWoodTop)"/>
-
-            {/* Wood grain lines */}
-            {[55, 80, 110, 150, 195, 230, 255].map((x, i) => (
-              <line key={i} x1={x} y1="18" x2={x} y2="108" stroke="rgba(0,0,0,0.06)" strokeWidth="1.2"/>
+            <rect x="40" y="230" width="300" height="38" rx="16" fill="url(#nfcWoodTop2)"/>
+            <rect x="40" y="252" width="300" height="16" fill="url(#nfcWoodTop2)"/>
+            {/* Wood grain */}
+            {[70,100,140,190,248,290,318].map((x,i)=>(
+              <line key={i} x1={x} y1="230" x2={x} y2="358" stroke="rgba(0,0,0,0.065)" strokeWidth="1.4"/>
             ))}
-            {/* Subtle horizontal grain */}
-            <line x1="30" y1="55" x2="270" y2="55" stroke="rgba(0,0,0,0.03)" strokeWidth="1"/>
-            <line x1="30" y1="78" x2="270" y2="78" stroke="rgba(0,0,0,0.03)" strokeWidth="1"/>
-
-            {/* Border */}
-            <rect x="30" y="18" width="240" height="90" rx="14" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5"/>
-
-            {/* NFC symbol — top center, large */}
-            <circle cx="150" cy="34" r="5" fill="rgba(255,255,255,0.7)"/>
-            <path d="M133 42 Q150 28 167 42" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-            <path d="M124 50 Q150 26 176 50" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" fill="none"/>
-            <path d="M115 58 Q150 24 185 58" stroke="rgba(255,255,255,0.25)" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
-
-            {/* Engraved name — central, large */}
-            <text x="150" y="80" textAnchor="middle" fontSize="14" fill="rgba(255,255,255,0.6)" fontFamily="Georgia, serif" letterSpacing="3" fontWeight="bold">BOULANGERIE</text>
-            <text x="150" y="98" textAnchor="middle" fontSize="12" fill="rgba(255,255,255,0.42)" fontFamily="Georgia, serif" letterSpacing="2.5">MARTIN</text>
-
-            {/* Stampify small logo bottom right */}
-            <text x="258" y="106" textAnchor="end" fontSize="7" fill="rgba(255,255,255,0.25)" fontFamily="sans-serif" letterSpacing="0.5">by Stampify</text>
-          </svg>
-        </div>
+            <line x1="40" y1="292" x2="340" y2="292" stroke="rgba(0,0,0,0.032)" strokeWidth="1"/>
+            <line x1="40" y1="330" x2="340" y2="330" stroke="rgba(0,0,0,0.028)" strokeWidth="1"/>
+            {/* Border edge */}
+            <rect x="40" y="230" width="300" height="132" rx="16" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5"/>
+            {/* NFC symbol on stand */}
+            <circle cx="190" cy="252" r="7" fill="rgba(255,255,255,0.65)"/>
+            <path d="M166 265 Q190 248 214 265" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeLinecap="round" fill="none"/>
+            <path d="M153 276 Q190 246 227 276" stroke="rgba(255,255,255,0.38)" strokeWidth="2.4" strokeLinecap="round" fill="none"/>
+            <path d="M140 287 Q190 244 240 287" stroke="rgba(255,255,255,0.22)" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+            {/* Engraved name */}
+            <text x="190" y="318" textAnchor="middle" fontSize="18" fill="rgba(255,255,255,0.58)" fontFamily="Georgia,serif" letterSpacing="4" fontWeight="bold">BOULANGERIE</text>
+            <text x="190" y="342" textAnchor="middle" fontSize="15" fill="rgba(255,255,255,0.4)" fontFamily="Georgia,serif" letterSpacing="3">MARTIN</text>
+            {/* Stampify mark */}
+            <text x="330" y="356" textAnchor="end" fontSize="8" fill="rgba(255,255,255,0.22)" fontFamily="sans-serif">by Stampify</text>
+          </g>
+        </svg>
       </div>
     </div>
   );

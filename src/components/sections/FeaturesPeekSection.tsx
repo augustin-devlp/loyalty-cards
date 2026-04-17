@@ -86,12 +86,15 @@ const feats = [
 
 export default function FeaturesPeekSection() {
   return (
-    <section style={{ background: "#fff", padding: "120px 24px" }}>
+    <section className="feat-peek-section" style={{ background: "#fff" }}>
       <style>{`
-        .feat-peek-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.08) !important;
-        }
+        .feat-peek-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.08) !important; }
+        .feat-peek-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 56px; }
+        @media (max-width: 768px) { .feat-peek-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+        @media (max-width: 480px) { .feat-peek-grid { grid-template-columns: 1fr; gap: 12px; } }
+        .feat-peek-section { padding: 120px 24px; }
+        @media (max-width: 768px) { .feat-peek-section { padding: 72px 20px; } }
+        @media (max-width: 480px) { .feat-peek-section { padding: 56px 16px; } }
       `}</style>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         {/* Header */}
@@ -123,12 +126,7 @@ export default function FeaturesPeekSection() {
         </div>
 
         {/* Feature grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 24,
-          marginBottom: 56,
-        }}>
+        <div className="feat-peek-grid">
           {feats.map((f, i) => (
             <div
               key={i}
@@ -155,16 +153,6 @@ export default function FeaturesPeekSection() {
             </div>
           ))}
         </div>
-
-        {/* Responsive grid for mobile */}
-        <style>{`
-          @media (max-width: 768px) {
-            .feat-peek-grid { grid-template-columns: 1fr 1fr !important; }
-          }
-          @media (max-width: 480px) {
-            .feat-peek-grid { grid-template-columns: 1fr !important; }
-          }
-        `}</style>
 
         {/* CTA */}
         <div style={{ textAlign: "center" }}>
