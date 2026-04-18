@@ -179,6 +179,25 @@ export default function SettingsPage() {
             </div>
           </form>
         )}
+
+        {/* ── Personnalisation du menu mobile ─────────────────────────── */}
+        <a
+          href="/dashboard/settings/mobile-nav"
+          className="mt-6 block rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="text-sm font-bold text-gray-900">
+                📱 Personnaliser le menu mobile
+              </div>
+              <div className="mt-1 text-xs text-gray-500">
+                Choisissez les 3 raccourcis visibles dans la barre du bas
+                sur mobile.
+              </div>
+            </div>
+            <span className="text-gray-400">→</span>
+          </div>
+        </a>
       </main>
     </div>
   );

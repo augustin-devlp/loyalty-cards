@@ -5,6 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { RIALTO_ID } from "@/lib/constants";
+import {
+  DEFAULT_QUICK_ACTIONS,
+  parseQuickActions,
+  QUICK_ACTIONS,
+  type QuickActionSlug,
+} from "@/lib/mobileQuickActions";
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -226,6 +232,8 @@ export default function DashboardNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pendingReservations, setPendingReservations] = useState(0);
   const [newOrders, setNewOrders] = useState(0);
+  const [quickActions, setQuickActions] =
+    useState<QuickActionSlug[]>(DEFAULT_QUICK_ACTIONS);
 
   // Load collapsed state from localStorage
   useEffect(() => {
@@ -273,6 +281,37 @@ export default function DashboardNav() {
       .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, fetchPending)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  // Charge la personnalisation du bottom nav (mobile_quick_actions)
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = createClient();
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("businesses")
+        .select("mobile_quick_actions")
+        .eq("id", user.id)
+        .single();
+      if (!cancelled) {
+        setQuickActions(parseQuickActions(data?.mobile_quick_actions));
+      }
+    };
+    load();
+
+    // Permet à la page de customisation de nous dire "refresh immédiat"
+    // sans reload de la page entière.
+    const onUpdated = (e: Event) => {
+      const detail = (e as CustomEvent<QuickActionSlug[]>).detail;
+      if (Array.isArray(detail)) setQuickActions(parseQuickActions(detail));
+    };
+    window.addEventListener("mobile-nav-updated", onUpdated);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("mobile-nav-updated", onUpdated);
+    };
   }, []);
 
   // Live badge pour nouvelles commandes Rialto
@@ -447,28 +486,78 @@ export default function DashboardNav() {
         </div>
       </aside>
 
-      {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
+      {/* ── Mobile bottom nav (personnalisable) ──────────────────────────── */}
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-gray-200"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="flex h-16">
-          <Link href="/dashboard" className={isHome && !isCards ? tabActive : tabInactive} style={isHome && !isCards ? { color: GREEN } : undefined}>
-            <HomeIcon /><span className="text-[10px] font-semibold">Accueil</span>
+        <div className="relative grid grid-cols-5 items-end h-16">
+          <MobileSlot
+            slug={quickActions[0]}
+            pathname={pathname}
+            newOrders={newOrders}
+            pendingReservations={pendingReservations}
+          />
+          <MobileSlot
+            slug={quickActions[1]}
+            pathname={pathname}
+            newOrders={newOrders}
+            pendingReservations={pendingReservations}
+          />
+          {/* Scanner FAB centré (toujours présent, toujours central) */}
+          <Link
+            href="/dashboard/scan"
+            aria-label="Scanner"
+            className="relative flex flex-col items-center justify-end h-full"
+          >
+            <span
+              className="absolute -top-5 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-transform active:scale-95"
+              style={{
+                background: GREEN,
+                boxShadow: "0 8px 20px rgba(29,158,117,0.4)",
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-6 h-6"
+                aria-hidden
+              >
+                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                <rect x="7" y="7" width="3" height="3" />
+                <rect x="14" y="7" width="3" height="3" />
+                <rect x="7" y="14" width="3" height="3" />
+                <rect x="14" y="14" width="3" height="3" />
+              </svg>
+            </span>
+            <span
+              className={`pb-2 pt-10 text-[10px] font-semibold ${
+                isScan ? "" : "text-gray-400"
+              }`}
+              style={isScan ? { color: GREEN } : undefined}
+            >
+              Scanner
+            </span>
           </Link>
-          <Link href="/dashboard/cards" className={isCards ? tabActive : tabInactive} style={isCards ? { color: GREEN } : undefined}>
-            <CardIcon /><span className="text-[10px] font-semibold">Cartes</span>
-          </Link>
-          <Link href="/dashboard/scan" className={isScan ? tabActive : tabInactive} style={isScan ? { color: GREEN } : undefined}>
-            <ScanIcon /><span className="text-[10px] font-semibold">Scanner</span>
-          </Link>
-          <Link href="/dashboard/stats" className={isStats ? tabActive : tabInactive} style={isStats ? { color: GREEN } : undefined}>
-            <StatsIcon /><span className="text-[10px] font-semibold">Stats</span>
-          </Link>
+          <MobileSlot
+            slug={quickActions[2]}
+            pathname={pathname}
+            newOrders={newOrders}
+            pendingReservations={pendingReservations}
+          />
+          {/* Menu drawer */}
           <button
             onClick={() => setDrawerOpen(true)}
             className={`${drawerOpen ? tabActive : tabInactive} relative`}
             style={drawerOpen ? { color: GREEN } : undefined}
+            aria-label="Menu complet"
           >
             <MenuIcon />
             <span className="text-[10px] font-semibold">Menu</span>
@@ -537,5 +626,55 @@ export default function DashboardNav() {
         </>
       )}
     </>
+  );
+}
+
+// ── Mobile bottom nav — slot personnalisable ────────────────────────────────
+function MobileSlot({
+  slug,
+  pathname,
+  newOrders,
+  pendingReservations,
+}: {
+  slug: QuickActionSlug;
+  pathname: string;
+  newOrders: number;
+  pendingReservations: number;
+}) {
+  const action = QUICK_ACTIONS[slug];
+  const active =
+    slug === "dashboard"
+      ? pathname === "/dashboard"
+      : pathname.startsWith(action.href);
+
+  // Badges contextuels selon le slug
+  const badgeCount =
+    slug === "commandes"
+      ? newOrders
+      : slug === "reservations"
+        ? pendingReservations
+        : 0;
+  const pulsing = slug === "commandes" && badgeCount > 0;
+
+  return (
+    <Link
+      href={action.href}
+      aria-label={action.label}
+      className="relative flex flex-col items-center justify-end h-full pb-2 pt-3"
+      style={active ? { color: GREEN } : { color: "#9ca3af" }}
+    >
+      {action.icon({ className: "w-5 h-5" })}
+      <span className="mt-0.5 text-[10px] font-semibold whitespace-nowrap">
+        {action.label}
+      </span>
+      {badgeCount > 0 && (
+        <span
+          className={`absolute top-0.5 right-3 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white ${pulsing ? "animate-pulse" : ""}`}
+          style={{ background: "#EF4444" }}
+        >
+          {badgeCount > 9 ? "9+" : badgeCount}
+        </span>
+      )}
+    </Link>
   );
 }
