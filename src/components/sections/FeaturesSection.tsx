@@ -118,11 +118,12 @@ export default function FeaturesSection() {
         .feat-row { display: flex; align-items: center; gap: 80px; }
         @media (max-width: 900px) {
           .feat-row { flex-direction: column !important; gap: 40px; }
-          .feat-section { padding: 72px 20px !important; }
+          .feat-section { padding: 72px 20px !important; overflow-x: hidden !important; }
           .feat-text h2 { font-size: clamp(22px,6vw,32px) !important; }
         }
         @media (max-width: 480px) {
-          .feat-section { padding: 56px 16px !important; }
+          .feat-section { padding: 56px 16px !important; overflow-x: hidden !important; }
+          .feat-row > div { max-width: 100% !important; min-width: 0 !important; }
         }
       `}</style>
       {features.map((f, i) => (

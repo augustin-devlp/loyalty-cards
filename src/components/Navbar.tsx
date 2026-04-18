@@ -131,7 +131,11 @@ export default function Navbar() {
         {menuOpen && (
           <div style={{
             position: "fixed",
-            inset: 0,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            minHeight: "100dvh",
             background: "#1d9e75",
             zIndex: 200,
             display: "flex",
@@ -139,6 +143,9 @@ export default function Navbar() {
             alignItems: "center",
             justifyContent: "center",
             gap: 32,
+            overflowY: "auto",
+            paddingTop: "env(safe-area-inset-top)",
+            paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)",
           }}>
             <button
               onClick={() => setMenuOpen(false)}

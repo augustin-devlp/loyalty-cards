@@ -187,7 +187,7 @@ const features = [
 export default function FeaturesPage() {
   return (
     <>
-      <main style={{ paddingTop: 68 }}>
+      <main style={{ paddingTop: 68, overflowX: "hidden" }}>
         {/* Header */}
         <section style={{ background: "#fff", padding: "80px 24px", textAlign: "center" }}>
           <span style={{

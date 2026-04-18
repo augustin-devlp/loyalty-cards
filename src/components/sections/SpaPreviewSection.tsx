@@ -33,9 +33,16 @@ export default function SpaPreviewSection() {
           pointer-events: auto;
         }
         @media (max-width: 768px) {
-          .spa-iframe-wrap { height: 320px; }
+          .spa-iframe-wrap { height: 320px; overflow: hidden; }
+          .spa-iframe-wrap iframe {
+            width: 100% !important;
+            height: 500px !important;
+            transform: none !important;
+            pointer-events: none;
+          }
           .spa-row { flex-direction: column !important; gap: 32px !important; }
           .spa-text-col { flex: none !important; max-width: 100% !important; }
+          .spa-browser-frame { overflow: hidden !important; max-width: 100% !important; }
         }
       `}</style>
 
@@ -101,8 +108,8 @@ export default function SpaPreviewSection() {
         </div>
 
         {/* Browser mockup droite — iframe interactive */}
-        <div style={{ flex: 1 }}>
-          <div style={{
+        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+          <div className="spa-browser-frame" style={{
             borderRadius: "12px 12px 8px 8px",
             overflow: "hidden",
             boxShadow: "0 4px 6px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.08), 0 40px 80px rgba(0,0,0,0.06)",
