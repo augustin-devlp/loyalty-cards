@@ -3,13 +3,27 @@
 import { formatCHF, formatZurichHHMM } from "@/lib/orderFormat";
 import type { OrderWithItems } from "@/lib/orderTypes";
 
+type SmsState =
+  | { state: "idle" }
+  | { state: "sending" }
+  | { state: "ok"; reference: string | null }
+  | { state: "error"; message: string };
+
 type Props = {
   order: OrderWithItems;
   onOpen: () => void;
+  sms?: SmsState;
+  onResendSms?: () => void;
   children: React.ReactNode;
 };
 
-export default function OrderCard({ order, onOpen, children }: Props) {
+export default function OrderCard({
+  order,
+  onOpen,
+  sms,
+  onResendSms,
+  children,
+}: Props) {
   const createdAt = formatZurichHHMM(order.created_at);
   const pickup = order.requested_pickup_time
     ? formatZurichHHMM(order.requested_pickup_time)
@@ -64,10 +78,13 @@ export default function OrderCard({ order, onOpen, children }: Props) {
           </div>
         )}
 
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-2 flex items-center justify-between gap-2">
           <span className="text-lg font-black text-red-600">
             {formatCHF(order.total_amount)}
           </span>
+          {sms && sms.state !== "idle" && (
+            <SmsIndicator sms={sms} onResend={onResendSms} />
+          )}
         </div>
       </div>
 
@@ -76,4 +93,43 @@ export default function OrderCard({ order, onOpen, children }: Props) {
       </div>
     </article>
   );
+}
+
+function SmsIndicator({
+  sms,
+  onResend,
+}: {
+  sms: SmsState;
+  onResend?: () => void;
+}) {
+  if (sms.state === "sending")
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500">
+        📱 …
+      </span>
+    );
+  if (sms.state === "ok")
+    return (
+      <span
+        title={`SMS envoyé${sms.reference ? ` (ref ${sms.reference})` : ""}`}
+        className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700"
+      >
+        📱 ✓
+      </span>
+    );
+  if (sms.state === "error")
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onResend?.();
+        }}
+        title={`SMS échoué : ${sms.message}. Cliquer pour renvoyer.`}
+        className="pointer-events-auto inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 hover:bg-red-100"
+      >
+        📱 ✗ Renvoyer
+      </button>
+    );
+  return null;
 }

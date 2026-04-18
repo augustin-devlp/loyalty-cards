@@ -92,10 +92,11 @@ export async function PATCH(
     );
   }
 
-  // SMS non-bloquant
-  void sendOrderStatusSms(updated, body.status);
+  // SMS BLOQUANT — on attend le résultat pour le renvoyer à l'UI dashboard
+  // (permet d'afficher ✓/✗ sur la card et de bloquer le retry).
+  const sms = await sendOrderStatusSms(updated, body.status);
 
-  return NextResponse.json({ order: updated });
+  return NextResponse.json({ order: updated, sms });
 }
 
 /**
@@ -127,6 +128,6 @@ export async function DELETE(
     );
   }
 
-  void sendOrderStatusSms(updated, "cancelled");
-  return NextResponse.json({ order: updated });
+  const sms = await sendOrderStatusSms(updated, "cancelled");
+  return NextResponse.json({ order: updated, sms });
 }

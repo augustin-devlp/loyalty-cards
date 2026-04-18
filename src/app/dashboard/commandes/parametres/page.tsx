@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DashboardNav from "@/components/DashboardNav";
+import PushControl from "@/components/orders/PushControl";
 import Toggle from "@/components/ui/Toggle";
 import { useDashboardPush } from "@/hooks/useDashboardPush";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
@@ -208,28 +209,15 @@ export default function ParametresCommandesPage() {
                     Alertes même onglet fermé.
                   </div>
                 </div>
-                {push.supported ? (
-                  <Toggle
-                    checked={push.subscribed}
-                    disabled={push.loading}
-                    tooltip={
-                      push.subscribed
-                        ? "Cliquez pour désactiver"
-                        : "Cliquez pour activer (autorisation du navigateur requise)"
-                    }
-                    onChange={async (next) => {
-                      if (next) {
-                        const result = await push.subscribe();
-                        if (!result.ok) alert(result.message);
-                      } else {
-                        await push.unsubscribe();
-                      }
-                    }}
-                    showStateText
-                  />
-                ) : (
-                  <span className="text-xs text-gray-400">Non supporté</span>
-                )}
+                <PushControl
+                  pushState={push.state}
+                  loading={push.loading}
+                  onSubscribe={async () => {
+                    const result = await push.subscribe();
+                    if (!result.ok) alert(result.message);
+                  }}
+                  onUnsubscribe={() => push.unsubscribe()}
+                />
               </div>
             </section>
 

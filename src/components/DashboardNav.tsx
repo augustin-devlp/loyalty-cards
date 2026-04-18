@@ -192,7 +192,7 @@ const OWNER_LINKS: NavLink[] = [
   { href: "/dashboard/promotions",    label: "Promotions",       icon: <PromoIcon /> },
   { href: "/dashboard/gift-cards",    label: "Cartes cadeaux",   icon: <GiftIcon /> },
   { href: "/dashboard/marketplace",   label: "Marketplace",      icon: <MarketplaceIcon /> },
-  { href: "/dashboard/click-collect", label: "Click & Collect",  icon: <ClickCollectIcon /> },
+  { href: "/dashboard/click-collect", label: "Réservation produits", icon: <ClickCollectIcon /> },
   { href: "/dashboard/team",          label: "Équipe",           icon: <TeamIcon /> },
   { href: "/dashboard/billing",       label: "Facturation",      icon: <BillingIcon /> },
   { href: "/dashboard/appearance",    label: "Apparence",        icon: <AppearanceIcon /> },
@@ -488,12 +488,22 @@ export default function DashboardNav() {
       {drawerOpen && (
         <>
           <div className="fixed inset-0 z-50 bg-black/40 md:hidden" onClick={() => setDrawerOpen(false)} />
-          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white rounded-t-2xl shadow-2xl" style={{ paddingBottom: "calc(4rem + env(safe-area-inset-bottom))" }}>
-            <div className="flex justify-center pt-3 pb-2">
+          <div
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white rounded-t-2xl shadow-2xl flex flex-col"
+            style={{ maxHeight: "85dvh" }}
+          >
+            {/* Handle sticky */}
+            <div className="flex justify-center pt-3 pb-2 shrink-0 bg-white rounded-t-2xl">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="px-4 pb-2">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Navigation</p>
+            <div
+              className="flex-1 overflow-y-auto px-4 pb-2"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                paddingBottom: "calc(4rem + env(safe-area-inset-bottom))",
+              }}
+            >
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-2 sticky top-0 bg-white py-2">Navigation</p>
               {links.map((link) => {
                 const active = isActive(link, pathname);
                 const badgeCount =

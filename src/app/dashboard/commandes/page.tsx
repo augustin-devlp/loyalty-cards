@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardNav from "@/components/DashboardNav";
 import OrderCard from "@/components/orders/OrderCard";
 import OrderDetailModal from "@/components/orders/OrderDetailModal";
+import PushControl from "@/components/orders/PushControl";
 import Toggle from "@/components/ui/Toggle";
 import { useOrdersRealtime } from "@/hooks/useOrdersRealtime";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
@@ -15,6 +16,11 @@ import { createClient } from "@/lib/supabase/client";
 import { formatZurichDateTime } from "@/lib/orderFormat";
 
 type Toast = { id: string; orderNumber: string };
+type SmsState =
+  | { state: "idle" }
+  | { state: "sending" }
+  | { state: "ok"; reference: string | null }
+  | { state: "error"; message: string };
 
 const COLUMNS: {
   key: OrderStatus;
@@ -37,6 +43,8 @@ export default function CommandesPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [pushBannerDismissed, setPushBannerDismissed] = useState(false);
+  // Map orderId → dernier résultat SMS (affiché sur la card)
+  const [smsByOrder, setSmsByOrder] = useState<Record<string, SmsState>>({});
 
   const sound = useNotificationSound();
   const push = useDashboardPush(RIALTO_ID);
@@ -113,6 +121,7 @@ export default function CommandesPage() {
   useEffect(refreshSelected, [orders]); // eslint-disable-line
 
   async function patchStatus(id: string, status: OrderStatus) {
+    setSmsByOrder((m) => ({ ...m, [id]: { state: "sending" } }));
     const res = await fetch(`/api/orders/${id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -120,15 +129,86 @@ export default function CommandesPage() {
     });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
+      setSmsByOrder((m) => ({ ...m, [id]: { state: "idle" } }));
       alert((j as { error?: string }).error ?? "Échec de la mise à jour");
+      return;
+    }
+    const body = (await res.json().catch(() => ({}))) as {
+      sms?:
+        | { success: true; reference: string | null }
+        | { success: false; error: string; status?: number };
+    };
+    const sms = body.sms;
+    if (sms) {
+      setSmsByOrder((m) => ({
+        ...m,
+        [id]: sms.success
+          ? { state: "ok", reference: sms.reference }
+          : { state: "error", message: sms.error },
+      }));
     }
   }
+
   async function cancelOrder(id: string) {
     if (!confirm("Annuler cette commande ? Un SMS sera envoyé au client.")) return;
+    setSmsByOrder((m) => ({ ...m, [id]: { state: "sending" } }));
     const res = await fetch(`/api/orders/${id}`, { method: "DELETE" });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
+      setSmsByOrder((m) => ({ ...m, [id]: { state: "idle" } }));
       alert((j as { error?: string }).error ?? "Échec de l'annulation");
+      return;
+    }
+    const body = (await res.json().catch(() => ({}))) as {
+      sms?:
+        | { success: true; reference: string | null }
+        | { success: false; error: string; status?: number };
+    };
+    const sms = body.sms;
+    if (sms) {
+      setSmsByOrder((m) => ({
+        ...m,
+        [id]: sms.success
+          ? { state: "ok", reference: sms.reference }
+          : { state: "error", message: sms.error },
+      }));
+    }
+  }
+
+  async function resendSms(id: string) {
+    setSmsByOrder((m) => ({ ...m, [id]: { state: "sending" } }));
+    try {
+      const res = await fetch(`/api/orders/${id}/resend-sms`, {
+        method: "POST",
+      });
+      const body = (await res.json().catch(() => ({}))) as {
+        sms?:
+          | { success: true; reference: string | null }
+          | { success: false; error: string };
+      };
+      const sms = body.sms;
+      if (sms && sms.success) {
+        setSmsByOrder((m) => ({
+          ...m,
+          [id]: { state: "ok", reference: sms.reference },
+        }));
+      } else {
+        setSmsByOrder((m) => ({
+          ...m,
+          [id]: {
+            state: "error",
+            message: sms && !sms.success ? sms.error : "Renvoi échoué",
+          },
+        }));
+      }
+    } catch (err) {
+      setSmsByOrder((m) => ({
+        ...m,
+        [id]: {
+          state: "error",
+          message: err instanceof Error ? err.message : "Erreur réseau",
+        },
+      }));
     }
   }
 
@@ -202,35 +282,23 @@ export default function CommandesPage() {
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                     📱 Push
                   </span>
-                  <Toggle
-                    checked={push.subscribed}
-                    disabled={!push.supported || push.loading}
-                    tooltip={
-                      !push.supported
-                        ? "Notifications push non supportées sur ce navigateur"
-                        : push.subscribed
-                          ? "Cliquez pour désactiver"
-                          : "Cliquez pour activer"
-                    }
-                    onChange={async (next) => {
+                  <PushControl
+                    pushState={push.state}
+                    loading={push.loading}
+                    onSubscribe={async () => {
                       sound.init();
-                      if (next) {
-                        const result = await push.subscribe();
-                        if (!result.ok) {
-                          alert(result.message);
-                        }
-                      } else {
-                        await push.unsubscribe();
-                      }
+                      const result = await push.subscribe();
+                      if (!result.ok) alert(result.message);
                     }}
+                    onUnsubscribe={() => push.unsubscribe()}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bannière Push */}
-          {push.supported && !push.subscribed && !pushBannerDismissed && (
+          {/* Bannière Push : uniquement si permission pas encore demandée */}
+          {push.state === "default" && !pushBannerDismissed && (
             <div className="border-t border-red-100 bg-red-50 px-4 py-2.5 text-sm">
               <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
                 <span className="text-red-900">
@@ -326,6 +394,8 @@ export default function CommandesPage() {
                             key={order.id}
                             order={order}
                             onOpen={() => setSelected(order)}
+                            sms={smsByOrder[order.id]}
+                            onResendSms={() => resendSms(order.id)}
                           >
                             {col.key === "new" && (
                               <>
