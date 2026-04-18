@@ -4,6 +4,22 @@ const withPWA = require("next-pwa")({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
+  // Ne JAMAIS cacher les pages /dashboard (sinon on sert du HTML perimé
+  // au gérant après un nouveau déploiement — sidebar manquante, page
+  // blanche, etc.) et pas les routes d'auth.
+  buildExcludes: [/dashboard\/.*/],
+  runtimeCaching: [
+    {
+      // /dashboard/* et /api/* : toujours réseau, pas de cache
+      urlPattern: ({ url }) =>
+        url.origin === self.location.origin &&
+        (url.pathname.startsWith("/dashboard") ||
+          url.pathname.startsWith("/api/")),
+      handler: "NetworkOnly",
+    },
+    // Fallback : tout le reste reste en NetworkFirst (comportement par
+    // défaut géré par next-pwa pour les autres routes).
+  ],
 });
 
 const securityHeaders = [

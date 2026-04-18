@@ -2,22 +2,32 @@
 
 import { useEffect, useState } from "react";
 
+export type PushError =
+  | "unsupported"
+  | "missing-vapid"
+  | "permission-denied"
+  | "sw-register-failed"
+  | "subscribe-failed"
+  | "network";
+
 /**
  * Gestion des Web Push pour le dashboard Rialto.
- * Réutilise le Service Worker `/sw.js` généré par next-pwa (étendu via
- * worker/index.js avec un handler `push`). Chaque souscription est liée à
- * un restaurant_id dans la table push_subscriptions.
+ * Chaque souscription est liée à un restaurant_id dans push_subscriptions.
+ * Réutilise le SW `/sw.js` généré par next-pwa + enrichi par `worker/index.js`
+ * (handler push + notificationclick).
  */
 export function useDashboardPush(restaurantId: string) {
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [supported, setSupported] = useState(false);
+  const [lastError, setLastError] = useState<PushError | null>(null);
 
   useEffect(() => {
     const ok =
       typeof window !== "undefined" &&
       "serviceWorker" in navigator &&
-      "PushManager" in window;
+      "PushManager" in window &&
+      typeof Notification !== "undefined";
     setSupported(ok);
     if (!ok) return;
     void checkSubscription();
@@ -33,12 +43,15 @@ export function useDashboardPush(restaurantId: string) {
       }
       const sub = await reg.pushManager.getSubscription();
       setSubscribed(!!sub);
-    } catch {
+    } catch (err) {
+      console.error("[push] checkSubscription failed", err);
       setSubscribed(false);
     }
   }
 
-  async function registerSW() {
+  async function registerSW(): Promise<ServiceWorkerRegistration> {
+    // En dev next-pwa est désactivé => /sw.js n'existe pas.
+    // On essaie quand même pour afficher une erreur claire.
     const reg = await navigator.serviceWorker.register("/sw.js", {
       scope: "/",
     });
@@ -46,37 +59,121 @@ export function useDashboardPush(restaurantId: string) {
     return reg;
   }
 
-  async function subscribe(): Promise<boolean> {
+  async function subscribe(): Promise<
+    { ok: true } | { ok: false; error: PushError; message: string }
+  > {
     setLoading(true);
+    setLastError(null);
     try {
-      const reg = await registerSW();
+      // 1. Support check
+      if (!supported) {
+        setLastError("unsupported");
+        return {
+          ok: false,
+          error: "unsupported",
+          message:
+            "Votre navigateur ne supporte pas les notifications push (essayez Chrome ou Firefox).",
+        };
+      }
+
+      // 2. VAPID public key check
+      const vapid = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapid) {
+        console.error("[push] NEXT_PUBLIC_VAPID_PUBLIC_KEY missing at runtime");
+        setLastError("missing-vapid");
+        return {
+          ok: false,
+          error: "missing-vapid",
+          message:
+            "Configuration serveur incomplète (clé VAPID publique manquante). Contactez le support.",
+        };
+      }
+
+      // 3. Service Worker
+      let reg: ServiceWorkerRegistration;
+      try {
+        reg = await registerSW();
+      } catch (err) {
+        console.error("[push] SW register failed", err);
+        setLastError("sw-register-failed");
+        return {
+          ok: false,
+          error: "sw-register-failed",
+          message:
+            "Impossible d'activer le service worker. Rechargez la page ou essayez en navigation normale (pas incognito).",
+        };
+      }
+
+      // 4. Permission
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        return false;
+        setLastError("permission-denied");
+        return {
+          ok: false,
+          error: "permission-denied",
+          message:
+            permission === "denied"
+              ? "Permission refusée. Pour réactiver : icône du cadenas dans la barre d'URL → Notifications → Autoriser."
+              : "Autorisation non accordée.",
+        };
       }
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "",
-        ) as unknown as ArrayBuffer,
-      });
-      const res = await fetch("/api/push/dashboard-subscribe", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          restaurant_id: restaurantId,
-          subscription: sub.toJSON(),
-        }),
-      });
-      if (!res.ok) {
+
+      // 5. Subscribe
+      let sub: PushSubscription;
+      try {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(
+            vapid,
+          ) as unknown as ArrayBuffer,
+        });
+      } catch (err) {
+        console.error("[push] pushManager.subscribe failed", err);
+        setLastError("subscribe-failed");
+        return {
+          ok: false,
+          error: "subscribe-failed",
+          message: `Erreur technique lors de l'abonnement : ${
+            err instanceof Error ? err.message : "inconnue"
+          }`,
+        };
+      }
+
+      // 6. Send to our backend
+      try {
+        const res = await fetch("/api/push/dashboard-subscribe", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            restaurant_id: restaurantId,
+            subscription: sub.toJSON(),
+          }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}) as { error?: string });
+          await sub.unsubscribe();
+          setLastError("network");
+          return {
+            ok: false,
+            error: "network",
+            message: `Erreur serveur : ${
+              (body as { error?: string }).error ?? res.status
+            }`,
+          };
+        }
+      } catch (err) {
+        console.error("[push] backend persist failed", err);
         await sub.unsubscribe();
-        return false;
+        setLastError("network");
+        return {
+          ok: false,
+          error: "network",
+          message: "Impossible de contacter le serveur Stampify.",
+        };
       }
+
       setSubscribed(true);
-      return true;
-    } catch (err) {
-      console.error("[dashboardPush] subscribe error", err);
-      return false;
+      return { ok: true };
     } finally {
       setLoading(false);
     }
@@ -86,14 +183,24 @@ export function useDashboardPush(restaurantId: string) {
     setLoading(true);
     try {
       const reg = await navigator.serviceWorker.getRegistration("/sw.js");
-      if (!reg) return;
+      if (!reg) {
+        setSubscribed(false);
+        return;
+      }
       const sub = await reg.pushManager.getSubscription();
-      if (!sub) return;
-      await fetch("/api/push/dashboard-subscribe", {
-        method: "DELETE",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ endpoint: sub.endpoint }),
-      });
+      if (!sub) {
+        setSubscribed(false);
+        return;
+      }
+      try {
+        await fetch("/api/push/dashboard-subscribe", {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ endpoint: sub.endpoint }),
+        });
+      } catch (err) {
+        console.warn("[push] backend delete failed (non-bloquant)", err);
+      }
       await sub.unsubscribe();
       setSubscribed(false);
     } finally {
@@ -101,7 +208,7 @@ export function useDashboardPush(restaurantId: string) {
     }
   }
 
-  return { subscribed, supported, loading, subscribe, unsubscribe };
+  return { subscribed, supported, loading, lastError, subscribe, unsubscribe };
 }
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {

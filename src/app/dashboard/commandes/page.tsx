@@ -215,11 +215,9 @@ export default function CommandesPage() {
                     onChange={async (next) => {
                       sound.init();
                       if (next) {
-                        const ok = await push.subscribe();
-                        if (!ok) {
-                          alert(
-                            "Permission refusée par le navigateur. Allez dans les paramètres du site et autorisez les notifications.",
-                          );
+                        const result = await push.subscribe();
+                        if (!result.ok) {
+                          alert(result.message);
                         }
                       } else {
                         await push.unsubscribe();
@@ -245,8 +243,8 @@ export default function CommandesPage() {
                     disabled={push.loading}
                     onClick={async () => {
                       sound.init();
-                      const ok = await push.subscribe();
-                      if (!ok) alert("Permission refusée.");
+                      const result = await push.subscribe();
+                      if (!result.ok) alert(result.message);
                     }}
                     className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
                   >

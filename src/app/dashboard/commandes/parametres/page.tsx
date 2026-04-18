@@ -219,12 +219,8 @@ export default function ParametresCommandesPage() {
                     }
                     onChange={async (next) => {
                       if (next) {
-                        const ok = await push.subscribe();
-                        if (!ok) {
-                          alert(
-                            "Permission refusée par le navigateur. Débloquez les notifications dans les paramètres du site.",
-                          );
-                        }
+                        const result = await push.subscribe();
+                        if (!result.ok) alert(result.message);
                       } else {
                         await push.unsubscribe();
                       }
