@@ -56,7 +56,7 @@ export default function TestimonialsSection() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+        <div className="testimonials-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {testimonials.map((t, i) => (
             <div key={i} style={{
               background: "#fff",

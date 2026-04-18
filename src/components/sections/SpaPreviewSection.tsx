@@ -32,11 +32,16 @@ export default function SpaPreviewSection() {
           transform-origin: top left;
           pointer-events: auto;
         }
+        @media (max-width: 768px) {
+          .spa-iframe-wrap { height: 320px; }
+          .spa-row { flex-direction: column !important; gap: 32px !important; }
+          .spa-text-col { flex: none !important; max-width: 100% !important; }
+        }
       `}</style>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 80 }}>
+      <div className="spa-row" style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 80 }}>
         {/* Texte gauche */}
-        <div style={{ flex: "0 0 40%", maxWidth: "40%" }}>
+        <div className="spa-text-col" style={{ flex: "0 0 40%", maxWidth: "40%" }}>
           <div style={{ width: 40, height: 2, background: "#1d9e75", marginBottom: 12 }} />
           <p style={{
             fontFamily: "var(--font-dm-sans), sans-serif",

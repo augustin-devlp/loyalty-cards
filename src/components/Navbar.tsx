@@ -105,7 +105,7 @@ export default function Navbar() {
           {/* Actions */}
           <div className="nav-actions">
             <Link href="/login" className="nav-btn-login">Se connecter</Link>
-            <Link href="/#tarif" className="nav-btn-cta">Démarrer — 990 CHF</Link>
+            <Link href="/#tarif" className="nav-btn-cta">Démarrer maintenant</Link>
           </div>
 
           {/* Hamburger */}
@@ -170,7 +170,7 @@ export default function Navbar() {
               fontWeight: 600, fontSize: 16, textDecoration: "none",
               marginTop: 8,
             }}>
-              Démarrer — 990 CHF
+              Démarrer maintenant
             </Link>
           </div>
         )}

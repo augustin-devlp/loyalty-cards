@@ -3,6 +3,22 @@
 import Link from "next/link";
 import { useRef } from "react";
 
+const DEMOS_STYLES = `
+  @media (max-width: 640px) {
+    .demos-header-title { font-size: 36px !important; }
+    .demos-header-sub { padding: 0 20px; font-size: 16px !important; }
+    .demos-spa-section { padding: 32px 20px 60px !important; }
+    .demos-spa-iframe-wrap { height: 280px !important; }
+    .demos-gallery-card { min-width: calc(85vw) !important; }
+    .demos-gallery-card-img { height: 180px !important; }
+    .demos-gallery-card-body { padding: 16px !important; }
+    .demos-cta-section { padding: 60px 20px !important; }
+    .demos-cta-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
+    .demos-scroll-container { padding: 24px 20px !important; }
+    .demos-scroll-hint { display: block !important; }
+  }
+`;
+
 const cards = [
   { name: "Boulangerie du Valentin", city: "Lausanne", type: "Boulangerie", note: "4.9", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80", href: "/boulangerie-martin.html", live: true },
   { name: "Café Lumière", city: "Genève", type: "Café", note: "5.0", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=80", href: "/cafe-lumiere.html", live: true },
@@ -17,6 +33,7 @@ export default function DemosPage() {
 
   return (
     <main style={{ paddingTop: 68 }}>
+      <style>{DEMOS_STYLES}</style>
       {/* Header */}
       <section style={{ background: "#FBF8F3", padding: "80px 24px", textAlign: "center" }}>
         <span style={{
@@ -27,7 +44,7 @@ export default function DemosPage() {
           fontSize: 13, fontWeight: 500,
           marginBottom: 20,
         }}>Nos réalisations</span>
-        <h1 style={{
+        <h1 className="demos-header-title" style={{
           fontFamily: "var(--font-fraunces), serif",
           fontWeight: 900,
           fontSize: "clamp(36px, 5vw, 56px)",
@@ -105,6 +122,7 @@ export default function DemosPage() {
 
         <div
           ref={scrollRef}
+          className="demos-scroll-container hide-scrollbar"
           style={{
             display: "flex",
             gap: 20,
@@ -112,10 +130,11 @@ export default function DemosPage() {
             scrollSnapType: "x mandatory",
             scrollbarWidth: "none",
             padding: "24px 40px",
+            WebkitOverflowScrolling: "touch" as const,
           }}
         >
           {cards.map((card, i) => (
-            <div key={i} style={{
+            <div key={i} className="demos-gallery-card" style={{
               minWidth: 320,
               flexShrink: 0,
               background: "#fff",
@@ -130,9 +149,11 @@ export default function DemosPage() {
               <img
                 src={card.img}
                 alt={card.name}
+                className="demos-gallery-card-img"
                 style={{ width: "100%", height: 200, objectFit: "cover", display: "block" }}
+                loading="lazy"
               />
-              <div style={{ padding: 20 }}>
+              <div className="demos-gallery-card-body" style={{ padding: 20 }}>
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
                   <div>
                     <div style={{
@@ -185,7 +206,7 @@ export default function DemosPage() {
           ))}
         </div>
 
-        <p style={{
+        <p className="demos-scroll-hint" style={{
           fontFamily: "var(--font-dm-sans), sans-serif",
           fontSize: 13, color: "#94a3b8",
           textAlign: "center", marginTop: 16,
@@ -195,7 +216,7 @@ export default function DemosPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ background: "#1d9e75", padding: "80px 24px", textAlign: "center" }}>
+      <section className="demos-cta-section" style={{ background: "#1d9e75", padding: "80px 24px", textAlign: "center" }}>
         <h2 style={{
           fontFamily: "var(--font-fraunces), serif",
           fontWeight: 700,
@@ -205,15 +226,16 @@ export default function DemosPage() {
         }}>
           Tu veux le même pour ton commerce ?
         </h2>
-        <Link href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29." style={{
+        <Link href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29." className="demos-cta-btn" style={{
           background: "#fff", color: "#1d9e75",
           borderRadius: 10, padding: "16px 32px",
           fontFamily: "var(--font-dm-sans), sans-serif",
           fontSize: 16, fontWeight: 500,
           textDecoration: "none",
           display: "inline-block",
+          minHeight: 44,
         }}>
-          Démarrer pour 990 CHF
+          Créer mon site
         </Link>
       </section>
     </main>

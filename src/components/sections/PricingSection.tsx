@@ -195,8 +195,8 @@ export default function PricingSection() {
           }}>
             Pourquoi pas une agence ?
           </p>
-          <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #f0f0f0" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr" }}>
+          <div className="compare-wrap" style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #f0f0f0" }}>
+            <div className="compare-inner" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr" }}>
               {["", "Agence", "Freelance", "Stampify"].map((h, i) => (
                 <div key={i} style={{
                   padding: "12px 16px",

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Fraunces, DM_Sans } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ConditionalNavbar from '@/components/ConditionalNavbar';
+import ConditionalFooter from '@/components/ConditionalFooter';
 import ScrollAnimationInit from '@/components/ScrollAnimationInit';
 
 const fraunces = Fraunces({
@@ -40,12 +40,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="fr" className={`${fraunces.variable} ${dmSans.variable}`}>
       <head>
         <meta name="theme-color" content="#1d9e75" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
       <body className="antialiased">
-        <Navbar />
+        <ConditionalNavbar />
         <ScrollAnimationInit />
         {children}
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );

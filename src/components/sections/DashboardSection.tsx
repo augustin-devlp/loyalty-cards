@@ -38,7 +38,11 @@ export default function DashboardSection() {
             Un tableau de bord simple pour suivre tes clients, tes tampons et tes revenus. En temps réel.
           </p>
         </div>
-        <DashboardMockup />
+        <div className="dashboard-outer">
+          <div className="dashboard-scale">
+            <DashboardMockup />
+          </div>
+        </div>
       </div>
     </section>
   );

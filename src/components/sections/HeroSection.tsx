@@ -77,6 +77,19 @@ export default function HeroSection() {
           transition: text-decoration-color 0.15s;
         }
         .hero-cta-secondary:hover { text-decoration-color: #1d9e75; }
+        .hero-cta-primary:active, .hero-cta-secondary:active { transform: scale(0.95) !important; }
+        @media (max-width: 640px) {
+          .hero-badge-float { display: none !important; }
+          .hero-left-col { flex: none !important; max-width: 100% !important; padding-right: 0 !important; }
+          .hero-title { font-size: 38px !important; line-height: 1.15 !important; }
+          .hero-subtitle { font-size: 16px !important; max-width: 100% !important; }
+          .hero-ctas-wrap { flex-direction: column !important; gap: 12px !important; }
+          .hero-cta-primary { width: 100% !important; text-align: center !important; min-height: 44px; display: flex !important; align-items: center; justify-content: center; }
+          .hero-cta-secondary { width: 100% !important; text-align: center !important; min-height: 44px; display: flex !important; align-items: center; justify-content: center; }
+          .hero-phone-inner { max-width: 260px !important; }
+          .hero-phone-shadow { display: block; width: 120px; height: 20px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.12) 0%, transparent 70%); filter: blur(8px); margin: 0 auto; }
+          .hero-social-proof { flex-wrap: wrap !important; justify-content: center !important; }
+        }
       `}</style>
 
       {/* SVG background drift shapes */}
@@ -101,7 +114,7 @@ export default function HeroSection() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px", position: "relative", zIndex: 1, width: "100%" }}>
         <div className="hero-split" style={{ display: "flex", alignItems: "center", gap: 64 }}>
           {/* Left column */}
-          <div style={{ flex: "0 0 55%", maxWidth: "55%", paddingRight: 0 }}>
+          <div className="hero-left-col" style={{ flex: "0 0 55%", maxWidth: "55%", paddingRight: 0 }}>
             {/* Badge */}
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
@@ -120,7 +133,7 @@ export default function HeroSection() {
             </div>
 
             {/* H1 */}
-            <h1 style={{
+            <h1 className="hero-title" style={{
               fontFamily: "var(--font-fraunces), serif",
               fontWeight: 900,
               fontSize: "clamp(42px, 5.5vw, 68px)",
@@ -134,7 +147,7 @@ export default function HeroSection() {
             </h1>
 
             {/* Subtitle */}
-            <p style={{
+            <p className="hero-subtitle" style={{
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontSize: 19,
               color: "#64748b",
@@ -147,13 +160,13 @@ export default function HeroSection() {
             </p>
 
             {/* CTAs */}
-            <div style={{
+            <div className="hero-ctas-wrap" style={{
               display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
               marginBottom: 28,
               animation: mounted ? "heroBadgeFadeDown 0.6s 0.3s ease both" : "none",
             }}>
               <Link href="/#tarif" className="hero-cta-primary">
-                Démarrer pour 990 CHF
+                Démarrer maintenant
               </Link>
               <Link href="/demos" className="hero-cta-secondary">
                 Voir une démo →
@@ -161,7 +174,7 @@ export default function HeroSection() {
             </div>
 
             {/* Social proof */}
-            <div style={{
+            <div className="hero-social-proof" style={{
               display: "flex", alignItems: "center", gap: 12,
               animation: mounted ? "heroBadgeFadeDown 0.6s 0.4s ease both" : "none",
             }}>
@@ -189,11 +202,11 @@ export default function HeroSection() {
 
           {/* Right column */}
           <div className="hero-img-col" style={{ flex: 1, position: "relative", display: "flex", justifyContent: "center" }}>
-            <div style={{ position: "relative" }}>
+            <div className="hero-phone-inner" style={{ position: "relative" }}>
               <PhoneMockup />
 
               {/* Badge 1 — top right */}
-              <div style={{
+              <div className="hero-badge-float" style={{
                 position: "absolute",
                 top: -20, right: -60,
                 background: "#fff",
@@ -212,7 +225,7 @@ export default function HeroSection() {
               </div>
 
               {/* Badge 2 — bottom left */}
-              <div style={{
+              <div className="hero-badge-float" style={{
                 position: "absolute",
                 bottom: 60, left: -60,
                 background: "#1d9e75",
@@ -229,7 +242,7 @@ export default function HeroSection() {
               </div>
 
               {/* Badge 3 — bottom right */}
-              <div style={{
+              <div className="hero-badge-float" style={{
                 position: "absolute",
                 bottom: -20, right: -40,
                 background: "#fff",

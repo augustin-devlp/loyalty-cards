@@ -119,7 +119,7 @@ function FloatingSymbols() {
 
 export default function FinalCTASection() {
   return (
-    <section style={{
+    <section className="cta-final-section" style={{
       background: "#1d9e75",
       position: "relative",
       overflow: "hidden",
@@ -151,35 +151,49 @@ export default function FinalCTASection() {
           Rejoins les commerçants romands qui ont arrêté de perdre leurs clients.
         </p>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
+        <style>{`
+          @media (max-width: 640px) {
+            .cta-final-btns { flex-direction: column !important; gap: 12px !important; align-items: stretch !important; }
+            .cta-final-btn { display: block !important; text-align: center !important; width: 100% !important; }
+            .cta-final-title { font-size: 36px !important; }
+            .cta-final-section { padding: 80px 20px !important; }
+            .cta-final-badges { gap: 12px !important; }
+            .cta-final-badge { font-size: 12px !important; }
+          }
+        `}</style>
+        <div className="cta-final-btns" style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
           <Link
             href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29."
+            className="cta-final-btn"
             style={{
               background: "#fff", color: "#1d9e75",
               borderRadius: 10, padding: "16px 32px",
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontSize: 16, fontWeight: 500, textDecoration: "none",
+              minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
             }}
           >
-            Démarrer pour 990 CHF
+            Démarrer maintenant
           </Link>
           <Link
             href="https://wa.me/41791342997"
+            className="cta-final-btn"
             style={{
               color: "#fff",
               border: "1px solid rgba(255,255,255,0.4)",
               borderRadius: 10, padding: "16px 32px",
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontSize: 16, fontWeight: 500, textDecoration: "none",
+              minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center",
             }}
           >
             Parler à Augustin
           </Link>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
+        <div className="cta-final-badges" style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
           {["Paiement sécurisé", "Remboursé si insatisfait", "En ligne en 48h"].map(badge => (
-            <span key={badge} style={{
+            <span key={badge} className="cta-final-badge" style={{
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontSize: 13, color: "rgba(255,255,255,0.75)",
             }}>

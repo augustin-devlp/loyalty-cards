@@ -297,16 +297,17 @@ export default function FeaturesPage() {
             fontSize: "clamp(26px, 3.5vw, 44px)",
             color: "#fff", marginBottom: 32,
           }}>
-            Tout ça pour 990 CHF.
+            Prêt à démarrer ?
           </h2>
-          <Link href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20d%C3%A9marrer%20avec%20Stampify%20%28990%20CHF%29." style={{
+          <Link href="/#tarif" style={{
             background: "#fff", color: "#1d9e75",
             borderRadius: 10, padding: "16px 32px",
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontSize: 16, fontWeight: 500,
             textDecoration: "none", display: "inline-block",
+            minHeight: 44,
           }}>
-            Démarrer maintenant →
+            Voir les tarifs →
           </Link>
         </section>
       </main>

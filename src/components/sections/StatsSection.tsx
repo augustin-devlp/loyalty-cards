@@ -12,7 +12,7 @@ const stats = [
 function Stat({ end, display, label, index }: { end: number; display: (n: number) => string; label: string; index: number }) {
   const { count, elementRef } = useCountUp(end, 1800, index * 150);
   return (
-    <div style={{
+    <div className="stat-item" style={{
       textAlign: "center",
       padding: "0 32px",
       borderRight: index < 3 ? "1px solid rgba(255,255,255,0.2)" : "none",

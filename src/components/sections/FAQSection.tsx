@@ -42,6 +42,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   return (
     <div
       onClick={() => setOpen(o => !o)}
+      className="faq-item"
       style={{
         borderBottom: "1px solid #f0f0f0",
         padding: "24px 0",
@@ -50,7 +51,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24 }}>
-        <span style={{
+        <span className="faq-question" style={{
           fontFamily: "var(--font-fraunces), serif",
           fontWeight: 600,
           fontSize: 18,
@@ -73,7 +74,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         overflow: "hidden",
         transition: "max-height 0.3s ease",
       }}>
-        <p style={{
+        <p className="faq-answer" style={{
           fontFamily: "var(--font-dm-sans), sans-serif",
           fontSize: 16,
           color: "#64748b",
