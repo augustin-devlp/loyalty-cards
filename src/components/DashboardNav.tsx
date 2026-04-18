@@ -4,30 +4,28 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { RIALTO_ID } from "@/lib/constants";
 
-// ── Inline SVG icons ──────────────────────────────────────────────────────────
+// ── Icons ─────────────────────────────────────────────────────────────────────
 
-function HomeIcon({ className }: { className?: string }) {
+function HomeIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className ?? "w-5 h-5"} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
   );
 }
-
-function CardIcon({ className }: { className?: string }) {
+function CardIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className ?? "w-5 h-5"} aria-hidden>
-      <rect x="2" y="5" width="20" height="14" rx="2" />
-      <line x1="2" y1="10" x2="22" y2="10" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
     </svg>
   );
 }
-
-function ScanIcon({ className }: { className?: string }) {
+function ScanIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className ?? "w-5 h-5"} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
       <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" />
       <path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
       <rect x="7" y="7" width="3" height="3" /><rect x="14" y="7" width="3" height="3" />
@@ -35,133 +33,188 @@ function ScanIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
-function StatsIcon({ className }: { className?: string }) {
+function StatsIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className ?? "w-5 h-5"} aria-hidden>
-      <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
     </svg>
   );
 }
-
-function MenuIcon({ className }: { className?: string }) {
+function CalendarIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className ?? "w-5 h-5"} aria-hidden>
-      <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
     </svg>
   );
 }
-
-function TeamIcon() {
+function WheelIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <circle cx="12" cy="12" r="10" /><line x1="12" y1="2" x2="12" y2="22" /><line x1="2" y1="12" x2="22" y2="12" />
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /><line x1="19.07" y1="4.93" x2="4.93" y2="19.07" />
     </svg>
   );
 }
-
-function BillingIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
-    </svg>
-  );
-}
-
-function AppearanceIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <circle cx="12" cy="12" r="10" /><path d="M12 2a10 10 0 0 1 0 20" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-    </svg>
-  );
-}
-
-function PromoIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-      <line x1="7" y1="7" x2="7.01" y2="7" />
-    </svg>
-  );
-}
-
-function EstablishmentIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  );
-}
-
-function SettingsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  );
-}
-
 function GiftIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <polyline points="20 12 20 22 4 22 4 12" />
-      <rect x="2" y="7" width="20" height="5" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <polyline points="20 12 20 22 4 22 4 12" /><rect x="2" y="7" width="20" height="5" />
       <line x1="12" y1="22" x2="12" y2="7" />
       <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
       <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
     </svg>
   );
 }
-
-function CalendarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  );
-}
-
 function SmsIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   );
 }
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+function PromoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+      <line x1="7" y1="7" x2="7.01" y2="7" />
+    </svg>
+  );
+}
+function TeamIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+function BillingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  );
+}
+function AppearanceIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <circle cx="12" cy="12" r="10" /><path d="M12 2a10 10 0 0 1 0 20" /><line x1="2" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function BuildingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  );
+}
+function SettingsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+function ChevronLeftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden>
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+function ChevronRightIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden>
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
+function MarketplaceIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" /><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+      <path d="M7 13L5.4 5" />
+    </svg>
+  );
+}
+function ClickCollectIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M21 10V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10" />
+      <path d="M1 6h22v4H1z" />
+      <line x1="12" y1="6" x2="12" y2="22" />
+    </svg>
+  );
+}
+function OrdersIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
 
-// ── Desktop nav links ─────────────────────────────────────────────────────────
+// ── Nav config ────────────────────────────────────────────────────────────────
 
-const OWNER_LINKS = [
-  { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon className="w-4 h-4" /> },
-  { href: "/dashboard/stats", label: "Statistiques", icon: <StatsIcon className="w-4 h-4" /> },
-  { href: "/dashboard/reservations", label: "Réservations", icon: <CalendarIcon /> },
-  { href: "/dashboard/spin-wheel", label: "Roue", icon: <PromoIcon /> },
-  { href: "/dashboard/lottery", label: "Loterie", icon: <GiftIcon /> },
-  { href: "/dashboard/sms", label: "SMS", icon: <SmsIcon /> },
-  { href: "/dashboard/menu", label: "Menu", icon: <MenuIcon className="w-4 h-4" /> },
-  { href: "/dashboard/team", label: "Équipe", icon: <TeamIcon /> },
-  { href: "/dashboard/billing", label: "Facturation", icon: <BillingIcon /> },
-  { href: "/dashboard/appearance", label: "Apparence", icon: <AppearanceIcon /> },
-  { href: "/dashboard/promotions", label: "Promos", icon: <PromoIcon /> },
-  { href: "/dashboard/establishments", label: "Établissements", icon: <EstablishmentIcon /> },
-  { href: "/dashboard/gift-cards", label: "Cartes cadeaux", icon: <GiftIcon /> },
-  { href: "/dashboard/settings", label: "Paramètres", icon: <SettingsIcon /> },
+type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boolean };
+
+const OWNER_LINKS: NavLink[] = [
+  { href: "/dashboard",               label: "Tableau de bord",  icon: <HomeIcon />,       exact: true },
+  { href: "/dashboard/commandes",     label: "Commandes",        icon: <OrdersIcon /> },
+  { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon /> },
+  { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon /> },
+  { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon /> },
+  { href: "/dashboard/reservations",  label: "Réservations",     icon: <CalendarIcon /> },
+  { href: "/dashboard/spin-wheel",    label: "Roue",             icon: <WheelIcon /> },
+  { href: "/dashboard/lottery",       label: "Loterie",          icon: <GiftIcon /> },
+  { href: "/dashboard/sms",           label: "SMS",              icon: <SmsIcon /> },
+  { href: "/dashboard/menu",          label: "Menu",             icon: <MenuIcon /> },
+  { href: "/dashboard/promotions",    label: "Promotions",       icon: <PromoIcon /> },
+  { href: "/dashboard/gift-cards",    label: "Cartes cadeaux",   icon: <GiftIcon /> },
+  { href: "/dashboard/marketplace",   label: "Marketplace",      icon: <MarketplaceIcon /> },
+  { href: "/dashboard/click-collect", label: "Click & Collect",  icon: <ClickCollectIcon /> },
+  { href: "/dashboard/team",          label: "Équipe",           icon: <TeamIcon /> },
+  { href: "/dashboard/billing",       label: "Facturation",      icon: <BillingIcon /> },
+  { href: "/dashboard/appearance",    label: "Apparence",        icon: <AppearanceIcon /> },
+  { href: "/dashboard/establishments",label: "Établissements",   icon: <BuildingIcon /> },
+  { href: "/dashboard/settings",      label: "Paramètres",       icon: <SettingsIcon /> },
 ];
 
-const EMPLOYEE_LINKS = [
-  { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon className="w-4 h-4" /> },
+const EMPLOYEE_LINKS: NavLink[] = [
+  { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon /> },
 ];
 
-// Drawer uses the same list as desktop — single source of truth.
+// divider before these indices (recalculés suite à l'ajout de "Commandes" en position 1)
+const DIVIDERS_AT = new Set([5, 14]);
+
+function isActive(link: NavLink, pathname: string) {
+  if (link.exact) return pathname === link.href;
+  return pathname.startsWith(link.href);
+}
+
+const GREEN = "#1d9e75";
+const GREEN_BG = "#e8f5ef";
+const BORDER = "#f0ede8";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -169,8 +222,22 @@ export default function DashboardNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [isEmployee, setIsEmployee] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [pendingReservations, setPendingReservations] = useState(0);
+  const [newOrders, setNewOrders] = useState(0);
+
+  // Load collapsed state from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("sidebar-collapsed");
+    if (stored === "true") setCollapsed(true);
+  }, []);
+
+  // Sync collapsed state to body class + localStorage
+  useEffect(() => {
+    document.body.classList.toggle("sidebar-collapsed", collapsed);
+    localStorage.setItem("sidebar-collapsed", String(collapsed));
+  }, [collapsed]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -208,10 +275,37 @@ export default function DashboardNav() {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  // Close drawer on route change
+  // Live badge pour nouvelles commandes Rialto
   useEffect(() => {
-    setDrawerOpen(false);
-  }, [pathname]);
+    const supabase = createClient();
+    const fetchNew = async () => {
+      const { count } = await supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("restaurant_id", RIALTO_ID)
+        .eq("status", "new");
+      setNewOrders(count ?? 0);
+    };
+    fetchNew();
+    const channel = supabase
+      .channel("nav-orders")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+          filter: `restaurant_id=eq.${RIALTO_ID}`,
+        },
+        fetchNew,
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -220,112 +314,159 @@ export default function DashboardNav() {
     router.refresh();
   };
 
-  const desktopLinks = isEmployee ? EMPLOYEE_LINKS : OWNER_LINKS;
-
-  // Bottom tab active state helpers
+  const links = isEmployee ? EMPLOYEE_LINKS : OWNER_LINKS;
   const isHome = pathname === "/dashboard";
   const isCards = pathname.startsWith("/dashboard/cards");
   const isScan = pathname.startsWith("/dashboard/scan");
   const isStats = pathname.startsWith("/dashboard/stats");
-
-  const tabActive = "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 text-[#534AB7]";
+  const tabActive = "flex flex-col items-center justify-center gap-0.5 flex-1 py-2";
   const tabInactive = "flex flex-col items-center justify-center gap-0.5 flex-1 py-2 text-gray-400";
 
   return (
     <>
-      {/* ── Desktop top header (hidden on mobile) ────────────────────────── */}
-      <header
-        className="border-b hidden md:block"
-        style={{ background: "var(--dash-nav-bg)", borderColor: "var(--dash-border)" }}
+      {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
+      <aside
+        className="fixed left-0 top-0 h-full hidden md:flex flex-col z-30 overflow-hidden"
+        style={{
+          width: collapsed ? 64 : 256,
+          background: "#ffffff",
+          borderRight: `1px solid ${BORDER}`,
+          transition: "width 0.25s cubic-bezier(0.4,0,0.2,1)",
+        }}
       >
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-5">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
-            >
-              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                <rect width="28" height="28" rx="8" fill="#534AB7"/>
-                <path d="M8 10C8 8.34 9.34 7 11 7H17C18.66 7 20 8.34 20 10V16C20 17.66 18.66 19 17 19H15.5L14 21.5L12.5 19H11C9.34 19 8 17.66 8 16V10Z" fill="white"/>
-                <circle cx="14" cy="12" r="2.5" fill="#534AB7"/>
-                <path d="M10.5 17C10.5 15.07 12.07 13.5 14 13.5C15.93 13.5 17.5 15.07 17.5 17" stroke="#534AB7" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              <span className="text-base font-bold" style={{ color: "#534AB7" }}>Stampify</span>
-            </Link>
-            <nav className="flex items-center gap-1">
-              {desktopLinks.map((link) => {
-                const active = pathname.startsWith(link.href);
-                const showBadge = link.href === "/dashboard/reservations" && pendingReservations > 0;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                    style={
-                      active
-                        ? { background: "var(--dash-accent-sub)", color: "var(--dash-accent)" }
-                        : { color: "var(--dash-muted)" }
-                    }
-                  >
-                    {link.icon}
-                    {link.label}
-                    {showBadge && (
-                      <span className="ml-1 flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold" style={{ background: "#EF4444", color: "white" }}>
-                        {pendingReservations > 9 ? "9+" : pendingReservations}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+        {/* Brand */}
+        <div
+          className="flex items-center px-4 py-5 shrink-0"
+          style={{ borderBottom: `1px solid ${BORDER}`, height: 64, gap: collapsed ? 0 : 12 }}
+        >
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: GREEN }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M8 10C8 8.34 9.34 7 11 7H17C18.66 7 20 8.34 20 10V16C20 17.66 18.66 19 17 19H15.5L14 21.5L12.5 19H11C9.34 19 8 17.66 8 16V10Z" fill="white"/>
+              <circle cx="14" cy="12" r="2.5" fill={GREEN}/>
+              <path d="M10.5 17C10.5 15.07 12.07 13.5 14 13.5C15.93 13.5 17.5 15.07 17.5 17" stroke={GREEN} strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
           </div>
+          <span
+            className="font-bold text-base text-gray-900 whitespace-nowrap overflow-hidden"
+            style={{
+              opacity: collapsed ? 0 : 1,
+              maxWidth: collapsed ? 0 : 160,
+              transition: "opacity 0.2s, max-width 0.25s",
+            }}
+          >
+            Stampify
+          </span>
+        </div>
+
+        {/* Nav items */}
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+          {links.map((link, idx) => {
+            const active = isActive(link, pathname);
+            const badgeCount =
+              link.href === "/dashboard/reservations"
+                ? pendingReservations
+                : link.href === "/dashboard/commandes"
+                  ? newOrders
+                  : 0;
+            const showBadge = badgeCount > 0;
+            const isOrdersBadge = link.href === "/dashboard/commandes";
+            const showDivider = DIVIDERS_AT.has(idx) && !isEmployee;
+            return (
+              <div key={link.href}>
+                {showDivider && <div className="my-2 mx-1" style={{ borderTop: `1px solid ${BORDER}` }} />}
+                <Link
+                  href={link.href}
+                  title={collapsed ? link.label : undefined}
+                  className="flex items-center rounded-xl text-sm font-medium transition-colors relative"
+                  style={{
+                    gap: collapsed ? 0 : 12,
+                    padding: collapsed ? "10px 0" : "10px 12px",
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    background: active ? GREEN_BG : "transparent",
+                    color: active ? GREEN : "#6b7280",
+                  }}
+                >
+                  {link.icon}
+                  {!collapsed && (
+                    <span className="flex-1 whitespace-nowrap">{link.label}</span>
+                  )}
+                  {!collapsed && showBadge && (
+                    <span
+                      className={`flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-[10px] font-bold ${
+                        isOrdersBadge ? "animate-pulse" : ""
+                      }`}
+                      style={{ background: "#EF4444", color: "white" }}
+                    >
+                      {badgeCount > 9 ? "9+" : badgeCount}
+                    </span>
+                  )}
+                  {collapsed && showBadge && (
+                    <span
+                      className={`absolute top-1 right-1 w-2 h-2 rounded-full ${
+                        isOrdersBadge ? "animate-pulse" : ""
+                      }`}
+                      style={{ background: "#EF4444" }}
+                    />
+                  )}
+                </Link>
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Footer: logout + collapse toggle */}
+        <div className="px-2 pb-4 pt-2 shrink-0" style={{ borderTop: `1px solid ${BORDER}` }}>
           <button
             onClick={handleLogout}
-            className="text-sm font-medium transition"
-            style={{ color: "var(--dash-muted)" }}
+            title={collapsed ? "Se déconnecter" : undefined}
+            className="flex items-center rounded-xl text-sm font-medium text-red-400 hover:bg-red-50 w-full transition-colors mt-2"
+            style={{
+              gap: collapsed ? 0 : 12,
+              padding: collapsed ? "10px 0" : "10px 12px",
+              justifyContent: collapsed ? "center" : "flex-start",
+            }}
           >
-            Se déconnecter
+            <LogoutIcon />
+            {!collapsed && <span className="whitespace-nowrap">Se déconnecter</span>}
+          </button>
+
+          {/* Collapse toggle button */}
+          <button
+            onClick={() => setCollapsed(c => !c)}
+            className="flex items-center justify-center w-full mt-2 rounded-xl transition-colors"
+            style={{
+              height: 32,
+              color: "#9ca3af",
+              background: "transparent",
+            }}
+            aria-label={collapsed ? "Déplier le menu" : "Réduire le menu"}
+            title={collapsed ? "Déplier" : "Réduire"}
+          >
+            {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </button>
         </div>
-      </header>
+      </aside>
 
-      {/* ── Mobile bottom navigation bar ────────────────────────────────── */}
+      {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-gray-200"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex h-16">
-          {/* Accueil */}
-          <Link href="/dashboard" className={isHome && !isCards ? tabActive : tabInactive}>
-            <HomeIcon />
-            <span className="text-[10px] font-semibold">Accueil</span>
+          <Link href="/dashboard" className={isHome && !isCards ? tabActive : tabInactive} style={isHome && !isCards ? { color: GREEN } : undefined}>
+            <HomeIcon /><span className="text-[10px] font-semibold">Accueil</span>
           </Link>
-
-          {/* Cartes */}
-          <Link href="/dashboard" className={isCards ? tabActive : tabInactive}>
-            <CardIcon />
-            <span className="text-[10px] font-semibold">Cartes</span>
+          <Link href="/dashboard/cards" className={isCards ? tabActive : tabInactive} style={isCards ? { color: GREEN } : undefined}>
+            <CardIcon /><span className="text-[10px] font-semibold">Cartes</span>
           </Link>
-
-          {/* Scanner */}
-          <Link href="/dashboard/scan" className={isScan ? tabActive : tabInactive}>
-            <ScanIcon />
-            <span className="text-[10px] font-semibold">Scanner</span>
+          <Link href="/dashboard/scan" className={isScan ? tabActive : tabInactive} style={isScan ? { color: GREEN } : undefined}>
+            <ScanIcon /><span className="text-[10px] font-semibold">Scanner</span>
           </Link>
-
-          {/* Stats */}
-          <Link href="/dashboard/stats" className={isStats ? tabActive : tabInactive}>
-            <StatsIcon />
-            <span className="text-[10px] font-semibold">Stats</span>
+          <Link href="/dashboard/stats" className={isStats ? tabActive : tabInactive} style={isStats ? { color: GREEN } : undefined}>
+            <StatsIcon /><span className="text-[10px] font-semibold">Stats</span>
           </Link>
-
-          {/* Menu */}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className={drawerOpen ? tabActive : tabInactive}
-          >
-            <MenuIcon />
-            <span className="text-[10px] font-semibold">Menu</span>
+          <button onClick={() => setDrawerOpen(true)} className={drawerOpen ? tabActive : tabInactive} style={drawerOpen ? { color: GREEN } : undefined}>
+            <MenuIcon /><span className="text-[10px] font-semibold">Menu</span>
           </button>
         </div>
       </nav>
@@ -333,62 +474,40 @@ export default function DashboardNav() {
       {/* ── Mobile drawer ────────────────────────────────────────────────── */}
       {drawerOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-50 bg-black/40 md:hidden"
-            onClick={() => setDrawerOpen(false)}
-          />
-          {/* Drawer panel */}
-          <div
-            className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white rounded-t-2xl shadow-2xl"
-            style={{ paddingBottom: "calc(4rem + env(safe-area-inset-bottom))" }}
-          >
-            {/* Drag handle */}
+          <div className="fixed inset-0 z-50 bg-black/40 md:hidden" onClick={() => setDrawerOpen(false)} />
+          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white rounded-t-2xl shadow-2xl" style={{ paddingBottom: "calc(4rem + env(safe-area-inset-bottom))" }}>
             <div className="flex justify-center pt-3 pb-2">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-
             <div className="px-4 pb-2">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">
-                Navigation
-              </p>
-              {desktopLinks.map((link) => {
-                const active = pathname.startsWith(link.href);
-                const showBadge = link.href === "/dashboard/reservations" && pendingReservations > 0;
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Navigation</p>
+              {links.map((link) => {
+                const active = isActive(link, pathname);
+                const badgeCount =
+                  link.href === "/dashboard/reservations"
+                    ? pendingReservations
+                    : link.href === "/dashboard/commandes"
+                      ? newOrders
+                      : 0;
+                const showBadge = badgeCount > 0;
                 return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
+                  <Link key={link.href} href={link.href}
                     className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium text-sm transition-colors"
-                    style={
-                      active
-                        ? { background: "#eef2ff", color: "#534AB7" }
-                        : { color: "#374151" }
-                    }
+                    style={active ? { background: GREEN_BG, color: GREEN } : { color: "#374151" }}
                   >
                     {link.icon}
                     {link.label}
                     {showBadge && (
                       <span className="ml-auto flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-[10px] font-bold" style={{ background: "#EF4444", color: "white" }}>
-                        {pendingReservations > 9 ? "9+" : pendingReservations}
+                        {badgeCount > 9 ? "9+" : badgeCount}
                       </span>
                     )}
                   </Link>
                 );
               })}
-
               <div className="my-2 border-t border-gray-100" />
-
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium text-sm text-red-600 w-full hover:bg-red-50 transition-colors"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                Se déconnecter
+              <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium text-sm text-red-500 w-full hover:bg-red-50 transition-colors">
+                <LogoutIcon />Se déconnecter
               </button>
             </div>
           </div>
