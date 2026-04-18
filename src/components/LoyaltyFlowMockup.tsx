@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 
-const STEP_DURATION = 2800;
+const STEP_DURATION = 3200;
 
 const STEPS = [
   { num: 1, label: "Le client scanne", sub: "Il pointe son appareil photo vers le QR code en caisse — sans télécharger d'app." },
   { num: 2, label: "Sa carte se crée", sub: "La carte fidélité vierge s'ouvre instantanément. Prête à recevoir ses premiers tampons." },
-  { num: 3, label: "Tampon ajouté", sub: "Le commerçant valide. Le tampon s'ajoute en temps réel sur la carte du client." },
-  { num: 4, label: "Récompense débloquée", sub: "Le 10ème tampon s'allume — le café offert se débloque et le client reçoit une notification." },
+  { num: 3, label: "Les tampons s'ajoutent", sub: "À chaque visite, un tampon de plus. Le client voit sa progression en temps réel." },
+  { num: 4, label: "Récompense débloquée", sub: "Le 8ème tampon s'allume — le café offert se débloque et le client reçoit une notification." },
 ];
 
 /* ── shared phone frame SVG ── */
@@ -22,29 +22,31 @@ const PHONE = (
   </>
 );
 
-/* ── shared card header ── */
+/* ── shared card header — 8 stamps ── */
 function CardHeader({ name = "Café Lumière" }: { name?: string }) {
   return (
     <>
-      <rect x="16" y="32" width="128" height="88" rx="12" fill="#1d9e75"/>
+      <rect x="16" y="32" width="128" height="94" rx="12" fill="#1d9e75"/>
       <defs>
-        <linearGradient id="lfcg" x1="16" y1="32" x2="144" y2="120" gradientUnits="userSpaceOnUse">
+        <linearGradient id="lfcg" x1="16" y1="32" x2="144" y2="126" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="rgba(255,255,255,0.17)"/>
           <stop offset="100%" stopColor="rgba(0,0,0,0.07)"/>
         </linearGradient>
       </defs>
-      <rect x="16" y="32" width="128" height="88" rx="12" fill="url(#lfcg)"/>
+      <rect x="16" y="32" width="128" height="94" rx="12" fill="url(#lfcg)"/>
       <circle cx="32" cy="48" r="10" fill="rgba(255,255,255,0.2)"/>
       <text x="32" y="52" textAnchor="middle" fontSize="10" fill="#fff">☕</text>
       <text x="50" y="48" fontSize="11" fill="rgba(255,255,255,0.95)" fontFamily="Georgia,serif" fontWeight="bold">{name}</text>
-      <text x="20" y="62" fontSize="7" fill="rgba(255,255,255,0.55)" fontFamily="sans-serif" letterSpacing="0.8">CARTE FIDÉLITÉ · 10 TAMPONS</text>
+      <text x="20" y="62" fontSize="7" fill="rgba(255,255,255,0.55)" fontFamily="sans-serif" letterSpacing="0.8">CARTE FIDÉLITÉ · 8 TAMPONS</text>
     </>
   );
 }
 
-/* stamp positions: 5 cols × 2 rows, cx=24+c*20, cy=74+r*18 */
+/* 4 cols × 2 rows = 8 stamps, perfectly centered in card (x=16→144) */
 function stampPos(i: number) {
-  return { cx: 24 + (i % 5) * 20, cy: 74 + Math.floor(i / 5) * 18 };
+  const col = i % 4;
+  const row = Math.floor(i / 4);
+  return { cx: 41 + col * 26, cy: 80 + row * 24 };
 }
 
 /* ── Step 1 : QR scan ── */
@@ -58,14 +60,11 @@ function StepScan() {
       <div style={{ width: "100%", maxWidth: 200 }}>
         <svg width="100%" viewBox="0 0 160 290" fill="none">
           {PHONE}
-          {/* viewfinder */}
           <rect x="28" y="44" width="104" height="104" rx="8" fill="rgba(0,0,0,0.04)"/>
-          {/* corner brackets */}
           <path d="M28 64 L28 44 L48 44" stroke="#1d9e75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
           <path d="M112 44 L132 44 L132 64" stroke="#1d9e75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
           <path d="M28 128 L28 148 L48 148" stroke="#1d9e75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
           <path d="M112 148 L132 148 L132 128" stroke="#1d9e75" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-          {/* QR code */}
           <rect x="36" y="52" width="22" height="22" rx="3" fill="none" stroke="#0f172a" strokeWidth="2"/>
           <rect x="40" y="56" width="14" height="14" rx="1" fill="#0f172a"/>
           <rect x="102" y="52" width="22" height="22" rx="3" fill="none" stroke="#0f172a" strokeWidth="2"/>
@@ -77,7 +76,6 @@ function StepScan() {
           ))}
           <circle cx="80" cy="90" r="7" fill="rgba(29,158,117,0.12)"/>
           <text x="80" y="94" textAnchor="middle" fontSize="8" fill="#1d9e75" fontWeight="bold" fontFamily="sans-serif">S</text>
-          {/* scan line */}
           <line x1="30" y1="44" x2="130" y2="44" stroke="#1d9e75" strokeWidth="1.5" strokeLinecap="round"
             style={{ animation: "lfscanLine 1.1s linear infinite alternate" }}/>
           <text x="80" y="170" textAnchor="middle" fontSize="10" fill="#94a3b8" fontFamily="sans-serif"
@@ -103,27 +101,25 @@ function StepCard() {
       <div style={{ width: "100%", maxWidth: 200 }}>
         <svg width="100%" viewBox="0 0 160 290" fill="none">
           {PHONE}
-          {/* Card header animated in */}
-          <g style={{ animation: "lfcardAppear 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+          <g style={{ animation: "lfcardAppear 0.55s 0.2s cubic-bezier(0.34,1.56,0.64,1) both" }}>
             <CardHeader />
-            {/* All 10 stamps EMPTY */}
-            {Array.from({length:10},(_,i)=>{
+            {/* 8 empty stamps */}
+            {Array.from({length:8},(_,i)=>{
               const {cx,cy}=stampPos(i);
               return (
-                <circle key={i} cx={cx} cy={cy} r="7"
+                <circle key={i} cx={cx} cy={cy} r="8"
                   fill="rgba(255,255,255,0.12)"
-                  stroke="rgba(255,255,255,0.35)" strokeWidth="1"
-                  strokeDasharray="2 2"/>
+                  stroke="rgba(255,255,255,0.4)" strokeWidth="1.2"
+                  strokeDasharray="2.5 2.5"/>
               );
             })}
-            {/* progress bar empty */}
-            <rect x="16" y="130" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
-            <text x="80" y="146" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.7)" fontFamily="sans-serif">0 / 10 — Carte prête !</text>
+            <rect x="16" y="136" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+            <text x="80" y="152" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.75)" fontFamily="sans-serif">0 / 8 — Carte prête !</text>
           </g>
-          {/* "Nouvelle carte" badge */}
-          <g style={{ animation: "lfcardPulse 1.6s 0.7s ease-in-out infinite" }}>
-            <rect x="28" y="155" width="104" height="20" rx="6" fill="rgba(255,255,255,0.15)"/>
-            <text x="80" y="169" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif" fontWeight="600">✨ Carte créée avec succès</text>
+          {/* success badge */}
+          <g style={{ animation: "lfcardPulse 1.6s 0.8s ease-in-out infinite" }}>
+            <rect x="24" y="161" width="112" height="22" rx="6" fill="rgba(255,255,255,0.15)"/>
+            <text x="80" y="175" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif" fontWeight="600">✨ Carte créée avec succès</text>
           </g>
         </svg>
       </div>
@@ -131,57 +127,69 @@ function StepCard() {
   );
 }
 
-/* ── Step 3 : First stamp pops on empty card ── */
+/* ── Step 3 : Stamps appear one by one (7 stamps, gradual) ── */
 function StepStamp() {
+  /* 7 stamps pop in with 340ms stagger — total 7×340 = 2380ms */
+  const stampDelay = (i: number) => i * 340;
+
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <style>{`
-        @keyframes s1pop {
-          0% { transform: scale(0); opacity: 0; }
-          60% { transform: scale(1.35); opacity: 1; }
-          80% { transform: scale(0.88); }
-          100% { transform: scale(1); opacity: 1; }
+        @keyframes sPop {
+          0%   { transform: scale(0);    opacity: 0; }
+          55%  { transform: scale(1.28); opacity: 1; }
+          78%  { transform: scale(0.90); }
+          100% { transform: scale(1);    opacity: 1; }
         }
-        @keyframes s1icon { 0%,30%{ opacity:0 } 65%,100%{ opacity:1 } }
-        @keyframes lf3notif { 0%,40%{ opacity:0; transform:translateY(6px) } 60%,100%{ opacity:1; transform:translateY(0) } }
-        @keyframes progressGrow { 0%{ width:0 } 100%{ width:13px } }
+        @keyframes sIcon { 0%,35%{ opacity:0 } 70%,100%{ opacity:1 } }
+        @keyframes s3notif { 0%,72%{ opacity:0; transform:translateY(5px) } 85%,100%{ opacity:1; transform:translateY(0) } }
+        @keyframes s3bar { from{ width:0 } to{ width:112px } }
       `}</style>
-      <div style={{ width: "100%", maxWidth: 200, position: "relative" }}>
+      <div style={{ width: "100%", maxWidth: 200 }}>
         <svg width="100%" viewBox="0 0 160 290" fill="none">
           {PHONE}
           <CardHeader />
-          {/* stamps 1-9 empty */}
-          {Array.from({length:10},(_,i)=>{
-            const {cx,cy}=stampPos(i);
-            if (i===0) return null; // stamp 0 animated below
+
+          {/* Stamps 0–6 pop in with stagger, stamp 7 stays empty */}
+          {Array.from({length:8},(_,i) => {
+            const {cx,cy} = stampPos(i);
+            if (i === 7) {
+              return (
+                <circle key={i} cx={cx} cy={cy} r="8"
+                  fill="rgba(255,255,255,0.12)"
+                  stroke="rgba(255,255,255,0.4)" strokeWidth="1.2"
+                  strokeDasharray="2.5 2.5"/>
+              );
+            }
+            const delay = stampDelay(i);
             return (
-              <circle key={i} cx={cx} cy={cy} r="7"
-                fill="rgba(255,255,255,0.12)"
-                stroke="rgba(255,255,255,0.35)" strokeWidth="1"
-                strokeDasharray="2 2"/>
-            );
-          })}
-          {/* stamp 0 (1st) — animated pop */}
-          {(()=>{
-            const {cx,cy}=stampPos(0);
-            return (
-              <g key="s0animated">
-                <circle cx={cx} cy={cy} r="7" fill="rgba(255,255,255,0.88)" stroke="rgba(255,255,255,0.35)" strokeWidth="1"
-                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s1pop 0.6s 0.4s cubic-bezier(0.36,0.07,0.19,0.97) both" }}/>
-                <text x={cx} y={cy+4} textAnchor="middle" fontSize="8" fill="#1d9e75"
-                  style={{ animation:"s1icon 0.6s 0.6s ease both" }}>☕</text>
+              <g key={i}>
+                <circle cx={cx} cy={cy} r="8"
+                  fill="rgba(255,255,255,0.88)"
+                  stroke="rgba(255,255,255,0.4)" strokeWidth="1"
+                  style={{
+                    transformBox: "fill-box",
+                    transformOrigin: "center",
+                    animation: `sPop 0.48s ${delay}ms cubic-bezier(0.36,0.07,0.19,0.97) both`,
+                  }}/>
+                <text x={cx} y={cy+4} textAnchor="middle" fontSize="9" fill="#1d9e75"
+                  style={{ animation: `sIcon 0.48s ${delay + 60}ms ease both` }}>☕</text>
               </g>
             );
-          })()}
-          {/* progress */}
-          <rect x="16" y="130" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
-          <rect x="16" y="130" width="13" height="4" rx="2" fill="#fff" opacity="0.7"
-            style={{ animation:"progressGrow 0.4s 0.5s ease both" }}/>
-          <text x="80" y="146" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.8)" fontFamily="sans-serif">1 / 10 — Continue !</text>
-          {/* admin notification banner */}
-          <g style={{ animation:"lf3notif 0.4s 0.5s ease both" }}>
-            <rect x="16" y="154" width="128" height="22" rx="7" fill="rgba(255,255,255,0.15)"/>
-            <text x="80" y="168" textAnchor="middle" fontSize="8" fill="#fff" fontFamily="sans-serif" fontWeight="600">✦ Tampon ajouté par le commerçant</text>
+          })}
+
+          {/* Progress bar growing to 7/8 */}
+          <rect x="16" y="136" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+          <rect x="16" y="136" width="112" height="4" rx="2" fill="#fff" opacity="0.7"
+            style={{ animation: "s3bar 2.38s ease both" }}/>
+          <text x="80" y="152" textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.85)" fontFamily="sans-serif">
+            7 / 8 — Encore un !
+          </text>
+
+          {/* Notification — appears after last stamp */}
+          <g style={{ animation: "s3notif 0.4s ease both", animationDuration: "0.4s", animationDelay: "2400ms" }}>
+            <rect x="16" y="160" width="128" height="22" rx="7" fill="rgba(255,255,255,0.15)"/>
+            <text x="80" y="174" textAnchor="middle" fontSize="8" fill="#fff" fontFamily="sans-serif" fontWeight="600">✦ 7 tampons ajoutés</text>
           </g>
         </svg>
       </div>
@@ -189,78 +197,87 @@ function StepStamp() {
   );
 }
 
-/* ── Step 4 : Full card + reward + SMS notification ── */
+/* ── Step 4 : 8th stamp + reward + SMS notification ── */
 function StepSuccess() {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <style>{`
-        @keyframes s10pop {
-          0%{ transform:scale(0); opacity:0 }
-          60%{ transform:scale(1.3); opacity:1 }
-          100%{ transform:scale(1); opacity:1 }
+        @keyframes s8pop {
+          0%  { transform: scale(0);    opacity: 0; }
+          55% { transform: scale(1.3);  opacity: 1; }
+          78% { transform: scale(0.88); }
+          100%{ transform: scale(1);    opacity: 1; }
         }
-        @keyframes s10icon {
+        @keyframes s8icon {
           0%,35%{ opacity:0; transform:scale(0); }
           65%,100%{ opacity:1; transform:scale(1); }
         }
+        @keyframes s8glow {
+          0%,100%{ opacity:0.5; r:9; }
+          50%{ opacity:1; r:11; }
+        }
         @keyframes rewardSlide {
-          0%,35%{ opacity:0; transform:translateY(10px); }
+          0%,38%{ opacity:0; transform:translateY(10px); }
           55%,100%{ opacity:1; transform:translateY(0); }
         }
-        @keyframes smsNotifSlide {
-          0%,55%{ opacity:0; transform:translateY(8px); }
+        @keyframes smsSlide {
+          0%,58%{ opacity:0; transform:translateY(8px); }
           75%,100%{ opacity:1; transform:translateY(0); }
-        }
-        @keyframes glowPulse {
-          0%,100%{ opacity:0.6; } 50%{ opacity:1; }
         }
       `}</style>
       <div style={{ width: "100%", maxWidth: 200 }}>
         <svg width="100%" viewBox="0 0 160 290" fill="none">
           {PHONE}
           <CardHeader />
-          {/* stamps 0-8 filled */}
-          {Array.from({length:10},(_,i)=>{
-            const {cx,cy}=stampPos(i);
-            if (i===9) return null; // animated separately
+
+          {/* Stamps 0–6 filled */}
+          {Array.from({length:8},(_,i) => {
+            const {cx,cy} = stampPos(i);
+            if (i === 7) return null; // animated separately
             return (
               <g key={i}>
-                <circle cx={cx} cy={cy} r="7" fill="rgba(255,255,255,0.88)" stroke="rgba(255,255,255,0.35)" strokeWidth="1"/>
-                <text x={cx} y={cy+4} textAnchor="middle" fontSize="8" fill="#1d9e75">☕</text>
+                <circle cx={cx} cy={cy} r="8" fill="rgba(255,255,255,0.88)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+                <text x={cx} y={cy+4} textAnchor="middle" fontSize="9" fill="#1d9e75">☕</text>
               </g>
             );
           })}
-          {/* stamp 9 (10th) — pop in */}
+
+          {/* Stamp 7 (8th) — animated pop */}
           {(()=>{
-            const {cx,cy}=stampPos(9);
+            const {cx,cy} = stampPos(7);
             return (
-              <g key="s9animated">
-                <circle cx={cx} cy={cy} r="9" fill="rgba(255,255,255,0.2)"
-                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"glowPulse 1s 0.8s ease infinite" }}/>
-                <circle cx={cx} cy={cy} r="7" fill="rgba(255,255,255,0.88)" stroke="rgba(255,255,255,0.35)" strokeWidth="1"
-                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s10pop 0.5s 0.3s cubic-bezier(0.36,0.07,0.19,0.97) both" }}/>
-                <text x={cx} y={cy+4} textAnchor="middle" fontSize="8" fill="#1d9e75"
-                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s10icon 0.4s 0.6s cubic-bezier(0.36,0.07,0.19,0.97) both" }}>☕</text>
+              <g key="s7">
+                <circle cx={cx} cy={cy} r="11" fill="rgba(255,255,255,0.2)"
+                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s8glow 1.2s 0.6s ease-in-out infinite" }}/>
+                <circle cx={cx} cy={cy} r="8" fill="rgba(255,255,255,0.88)" stroke="rgba(255,255,255,0.4)" strokeWidth="1"
+                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s8pop 0.5s 0.25s cubic-bezier(0.36,0.07,0.19,0.97) both" }}/>
+                <text x={cx} y={cy+4} textAnchor="middle" fontSize="9" fill="#1d9e75"
+                  style={{ transformBox:"fill-box", transformOrigin:"center", animation:"s8icon 0.45s 0.5s cubic-bezier(0.36,0.07,0.19,0.97) both" }}>☕</text>
               </g>
             );
           })()}
-          {/* progress — full */}
-          <rect x="16" y="130" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
-          <rect x="16" y="130" width="128" height="4" rx="2" fill="#fff" opacity="0.8"/>
-          <text x="80" y="146" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif" fontWeight="600">10 / 10 🎉</text>
-          {/* reward banner */}
-          <g style={{ animation:"rewardSlide 0.5s 0.6s ease both" }}>
-            <rect x="12" y="152" width="136" height="32" rx="8" fill="rgba(255,255,255,0.95)"/>
-            <text x="80" y="165" textAnchor="middle" fontSize="10" fill="#1d9e75" fontFamily="sans-serif" fontWeight="700">☕ Café offert !</text>
-            <text x="80" y="177" textAnchor="middle" fontSize="7.5" fill="#64748b" fontFamily="sans-serif">Montre ce message en caisse</text>
+
+          {/* Progress — full */}
+          <rect x="16" y="136" width="128" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+          <rect x="16" y="136" width="128" height="4" rx="2" fill="#fff" opacity="0.85"/>
+          <text x="80" y="152" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif" fontWeight="600">
+            8 / 8 🎉
+          </text>
+
+          {/* Reward banner */}
+          <g style={{ animation: "rewardSlide 0.5s 0.55s ease both" }}>
+            <rect x="12" y="158" width="136" height="30" rx="8" fill="rgba(255,255,255,0.95)"/>
+            <text x="80" y="170" textAnchor="middle" fontSize="10" fill="#1d9e75" fontFamily="sans-serif" fontWeight="700">☕ Café offert !</text>
+            <text x="80" y="181" textAnchor="middle" fontSize="7.5" fill="#64748b" fontFamily="sans-serif">Montre ce message en caisse</text>
           </g>
+
           {/* SMS notification */}
-          <g style={{ animation:"smsNotifSlide 0.4s 1s ease both" }}>
-            <rect x="10" y="191" width="140" height="34" rx="8" fill="#0f172a"/>
-            <rect x="16" y="197" width="18" height="18" rx="9" fill="#1d9e75"/>
-            <text x="25" y="209" textAnchor="middle" fontSize="9" fill="#fff" fontWeight="700">S</text>
-            <text x="40" y="205" fontSize="8" fill="rgba(255,255,255,0.6)" fontFamily="sans-serif">Stampify</text>
-            <text x="40" y="216" fontSize="7.5" fill="#fff" fontFamily="sans-serif">🎉 Ton café offert t&apos;attend !</text>
+          <g style={{ animation: "smsSlide 0.4s 0.9s ease both" }}>
+            <rect x="10" y="196" width="140" height="34" rx="8" fill="#0f172a"/>
+            <rect x="16" y="202" width="18" height="18" rx="9" fill="#1d9e75"/>
+            <text x="25" y="214" textAnchor="middle" fontSize="9" fill="#fff" fontWeight="700">S</text>
+            <text x="40" y="210" fontSize="8" fill="rgba(255,255,255,0.55)" fontFamily="sans-serif">Stampify</text>
+            <text x="40" y="221" fontSize="7.5" fill="#fff" fontFamily="sans-serif">🎉 Ton café offert t&apos;attend !</text>
           </g>
         </svg>
       </div>
