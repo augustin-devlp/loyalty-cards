@@ -39,7 +39,10 @@ export async function sendOrderStatusSms(
   }
 
   try {
-    await sendSms(order.customer_phone, message);
+    // Sender "Rialto" (6 chars, dans la limite Brevo de 11 alphanum).
+    // Quand on aura d'autres restaurants, passer à un champ
+    // restaurants.sms_sender configurable.
+    await sendSms(order.customer_phone, message, "Rialto");
     return true;
   } catch (err) {
     console.error(

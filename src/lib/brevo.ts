@@ -2,18 +2,30 @@
  * Send a transactional SMS via Brevo REST API.
  * @param to  Recipient phone — will be normalized to Brevo format (no +, e.g. "33612345678")
  * @param content  SMS text (max 160 chars for a single SMS)
+ * @param sender  Alphanumeric 11-char max sender ID. Defaults to "Stampify".
  */
-export async function sendSms(to: string, content: string): Promise<void> {
+export async function sendSms(
+  to: string,
+  content: string,
+  sender: string = "Stampify",
+): Promise<void> {
   const apiKey = process.env.BREVO_API_KEY;
   console.log("[brevo] BREVO_API_KEY present:", !!apiKey);
 
   if (!apiKey) throw new Error("BREVO_API_KEY is not set");
 
   const recipient = normalizePhone(to);
-  console.log("[brevo] sending SMS to recipient:", recipient, "| content length:", content.length);
+  console.log(
+    "[brevo] sending SMS to recipient:",
+    recipient,
+    "| sender:",
+    sender,
+    "| content length:",
+    content.length,
+  );
 
   const payload = {
-    sender: "Stampify",
+    sender,
     recipient,
     content,
     type: "transactional",

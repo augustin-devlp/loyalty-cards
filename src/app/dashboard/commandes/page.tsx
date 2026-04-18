@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardNav from "@/components/DashboardNav";
 import OrderCard from "@/components/orders/OrderCard";
 import OrderDetailModal from "@/components/orders/OrderDetailModal";
+import Toggle from "@/components/ui/Toggle";
 import { useOrdersRealtime } from "@/hooks/useOrdersRealtime";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { useDashboardPush } from "@/hooks/useDashboardPush";
@@ -150,8 +151,8 @@ export default function CommandesPage() {
         {/* Header sticky */}
         <header className="sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex-1 min-w-[200px]">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0 flex-1">
                 <h1 className="text-2xl font-black tracking-tight text-gray-900">
                   Commandes en direct
                 </h1>
@@ -168,32 +169,64 @@ export default function CommandesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={toggleAcceptingOrders}
-                  className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
-                    restaurant?.accepting_orders
-                      ? "bg-emerald-100 text-emerald-900 hover:bg-emerald-200"
-                      : "bg-red-100 text-red-900 hover:bg-red-200"
-                  }`}
-                >
-                  {restaurant?.accepting_orders
-                    ? "🟢 Accepte les commandes"
-                    : "⛔ En pause"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    sound.init();
-                    sound.setEnabled(!sound.enabled);
-                    if (!sound.enabled) sound.play();
-                  }}
-                  className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
-                >
-                  {sound.enabled ? "🔔 Son activé" : "🔕 Son coupé"}
-                </button>
+              {/* Toggles principaux */}
+              <div className="flex flex-wrap items-center gap-4 rounded-xl border border-gray-200 bg-white p-3 sm:gap-5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Commandes
+                  </span>
+                  <Toggle
+                    checked={!!restaurant?.accepting_orders}
+                    onChange={toggleAcceptingOrders}
+                    tooltip={
+                      restaurant?.accepting_orders
+                        ? "Les clients peuvent commander"
+                        : "Pause temporaire — aucun client ne peut commander"
+                    }
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    🔔 Son
+                  </span>
+                  <Toggle
+                    checked={sound.enabled}
+                    onChange={(next) => {
+                      sound.init();
+                      sound.setEnabled(next);
+                      if (next) sound.play();
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    📱 Push
+                  </span>
+                  <Toggle
+                    checked={push.subscribed}
+                    disabled={!push.supported || push.loading}
+                    tooltip={
+                      !push.supported
+                        ? "Notifications push non supportées sur ce navigateur"
+                        : push.subscribed
+                          ? "Cliquez pour désactiver"
+                          : "Cliquez pour activer"
+                    }
+                    onChange={async (next) => {
+                      sound.init();
+                      if (next) {
+                        const ok = await push.subscribe();
+                        if (!ok) {
+                          alert(
+                            "Permission refusée par le navigateur. Allez dans les paramètres du site et autorisez les notifications.",
+                          );
+                        }
+                      } else {
+                        await push.unsubscribe();
+                      }
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -258,13 +291,18 @@ export default function CommandesPage() {
             </div>
           ) : (
             <>
-              <div className="grid gap-4 lg:grid-cols-4">
+              {/* Hint scroll horizontal (mobile only) */}
+              <div className="mb-3 flex items-center justify-between text-[11px] font-medium text-gray-500 lg:hidden">
+                <span>← Faites glisser entre les colonnes →</span>
+              </div>
+
+              <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 scroll-smooth lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0">
                 {COLUMNS.map((col) => {
                   const list = byStatus[col.key];
                   return (
                     <section
                       key={col.key}
-                      className={`flex flex-col rounded-2xl border border-gray-200 ${col.bg} border-l-4 ${col.accent}`}
+                      className={`flex shrink-0 snap-start flex-col rounded-2xl border border-gray-200 ${col.bg} border-l-4 ${col.accent} w-[85vw] max-w-[340px] lg:w-auto lg:max-w-none lg:shrink`}
                     >
                       <header
                         className={`flex items-center justify-between rounded-t-2xl ${col.headerBg} px-4 py-3 text-white ${col.pulse && list.length > 0 ? "animate-pulse" : ""}`}
@@ -278,7 +316,7 @@ export default function CommandesPage() {
                         </span>
                       </header>
 
-                      <div className="flex-1 overflow-y-auto p-3 min-h-[200px] max-h-[75vh]">
+                      <div className="flex-1 overflow-y-auto p-3 min-h-[200px] max-h-[70vh] lg:max-h-[75vh]">
                         {list.length === 0 && (
                           <div className="pt-6 text-center text-xs text-gray-400">
                             Aucune commande

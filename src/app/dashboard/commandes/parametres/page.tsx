@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DashboardNav from "@/components/DashboardNav";
+import Toggle from "@/components/ui/Toggle";
 import { useDashboardPush } from "@/hooks/useDashboardPush";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { RIALTO_ID } from "@/lib/constants";
@@ -99,6 +100,7 @@ export default function ParametresCommandesPage() {
                 <Toggle
                   checked={restaurant.accepting_orders}
                   onChange={(v) => set({ accepting_orders: v })}
+                  showStateText
                 />
               </div>
               <div className={row}>
@@ -178,6 +180,7 @@ export default function ParametresCommandesPage() {
                 <Toggle
                   checked={!!restaurant.notification_sound}
                   onChange={(v) => set({ notification_sound: v })}
+                  showStateText
                 />
               </div>
               <div className={row}>
@@ -206,28 +209,28 @@ export default function ParametresCommandesPage() {
                   </div>
                 </div>
                 {push.supported ? (
-                  push.subscribed ? (
-                    <button
-                      type="button"
-                      disabled={push.loading}
-                      onClick={() => push.unsubscribe()}
-                      className="rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-                    >
-                      Désactiver
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled={push.loading}
-                      onClick={async () => {
+                  <Toggle
+                    checked={push.subscribed}
+                    disabled={push.loading}
+                    tooltip={
+                      push.subscribed
+                        ? "Cliquez pour désactiver"
+                        : "Cliquez pour activer (autorisation du navigateur requise)"
+                    }
+                    onChange={async (next) => {
+                      if (next) {
                         const ok = await push.subscribe();
-                        if (!ok) alert("Permission refusée.");
-                      }}
-                      className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
-                    >
-                      Activer sur ce navigateur
-                    </button>
-                  )
+                        if (!ok) {
+                          alert(
+                            "Permission refusée par le navigateur. Débloquez les notifications dans les paramètres du site.",
+                          );
+                        }
+                      } else {
+                        await push.unsubscribe();
+                      }
+                    }}
+                    showStateText
+                  />
                 ) : (
                   <span className="text-xs text-gray-400">Non supporté</span>
                 )}
@@ -256,28 +259,3 @@ export default function ParametresCommandesPage() {
   );
 }
 
-function Toggle({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors ${
-        checked ? "bg-emerald-500" : "bg-gray-300"
-      }`}
-    >
-      <span
-        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-          checked ? "translate-x-5" : ""
-        }`}
-      />
-    </button>
-  );
-}

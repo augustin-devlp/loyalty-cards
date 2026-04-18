@@ -465,8 +465,21 @@ export default function DashboardNav() {
           <Link href="/dashboard/stats" className={isStats ? tabActive : tabInactive} style={isStats ? { color: GREEN } : undefined}>
             <StatsIcon /><span className="text-[10px] font-semibold">Stats</span>
           </Link>
-          <button onClick={() => setDrawerOpen(true)} className={drawerOpen ? tabActive : tabInactive} style={drawerOpen ? { color: GREEN } : undefined}>
-            <MenuIcon /><span className="text-[10px] font-semibold">Menu</span>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className={`${drawerOpen ? tabActive : tabInactive} relative`}
+            style={drawerOpen ? { color: GREEN } : undefined}
+          >
+            <MenuIcon />
+            <span className="text-[10px] font-semibold">Menu</span>
+            {newOrders > 0 && (
+              <span
+                className="absolute top-1 right-5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white animate-pulse"
+                style={{ background: "#EF4444" }}
+              >
+                {newOrders > 9 ? "9+" : newOrders}
+              </span>
+            )}
           </button>
         </div>
       </nav>
