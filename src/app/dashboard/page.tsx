@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import DashboardNav from "@/components/DashboardNav";
 import OnboardingTourClient from "@/components/OnboardingTourClient";
 
+const GREEN = "#1d9e75";
+const GREEN_BG = "#e8f5ef";
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +23,7 @@ export default async function DashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center px-4">
         <div className="w-full max-w-lg text-center">
           <div className="flex items-center gap-2 justify-center mb-8">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: GREEN }}>
               <span className="text-white font-black">S</span>
             </div>
             <span className="font-black text-2xl text-gray-900">Stampify</span>
@@ -40,7 +43,7 @@ export default async function DashboardPage() {
                 <span>💬</span> WhatsApp : +41 79 134 29 97
               </a>
             </div>
-            <Link href="/activate" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-colors">
+            <Link href="/activate" className="inline-block text-white font-bold px-6 py-3 rounded-2xl text-sm transition-colors" style={{ background: GREEN }}>
               J&apos;ai reçu mon code → Activer
             </Link>
           </div>
@@ -61,10 +64,11 @@ export default async function DashboardPage() {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-  // Client cards ce mois
   let clientsThisMonth = 0;
   let stampsThisMonth = 0;
   let rewardsThisMonth = 0;
+  const dailyStamps: Record<string, number> = {};
+
   if (cardIds.length > 0) {
     const { count: cc } = await supabase
       .from("customer_cards")
@@ -87,7 +91,11 @@ export default async function DashboardPage() {
         .gte("created_at", startOfMonth);
 
       for (const tx of txs ?? []) {
-        if (tx.type === "stamp_added") stampsThisMonth += tx.value;
+        if (tx.type === "stamp_added") {
+          stampsThisMonth += tx.value;
+          const day = (tx.created_at as string).split("T")[0];
+          dailyStamps[day] = (dailyStamps[day] ?? 0) + tx.value;
+        }
         if (tx.type === "reward_claimed") rewardsThisMonth++;
       }
     }
@@ -128,7 +136,10 @@ export default async function DashboardPage() {
   }
 
   const businessName = business.business_name ?? user.email;
-  const isPro = business.plan === "pro" || business.plan === "business";
+  // FIX : toutes les features (hors SMS) sont accessibles à tous les plans.
+  // Les endpoints SMS vérifient eux-mêmes le plan côté API.
+  const isPro = true;
+  void business.plan; // (ancien : business.plan === "pro" || business.plan === "business")
 
   // ── Alerts ──────────────────────────────────────────────────────────────────
   const alerts: { emoji: string; text: string; link: string }[] = [];
@@ -142,61 +153,167 @@ export default async function DashboardPage() {
     alerts.push({ emoji: "📍", text: "Google Place ID non configuré — activez les avis Google automatiques.", link: "/dashboard/settings" });
   }
 
+  // ── Chart data ─────────────────────────────────────────────────────────────
+  const daysInMonth = now.getDate();
+  const chartData = Array.from({ length: daysInMonth }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth(), i + 1);
+    const key = d.toISOString().split("T")[0];
+    return { day: i + 1, value: dailyStamps[key] ?? 0 };
+  });
+  const maxStamp = Math.max(...chartData.map(d => d.value), 1);
+  const BAR_W = 12;
+  const BAR_GAP = 3;
+  const CHART_H = 72;
+  const svgW = daysInMonth * (BAR_W + BAR_GAP);
+
+  const MONTH_NAMES = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+  const monthLabel = `${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: "#FBF8F3" }}>
       <DashboardNav />
       {!business.onboarding_completed && <OnboardingTourClient businessId={user.id} />}
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-8 pb-24 md:pb-10">
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-8 pb-24 md:pb-12">
 
-        {/* Welcome */}
-        <div className="bg-gradient-to-r from-[#534AB7] to-indigo-500 rounded-2xl p-6 text-white shadow-lg">
-          <p className="text-indigo-200 text-sm font-medium mb-1">Tableau de bord</p>
+        {/* Welcome banner */}
+        <div className="rounded-2xl p-6 text-white shadow-sm" style={{ background: "linear-gradient(135deg, #1d9e75 0%, #15856b 100%)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "rgba(255,255,255,0.75)" }}>Tableau de bord</p>
           <h1 className="text-2xl font-bold">{businessName}</h1>
-          <p className="text-indigo-200 text-sm mt-1">
+          <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>
             {business.country === "CH" ? "🇨🇭 Suisse" : "🇫🇷 France"} · Plan {business.plan ?? "Essentiel"}
           </p>
         </div>
 
         {/* Metric cards */}
         <div>
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Ce mois-ci</h2>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Ce mois-ci</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all group">
-              <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Nouveaux clients</p>
-              <p className="text-3xl font-black text-indigo-600">{clientsThisMonth}</p>
-              <p className="text-xs text-gray-400 mt-1 group-hover:text-indigo-500">Voir les stats →</p>
+            {/* Clients */}
+            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Nouveaux clients</p>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                    <line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-3xl font-black" style={{ color: GREEN }}>{clientsThisMonth}</p>
+              <p className="text-xs text-gray-400 mt-2 group-hover:text-gray-600 transition-colors">Voir les stats →</p>
             </Link>
-            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-violet-200 transition-all group">
-              <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Tampons distribués</p>
-              <p className="text-3xl font-black text-violet-600">{stampsThisMonth}</p>
-              <p className="text-xs text-gray-400 mt-1 group-hover:text-violet-500">Voir les stats →</p>
+
+            {/* Stamps */}
+            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Tampons</p>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                    <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-3xl font-black" style={{ color: GREEN }}>{stampsThisMonth}</p>
+              <p className="text-xs text-gray-400 mt-2 group-hover:text-gray-600 transition-colors">Voir les stats →</p>
             </Link>
-            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-green-200 transition-all group">
-              <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Récompenses</p>
-              <p className="text-3xl font-black text-green-600">{rewardsThisMonth}</p>
-              <p className="text-xs text-gray-400 mt-1 group-hover:text-green-500">Voir les stats →</p>
+
+            {/* Rewards */}
+            <Link href="/dashboard/stats" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Récompenses</p>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                    <polyline points="20 12 20 22 4 22 4 12" /><rect x="2" y="7" width="20" height="5" />
+                    <line x1="12" y1="22" x2="12" y2="7" />
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-3xl font-black" style={{ color: GREEN }}>{rewardsThisMonth}</p>
+              <p className="text-xs text-gray-400 mt-2 group-hover:text-gray-600 transition-colors">Voir les stats →</p>
             </Link>
+
+            {/* Spins or Lottery */}
             {isPro ? (
-              <Link href="/dashboard/spin-wheel" className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-orange-200 transition-all group">
-                <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Spins roue</p>
-                <p className="text-3xl font-black text-orange-500">{spinsThisMonth}</p>
-                <p className="text-xs text-gray-400 mt-1 group-hover:text-orange-500">Configurer →</p>
+              <Link href="/dashboard/spin-wheel" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Spins roue</p>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                      <line x1="7" y1="7" x2="7.01" y2="7" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-3xl font-black" style={{ color: GREEN }}>{spinsThisMonth}</p>
+                <p className="text-xs text-gray-400 mt-2 group-hover:text-gray-600 transition-colors">Configurer →</p>
               </Link>
             ) : (
-              <Link href="/dashboard/lottery" className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-pink-200 transition-all group">
-                <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Loterie</p>
-                <p className="text-3xl font-black text-pink-500">{lotteryParticipants}</p>
-                <p className="text-xs text-gray-400 mt-1 group-hover:text-pink-500">Participants →</p>
+              <Link href="/dashboard/lottery" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Loterie</p>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden>
+                      <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-3xl font-black" style={{ color: GREEN }}>{lotteryParticipants}</p>
+                <p className="text-xs text-gray-400 mt-2 group-hover:text-gray-600 transition-colors">Participants →</p>
               </Link>
             )}
+          </div>
+        </div>
+
+        {/* Activity chart */}
+        <div className="bg-white rounded-2xl border p-6 shadow-sm" style={{ borderColor: "#f0ede8" }}>
+          <div className="flex items-start justify-between mb-5">
+            <div>
+              <h2 className="font-semibold text-gray-900">Activité tampons</h2>
+              <p className="text-xs text-gray-400 mt-0.5">{monthLabel}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-black" style={{ color: GREEN }}>{stampsThisMonth}</p>
+              <p className="text-xs text-gray-400">ce mois</p>
+            </div>
+          </div>
+          <svg
+            viewBox={`0 0 ${svgW} ${CHART_H}`}
+            preserveAspectRatio="none"
+            className="w-full"
+            style={{ height: CHART_H, display: "block" }}
+          >
+            {chartData.map((d, i) => {
+              const barH = Math.max((d.value / maxStamp) * (CHART_H - 6), d.value > 0 ? 6 : 3);
+              const x = i * (BAR_W + BAR_GAP);
+              const y = CHART_H - barH;
+              return (
+                <rect
+                  key={i}
+                  x={x}
+                  y={y}
+                  width={BAR_W}
+                  height={barH}
+                  rx={3}
+                  fill={d.value > 0 ? GREEN : "#e5e7eb"}
+                  opacity={d.value > 0 ? 0.9 : 1}
+                />
+              );
+            })}
+          </svg>
+          <div className="flex justify-between mt-2">
+            <span className="text-[10px] text-gray-400">1</span>
+            <span className="text-[10px] text-gray-400">{Math.ceil(daysInMonth / 2)}</span>
+            <span className="text-[10px] text-gray-400">{daysInMonth}</span>
           </div>
         </div>
 
         {/* Alerts */}
         {alerts.length > 0 && (
           <div>
-            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Alertes</h2>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Alertes</p>
             <div className="space-y-2">
               {alerts.map((a, i) => (
                 <Link key={i} href={a.link} className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100 transition-colors">
@@ -211,22 +328,43 @@ export default async function DashboardPage() {
 
         {/* Quick actions */}
         <div>
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Actions rapides</h2>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Actions rapides</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Link href="/dashboard/cards/new" className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-center">
-              <span className="text-2xl">🃏</span>
+            <Link href="/dashboard/cards/new" className="flex flex-col items-center gap-2.5 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all text-center group" style={{ borderColor: "#f0ede8" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden>
+                  <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
+                  <line x1="12" y1="13" x2="12" y2="17" /><line x1="10" y1="15" x2="14" y2="15" />
+                </svg>
+              </div>
               <span className="text-xs font-semibold text-gray-700">Créer une carte</span>
             </Link>
-            <Link href="/dashboard/scan" className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-center">
-              <span className="text-2xl">📷</span>
+            <Link href="/dashboard/scan" className="flex flex-col items-center gap-2.5 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all text-center group" style={{ borderColor: "#f0ede8" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden>
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2" /><path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2" /><path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                  <rect x="7" y="7" width="3" height="3" /><rect x="14" y="7" width="3" height="3" />
+                  <rect x="7" y="14" width="3" height="3" /><rect x="14" y="14" width="3" height="3" />
+                </svg>
+              </div>
               <span className="text-xs font-semibold text-gray-700">Scanner un client</span>
             </Link>
-            <Link href="/dashboard/stats" className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-center">
-              <span className="text-2xl">📊</span>
+            <Link href="/dashboard/stats" className="flex flex-col items-center gap-2.5 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all text-center group" style={{ borderColor: "#f0ede8" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden>
+                  <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              </div>
               <span className="text-xs font-semibold text-gray-700">Voir les stats</span>
             </Link>
-            <Link href="/dashboard/promotions" className="flex flex-col items-center gap-2 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-center">
-              <span className="text-2xl">📣</span>
+            <Link href="/dashboard/promotions" className="flex flex-col items-center gap-2.5 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all text-center group" style={{ borderColor: "#f0ede8" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: GREEN_BG }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5" aria-hidden>
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
               <span className="text-xs font-semibold text-gray-700">Notification push</span>
             </Link>
           </div>
@@ -235,15 +373,15 @@ export default async function DashboardPage() {
         {/* Cards */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide">Mes cartes</h2>
-            <Link href="/dashboard/cards/new" className="bg-[#534AB7] hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Mes cartes</p>
+            <Link href="/dashboard/cards/new" className="text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors" style={{ background: GREEN }}>
               + Nouvelle
             </Link>
           </div>
           {!cards || cards.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-10 text-center">
+            <div className="bg-white rounded-2xl border border-dashed p-10 text-center" style={{ borderColor: "#c8e6dc" }}>
               <p className="text-gray-400 text-sm mb-4">Aucune carte de fidélité pour l&apos;instant.</p>
-              <Link href="/dashboard/cards/new" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+              <Link href="/dashboard/cards/new" className="inline-block text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors" style={{ background: GREEN }}>
                 Créer ma première carte
               </Link>
             </div>
@@ -251,14 +389,14 @@ export default async function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {cards.map((card) => (
                 <Link key={card.id} href={`/dashboard/cards/${card.id}`}
-                  className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all group">
+                  className="bg-white rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all group" style={{ borderColor: "#f0ede8" }}>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base font-bold"
                       style={{ backgroundColor: card.primary_color, color: card.text_color }}>
                       {card.card_name[0]?.toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-700 transition-colors">{card.card_name}</p>
+                      <p className="font-semibold text-gray-900 text-sm truncate group-hover:text-gray-700 transition-colors">{card.card_name}</p>
                       <p className="text-xs text-gray-400">{card.card_type === "stamp" ? "Tampons" : "Points"}</p>
                     </div>
                     <span className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${card.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"}`}>

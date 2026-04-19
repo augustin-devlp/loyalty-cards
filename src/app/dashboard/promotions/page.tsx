@@ -69,7 +69,8 @@ export default function PromotionsPage() {
         .eq("id", user.id)
         .single();
 
-      if (!biz || biz.plan !== "pro" || biz.subscription_status !== "active") {
+      // FIX : Promotions déverrouillées pour tous les plans actifs.
+      if (!biz || biz.subscription_status !== "active") {
         setIsPro(false);
         setLoading(false);
         return;

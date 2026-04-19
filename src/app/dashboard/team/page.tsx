@@ -35,7 +35,8 @@ export default function TeamPage() {
       supabase.from("employees").select("id, name, email, invite_accepted, created_at").eq("business_id", user.id).order("created_at"),
     ]);
 
-    setIsPro(biz?.plan === "pro" && biz?.subscription_status === "active");
+    // FIX : Équipe déverrouillée pour tous les plans actifs (seul SMS reste Pro).
+    setIsPro(biz?.subscription_status === "active");
     setEmployees(emps ?? []);
     setLoading(false);
   };

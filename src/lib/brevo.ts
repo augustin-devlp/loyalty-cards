@@ -77,28 +77,13 @@ export async function sendEmail(
 }
 
 /**
- * Normalize a phone number to Brevo format: digits only, no +, no leading 0.
- * Examples:
- *   "+33 6 12 34 56 78" → "33612345678"
- *   "0612345678"        → "33612345678"  (French mobile, 0 replaced by 33)
- *   "+41 76 123 45 67"  → "41761234567"
+ * Normalise un numéro au format Brevo (E.164 sans "+"). Délègue à la
+ * lib libphonenumber-js pour gérer CH + FR + international correctement.
  */
+import { toBrevoPhone } from "./phone";
+
 export function normalizePhone(phone: string): string {
-  // Strip all spaces, dashes, dots, parentheses
-  let n = phone.replace(/[\s\-().]/g, "");
-
-  if (n.startsWith("+")) {
-    // +33612345678 → 33612345678  /  +41761234567 → 41761234567
-    n = n.slice(1);
-  } else if (n.startsWith("0")) {
-    // 0612345678 → 33612345678  (French local format)
-    n = "33" + n.slice(1);
-  } else if (/^[67]\d{8}$/.test(n)) {
-    // 9 digits starting with 6 or 7 = French mobile without leading 0 or country code
-    // e.g. "676549599" → "33676549599"
-    n = "33" + n;
-  }
-
+  const n = toBrevoPhone(phone);
   console.log("[brevo] normalizePhone:", phone, "→", n);
   return n;
 }

@@ -7,6 +7,7 @@ import {
   RIALTO_SPIN_WHEEL_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
+import { normalizePhone } from "@/lib/phone";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, {
@@ -23,13 +24,15 @@ export async function OPTIONS(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const headers = rialtoCorsHeaders(req.headers.get("origin"));
   const url = new URL(req.url);
-  const phone = url.searchParams.get("phone")?.trim();
-  if (!phone) {
+  const phoneRaw = url.searchParams.get("phone")?.trim();
+  if (!phoneRaw) {
     return NextResponse.json(
       { error: "phone requis" },
       { status: 400, headers },
     );
   }
+  // Normalise en E.164 pour matcher quelle que soit la façon de saisir
+  const phone = normalizePhone(phoneRaw) ?? phoneRaw;
 
   const admin = createAdminClient();
 

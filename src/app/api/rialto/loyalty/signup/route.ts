@@ -4,6 +4,7 @@ import {
   RIALTO_CARD_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
+import { normalizePhone } from "@/lib/phone";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, {
@@ -35,8 +36,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Normalise en E.164 pour que le même numéro soit trouvé quel que soit
+  // le format saisi (0612345678, +33 6 12…, 41791234567, etc.)
+  const phone = normalizePhone(body.phone);
+  if (!phone) {
+    return NextResponse.json(
+      { error: "Numéro de téléphone invalide." },
+      { status: 400, headers },
+    );
+  }
+
   const admin = createAdminClient();
-  const phone = body.phone.trim();
 
   // Cherche une carte existante par phone dans le programme Rialto
   const { data: existingCards } = await admin

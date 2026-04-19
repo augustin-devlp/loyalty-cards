@@ -276,7 +276,7 @@ function Dashboard({ data }: { data: AdminData }) {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-                {["Commerce", "Email", "Plan", "Statut", "Pays", "Inscrit le"].map((h) => (
+                {["Commerce", "Email", "Plan", "Statut", "Pays", "Inscrit le", "Actions"].map((h) => (
                   <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 700, color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.04em" }}>
                     {h}
                   </th>
@@ -286,7 +286,7 @@ function Dashboard({ data }: { data: AdminData }) {
             <tbody>
               {activeList.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: "32px 16px", textAlign: "center", color: "#9ca3af" }}>
+                  <td colSpan={7} style={{ padding: "32px 16px", textAlign: "center", color: "#9ca3af" }}>
                     Aucun commerçant actif.
                   </td>
                 </tr>
@@ -327,6 +327,9 @@ function Dashboard({ data }: { data: AdminData }) {
                       <td style={{ padding: "14px 16px", color: "#9ca3af", fontSize: 12 }}>
                         {new Date(biz.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
+                      <td style={{ padding: "10px 16px" }}>
+                        <BusinessActions biz={biz} />
+                      </td>
                     </tr>
                   );
                 })
@@ -363,4 +366,105 @@ export default function AdminPage() {
   if (unlocked && data) return <Dashboard data={data} />;
 
   return <PinForm onSuccess={handleSuccess} />;
+}
+
+// ── Business quick actions (change plan + status) ────────────────────────────
+function BusinessActions({ biz }: { biz: Business }) {
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function call(update: { plan?: string | null; subscription_status?: string | null }, key: string) {
+    if (busy) return;
+    setBusy(key);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/update-business", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: PIN, business_id: biz.id, ...update }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError((body as { error?: string }).error ?? `Erreur ${res.status}`);
+      } else {
+        // Reload to reflect changes
+        location.reload();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const btn: React.CSSProperties = {
+    border: "1px solid #d1d5db",
+    background: "#fff",
+    padding: "4px 10px",
+    borderRadius: 6,
+    fontSize: 11,
+    fontWeight: 600,
+    color: "#374151",
+    cursor: "pointer",
+  };
+
+  return (
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          color: biz.plan === "essential" ? "#9ca3af" : "#15803d",
+          borderColor: biz.plan === "essential" ? "#e5e7eb" : "#86efac",
+        }}
+        disabled={busy !== null || biz.plan === "essential"}
+        onClick={() => call({ plan: "essential" }, "essential")}
+        title="Passer en plan Essentiel"
+      >
+        {busy === "essential" ? "…" : "→ Essentiel"}
+      </button>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          color: biz.plan === "pro" ? "#9ca3af" : "#6d28d9",
+          borderColor: biz.plan === "pro" ? "#e5e7eb" : "#c4b5fd",
+        }}
+        disabled={busy !== null || biz.plan === "pro"}
+        onClick={() => call({ plan: "pro" }, "pro")}
+        title="Passer en plan Pro (active l'accès SMS)"
+      >
+        {busy === "pro" ? "…" : "→ Pro"}
+      </button>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          color: biz.subscription_status === "active" ? "#9ca3af" : "#15803d",
+        }}
+        disabled={busy !== null || biz.subscription_status === "active"}
+        onClick={() => call({ subscription_status: "active" }, "active")}
+        title="Activer l'abonnement"
+      >
+        {busy === "active" ? "…" : "Activer"}
+      </button>
+      <button
+        type="button"
+        style={{
+          ...btn,
+          color: biz.subscription_status !== "active" ? "#9ca3af" : "#b91c1c",
+        }}
+        disabled={busy !== null || biz.subscription_status !== "active"}
+        onClick={() => call({ subscription_status: "inactive" }, "inactive")}
+        title="Désactiver l'abonnement"
+      >
+        {busy === "inactive" ? "…" : "Désactiver"}
+      </button>
+      {error && (
+        <span style={{ fontSize: 10, color: "#b91c1c", marginLeft: 4 }}>
+          {error}
+        </span>
+      )}
+    </div>
+  );
 }

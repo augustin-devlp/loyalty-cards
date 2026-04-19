@@ -18,8 +18,9 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (!business) return NextResponse.json({ error: "Commerce introuvable" }, { status: 404 });
-  if (business.plan !== "pro" || business.subscription_status !== "active") {
-    return NextResponse.json({ error: "Cette fonctionnalité requiert le plan Pro." }, { status: 403 });
+  // FIX : équipe déverrouillée, seul SMS reste Pro. Abonnement actif exigé.
+  if (business.subscription_status !== "active") {
+    return NextResponse.json({ error: "Abonnement non actif." }, { status: 403 });
   }
 
   // Check employee count

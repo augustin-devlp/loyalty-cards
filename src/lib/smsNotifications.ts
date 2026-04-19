@@ -24,16 +24,13 @@ export type SmsResult =
   | { success: false; skipped: true; reason: string };
 
 /**
- * Normalise un numéro de téléphone suisse (ou international) au format
- * Brevo E.164 sans le "+" (ex. "41791234567").
+ * Normalise au format Brevo (E.164 sans "+"). Gère CH + FR + international
+ * via libphonenumber-js.
  */
+import { toBrevoPhone } from "./phone";
+
 export function normalizePhone(raw: string): string {
-  let n = raw.replace(/[\s\-().]/g, "");
-  if (n.startsWith("+")) return n.slice(1);
-  if (n.startsWith("00")) return n.slice(2);
-  if (/^0[1-9]\d{8}$/.test(n)) return "41" + n.slice(1);
-  if (n.startsWith("0")) return "41" + n.slice(1);
-  return n;
+  return toBrevoPhone(raw);
 }
 
 const STATUS_TO_KEY: Partial<Record<OrderStatus, TemplateKey>> = {

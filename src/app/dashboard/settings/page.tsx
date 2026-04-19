@@ -55,7 +55,10 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const isPro = plan === "pro" || plan === "business";
+  // FIX : configuration Google Place ID déverrouillée pour tous. La feature
+  // SMS elle-même (envoi d'avis Google) reste plan-Pro, vérifiée côté API.
+  const isPro = true; // (anciennement: plan === "pro" || plan === "business")
+  void plan; // éviter warning unused
 
   return (
     <div className="min-h-screen" style={{ background: "var(--dash-bg)" }}>
