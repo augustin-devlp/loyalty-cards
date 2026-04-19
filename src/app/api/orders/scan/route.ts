@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendOrderStatusSms } from "@/lib/smsNotifications";
+import { RIALTO_CARD_ID } from "@/lib/rialtoConstants";
 
 /**
  * GET /api/orders/scan?number=R-2026-XXX
@@ -77,10 +78,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // +1 tampon fidélité
+  // +1 tampon fidélité Stampify natif
   if (order.customer_id) {
-    await admin.rpc("increment_rialto_stamps", {
+    await admin.rpc("increment_stampify_stamps", {
       p_customer_id: order.customer_id,
+      p_card_id: RIALTO_CARD_ID,
     });
   }
 

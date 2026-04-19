@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendOrderStatusSms } from "@/lib/smsNotifications";
 import type { OrderStatus } from "@/lib/constants";
 import { ORDER_STATUSES } from "@/lib/constants";
+import { RIALTO_CARD_ID } from "@/lib/rialtoConstants";
 
 async function requireAuth() {
   const supabase = await createClient();
@@ -92,15 +93,28 @@ export async function PATCH(
     );
   }
 
-  // +1 tampon quand la commande devient "completed"
+  // +1 tampon Stampify natif quand la commande devient "completed".
+  // Utilise la RPC atomique qui reset stamps + incrémente rewards_claimed
+  // au seuil (stamps_required) du programme.
+  let rewardEarned = false;
   if (body.status === "completed" && updated.customer_id) {
-    await admin.rpc("increment_rialto_stamps", { p_customer_id: updated.customer_id });
+    const { data: rpcResult } = await admin.rpc("increment_stampify_stamps", {
+      p_customer_id: updated.customer_id,
+      p_card_id: RIALTO_CARD_ID,
+    });
+    if (
+      rpcResult &&
+      typeof rpcResult === "object" &&
+      (rpcResult as { reward_earned?: boolean }).reward_earned === true
+    ) {
+      rewardEarned = true;
+    }
   }
 
   // SMS BLOQUANT — on attend le résultat pour le renvoyer à l'UI dashboard
   const sms = await sendOrderStatusSms(updated, body.status);
 
-  return NextResponse.json({ order: updated, sms });
+  return NextResponse.json({ order: updated, sms, reward_earned: rewardEarned });
 }
 
 /**
