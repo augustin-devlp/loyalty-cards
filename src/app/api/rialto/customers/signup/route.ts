@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       },
       { onConflict: "restaurant_id,phone" },
     )
-    .select("id, first_name, last_name, email, stamps_count")
+    .select("id, first_name, last_name, email, phone, stamps_count")
     .single();
 
   if (error) {
@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
   const admin = createAdminClient();
   const { data } = await admin
     .from("rialto_customers")
-    .select("id, first_name, last_name, email, stamps_count")
+    .select("id, first_name, last_name, email, phone, stamps_count")
     .eq("restaurant_id", restaurantId)
     .eq("phone", phone)
     .maybeSingle();
