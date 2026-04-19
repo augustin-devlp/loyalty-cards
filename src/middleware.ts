@@ -48,15 +48,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from auth pages
+  // Rediriger les utilisateurs authentifiés depuis /login et /signup UNIQUEMENT
+  // s'ils ont une souscription active (= prêt pour le dashboard). Sinon on
+  // laisse le formulaire visible pour qu'ils puissent se connecter avec un
+  // autre compte, faire un reset password, etc.
+  //
+  // (Sans cette condition, un user loggé mais sans subscription active
+  // tombe dans le chaînage /login → /dashboard → /subscribe et ne peut
+  // jamais voir le formulaire de connexion.)
   if (
     user &&
     (request.nextUrl.pathname === "/login" ||
       request.nextUrl.pathname === "/signup")
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    const { data: business } = await supabase
+      .from("businesses")
+      .select("subscription_status")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (business?.subscription_status === "active") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    // Pas de souscription active → on laisse voir le formulaire
   }
 
   return supabaseResponse;
