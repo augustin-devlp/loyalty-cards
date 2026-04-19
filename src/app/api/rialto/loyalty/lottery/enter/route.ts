@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  RIALTO_BUSINESS_ID,
+  RIALTO_CARD_ID,
   RIALTO_LOTTERY_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   const { data: lottery } = await admin
     .from("lotteries")
-    .select("id, is_active, end_date")
+    .select("id, is_active, end_date, require_google_review")
     .eq("id", RIALTO_LOTTERY_ID)
     .maybeSingle();
   if (!lottery || !lottery.is_active) {
@@ -46,6 +48,47 @@ export async function POST(req: NextRequest) {
       { error: "La loterie n'est pas active." },
       { status: 409, headers },
     );
+  }
+
+  // Si avis Google requis, vérifier le claim actif
+  if (lottery.require_google_review) {
+    const { data: cards } = await admin
+      .from("customer_cards")
+      .select("customer_id, customers!inner (phone)")
+      .eq("card_id", RIALTO_CARD_ID)
+      .eq("customers.phone", phone)
+      .limit(1);
+    const customerId =
+      Array.isArray(cards) && cards.length > 0
+        ? (cards[0].customer_id as string)
+        : null;
+    if (!customerId) {
+      return NextResponse.json(
+        {
+          error: "Aucune carte fidélité trouvée pour ce numéro.",
+          requires_review: true,
+        },
+        { status: 403, headers },
+      );
+    }
+    const { data: claim } = await admin
+      .from("google_review_claims")
+      .select("id")
+      .eq("customer_id", customerId)
+      .eq("business_id", RIALTO_BUSINESS_ID)
+      .gt("expires_at", new Date().toISOString())
+      .limit(1)
+      .maybeSingle();
+    if (!claim) {
+      return NextResponse.json(
+        {
+          error: "Laissez un avis Google pour participer à la loterie.",
+          requires_review: true,
+          customer_id: customerId,
+        },
+        { status: 403, headers },
+      );
+    }
   }
 
   const { data: existing } = await admin

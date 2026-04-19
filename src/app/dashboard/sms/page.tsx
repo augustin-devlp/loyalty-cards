@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import DashboardNav from "@/components/DashboardNav";
+import SMSLockCard from "@/components/SMSLockCard";
 
 // 15 SMS trigger definitions
 const SMS_TRIGGERS = [
@@ -69,41 +71,30 @@ export default function SmsDashboardPage() {
   // Add-on gate
   if (hasAddon === null) {
     return (
-      <div style={{ padding: 40, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 400 }}>
-        <span style={{ color: "#6B6259", fontSize: 14 }}>Chargement…</span>
+      <div style={{ background: "#FBF8F3", minHeight: "100vh" }}>
+        <DashboardNav />
+        <div style={{ padding: 40, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 400 }}>
+          <span style={{ color: "#6B6259", fontSize: 14 }}>Chargement…</span>
+        </div>
       </div>
     );
   }
 
   if (!hasAddon) {
     return (
-      <div style={{ padding: "32px 24px", fontFamily: "'DM Sans', sans-serif" }}>
-        <div style={{ maxWidth: 600, margin: "0 auto" }}>
-          <div style={{ background: "#FEF3C7", border: "1.5px solid #F59E0B", borderRadius: 16, padding: "32px", textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-            <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 24, fontWeight: 700, color: "#1A1410", margin: "0 0 12px" }}>
-              Fonctionnalité SMS verrouillée
-            </h2>
-            <p style={{ fontSize: 15, color: "#6B6259", lineHeight: 1.65, margin: "0 0 24px" }}>
-              Les automatisations SMS et les campagnes manuelles sont disponibles avec l&apos;add-on <strong>Essentiel (49 CHF/mois)</strong> ou <strong>Pro (79 CHF/mois)</strong>.
-            </p>
-            <a
-              href="https://wa.me/41791342997?text=Bonjour%20%21%20Je%20souhaite%20activer%20l%27add-on%20SMS%20pour%20mon%20site%20Stampify."
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: "inline-block", background: "#3D31B0", color: "white", padding: "14px 28px", borderRadius: 10, fontWeight: 700, fontSize: 15, textDecoration: "none" }}
-            >
-              Activer l&apos;add-on SMS →
-            </a>
-            <p style={{ fontSize: 13, color: "#9B8A7E", marginTop: 12, marginBottom: 0 }}>Sans engagement · résiliable à tout moment</p>
-          </div>
+      <div style={{ background: "#FBF8F3", minHeight: "100vh" }}>
+        <DashboardNav />
+        <div className="py-8">
+          <SMSLockCard />
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "24px", fontFamily: "'DM Sans', sans-serif", maxWidth: 900 }}>
+    <div style={{ background: "#FBF8F3", minHeight: "100vh" }}>
+    <DashboardNav />
+    <div style={{ padding: "24px", fontFamily: "'DM Sans', sans-serif", maxWidth: 900, margin: "0 auto" }}>
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: 28, fontWeight: 700, color: "#1A1410", margin: "0 0 6px" }}>
           SMS & Automatisations
@@ -284,6 +275,7 @@ export default function SmsDashboardPage() {
         </div>
         <p style={{ fontSize: 12, color: "#9B8A7E", marginTop: 12, fontStyle: "italic" }}>Les statistiques apparaîtront après votre première campagne.</p>
       </section>
+    </div>
     </div>
   );
 }

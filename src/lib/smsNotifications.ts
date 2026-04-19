@@ -41,7 +41,24 @@ const STATUS_TO_KEY: Partial<Record<OrderStatus, TemplateKey>> = {
 };
 
 const BREVO_URL = "https://api.brevo.com/v3/transactionalSMS/sms";
-const SENDER = "Rialto";
+const PRIMARY_SENDER = "Rialto";
+const FALLBACK_SENDER = "Stampify"; // sender pré-validé Brevo, fonctionne FR+CH
+
+/**
+ * Brevo bloque les envois vers la France avec un sender alphanumérique
+ * non pré-enregistré (règle depuis 2023). On détecte ces cas côté HTTP
+ * et on retente avec un sender fallback "Stampify" qui est déjà validé.
+ */
+function shouldRetryWithFallback(status: number, data: Record<string, unknown>): boolean {
+  if (status !== 400 && status !== 403) return false;
+  const msg = JSON.stringify(data).toLowerCase();
+  return (
+    msg.includes("sender") ||
+    msg.includes("expediteur") ||
+    msg.includes("unauthorized") ||
+    msg.includes("not allowed")
+  );
+}
 
 /**
  * Envoie un SMS de transition de statut en utilisant le template personnalisé
@@ -139,12 +156,24 @@ async function sendTemplated(
   const content = renderTemplate(tmpl.content, ctx);
   const phone = normalizePhone(order.customer_phone);
 
-  const bodyStr = JSON.stringify({
-    sender: SENDER,
-    recipient: phone,
-    content,
-    type: "transactional",
-  });
+  const isFrench = phone.startsWith("33");
+  if (isFrench) {
+    console.log(
+      "[SMS] FR number detected — sender Rialto may be rejected by Brevo. Will fallback to Stampify if needed.",
+      { orderId: order.id, phoneNorm: phone },
+    );
+  }
+
+  const sendersToTry = [PRIMARY_SENDER, FALLBACK_SENDER];
+  let currentSender = sendersToTry[0];
+
+  const makeBody = (sender: string) =>
+    JSON.stringify({
+      sender,
+      recipient: phone,
+      content,
+      type: "transactional",
+    });
 
   console.log("[SMS] sending", {
     orderId: order.id,
@@ -152,6 +181,7 @@ async function sendTemplated(
     templateKey: key,
     phoneNorm: phone,
     length: content.length,
+    sender: currentSender,
   });
 
   let lastError = "unknown";
@@ -166,7 +196,7 @@ async function sendTemplated(
           "content-type": "application/json",
           "api-key": apiKey,
         },
-        body: bodyStr,
+        body: makeBody(currentSender),
       });
       const raw = await res.text();
       let data: Record<string, unknown> = {};
@@ -185,6 +215,7 @@ async function sendTemplated(
           reference,
           attempt,
           httpStatus: res.status,
+          sender: currentSender,
         });
         return { success: true, reference };
       }
@@ -197,8 +228,22 @@ async function sendTemplated(
         templateKey: key,
         attempt,
         httpStatus: res.status,
+        sender: currentSender,
         data,
       });
+
+      // Fallback sender si Brevo refuse "Rialto" (typique FR)
+      if (
+        currentSender === PRIMARY_SENDER &&
+        shouldRetryWithFallback(res.status, data)
+      ) {
+        console.warn(
+          "[SMS] Brevo a refusé le sender 'Rialto' — retry avec 'Stampify'",
+          { orderId: order.id, phone },
+        );
+        currentSender = FALLBACK_SENDER;
+        continue; // on retente immédiatement avec le nouveau sender
+      }
 
       if (res.status >= 400 && res.status < 500) {
         return { success: false, error: lastError, status: res.status };

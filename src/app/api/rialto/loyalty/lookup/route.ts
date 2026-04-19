@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  RIALTO_BUSINESS_ID,
   RIALTO_CARD_ID,
   RIALTO_LOTTERY_ID,
   RIALTO_RESTAURANT_ID,
@@ -55,12 +56,38 @@ export async function GET(req: NextRequest) {
     .eq("id", RIALTO_CARD_ID)
     .single();
 
-  // 2) Spin wheel (state partagé entre clients, mais can_spin dépend du user)
+  // 2) Spin wheel
   const { data: wheel } = await admin
     .from("spin_wheels")
     .select("id, segments, frequency, is_active, require_google_review")
     .eq("id", RIALTO_SPIN_WHEEL_ID)
     .maybeSingle();
+
+  // 2b) Business : place_id pour le deep-link Google + claim actif
+  const { data: business } = await admin
+    .from("businesses")
+    .select("google_place_id")
+    .eq("id", RIALTO_BUSINESS_ID)
+    .maybeSingle();
+
+  let activeClaim: { id: string; expires_at: string } | null = null;
+  if (card) {
+    const { data: claim } = await admin
+      .from("google_review_claims")
+      .select("id, expires_at")
+      .eq("customer_id", card.customer_id)
+      .eq("business_id", RIALTO_BUSINESS_ID)
+      .gt("expires_at", new Date().toISOString())
+      .order("claimed_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (claim) {
+      activeClaim = {
+        id: claim.id as string,
+        expires_at: claim.expires_at as string,
+      };
+    }
+  }
 
   const { data: wheelRewards } = await admin
     .from("spin_rewards")
@@ -103,7 +130,7 @@ export async function GET(req: NextRequest) {
   const { data: lottery } = await admin
     .from("lotteries")
     .select(
-      "id, title, reward_description, draw_date, start_date, end_date, is_active, is_permanent, max_winners",
+      "id, title, reward_description, draw_date, start_date, end_date, is_active, is_permanent, max_winners, require_google_review",
     )
     .eq("id", RIALTO_LOTTERY_ID)
     .maybeSingle();
@@ -164,6 +191,7 @@ export async function GET(req: NextRequest) {
             rewards: wheelRewards ?? [],
             can_spin: canSpin,
             last_reward: lastSpinReward,
+            require_google_review: !!wheel.require_google_review,
           }
         : null,
       lottery: lottery
@@ -177,9 +205,14 @@ export async function GET(req: NextRequest) {
             is_active: lottery.is_active,
             is_permanent: lottery.is_permanent,
             already_entered: alreadyEntered,
+            require_google_review: !!(lottery as { require_google_review?: boolean }).require_google_review,
           }
         : null,
       orders: orders ?? [],
+      review_gate: {
+        place_id: (business?.google_place_id as string | null) ?? null,
+        active_claim: activeClaim,
+      },
     },
     { headers },
   );

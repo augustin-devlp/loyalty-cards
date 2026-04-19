@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  RIALTO_BUSINESS_ID,
+  RIALTO_CARD_ID,
   RIALTO_SPIN_WHEEL_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
 
   const { data: wheel } = await admin
     .from("spin_wheels")
-    .select("id, segments, frequency, is_active")
+    .select("id, segments, frequency, is_active, require_google_review")
     .eq("id", RIALTO_SPIN_WHEEL_ID)
     .maybeSingle();
 
@@ -54,6 +56,51 @@ export async function POST(req: NextRequest) {
       { error: "La roue n'est pas active actuellement." },
       { status: 409, headers },
     );
+  }
+
+  // Si la roue exige un avis Google, vérifier qu'un claim actif existe
+  if (wheel.require_google_review) {
+    // Retrouve le customer_id depuis la carte Rialto liée à ce phone
+    const { data: cards } = await admin
+      .from("customer_cards")
+      .select("customer_id, customers!inner (phone)")
+      .eq("card_id", RIALTO_CARD_ID)
+      .eq("customers.phone", phone)
+      .limit(1);
+    const customerId =
+      Array.isArray(cards) && cards.length > 0
+        ? (cards[0].customer_id as string)
+        : null;
+
+    if (!customerId) {
+      return NextResponse.json(
+        {
+          error: "Aucune carte fidélité trouvée pour ce numéro.",
+          requires_review: true,
+        },
+        { status: 403, headers },
+      );
+    }
+
+    const { data: claim } = await admin
+      .from("google_review_claims")
+      .select("id, expires_at")
+      .eq("customer_id", customerId)
+      .eq("business_id", RIALTO_BUSINESS_ID)
+      .gt("expires_at", new Date().toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    if (!claim) {
+      return NextResponse.json(
+        {
+          error: "Laissez un avis Google pour débloquer votre tour.",
+          requires_review: true,
+          customer_id: customerId,
+        },
+        { status: 403, headers },
+      );
+    }
   }
 
   // Vérif fréquence
