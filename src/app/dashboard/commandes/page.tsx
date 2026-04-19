@@ -5,6 +5,7 @@ import DashboardNav from "@/components/DashboardNav";
 import OrderCard from "@/components/orders/OrderCard";
 import OrderDetailModal from "@/components/orders/OrderDetailModal";
 import PushControl from "@/components/orders/PushControl";
+import RefuseOrderModal from "@/components/orders/RefuseOrderModal";
 import Toggle from "@/components/ui/Toggle";
 import { useOrdersRealtime } from "@/hooks/useOrdersRealtime";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
@@ -43,6 +44,7 @@ export default function CommandesPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [pushBannerDismissed, setPushBannerDismissed] = useState(false);
+  const [refuseTarget, setRefuseTarget] = useState<OrderWithItems | null>(null);
   // Map orderId → dernier résultat SMS (affiché sur la card)
   const [smsByOrder, setSmsByOrder] = useState<Record<string, SmsState>>({});
 
@@ -149,10 +151,16 @@ export default function CommandesPage() {
     }
   }
 
-  async function cancelOrder(id: string) {
-    if (!confirm("Annuler cette commande ? Un SMS sera envoyé au client.")) return;
+  async function cancelOrder(id: string, reason?: string) {
+    if (!reason) {
+      if (!confirm("Annuler cette commande ? Un SMS sera envoyé au client.")) return;
+    }
     setSmsByOrder((m) => ({ ...m, [id]: { state: "sending" } }));
-    const res = await fetch(`/api/orders/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "DELETE",
+      headers: reason ? { "content-type": "application/json" } : undefined,
+      body: reason ? JSON.stringify({ reason }) : undefined,
+    });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
       setSmsByOrder((m) => ({ ...m, [id]: { state: "idle" } }));
@@ -415,7 +423,7 @@ export default function CommandesPage() {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     sound.stop();
-                                    void cancelOrder(order.id);
+                                    setRefuseTarget(order);
                                   }}
                                   className="flex-1 rounded-full bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
                                 >
@@ -516,6 +524,18 @@ export default function CommandesPage() {
             </>
           )}
         </div>
+
+        {refuseTarget && (
+          <RefuseOrderModal
+            orderNumber={refuseTarget.order_number}
+            onClose={() => setRefuseTarget(null)}
+            onConfirm={async (reason) => {
+              const id = refuseTarget.id;
+              setRefuseTarget(null);
+              await cancelOrder(id, reason);
+            }}
+          />
+        )}
 
         {selected && (
           <OrderDetailModal

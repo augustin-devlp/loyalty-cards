@@ -81,7 +81,7 @@ export async function PATCH(
     .update({ status: body.status })
     .eq("id", params.id)
     .select(
-      "id, order_number, customer_phone, status, total_amount, requested_pickup_time",
+      "id, restaurant_id, order_number, customer_name, customer_phone, customer_id, status, total_amount, requested_pickup_time, cancellation_reason",
     )
     .single();
 
@@ -92,8 +92,12 @@ export async function PATCH(
     );
   }
 
+  // +1 tampon quand la commande devient "completed"
+  if (body.status === "completed" && updated.customer_id) {
+    await admin.rpc("increment_rialto_stamps", { p_customer_id: updated.customer_id });
+  }
+
   // SMS BLOQUANT — on attend le résultat pour le renvoyer à l'UI dashboard
-  // (permet d'afficher ✓/✗ sur la card et de bloquer le retry).
   const sms = await sendOrderStatusSms(updated, body.status);
 
   return NextResponse.json({ order: updated, sms });
@@ -111,13 +115,30 @@ export async function DELETE(
   const user = await requireAuth();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // Raison optionnelle dans le body (utile quand on "refuse" avec motif)
+  const raw = await _req.text();
+  let reason: string | null = null;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as { reason?: string };
+      if (typeof parsed.reason === "string" && parsed.reason.trim()) {
+        reason = parsed.reason.trim();
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
   const admin = createAdminClient();
   const { data: updated, error } = await admin
     .from("orders")
-    .update({ status: "cancelled" })
+    .update({
+      status: "cancelled",
+      ...(reason ? { cancellation_reason: reason } : {}),
+    })
     .eq("id", params.id)
     .select(
-      "id, order_number, customer_phone, status, total_amount, requested_pickup_time",
+      "id, restaurant_id, order_number, customer_name, customer_phone, status, total_amount, requested_pickup_time, cancellation_reason",
     )
     .single();
 

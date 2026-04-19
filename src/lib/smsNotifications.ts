@@ -1,88 +1,147 @@
-import { formatZurichHHMM } from "./orderFormat";
+import { createAdminClient } from "./supabase/admin";
 import type { OrderStatus } from "./constants";
+import {
+  buildContext,
+  renderTemplate,
+  TEMPLATE_META,
+  type TemplateKey,
+} from "./smsTemplates";
 
 type OrderForSms = {
-  id?: string;
+  id: string;
+  restaurant_id?: string;
   order_number: string;
+  customer_name?: string | null;
   customer_phone: string;
   total_amount: number | string;
   requested_pickup_time: string | null;
+  cancellation_reason?: string | null;
 };
 
 export type SmsResult =
   | { success: true; reference: string | null }
-  | { success: false; error: string; status?: number };
+  | { success: false; error: string; status?: number }
+  | { success: false; skipped: true; reason: string };
 
 /**
  * Normalise un numéro de téléphone suisse (ou international) au format
  * Brevo E.164 sans le "+" (ex. "41791234567").
- *
- * Règles :
- *  - Retire espaces, tirets, parenthèses, points
- *  - "+41..." → "41..."
- *  - "0041..." → "41..."
- *  - "0..." suisse (9 chiffres après le 0) → "41..."
- *  - "41..." sans préfixe → "41..." (tel quel)
- *  - Autres cas déjà internationaux → tel quel sans le "+"
  */
 export function normalizePhone(raw: string): string {
   let n = raw.replace(/[\s\-().]/g, "");
   if (n.startsWith("+")) return n.slice(1);
   if (n.startsWith("00")) return n.slice(2);
-  // "0" puis 9 chiffres = local suisse (ex: 0791234567)
   if (/^0[1-9]\d{8}$/.test(n)) return "41" + n.slice(1);
-  // "0" puis longueur plus courte = erreur probable, on laisse passer
   if (n.startsWith("0")) return "41" + n.slice(1);
   return n;
 }
 
-function buildMessage(order: OrderForSms, newStatus: OrderStatus): string | null {
-  const pickup = formatZurichHHMM(order.requested_pickup_time);
-  const totalStr = `${Number(order.total_amount).toFixed(2)} CHF`;
-  switch (newStatus) {
-    case "accepted":
-      return `Rialto a accepté votre commande #${order.order_number}. Préparation en cours. Prête vers ${pickup}. Avenue de Béthusy 29, Lausanne.`;
-    case "preparing":
-      return `Votre commande Rialto #${order.order_number} est en préparation. On vous prévient dès qu'elle est prête.`;
-    case "ready":
-      return `Votre commande Rialto #${order.order_number} est prête ! Vous pouvez venir la récupérer. Montant : ${totalStr} à régler sur place (espèces ou TWINT). Avenue de Béthusy 29, Lausanne. 021 312 64 60`;
-    case "cancelled":
-      return `Votre commande Rialto #${order.order_number} a été annulée. Pour toute question, contactez-nous au 021 312 64 60.`;
-    default:
-      return null;
-  }
-}
+const STATUS_TO_KEY: Partial<Record<OrderStatus, TemplateKey>> = {
+  accepted: "order_accepted",
+  preparing: "order_preparing",
+  ready: "order_ready",
+  cancelled: "order_cancelled",
+};
 
 const BREVO_URL = "https://api.brevo.com/v3/transactionalSMS/sms";
-const SENDER = "Rialto"; // 6 chars, sous la limite 11 alphanum de Brevo
+const SENDER = "Rialto";
 
 /**
- * Envoie un SMS de transition de statut. Retry 3× avec backoff (1s / 2s / 4s)
- * sur les erreurs 5xx et réseau. Retourne success + reference en cas de
- * succès, ou success=false + error en cas d'échec définitif.
- *
- * À appeler **avec await** depuis l'API route pour que le retour contienne
- * le statut du SMS (permettant à l'UI dashboard d'afficher ✓ / ✗).
+ * Envoie un SMS de transition de statut en utilisant le template personnalisé
+ * stocké dans `sms_templates`. Retry 3× avec backoff. Si le template est
+ * absent ou désactivé → skip (success:false, skipped:true).
  */
 export async function sendOrderStatusSms(
   order: OrderForSms,
   newStatus: OrderStatus,
 ): Promise<SmsResult> {
-  const content = buildMessage(order, newStatus);
-  if (!content) {
-    return { success: false, error: `Pas de SMS pour status=${newStatus}` };
-  }
+  const key = STATUS_TO_KEY[newStatus];
+  if (!key) return { success: false, error: `no template for ${newStatus}` };
+  return sendTemplated(order, key);
+}
 
+export async function sendOrderConfirmationSms(
+  order: OrderForSms,
+): Promise<SmsResult> {
+  return sendTemplated(order, "order_confirmation");
+}
+
+/** Coeur de l'envoi templaté. */
+async function sendTemplated(
+  order: OrderForSms,
+  key: TemplateKey,
+): Promise<SmsResult> {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
-    console.error("[SMS] BREVO_API_KEY missing — SMS non envoyé", {
-      orderId: order.id,
-      status: newStatus,
-    });
+    console.error("[SMS] BREVO_API_KEY missing");
     return { success: false, error: "BREVO_API_KEY not set" };
   }
 
+  const admin = createAdminClient();
+
+  // 1. Récupère le restaurant + template
+  const restaurantId = order.restaurant_id;
+  if (!restaurantId) {
+    // Fallback : on va chercher via orders
+    const { data: o } = await admin
+      .from("orders")
+      .select("restaurant_id")
+      .eq("id", order.id)
+      .single();
+    if (!o) return { success: false, error: "restaurant inconnu" };
+    order.restaurant_id = o.restaurant_id as string;
+  }
+
+  const [{ data: restaurant }, { data: template }] = await Promise.all([
+    admin
+      .from("restaurants")
+      .select("name, phone, address")
+      .eq("id", order.restaurant_id!)
+      .single(),
+    admin
+      .from("sms_templates")
+      .select("content, enabled")
+      .eq("restaurant_id", order.restaurant_id!)
+      .eq("template_key", key)
+      .maybeSingle(),
+  ]);
+
+  if (!restaurant) return { success: false, error: "restaurant introuvable" };
+
+  const tmpl = template ?? {
+    content: TEMPLATE_META[key].defaultContent,
+    enabled: true,
+  };
+
+  if (!tmpl.enabled) {
+    console.log("[SMS] template disabled, skipping", {
+      orderId: order.id,
+      key,
+    });
+    return { success: false, skipped: true, reason: "template disabled" };
+  }
+
+  const ctx = buildContext({
+    order: {
+      id: order.id,
+      order_number: order.order_number,
+      customer_name: order.customer_name ?? null,
+      customer_phone: order.customer_phone,
+      total_amount: order.total_amount,
+      requested_pickup_time: order.requested_pickup_time,
+      cancellation_reason: order.cancellation_reason ?? null,
+    },
+    restaurant: {
+      name: restaurant.name,
+      phone: restaurant.phone,
+      address: restaurant.address,
+    },
+    siteUrl: process.env.NEXT_PUBLIC_RIALTO_URL ?? "https://rialto-lausanne.ch",
+  });
+
+  const content = renderTemplate(tmpl.content, ctx);
   const phone = normalizePhone(order.customer_phone);
+
   const bodyStr = JSON.stringify({
     sender: SENDER,
     recipient: phone,
@@ -93,8 +152,7 @@ export async function sendOrderStatusSms(
   console.log("[SMS] sending", {
     orderId: order.id,
     orderNumber: order.order_number,
-    status: newStatus,
-    phoneRaw: order.customer_phone,
+    templateKey: key,
     phoneNorm: phone,
     length: content.length,
   });
@@ -113,8 +171,6 @@ export async function sendOrderStatusSms(
         },
         body: bodyStr,
       });
-
-      // Brevo peut renvoyer du texte au lieu de JSON en cas d'erreur — safe parse
       const raw = await res.text();
       let data: Record<string, unknown> = {};
       try {
@@ -128,9 +184,9 @@ export async function sendOrderStatusSms(
         console.log("[SMS] SUCCESS", {
           orderId: order.id,
           orderNumber: order.order_number,
-          status: newStatus,
-          attempt,
+          templateKey: key,
           reference,
+          attempt,
           httpStatus: res.status,
         });
         return { success: true, reference };
@@ -141,39 +197,28 @@ export async function sendOrderStatusSms(
 
       console.error("[SMS] Brevo error", {
         orderId: order.id,
-        orderNumber: order.order_number,
-        status: newStatus,
+        templateKey: key,
         attempt,
         httpStatus: res.status,
         data,
       });
 
-      // 4xx → pas de retry (client error, ex: numéro invalide, blocked, etc.)
       if (res.status >= 400 && res.status < 500) {
-        return {
-          success: false,
-          error: lastError,
-          status: res.status,
-        };
+        return { success: false, error: lastError, status: res.status };
       }
-
-      // 5xx → attendre et retry
       if (attempt < 3) {
-        const waitMs = 1000 * Math.pow(2, attempt - 1);
-        await new Promise((r) => setTimeout(r, waitMs));
+        await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
       }
     } catch (err) {
       lastError = err instanceof Error ? err.message : String(err);
       console.error("[SMS] Fetch exception", {
         orderId: order.id,
-        orderNumber: order.order_number,
-        status: newStatus,
+        templateKey: key,
         attempt,
         err: lastError,
       });
       if (attempt < 3) {
-        const waitMs = 1000 * Math.pow(2, attempt - 1);
-        await new Promise((r) => setTimeout(r, waitMs));
+        await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
       }
     }
   }

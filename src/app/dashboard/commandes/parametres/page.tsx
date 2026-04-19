@@ -237,6 +237,25 @@ export default function ParametresCommandesPage() {
               </button>
             </div>
           </div>
+
+          {/* Lien vers les templates SMS */}
+          <a
+            href="/dashboard/commandes/sms-templates"
+            className="mt-4 block rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-bold text-gray-900">
+                  💬 Messages SMS clients
+                </div>
+                <div className="mt-0.5 text-xs text-gray-500">
+                  Personnalisez les 5 messages automatiques (confirmation,
+                  accepté, préparation, prête, annulé).
+                </div>
+              </div>
+              <span className="text-gray-400">→</span>
+            </div>
+          </a>
         </div>
       </main>
     </div>
