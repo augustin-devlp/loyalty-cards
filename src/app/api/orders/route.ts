@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   let query = admin
     .from("orders")
     .select(
-      "id, restaurant_id, order_number, customer_name, customer_phone, requested_pickup_time, status, total_amount, notes, created_at, updated_at",
+      "id, restaurant_id, order_number, customer_name, customer_phone, requested_pickup_time, status, total_amount, notes, created_at, updated_at, fulfillment_type, delivery_address, delivery_postal_code, delivery_city, delivery_floor_door, delivery_instructions, delivery_fee, payer_phone",
     )
     .eq("restaurant_id", restaurantId)
     .order("created_at", { ascending: false })

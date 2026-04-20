@@ -304,7 +304,19 @@ function Dashboard({ data }: { data: AdminData }) {
                     : { bg: "#f9fafb", text: "#6b7280" };
 
                   return (
-                    <tr key={biz.id} style={{ borderTop: i > 0 ? "1px solid #f3f4f6" : undefined }}>
+                    <tr
+                      key={biz.id}
+                      style={{
+                        borderTop: i > 0 ? "1px solid #f3f4f6" : undefined,
+                        cursor: "pointer",
+                      }}
+                      onClick={(e) => {
+                        // Ne déclenche pas si on clique un bouton dans la ligne
+                        const target = e.target as HTMLElement;
+                        if (target.closest("button") || target.closest("a")) return;
+                        location.assign(`/admin/commerces/${biz.id}`);
+                      }}
+                    >
                       <td style={{ padding: "14px 16px", fontWeight: 600, color: "#111827" }}>
                         {biz.business_name || "—"}
                       </td>

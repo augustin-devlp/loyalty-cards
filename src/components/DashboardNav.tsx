@@ -182,32 +182,32 @@ function OrdersIcon() {
 
 // ── Nav config ────────────────────────────────────────────────────────────────
 
-type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boolean };
+type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boolean; feature: string };
 
 const OWNER_LINKS: NavLink[] = [
-  { href: "/dashboard",               label: "Tableau de bord",  icon: <HomeIcon />,       exact: true },
-  { href: "/dashboard/commandes",     label: "Commandes",        icon: <OrdersIcon /> },
-  { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon /> },
-  { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon /> },
-  { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon /> },
-  { href: "/dashboard/reservations",  label: "Réservations",     icon: <CalendarIcon /> },
-  { href: "/dashboard/spin-wheel",    label: "Roue",             icon: <WheelIcon /> },
-  { href: "/dashboard/lottery",       label: "Loterie",          icon: <GiftIcon /> },
-  { href: "/dashboard/sms",           label: "SMS",              icon: <SmsIcon /> },
-  { href: "/dashboard/menu",          label: "Menu",             icon: <MenuIcon /> },
-  { href: "/dashboard/promotions",    label: "Promotions",       icon: <PromoIcon /> },
-  { href: "/dashboard/gift-cards",    label: "Cartes cadeaux",   icon: <GiftIcon /> },
-  { href: "/dashboard/marketplace",   label: "Marketplace",      icon: <MarketplaceIcon /> },
-  { href: "/dashboard/click-collect", label: "Réservation produits", icon: <ClickCollectIcon /> },
-  { href: "/dashboard/team",          label: "Équipe",           icon: <TeamIcon /> },
-  { href: "/dashboard/billing",       label: "Facturation",      icon: <BillingIcon /> },
-  { href: "/dashboard/appearance",    label: "Apparence",        icon: <AppearanceIcon /> },
-  { href: "/dashboard/establishments",label: "Établissements",   icon: <BuildingIcon /> },
-  { href: "/dashboard/settings",      label: "Paramètres",       icon: <SettingsIcon /> },
+  { href: "/dashboard",               label: "Tableau de bord",  icon: <HomeIcon />,       exact: true, feature: "dashboard" },
+  { href: "/dashboard/commandes",     label: "Commandes",        icon: <OrdersIcon />,     feature: "commandes" },
+  { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon />,       feature: "cards" },
+  { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon />,       feature: "scanner" },
+  { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon />,      feature: "stats" },
+  { href: "/dashboard/reservations",  label: "Réservations",     icon: <CalendarIcon />,   feature: "reservations" },
+  { href: "/dashboard/spin-wheel",    label: "Roue",             icon: <WheelIcon />,      feature: "spin-wheel" },
+  { href: "/dashboard/lottery",       label: "Loterie",          icon: <GiftIcon />,       feature: "lottery" },
+  { href: "/dashboard/sms",           label: "SMS",              icon: <SmsIcon />,        feature: "sms" },
+  { href: "/dashboard/menu",          label: "Menu",             icon: <MenuIcon />,       feature: "menu" },
+  { href: "/dashboard/promotions",    label: "Promotions",       icon: <PromoIcon />,      feature: "promotions" },
+  { href: "/dashboard/gift-cards",    label: "Cartes cadeaux",   icon: <GiftIcon />,       feature: "gift-cards" },
+  { href: "/dashboard/marketplace",   label: "Marketplace",      icon: <MarketplaceIcon />, feature: "marketplace" },
+  { href: "/dashboard/click-collect", label: "Réservation produits", icon: <ClickCollectIcon />, feature: "click-collect" },
+  { href: "/dashboard/team",          label: "Équipe",           icon: <TeamIcon />,       feature: "team" },
+  { href: "/dashboard/billing",       label: "Facturation",      icon: <BillingIcon />,    feature: "billing" },
+  { href: "/dashboard/appearance",    label: "Apparence",        icon: <AppearanceIcon />, feature: "appearance" },
+  { href: "/dashboard/establishments",label: "Établissements",   icon: <BuildingIcon />,   feature: "establishments" },
+  { href: "/dashboard/settings",      label: "Paramètres",       icon: <SettingsIcon />,   feature: "settings" },
 ];
 
 const EMPLOYEE_LINKS: NavLink[] = [
-  { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon /> },
+  { href: "/dashboard/scan", label: "Scanner", icon: <ScanIcon />, feature: "scanner" },
 ];
 
 // divider before these indices (recalculés suite à l'ajout de "Commandes" en position 1)
@@ -234,6 +234,7 @@ export default function DashboardNav() {
   const [newOrders, setNewOrders] = useState(0);
   const [quickActions, setQuickActions] =
     useState<QuickActionSlug[]>(DEFAULT_QUICK_ACTIONS);
+  const [enabledFeatures, setEnabledFeatures] = useState<string[] | null>(null);
 
   // Load collapsed state from localStorage
   useEffect(() => {
@@ -283,7 +284,7 @@ export default function DashboardNav() {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  // Charge la personnalisation du bottom nav (mobile_quick_actions)
+  // Charge la personnalisation du bottom nav + enabled_features
   useEffect(() => {
     let cancelled = false;
     const supabase = createClient();
@@ -292,11 +293,16 @@ export default function DashboardNav() {
       if (!user) return;
       const { data } = await supabase
         .from("businesses")
-        .select("mobile_quick_actions")
+        .select("mobile_quick_actions, enabled_features")
         .eq("id", user.id)
         .single();
       if (!cancelled) {
         setQuickActions(parseQuickActions(data?.mobile_quick_actions));
+        if (Array.isArray(data?.enabled_features)) {
+          setEnabledFeatures(data.enabled_features as string[]);
+        } else {
+          setEnabledFeatures(null); // = tout activé (fallback)
+        }
       }
     };
     load();
@@ -353,7 +359,13 @@ export default function DashboardNav() {
     router.refresh();
   };
 
-  const links = isEmployee ? EMPLOYEE_LINKS : OWNER_LINKS;
+  const rawLinks = isEmployee ? EMPLOYEE_LINKS : OWNER_LINKS;
+  // Filtre selon enabled_features. Si null (pas chargé ou pas config),
+  // on affiche tout (fallback safe).
+  const links =
+    enabledFeatures === null
+      ? rawLinks
+      : rawLinks.filter((l) => enabledFeatures.includes(l.feature));
   const isHome = pathname === "/dashboard";
   const isCards = pathname.startsWith("/dashboard/cards");
   const isScan = pathname.startsWith("/dashboard/scan");

@@ -6,6 +6,10 @@ const ADMIN_PIN = "0808";
 const ALLOWED_PLANS = ["essential", "pro", "business", null];
 const ALLOWED_STATUSES = ["active", "inactive", "canceled", null];
 
+function validateEnabledFeatures(v: unknown): v is string[] {
+  return Array.isArray(v) && v.every((x) => typeof x === "string");
+}
+
 /**
  * POST /api/admin/update-business
  * Body: { pin, business_id, plan?, subscription_status? }
@@ -19,6 +23,7 @@ export async function POST(req: Request) {
     business_id?: string;
     plan?: string | null;
     subscription_status?: string | null;
+    enabled_features?: string[];
   } | null;
 
   if (!body || body.pin !== ADMIN_PIN) {
@@ -46,6 +51,15 @@ export async function POST(req: Request) {
       );
     }
     update.subscription_status = body.subscription_status;
+  }
+  if (body.enabled_features !== undefined) {
+    if (!validateEnabledFeatures(body.enabled_features)) {
+      return NextResponse.json(
+        { error: "enabled_features doit être un tableau de strings" },
+        { status: 400 },
+      );
+    }
+    update.enabled_features = body.enabled_features;
   }
 
   if (Object.keys(update).length === 0) {

@@ -12,6 +12,15 @@ export type OrderRow = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // Delivery
+  fulfillment_type?: "pickup" | "delivery";
+  delivery_address?: string | null;
+  delivery_postal_code?: string | null;
+  delivery_city?: string | null;
+  delivery_floor_door?: string | null;
+  delivery_instructions?: string | null;
+  delivery_fee?: string | number | null;
+  payer_phone?: string | null;
 };
 
 export type OrderItemRow = {

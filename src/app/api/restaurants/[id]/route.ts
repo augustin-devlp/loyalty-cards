@@ -65,6 +65,14 @@ export async function PATCH(
     "address",
     "phone",
     "logo_url",
+    // Delivery settings (Chantier 1)
+    "offers_pickup",
+    "offers_delivery",
+    "pickup_prep_time_minutes",
+    "delivery_prep_time_minutes",
+    "receipt_email",
+    "announcement_message",
+    "announcement_active",
   ];
   const update: Record<string, unknown> = {};
   for (const k of allowed) if (k in body) update[k] = body[k];

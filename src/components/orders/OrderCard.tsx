@@ -27,12 +27,19 @@ export default function OrderCard({
   const createdAt = formatZurichHHMM(order.created_at);
   const pickup = order.requested_pickup_time
     ? formatZurichHHMM(order.requested_pickup_time)
-    : "—";
+    : "dès que possible";
   const itemsText = order.items
     .slice(0, 2)
     .map((it) => `${it.quantity}× ${it.item_name_snapshot}`)
     .join(" · ");
   const extra = order.items.length > 2 ? ` +${order.items.length - 2} plat${order.items.length - 2 > 1 ? "s" : ""}` : "";
+
+  const isDelivery = order.fulfillment_type === "delivery";
+  const mapsUrl = isDelivery && order.delivery_address
+    ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent("Avenue de Béthusy 29, 1012 Lausanne")}&destination=${encodeURIComponent(
+        `${order.delivery_address}, ${order.delivery_postal_code ?? ""} ${order.delivery_city ?? ""}`,
+      )}`
+    : null;
 
   return (
     <article className="group relative mb-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition hover:shadow-md">
@@ -45,9 +52,20 @@ export default function OrderCard({
 
       <div className="relative z-10 pointer-events-none">
         <div className="mb-1 flex items-start justify-between gap-2">
-          <div>
-            <div className="text-sm font-bold tracking-tight text-gray-900">
-              {order.order_number}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold tracking-tight text-gray-900">
+                {order.order_number}
+              </span>
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                  isDelivery
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {isDelivery ? "🚴 Livraison" : "🏪 Retrait"}
+              </span>
             </div>
             <div className="text-[11px] text-gray-500">Reçue à {createdAt}</div>
           </div>
@@ -66,6 +84,44 @@ export default function OrderCard({
         >
           📞 {order.customer_phone}
         </a>
+        {order.payer_phone && order.payer_phone !== order.customer_phone && (
+          <a
+            href={`tel:${order.payer_phone}`}
+            className="pointer-events-auto ml-2 text-xs text-amber-700 hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            · Payeur : {order.payer_phone}
+          </a>
+        )}
+
+        {isDelivery && order.delivery_address && (
+          <div className="mt-1.5 rounded-md bg-blue-50 p-2 text-[11px] text-blue-900">
+            <div>
+              🏠 {order.delivery_address}, {order.delivery_postal_code} {order.delivery_city}
+            </div>
+            {order.delivery_floor_door && (
+              <div className="text-[10px] text-blue-800">
+                {order.delivery_floor_door}
+              </div>
+            )}
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pointer-events-auto mt-1 inline-block text-[11px] font-semibold text-blue-700 hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                📍 Itinéraire Google Maps →
+              </a>
+            )}
+          </div>
+        )}
+        {isDelivery && order.delivery_instructions && (
+          <div className="mt-1 rounded-md bg-yellow-50 p-1.5 text-[10px] italic text-yellow-900">
+            💬 {order.delivery_instructions}
+          </div>
+        )}
 
         <div className="mt-2 text-xs text-gray-600 line-clamp-2">
           {itemsText}
