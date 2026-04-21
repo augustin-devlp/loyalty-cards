@@ -186,7 +186,7 @@ export default function LivraisonSettingsPage() {
         <div className="mx-auto max-w-4xl">
           <header>
             <h1 className="text-2xl font-black tracking-tight">
-              Retrait & livraison
+              Livraison à domicile
             </h1>
             <p className="mt-1 text-sm text-gray-600">
               Configure les modes de service et les zones de livraison.

@@ -29,7 +29,7 @@ export const FEATURES: FeatureDef[] = [
 
   { slug: "commandes", name: "Commandes", description: "Kanban commandes en direct (restaurant)", category: "Commandes", icon: "📦" },
   { slug: "commandes-menu", name: "Menu restaurant", description: "Édition des plats et prix", category: "Commandes", icon: "🍽️" },
-  { slug: "delivery_zones", name: "Retrait & livraison", description: "Zones de livraison par code postal, frais, horaires de prep", category: "Commandes", icon: "🚴" },
+  { slug: "delivery_zones", name: "Livraison à domicile", description: "Zones de livraison par code postal, frais, horaires de prep", category: "Commandes", icon: "🚴" },
   { slug: "commandes-sms-templates", name: "Templates SMS resto", description: "Personnaliser les SMS transactionnels", category: "Commandes", icon: "💬" },
 
   { slug: "spin-wheel", name: "Roue de la chance", description: "Jeu de la roue gamifié", category: "Fidélité", icon: "🎰" },

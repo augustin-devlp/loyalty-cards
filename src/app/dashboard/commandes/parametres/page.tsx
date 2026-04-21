@@ -246,7 +246,7 @@ export default function ParametresCommandesPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-bold text-gray-900">
-                  🚴 Retrait & livraison
+                  🚴 Livraison à domicile
                 </div>
                 <div className="mt-0.5 text-xs text-gray-500">
                   Configurer les zones de livraison, frais, panier minimum

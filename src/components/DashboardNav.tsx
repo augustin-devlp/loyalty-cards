@@ -193,12 +193,12 @@ function DeliveryIcon() {
 
 // ── Nav config ────────────────────────────────────────────────────────────────
 
-type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boolean; feature: string };
+type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boolean; feature: string; title?: string };
 
 const OWNER_LINKS: NavLink[] = [
   { href: "/dashboard",               label: "Tableau de bord",  icon: <HomeIcon />,       exact: true, feature: "dashboard" },
   { href: "/dashboard/commandes",     label: "Commandes",        icon: <OrdersIcon />,     feature: "commandes" },
-  { href: "/dashboard/commandes/livraison", label: "Retrait & livraison", icon: <DeliveryIcon />, feature: "delivery_zones" },
+  { href: "/dashboard/commandes/livraison", label: "Livraison", title: "Retrait & livraison à domicile", icon: <DeliveryIcon />, feature: "delivery_zones" },
   { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon />,       feature: "cards" },
   { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon />,       feature: "scanner" },
   { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon />,      feature: "stats" },
@@ -439,7 +439,7 @@ export default function DashboardNav() {
                 {showDivider && <div className="my-2 mx-1" style={{ borderTop: `1px solid ${BORDER}` }} />}
                 <Link
                   href={link.href}
-                  title={collapsed ? link.label : undefined}
+                  title={link.title ?? (collapsed ? link.label : undefined)}
                   className="flex items-center rounded-xl text-sm font-medium transition-colors relative"
                   style={{
                     gap: collapsed ? 0 : 12,
