@@ -6,6 +6,9 @@ export const TEMPLATE_KEYS = [
   "order_preparing",
   "order_ready",
   "order_cancelled",
+  "wheel_prize_code",
+  "lottery_winner",
+  "birthday_offer",
 ] as const;
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
 
@@ -46,6 +49,27 @@ export const TEMPLATE_META: Record<
     defaultContent:
       "Votre commande Rialto {{order_number}} a été annulée. {{reason}} Pour toute question : 021 312 64 60.",
   },
+  wheel_prize_code: {
+    title: "Code promo gagné (roue)",
+    description:
+      "Envoyé quand un client gagne un lot à la roue de la chance. {{code}} = code promo, {{reward_label}} = libellé du lot.",
+    defaultContent:
+      "Bravo {{customer_name}} ! Tu as gagne {{reward_label}} sur ta prochaine commande. Code : {{code}}. Valable 30 jours. Rialto.",
+  },
+  lottery_winner: {
+    title: "Gagnant tombola",
+    description:
+      "Envoyé au tirage de la tombola. {{code}} = code promo, {{reward_label}} = lot gagné.",
+    defaultContent:
+      "Felicitations {{customer_name}} ! Tu as gagne {{reward_label}} a la tombola Rialto. Code : {{code}}. A utiliser sur ta prochaine commande (30 jours).",
+  },
+  birthday_offer: {
+    title: "Offre anniversaire",
+    description:
+      "Envoyé pour l'anniversaire d'un client fidèle. {{code}} = code promo.",
+    defaultContent:
+      "Joyeux anniversaire {{customer_name}} ! Rialto t'offre {{reward_label}}. Code : {{code}}. Valable 30 jours.",
+  },
 };
 
 export const TEMPLATE_VARIABLES = [
@@ -65,6 +89,12 @@ export const TEMPLATE_VARIABLES = [
     key: "restaurant_address",
     label: "Adresse restaurant",
     example: "Av. de Béthusy 29, Lausanne",
+  },
+  { key: "code", label: "Code promo", example: "RIA-7H2KM" },
+  {
+    key: "reward_label",
+    label: "Libellé du lot gagné",
+    example: "un Tiramisu",
   },
 ] as const;
 

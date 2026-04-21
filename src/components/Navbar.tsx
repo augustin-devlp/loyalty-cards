@@ -170,12 +170,39 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+            {/* Séparateur visuel + bouton Se connecter */}
+            <div style={{ width: 48, height: 1, background: "rgba(255,255,255,0.2)", marginTop: 8 }} />
+            <Link
+              href="/login"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                color: "#fff",
+                background: "transparent",
+                border: "1.5px solid rgba(255,255,255,0.4)",
+                borderRadius: 10,
+                padding: "12px 28px",
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                fontWeight: 600,
+                fontSize: 15,
+                textDecoration: "none",
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Se connecter
+            </Link>
+
             <Link href="/#tarif" onClick={() => setMenuOpen(false)} style={{
               background: "#fff", color: "#1d9e75", borderRadius: 10,
               padding: "14px 32px",
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontWeight: 600, fontSize: 16, textDecoration: "none",
-              marginTop: 8,
+              marginTop: 4,
             }}>
               Démarrer maintenant
             </Link>

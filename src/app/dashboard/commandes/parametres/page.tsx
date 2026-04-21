@@ -219,6 +219,52 @@ export default function ParametresCommandesPage() {
                   onUnsubscribe={() => push.unsubscribe()}
                 />
               </div>
+              {push.state === "active" && (
+                <div className={row}>
+                  <div className={label}>
+                    Tester la notification push
+                    <div className="text-xs text-gray-500">
+                      Envoie une notification factice à cet appareil.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch("/api/push/dashboard-send", {
+                          method: "POST",
+                          headers: { "content-type": "application/json" },
+                          body: JSON.stringify({
+                            restaurant_id: RIALTO_ID,
+                            title: "Test Stampify",
+                            body: "Si vous voyez ceci, les notifications fonctionnent 🎉",
+                            url: "/dashboard/commandes/parametres",
+                            tag: "test-push",
+                          }),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) {
+                          alert(`Échec : ${data.error ?? res.status}`);
+                        } else if (data.sent === 0) {
+                          alert("Aucun appareil abonné.");
+                        } else {
+                          // Feedback inline après 1 sec (laisse le temps à la notif d'arriver)
+                          setTimeout(() => {
+                            alert(`✓ Envoyé sur ${data.sent} appareil${data.sent > 1 ? "s" : ""}.`);
+                          }, 200);
+                        }
+                      } catch (err) {
+                        alert(
+                          `Erreur réseau : ${err instanceof Error ? err.message : "inconnue"}`,
+                        );
+                      }
+                    }}
+                    className="rounded-full bg-gray-100 px-4 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-200"
+                  >
+                    ▶ Tester
+                  </button>
+                </div>
+              )}
             </section>
 
             <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">

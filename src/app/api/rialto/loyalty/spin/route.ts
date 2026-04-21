@@ -3,9 +3,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   RIALTO_BUSINESS_ID,
   RIALTO_CARD_ID,
+  RIALTO_RESTAURANT_ID,
   RIALTO_SPIN_WHEEL_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
+import {
+  generatePromoCode,
+  type PromoDiscountType,
+} from "@/lib/promoCodes";
+import { renderTemplate, TEMPLATE_META } from "@/lib/smsTemplates";
+import { sendSms } from "@/lib/brevo";
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, {
@@ -18,7 +25,55 @@ type Segment = {
   label: string;
   color?: string;
   probability?: number;
+  /**
+   * Optionnel : déclare le type de remise que gagne ce segment. Si absent,
+   * on infère à partir du libellé (heuristique). Sert à générer un code
+   * promo réellement applicable côté Rialto.
+   */
+  discount_type?: PromoDiscountType;
+  discount_value?: number;
+  free_item_label?: string;
+  /** `true` pour les segments "Perdu / Dommage" — aucun code n'est généré. */
+  is_loss?: boolean;
 };
+
+/** Détecte si un segment est un "perdu" — heuristique sur le label. */
+function isLosingSegment(seg: Segment): boolean {
+  if (seg.is_loss === true) return true;
+  const lbl = (seg.label || "").toLowerCase();
+  return (
+    lbl.includes("perdu") ||
+    lbl.includes("dommage") ||
+    lbl.includes("retente") ||
+    lbl === "rien"
+  );
+}
+
+/**
+ * Convertit un segment de la roue en paramètres pour generatePromoCode.
+ * Tente de lire les champs explicites puis fallback sur une heuristique
+ * de parsing du label ("10%", "5 CHF", "Tiramisu offert"...).
+ */
+function segmentToPromoInput(seg: Segment): {
+  discount_type: PromoDiscountType;
+  discount_value?: number;
+  free_item_label?: string;
+} {
+  if (seg.discount_type) {
+    return {
+      discount_type: seg.discount_type,
+      discount_value: seg.discount_value,
+      free_item_label: seg.free_item_label,
+    };
+  }
+  const lbl = seg.label || "";
+  const pct = lbl.match(/(\d{1,2})\s*%/);
+  if (pct) return { discount_type: "percent", discount_value: Number(pct[1]) };
+  const chf = lbl.match(/(\d{1,3})\s*(CHF|chf|fr)/);
+  if (chf) return { discount_type: "fixed", discount_value: Number(chf[1]) };
+  // Fallback : traite comme article offert
+  return { discount_type: "free_item", free_item_label: lbl };
+}
 
 /**
  * POST /api/rialto/loyalty/spin
@@ -181,8 +236,117 @@ export async function POST(req: NextRequest) {
     reward: chosen.label,
   });
 
-  // Code de récompense lisible
-  const code = `RIALTO-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  // Segment perdu → pas de code
+  if (isLosingSegment(chosen)) {
+    return NextResponse.json(
+      {
+        ok: true,
+        segment_index: chosenIndex,
+        reward: chosen.label,
+        color: chosen.color ?? null,
+        total_segments: segments.length,
+        code: null,
+      },
+      { headers },
+    );
+  }
+
+  // Retrouver customer_id si existe (pour traçabilité, optionnel)
+  let customerId: string | null = null;
+  try {
+    const { data: cards } = await admin
+      .from("customer_cards")
+      .select("customer_id, customers!inner (phone)")
+      .eq("card_id", RIALTO_CARD_ID)
+      .eq("customers.phone", phone)
+      .limit(1);
+    if (cards && cards.length > 0) {
+      customerId = cards[0].customer_id as string;
+    }
+  } catch (err) {
+    console.warn("[spin] lookup customer failed (non-blocking)", err);
+  }
+
+  // Générer un code promo réel en DB
+  const promoInput = segmentToPromoInput(chosen);
+  const gen = await generatePromoCode({
+    business_id: RIALTO_BUSINESS_ID,
+    restaurant_id: RIALTO_RESTAURANT_ID,
+    customer_id: customerId,
+    phone,
+    source: "spin_wheel",
+    discount_type: promoInput.discount_type,
+    discount_value: promoInput.discount_value ?? null,
+    free_item_label: promoInput.free_item_label ?? null,
+    min_order_amount: 0,
+    max_uses: 1,
+    valid_days: 30,
+  });
+
+  if (!gen.ok) {
+    console.error("[spin] promo code generation failed", gen.error);
+    return NextResponse.json(
+      {
+        ok: true,
+        segment_index: chosenIndex,
+        reward: chosen.label,
+        color: chosen.color ?? null,
+        total_segments: segments.length,
+        code: null,
+        warning: "Code promo non généré — contactez le restaurant.",
+      },
+      { headers },
+    );
+  }
+
+  const promoCode = gen.code.code;
+
+  // Envoi SMS (template wheel_prize_code, non-bloquant)
+  void (async () => {
+    try {
+      const { data: tmpl } = await admin
+        .from("sms_templates")
+        .select("content, enabled")
+        .eq("restaurant_id", RIALTO_RESTAURANT_ID)
+        .eq("template_key", "wheel_prize_code")
+        .maybeSingle();
+
+      const effective = tmpl ?? {
+        content: TEMPLATE_META.wheel_prize_code.defaultContent,
+        enabled: true,
+      };
+      if (!effective.enabled) {
+        console.log("[spin] wheel_prize_code template disabled, skipping SMS");
+        return;
+      }
+
+      const content = renderTemplate(effective.content, {
+        customer_name: body.first_name ?? "",
+        reward_label: chosen.label,
+        code: promoCode,
+        restaurant_name: "Rialto",
+      });
+
+      // Cascade sender : Rialto → Stampify si FR
+      try {
+        await sendSms(phone, content, "Rialto");
+        console.log("[spin] SMS wheel_prize_code sent (Rialto)", {
+          phone,
+          code: promoCode,
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.toLowerCase().includes("sender") || msg.includes("400")) {
+          console.warn("[spin] Rialto sender refusé, retry Stampify", msg);
+          await sendSms(phone, content, "Stampify");
+        } else {
+          throw err;
+        }
+      }
+    } catch (err) {
+      console.error("[spin] SMS send failed", err);
+    }
+  })();
 
   return NextResponse.json(
     {
@@ -191,7 +355,8 @@ export async function POST(req: NextRequest) {
       reward: chosen.label,
       color: chosen.color ?? null,
       total_segments: segments.length,
-      code,
+      code: promoCode,
+      valid_until: gen.code.valid_until,
     },
     { headers },
   );
