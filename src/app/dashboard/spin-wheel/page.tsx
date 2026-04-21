@@ -19,6 +19,10 @@ interface WheelRow {
   frequency: string;
   segments: Segment[];
   require_google_review: boolean;
+  // Chantier 4 : paramétrage fin de la fréquence
+  frequency_days?: number;
+  requires_order_since?: boolean;
+  min_orders_count?: number;
 }
 
 const PALETTE = [
@@ -84,6 +88,10 @@ export default function SpinWheelPage() {
   const [isActive, setIsActive]   = useState(false);
   const [requireGoogleReview, setRequireGoogleReview] = useState(false);
   const [businessId, setBusinessId] = useState<string>("");
+  // Chantier 4 : règles avancées
+  const [frequencyDays, setFrequencyDays] = useState<number>(30);
+  const [requiresOrderSince, setRequiresOrderSince] = useState<boolean>(true);
+  const [minOrdersCount, setMinOrdersCount] = useState<number>(1);
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
   const [saveOk, setSaveOk]     = useState(false);
@@ -110,6 +118,9 @@ export default function SpinWheelPage() {
         setFrequency(w.frequency as "once" | "daily" | "weekly" | "monthly");
         setIsActive(w.is_active);
         setRequireGoogleReview(w.require_google_review ?? false);
+        setFrequencyDays(w.frequency_days ?? 30);
+        setRequiresOrderSince(w.requires_order_since ?? true);
+        setMinOrdersCount(w.min_orders_count ?? 1);
       }
       setLoading(false);
     });
@@ -124,20 +135,38 @@ export default function SpinWheelPage() {
     const sb = createClient();
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
+    const payload = {
+      segments,
+      frequency,
+      is_active: isActive,
+      require_google_review: requireGoogleReview,
+      frequency_days: frequencyDays,
+      requires_order_since: requiresOrderSince,
+      min_orders_count: minOrdersCount,
+    };
     if (wheel) {
-      await sb.from("spin_wheels").update({
-        segments, frequency, is_active: isActive, require_google_review: requireGoogleReview,
-      }).eq("id", wheel.id);
+      await sb.from("spin_wheels").update(payload).eq("id", wheel.id);
     } else {
-      const { data } = await sb.from("spin_wheels").insert({
-        business_id: user.id, segments, frequency, is_active: isActive,
-        require_google_review: requireGoogleReview,
-      }).select().single();
+      const { data } = await sb
+        .from("spin_wheels")
+        .insert({ business_id: user.id, ...payload })
+        .select()
+        .single();
       if (data) setWheel(data as WheelRow);
     }
     setSaving(false); setSaveOk(true);
     setTimeout(() => setSaveOk(false), 2500);
-  }, [wheel, segments, frequency, isActive, requireGoogleReview, total]);
+  }, [
+    wheel,
+    segments,
+    frequency,
+    isActive,
+    requireGoogleReview,
+    frequencyDays,
+    requiresOrderSince,
+    minOrdersCount,
+    total,
+  ]);
 
   const toggleActive = async () => {
     if (!wheel) return;
@@ -273,6 +302,112 @@ export default function SpinWheelPage() {
                 <p className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2 leading-snug">
                   Mode simple : participation directe après vérification SMS. Le bouton avis Google s&apos;affiche en option après la roue.
                 </p>
+              )}
+            </div>
+
+            {/* ── Règles avancées (Chantier 4) ───────────────────────── */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
+              <div>
+                <h2 className="text-sm font-bold text-gray-700">Règles avancées</h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Affinez qui peut retenter sa chance et à quelle fréquence.
+                </p>
+              </div>
+
+              {/* Fréquence en jours */}
+              <div className="space-y-1.5">
+                <label className="flex items-center justify-between text-xs font-semibold text-gray-700">
+                  <span>Fréquence minimale entre 2 spins</span>
+                  <span className="text-gray-400 font-normal">{frequencyDays} jours</span>
+                </label>
+                <input
+                  type="range"
+                  min={1}
+                  max={90}
+                  value={frequencyDays}
+                  onChange={(e) => setFrequencyDays(Number(e.target.value))}
+                  className="w-full accent-[#534AB7]"
+                />
+                <div className="flex justify-between text-[10px] text-gray-400">
+                  <span>1j</span>
+                  <span>30j</span>
+                  <span>60j</span>
+                  <span>90j</span>
+                </div>
+                <p className="text-[11px] text-gray-400 leading-snug">
+                  Remplace l&apos;ancienne option &quot;Chaque jour / semaine / mois&quot;. Le
+                  client ne pourra pas retenter avant {frequencyDays} jour{frequencyDays > 1 ? "s" : ""}.
+                </p>
+              </div>
+
+              {/* Toggle requires_order_since */}
+              <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-4">
+                <div>
+                  <h3 className="text-xs font-bold text-gray-700">
+                    Nécessite une nouvelle commande
+                  </h3>
+                  <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+                    Le client doit avoir passé au moins {minOrdersCount} commande
+                    {minOrdersCount > 1 ? "s" : ""} depuis son dernier spin.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRequiresOrderSince(!requiresOrderSince)}
+                  className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
+                    requiresOrderSince ? "bg-[#534AB7]" : "bg-gray-200"
+                  }`}
+                  aria-pressed={requiresOrderSince}
+                >
+                  <span
+                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
+                      requiresOrderSince
+                        ? "translate-x-[22px]"
+                        : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Nombre de commandes minimum (visible uniquement si toggle actif) */}
+              {requiresOrderSince && (
+                <div className="space-y-1.5">
+                  <label className="flex items-center justify-between text-xs font-semibold text-gray-700">
+                    <span>Nombre de commandes minimum</span>
+                    <span className="text-gray-400 font-normal">
+                      {minOrdersCount}
+                    </span>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setMinOrdersCount(Math.max(1, minOrdersCount - 1))}
+                      className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold disabled:opacity-40"
+                      disabled={minOrdersCount <= 1}
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={minOrdersCount}
+                      onChange={(e) =>
+                        setMinOrdersCount(
+                          Math.max(1, Math.min(50, Number(e.target.value) || 1)),
+                        )
+                      }
+                      className="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm font-semibold text-black focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMinOrdersCount(Math.min(50, minOrdersCount + 1))}
+                      className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
 

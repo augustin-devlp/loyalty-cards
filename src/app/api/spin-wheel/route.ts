@@ -100,6 +100,10 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json() as {
       is_active?: boolean;
       frequency?: string;
+      frequency_days?: number;
+      requires_order_since?: boolean;
+      min_orders_count?: number;
+      require_google_review?: boolean;
       segments?: Array<{ label: string; color: string; probability: number }>;
     };
 
@@ -118,6 +122,32 @@ export async function PATCH(request: NextRequest) {
     const wheelUpdate: Record<string, unknown> = {};
     if (body.is_active !== undefined) wheelUpdate.is_active = body.is_active;
     if (body.frequency !== undefined) wheelUpdate.frequency = body.frequency;
+    if (body.frequency_days !== undefined) {
+      const n = Number(body.frequency_days);
+      if (!Number.isFinite(n) || n < 1 || n > 365) {
+        return NextResponse.json(
+          { error: "frequency_days doit être entre 1 et 365" },
+          { status: 400 },
+        );
+      }
+      wheelUpdate.frequency_days = n;
+    }
+    if (body.requires_order_since !== undefined) {
+      wheelUpdate.requires_order_since = !!body.requires_order_since;
+    }
+    if (body.min_orders_count !== undefined) {
+      const n = Number(body.min_orders_count);
+      if (!Number.isFinite(n) || n < 0 || n > 50) {
+        return NextResponse.json(
+          { error: "min_orders_count doit être entre 0 et 50" },
+          { status: 400 },
+        );
+      }
+      wheelUpdate.min_orders_count = n;
+    }
+    if (body.require_google_review !== undefined) {
+      wheelUpdate.require_google_review = !!body.require_google_review;
+    }
 
     if (Object.keys(wheelUpdate).length > 0) {
       const { error: updateError } = await supabase
