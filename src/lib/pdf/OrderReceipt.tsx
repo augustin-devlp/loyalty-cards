@@ -76,16 +76,30 @@ const styles = StyleSheet.create({
   label: { color: "#6b7280" },
   value: { fontWeight: 700 },
   typeBadge: {
-    marginTop: 6,
-    padding: 6,
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     borderRadius: 4,
     backgroundColor: "#dbeafe",
     color: "#1e40af",
     fontWeight: 700,
     textAlign: "center",
+    fontSize: 11,
+    letterSpacing: 1,
+  },
+  typeBadgeText: {
+    color: "#1e40af",
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 1,
+    // Empêche tout break de mot dans le badge
+    textOverflow: "ellipsis",
   },
   typePickup: {
     backgroundColor: "#f3f4f6",
+    color: "#374151",
+  },
+  typePickupText: {
     color: "#374151",
   },
   infoBlock: {
@@ -197,8 +211,18 @@ export function OrderReceipt({
                 : { ...styles.typeBadge, ...styles.typePickup }
             }
           >
-            <Text>
-              {isDelivery ? "🚴 Livraison à domicile" : "🏪 Retrait en magasin"}
+            {/* Pas d'emoji : react-pdf ne les rend pas correctement et
+                peut provoquer des retours à la ligne moches.
+                Texte court en CAPS, tient sur une ligne quelle que soit
+                la largeur du badge. */}
+            <Text
+              style={
+                isDelivery
+                  ? styles.typeBadgeText
+                  : { ...styles.typeBadgeText, ...styles.typePickupText }
+              }
+            >
+              {isDelivery ? "LIVRAISON À DOMICILE" : "RETRAIT EN MAGASIN"}
             </Text>
           </View>
         </View>
