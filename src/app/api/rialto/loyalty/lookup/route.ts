@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   const { data: cards } = await admin
     .from("customer_cards")
     .select(
-      "id, customer_id, current_stamps, rewards_claimed, qr_code_value, customers!inner (id, first_name, last_name, phone, email)",
+      "id, customer_id, current_stamps, rewards_claimed, qr_code_value, short_code, customers!inner (id, first_name, last_name, phone, email)",
     )
     .eq("card_id", RIALTO_CARD_ID)
     .eq("customers.phone", phone)
@@ -180,6 +180,7 @@ export async function GET(req: NextRequest) {
             card_name: loyalty?.card_name ?? "Rialto Club",
             qr_code_value: card.qr_code_value,
             rewards_claimed: card.rewards_claimed,
+            short_code: (card as { short_code?: string | null }).short_code ?? null,
           }
         : null,
       spin_wheel: wheel

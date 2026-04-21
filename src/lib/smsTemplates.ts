@@ -9,6 +9,7 @@ export const TEMPLATE_KEYS = [
   "wheel_prize_code",
   "lottery_winner",
   "birthday_offer",
+  "loyalty_card_created",
 ] as const;
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
 
@@ -70,6 +71,13 @@ export const TEMPLATE_META: Record<
     defaultContent:
       "Joyeux anniversaire {{customer_name}} ! Rialto t'offre {{reward_label}}. Code : {{code}}. Valable 30 jours.",
   },
+  loyalty_card_created: {
+    title: "Carte fidélité créée",
+    description:
+      "Envoyé automatiquement après création d'une carte fidélité. {{card_url}} = lien vers la carte avec QR code.",
+    defaultContent:
+      "Bienvenue chez Rialto {{customer_name}} ! Ta carte fidelite est prete. Montre-la a chaque commande : {{card_url}} - 1 pizza offerte apres 10 tampons !",
+  },
 };
 
 export const TEMPLATE_VARIABLES = [
@@ -95,6 +103,11 @@ export const TEMPLATE_VARIABLES = [
     key: "reward_label",
     label: "Libellé du lot gagné",
     example: "un Tiramisu",
+  },
+  {
+    key: "card_url",
+    label: "URL carte fidélité",
+    example: "https://www.stampify.ch/c/K7H9M2P4",
   },
 ] as const;
 

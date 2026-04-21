@@ -2,9 +2,106 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   RIALTO_CARD_ID,
+  RIALTO_RESTAURANT_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
 import { normalizePhone } from "@/lib/phone";
+import { renderTemplate, TEMPLATE_META } from "@/lib/smsTemplates";
+import { sendSms } from "@/lib/brevo";
+
+/**
+ * Génère un short_code alphanumérique unique de 8 chars.
+ * Alphabet sans caractères ambigus (0/O/1/I/l).
+ */
+async function generateUniqueShortCode(
+  admin: ReturnType<typeof createAdminClient>,
+): Promise<string> {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  for (let attempt = 0; attempt < 8; attempt++) {
+    let code = "";
+    for (let i = 0; i < 8; i++) {
+      code += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    const { data } = await admin
+      .from("customer_cards")
+      .select("id")
+      .eq("short_code", code)
+      .maybeSingle();
+    if (!data) return code;
+  }
+  // Fallback : base36 timestamp (collision extrêmement improbable)
+  return Date.now().toString(36).toUpperCase().slice(-8);
+}
+
+/**
+ * Envoie le SMS "loyalty_card_created" avec l'URL publique courte.
+ * Non-bloquant : logue mais n'empêche pas la réponse au client.
+ */
+async function sendLoyaltyCardSms(params: {
+  admin: ReturnType<typeof createAdminClient>;
+  phone: string;
+  firstName: string;
+  shortCode: string;
+}): Promise<void> {
+  const { admin, phone, firstName, shortCode } = params;
+  try {
+    const { data: tmpl } = await admin
+      .from("sms_templates")
+      .select("content, enabled")
+      .eq("restaurant_id", RIALTO_RESTAURANT_ID)
+      .eq("template_key", "loyalty_card_created")
+      .maybeSingle();
+
+    const effective =
+      tmpl && tmpl.enabled !== false
+        ? tmpl
+        : TEMPLATE_META.loyalty_card_created
+          ? {
+              content: TEMPLATE_META.loyalty_card_created.defaultContent,
+              enabled: true,
+            }
+          : null;
+
+    if (!effective) {
+      console.log(
+        "[sms-loyalty] loyalty_card_created template absent, skipping SMS",
+      );
+      return;
+    }
+    if (!effective.enabled) {
+      console.log("[sms-loyalty] template disabled, skipping SMS");
+      return;
+    }
+
+    const siteUrl =
+      process.env.NEXT_PUBLIC_STAMPIFY_URL ?? "https://www.stampify.ch";
+    const content = renderTemplate(effective.content, {
+      customer_name: firstName,
+      card_url: `${siteUrl.replace(/\/$/, "")}/c/${shortCode}`,
+      restaurant_name: "Rialto",
+    });
+
+    // Cascade sender : Rialto → Stampify fallback pour FR
+    try {
+      await sendSms(phone, content, "Rialto");
+      console.log("[sms-loyalty] success sender=Rialto", {
+        phone,
+        shortCode,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes("sender") || msg.includes("400")) {
+        console.warn("[sms-loyalty] Rialto refusé, retry Stampify");
+        await sendSms(phone, content, "Stampify");
+        console.log("[sms-loyalty] success sender=Stampify");
+      } else {
+        throw err;
+      }
+    }
+  } catch (err) {
+    console.error("[sms-loyalty] failed (non-blocking)", err);
+  }
+}
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, {
@@ -63,14 +160,33 @@ export async function POST(req: NextRequest) {
   let currentStamps = 0;
   let rewardsClaimed = 0;
   let qrCodeValue: string;
+  let shortCode: string | null = null;
+  let wasCreated = false;
 
   if (existingCards && existingCards.length > 0) {
-    const existing = existingCards[0];
+    const existing = existingCards[0] as Record<string, unknown>;
     customerId = existing.customer_id as string;
     cardId = existing.id as string;
-    currentStamps = existing.current_stamps ?? 0;
-    rewardsClaimed = existing.rewards_claimed ?? 0;
+    currentStamps = (existing.current_stamps as number) ?? 0;
+    rewardsClaimed = (existing.rewards_claimed as number) ?? 0;
     qrCodeValue = existing.qr_code_value as string;
+
+    // Re-fetch short_code si absent de la query initiale (compat rétro)
+    const { data: cardWithShort } = await admin
+      .from("customer_cards")
+      .select("short_code")
+      .eq("id", cardId)
+      .maybeSingle();
+    shortCode = (cardWithShort?.short_code as string) ?? null;
+
+    // Backfill short_code pour les cartes créées avant la migration
+    if (!shortCode) {
+      shortCode = await generateUniqueShortCode(admin);
+      await admin
+        .from("customer_cards")
+        .update({ short_code: shortCode })
+        .eq("id", cardId);
+    }
 
     // Update infos client
     await admin
@@ -105,16 +221,19 @@ export async function POST(req: NextRequest) {
     customerId = newCustomer.id;
 
     qrCodeValue = crypto.randomUUID();
+    shortCode = await generateUniqueShortCode(admin);
+    // 1 tampon offert à la création = cadeau bienvenue
     const { data: newCard, error: cardErr } = await admin
       .from("customer_cards")
       .insert({
         customer_id: customerId,
         card_id: RIALTO_CARD_ID,
-        current_stamps: 0,
+        current_stamps: 1,
         qr_code_value: qrCodeValue,
         rewards_claimed: 0,
+        short_code: shortCode,
       })
-      .select("id, current_stamps, rewards_claimed, qr_code_value")
+      .select("id, current_stamps, rewards_claimed, qr_code_value, short_code")
       .single();
     if (cardErr || !newCard) {
       console.error("[loyalty/signup] card insert failed", cardErr);
@@ -124,9 +243,21 @@ export async function POST(req: NextRequest) {
       );
     }
     cardId = newCard.id;
-    currentStamps = newCard.current_stamps ?? 0;
+    currentStamps = newCard.current_stamps ?? 1;
     rewardsClaimed = newCard.rewards_claimed ?? 0;
     qrCodeValue = newCard.qr_code_value as string;
+    shortCode = (newCard.short_code as string) ?? shortCode;
+    wasCreated = true;
+  }
+
+  // SMS QR link — uniquement à la création (pas sur les retours client)
+  if (wasCreated && shortCode) {
+    void sendLoyaltyCardSms({
+      admin,
+      phone,
+      firstName: body.first_name.trim(),
+      shortCode,
+    });
   }
 
   // Renvoie un payload similaire à /lookup
@@ -153,7 +284,9 @@ export async function POST(req: NextRequest) {
         card_name: loyalty?.card_name ?? "Rialto Club",
         qr_code_value: qrCodeValue,
         rewards_claimed: rewardsClaimed,
+        short_code: shortCode,
       },
+      was_created: wasCreated,
     },
     { headers },
   );
