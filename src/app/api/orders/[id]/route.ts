@@ -94,8 +94,6 @@ export async function PATCH(
   }
 
   // +1 tampon Stampify natif quand la commande devient "completed".
-  // Utilise la RPC atomique qui reset stamps + incrémente rewards_claimed
-  // au seuil (stamps_required) du programme.
   let rewardEarned = false;
   if (body.status === "completed" && updated.customer_id) {
     const { data: rpcResult } = await admin.rpc("increment_stampify_stamps", {
@@ -111,10 +109,52 @@ export async function PATCH(
     }
   }
 
+  // Email du ticket PDF au restaurant quand Mehmet accepte la commande.
+  // Fire-and-forget : n'attend pas la fin pour répondre au dashboard.
+  if (body.status === "accepted") {
+    console.log("[orders PATCH] accepted → triggering receipt email", {
+      orderId: updated.id,
+      orderNumber: updated.order_number,
+    });
+    void triggerReceiptEmail(updated.id, req.nextUrl.origin);
+  }
+
   // SMS BLOQUANT — on attend le résultat pour le renvoyer à l'UI dashboard
   const sms = await sendOrderStatusSms(updated, body.status);
 
   return NextResponse.json({ order: updated, sms, reward_earned: rewardEarned });
+}
+
+async function triggerReceiptEmail(
+  orderId: string,
+  origin: string,
+): Promise<void> {
+  const secret = process.env.ORDER_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn(
+      "[receipt-email] ⚠️ ORDER_WEBHOOK_SECRET missing — email ticket won't send",
+    );
+    return;
+  }
+  try {
+    const res = await fetch(`${origin}/api/orders/${orderId}/receipt-email`, {
+      method: "POST",
+      headers: { "x-webhook-secret": secret },
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(
+        "[receipt-email] internal call failed",
+        res.status,
+        body.slice(0, 300),
+      );
+    } else {
+      const body = await res.json().catch(() => ({}));
+      console.log("[receipt-email] internal call OK", { orderId, body });
+    }
+  } catch (err) {
+    console.error("[receipt-email] internal fetch error", err);
+  }
 }
 
 /**

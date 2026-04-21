@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { formatCHF, formatZurichHHMM } from "@/lib/orderFormat";
 import type { OrderWithItems } from "@/lib/orderTypes";
 
@@ -16,6 +17,12 @@ type Props = {
   onResendSms?: () => void;
   children: React.ReactNode;
 };
+
+type EmailStatus =
+  | { state: "idle" }
+  | { state: "sending" }
+  | { state: "ok" }
+  | { state: "error"; message: string };
 
 export default function OrderCard({
   order,
@@ -144,10 +151,93 @@ export default function OrderCard({
         </div>
       </div>
 
-      <div className="relative z-10 mt-3 flex gap-2 pointer-events-auto">
+      <div className="relative z-10 mt-3 flex items-center gap-2 pointer-events-auto">
         {children}
+        <ResendReceiptButton orderId={order.id} />
       </div>
     </article>
+  );
+}
+
+function ResendReceiptButton({ orderId }: { orderId: string }) {
+  const [status, setStatus] = useState<EmailStatus>({ state: "idle" });
+
+  async function resend(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (status.state === "sending") return;
+    setStatus({ state: "sending" });
+    try {
+      const res = await fetch(`/api/orders/${orderId}/receipt-email`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        const msg =
+          (body as { error?: string }).error ?? `Erreur ${res.status}`;
+        setStatus({ state: "error", message: msg });
+        setTimeout(() => setStatus({ state: "idle" }), 5000);
+        return;
+      }
+      setStatus({ state: "ok" });
+      setTimeout(() => setStatus({ state: "idle" }), 3000);
+    } catch (err) {
+      setStatus({
+        state: "error",
+        message: err instanceof Error ? err.message : "Erreur réseau",
+      });
+      setTimeout(() => setStatus({ state: "idle" }), 5000);
+    }
+  }
+
+  const isSending = status.state === "sending";
+  const isOk = status.state === "ok";
+  const isError = status.state === "error";
+
+  return (
+    <button
+      type="button"
+      onClick={resend}
+      disabled={isSending}
+      title={
+        isError
+          ? `Erreur : ${(status as { message: string }).message}`
+          : "Renvoyer le ticket PDF par email au restaurant"
+      }
+      className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition ${
+        isOk
+          ? "bg-emerald-100 text-emerald-800"
+          : isError
+            ? "bg-red-100 text-red-800"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+      }`}
+    >
+      {isSending ? (
+        <>
+          <Spinner />
+          Envoi…
+        </>
+      ) : isOk ? (
+        "📧 ✓ Envoyé"
+      ) : isError ? (
+        "📧 ✗ Erreur"
+      ) : (
+        "📧 Ticket"
+      )}
+    </button>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg
+      className="h-3 w-3 animate-spin"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.3" strokeWidth="4" />
+      <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+    </svg>
   );
 }
 

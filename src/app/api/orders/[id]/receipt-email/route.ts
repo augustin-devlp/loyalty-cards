@@ -16,13 +16,34 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  console.log("[receipt-email] START", { orderId: params.id });
+
+  // Auth : shared secret OU session utilisateur (pour le bouton Resend)
   const secret = req.headers.get("x-webhook-secret");
   const expected = process.env.ORDER_WEBHOOK_SECRET;
-  if (!expected || secret !== expected) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const secretOK = !!expected && secret === expected;
+
+  if (!secretOK) {
+    // Essaye session
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      console.warn("[receipt-email] UNAUTHORIZED — no secret and no session");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
+  if (!expected) {
+    console.warn(
+      "[receipt-email] ⚠️ ORDER_WEBHOOK_SECRET missing (env var). Email will still try via session auth.",
+    );
   }
 
   const admin = createAdminClient();
+  console.log("[receipt-email] auth OK, fetching order");
 
   const { data: order } = await admin
     .from("orders")
@@ -60,6 +81,7 @@ export async function POST(
   }
 
   const to = restaurant.receipt_email ?? "augustin-domenget@stampify.ch";
+  console.log("[receipt-email] target email:", to);
 
   // Génère le PDF
   let pdfBuffer: Buffer;
@@ -71,6 +93,7 @@ export async function POST(
         restaurant: restaurant as never,
       }),
     );
+    console.log("[receipt-email] PDF rendered", { bytes: pdfBuffer.length });
   } catch (err) {
     console.error("[receipt-email] PDF render failed", err);
     return NextResponse.json(
@@ -79,35 +102,24 @@ export async function POST(
     );
   }
 
-  const subject = `Nouvelle commande ${order.order_number} · ${restaurant.name}`;
-  const typeLabel =
-    order.fulfillment_type === "delivery"
-      ? "🚴 Livraison à domicile"
-      : "🏪 Retrait en magasin";
-  const html = `
-    <h2 style="font-family:system-ui">Nouvelle commande ${escapeHtml(order.order_number)}</h2>
-    <p>Type : <strong>${typeLabel}</strong></p>
-    <p>Client : <strong>${escapeHtml(order.customer_name)}</strong> · ${escapeHtml(order.customer_phone)}</p>
-    ${
-      order.fulfillment_type === "delivery"
-        ? `<p>Adresse : ${escapeHtml(order.delivery_address ?? "")} · ${escapeHtml(order.delivery_postal_code ?? "")} ${escapeHtml(order.delivery_city ?? "")}</p>`
-        : ""
-    }
-    <p>Total : <strong>${Number(order.total_amount).toFixed(2)} CHF</strong></p>
-    <p>Le ticket PDF est joint à ce mail.</p>
-    <hr/>
-    <p style="color:#6b7280;font-size:12px">Stampify — envoyé automatiquement</p>
-  `;
+  // Format imposé : objet minimaliste "Ticket de commande XXX", corps court,
+  // PDF nommé "ticket-commande-XXX.pdf"
+  const subject = `Ticket de commande ${order.order_number}`;
+  const html = `<p>Bonjour,</p>
+<p>Nouvelle commande acceptée. Retrouvez le ticket en pièce jointe.</p>
+<p>Rialto</p>`;
 
   const base64 = pdfBuffer.toString("base64");
-  const filename = `commande-${order.order_number}.pdf`;
+  const filename = `ticket-commande-${order.order_number}.pdf`;
 
   let sent = false;
   let lastError: string | null = null;
+  let provider: "resend" | "brevo" | null = null;
 
   // Essai 1 : Resend (si clé configurée)
   const resendKey = process.env.RESEND_API_KEY;
   if (resendKey) {
+    console.log("[receipt-email] trying Resend…");
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -125,6 +137,8 @@ export async function POST(
       });
       if (res.ok) {
         sent = true;
+        provider = "resend";
+        console.log("[receipt-email] ✓ Resend SUCCESS");
       } else {
         lastError = `Resend ${res.status}: ${await res.text()}`;
         console.error("[receipt-email] Resend failed", lastError);
@@ -133,12 +147,18 @@ export async function POST(
       lastError = err instanceof Error ? err.message : String(err);
       console.error("[receipt-email] Resend error", err);
     }
+  } else {
+    console.log("[receipt-email] RESEND_API_KEY missing — skipping Resend");
   }
 
   // Essai 2 : Brevo email (fallback)
   if (!sent) {
+    console.log("[receipt-email] trying Brevo email fallback…");
     const brevoKey = process.env.BREVO_API_KEY;
     if (!brevoKey) {
+      console.error(
+        "[receipt-email] ⚠️ Neither RESEND_API_KEY nor BREVO_API_KEY set!",
+      );
       return NextResponse.json(
         {
           ok: false,
@@ -166,6 +186,8 @@ export async function POST(
       });
       if (res.ok) {
         sent = true;
+        provider = "brevo";
+        console.log("[receipt-email] ✓ Brevo SUCCESS");
       } else {
         lastError = `Brevo ${res.status}: ${await res.text()}`;
         console.error("[receipt-email] Brevo fallback failed", lastError);
@@ -177,13 +199,19 @@ export async function POST(
   }
 
   if (!sent) {
+    console.error("[receipt-email] ✗ FAILED", { orderId: order.id, lastError });
     return NextResponse.json(
       { ok: false, error: lastError ?? "Envoi échoué" },
       { status: 500 },
     );
   }
-  console.log("[receipt-email] sent", { orderId: order.id, to });
-  return NextResponse.json({ ok: true, to });
+  console.log("[receipt-email] ✓ DONE", {
+    orderId: order.id,
+    orderNumber: order.order_number,
+    to,
+    provider,
+  });
+  return NextResponse.json({ ok: true, to, provider });
 }
 
 function escapeHtml(s: string): string {

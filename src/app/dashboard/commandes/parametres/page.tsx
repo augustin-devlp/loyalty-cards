@@ -238,6 +238,25 @@ export default function ParametresCommandesPage() {
             </div>
           </div>
 
+          {/* Lien vers la config livraison */}
+          <a
+            href="/dashboard/commandes/livraison"
+            className="mt-4 block rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-bold text-gray-900">
+                  🚴 Retrait & livraison
+                </div>
+                <div className="mt-0.5 text-xs text-gray-500">
+                  Configurer les zones de livraison, frais, panier minimum
+                  et email de réception des tickets.
+                </div>
+              </div>
+              <span className="text-gray-400">→</span>
+            </div>
+          </a>
+
           {/* Lien vers les templates SMS */}
           <a
             href="/dashboard/commandes/sms-templates"
