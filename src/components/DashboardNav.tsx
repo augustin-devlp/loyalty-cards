@@ -179,6 +179,17 @@ function OrdersIcon() {
     </svg>
   );
 }
+function DeliveryIcon() {
+  // lucide-react Truck-ish
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" aria-hidden>
+      <path d="M5 18H3V6a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v12" />
+      <path d="M14 9h4l4 4v5h-2" />
+      <circle cx="7" cy="18" r="2" />
+      <circle cx="17" cy="18" r="2" />
+    </svg>
+  );
+}
 
 // ── Nav config ────────────────────────────────────────────────────────────────
 
@@ -187,6 +198,7 @@ type NavLink = { href: string; label: string; icon: React.ReactNode; exact?: boo
 const OWNER_LINKS: NavLink[] = [
   { href: "/dashboard",               label: "Tableau de bord",  icon: <HomeIcon />,       exact: true, feature: "dashboard" },
   { href: "/dashboard/commandes",     label: "Commandes",        icon: <OrdersIcon />,     feature: "commandes" },
+  { href: "/dashboard/commandes/livraison", label: "Retrait & livraison", icon: <DeliveryIcon />, feature: "delivery_zones" },
   { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon />,       feature: "cards" },
   { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon />,       feature: "scanner" },
   { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon />,      feature: "stats" },

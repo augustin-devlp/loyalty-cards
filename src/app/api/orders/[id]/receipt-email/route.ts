@@ -1,63 +1,85 @@
 import { NextRequest, NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { OrderReceipt } from "@/lib/pdf/OrderReceipt";
 
 /**
  * POST /api/orders/[id]/receipt-email
  *
- * Génère le PDF de la commande et l'envoie par email au restaurant
- * (restaurants.receipt_email). Appelé en fire-and-forget depuis le POST
- * /api/orders de rialto-lausanne.
+ * Génère le PDF du ticket de commande et l'envoie par email au restaurant
+ * via Brevo (compte centralisé email + SMS). Déclenché :
+ *  - automatiquement par PATCH /api/orders/[id] quand status='accepted'
+ *    (via header x-webhook-secret = ORDER_WEBHOOK_SECRET)
+ *  - manuellement par le bouton "📧 Ticket" sur chaque OrderCard
+ *    (via session utilisateur authentifiée)
  *
- * Auth par shared secret (header x-webhook-secret) pour éviter de spammer.
+ * Format strict :
+ *  - Subject : "Ticket de commande R-2026-XXX"
+ *  - Body HTML minimaliste
+ *  - Attachment unique : ticket-commande-R-2026-XXX.pdf
+ *  - Destinataire : restaurants.receipt_email
  */
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  console.log("[receipt-email] START", { orderId: params.id });
+  console.log("[email-brevo] START orderId=%s", params.id);
 
-  // Auth : shared secret OU session utilisateur (pour le bouton Resend)
+  // === 1) Auth : shared secret OU session user ===
   const secret = req.headers.get("x-webhook-secret");
   const expected = process.env.ORDER_WEBHOOK_SECRET;
-  const secretOK = !!expected && secret === expected;
+  const hasValidSecret = !!expected && secret === expected;
 
-  if (!secretOK) {
-    // Essaye session
-    const { createClient } = await import("@/lib/supabase/server");
+  if (!hasValidSecret) {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      console.warn("[receipt-email] UNAUTHORIZED — no secret and no session");
+      console.log("[email-brevo] UNAUTHORIZED orderId=%s (no secret, no session)", params.id);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    console.log("[email-brevo] auth=session userId=%s", user.id);
+  } else {
+    console.log("[email-brevo] auth=webhook-secret");
   }
 
-  if (!expected) {
+  // === 2) Warnings env vars ===
+  if (!process.env.BREVO_API_KEY) {
+    console.error(
+      "[email-brevo] ⚠️ BREVO_API_KEY missing — emails won't send",
+    );
+  }
+  if (!process.env.BREVO_SENDER_EMAIL) {
     console.warn(
-      "[receipt-email] ⚠️ ORDER_WEBHOOK_SECRET missing (env var). Email will still try via session auth.",
+      "[email-brevo] ⚠️ BREVO_SENDER_EMAIL missing — using default noreply@stampify.ch (must be DKIM-validated in Brevo)",
     );
   }
 
   const admin = createAdminClient();
-  console.log("[receipt-email] auth OK, fetching order");
 
-  const { data: order } = await admin
+  // === 3) Fetch order + items + restaurant ===
+  const { data: order, error: orderErr } = await admin
     .from("orders")
     .select(
       "id, restaurant_id, order_number, customer_name, customer_phone, payer_phone, fulfillment_type, delivery_address, delivery_postal_code, delivery_city, delivery_floor_door, delivery_instructions, delivery_fee, total_amount, notes, requested_pickup_time, created_at",
     )
     .eq("id", params.id)
     .single();
-  if (!order) {
+
+  if (orderErr || !order) {
+    console.error("[email-brevo] FAILED fetch order err=%s", orderErr?.message);
     return NextResponse.json(
       { error: "Commande introuvable" },
       { status: 404 },
     );
   }
+  console.log(
+    "[email-brevo] order fetched orderNumber=%s status=%s",
+    order.order_number,
+    (order as { status?: string }).status,
+  );
 
   const [{ data: items }, { data: restaurant }] = await Promise.all([
     admin
@@ -74,6 +96,7 @@ export async function POST(
   ]);
 
   if (!restaurant) {
+    console.error("[email-brevo] FAILED restaurant not found");
     return NextResponse.json(
       { error: "Restaurant introuvable" },
       { status: 404 },
@@ -81,9 +104,9 @@ export async function POST(
   }
 
   const to = restaurant.receipt_email ?? "augustin-domenget@stampify.ch";
-  console.log("[receipt-email] target email:", to);
+  console.log("[email-brevo] target=%s itemsCount=%d", to, (items ?? []).length);
 
-  // Génère le PDF
+  // === 4) Render PDF ===
   let pdfBuffer: Buffer;
   try {
     pdfBuffer = await renderToBuffer(
@@ -93,131 +116,98 @@ export async function POST(
         restaurant: restaurant as never,
       }),
     );
-    console.log("[receipt-email] PDF rendered", { bytes: pdfBuffer.length });
+    console.log("[email-brevo] PDF rendered bytes=%d", pdfBuffer.length);
   } catch (err) {
-    console.error("[receipt-email] PDF render failed", err);
+    console.error("[email-brevo] FAILED PDF render err=%s", err);
     return NextResponse.json(
       { error: "PDF render failed" },
       { status: 500 },
     );
   }
 
-  // Format imposé : objet minimaliste "Ticket de commande XXX", corps court,
-  // PDF nommé "ticket-commande-XXX.pdf"
+  // === 5) Envoi via Brevo transactional email ===
+  const senderEmail = process.env.BREVO_SENDER_EMAIL ?? "noreply@stampify.ch";
+  const senderName = process.env.BREVO_SENDER_NAME ?? "Rialto";
+  console.log("[email-brevo] sender=%s name=%s", senderEmail, senderName);
+
   const subject = `Ticket de commande ${order.order_number}`;
-  const html = `<p>Bonjour,</p>
-<p>Nouvelle commande acceptée. Retrouvez le ticket en pièce jointe.</p>
-<p>Rialto</p>`;
-
-  const base64 = pdfBuffer.toString("base64");
+  const htmlContent = `<p>Bonjour,</p><p>Nouvelle commande acceptée. Retrouvez le ticket en pièce jointe.</p><p>Rialto</p>`;
   const filename = `ticket-commande-${order.order_number}.pdf`;
+  const base64 = pdfBuffer.toString("base64");
 
-  let sent = false;
-  let lastError: string | null = null;
-  let provider: "resend" | "brevo" | null = null;
-
-  // Essai 1 : Resend (si clé configurée)
-  const resendKey = process.env.RESEND_API_KEY;
-  if (resendKey) {
-    console.log("[receipt-email] trying Resend…");
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Stampify <noreply@stampify.ch>",
-          to: [to],
-          subject,
-          html,
-          attachments: [{ filename, content: base64 }],
-        }),
-      });
-      if (res.ok) {
-        sent = true;
-        provider = "resend";
-        console.log("[receipt-email] ✓ Resend SUCCESS");
-      } else {
-        lastError = `Resend ${res.status}: ${await res.text()}`;
-        console.error("[receipt-email] Resend failed", lastError);
-      }
-    } catch (err) {
-      lastError = err instanceof Error ? err.message : String(err);
-      console.error("[receipt-email] Resend error", err);
-    }
-  } else {
-    console.log("[receipt-email] RESEND_API_KEY missing — skipping Resend");
+  if (!process.env.BREVO_API_KEY) {
+    return NextResponse.json(
+      { ok: false, error: "BREVO_API_KEY non configurée" },
+      { status: 500 },
+    );
   }
 
-  // Essai 2 : Brevo email (fallback)
-  if (!sent) {
-    console.log("[receipt-email] trying Brevo email fallback…");
-    const brevoKey = process.env.BREVO_API_KEY;
-    if (!brevoKey) {
+  console.log("[email-brevo] Calling Brevo API...");
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: { email: senderEmail, name: senderName },
+        to: [{ email: to, name: "Rialto" }],
+        subject,
+        htmlContent,
+        attachment: [{ name: filename, content: base64 }],
+      }),
+    });
+
+    const raw = await res.text();
+    let data: Record<string, unknown> = {};
+    try {
+      data = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    } catch {
+      data = { rawBody: raw };
+    }
+
+    console.log(
+      "[email-brevo] Brevo status=%d messageId=%s",
+      res.status,
+      (data.messageId as string | undefined) ?? "(none)",
+    );
+
+    if (!res.ok) {
       console.error(
-        "[receipt-email] ⚠️ Neither RESEND_API_KEY nor BREVO_API_KEY set!",
+        "[email-brevo] FAILED status=%d data=%j",
+        res.status,
+        data,
       );
       return NextResponse.json(
         {
           ok: false,
-          error: "Aucun provider email configuré (RESEND_API_KEY ou BREVO_API_KEY)",
-          lastResendError: lastError,
+          error: (data.message as string) ?? `Brevo ${res.status}`,
+          status: res.status,
+          details: data,
         },
         { status: 500 },
       );
     }
-    try {
-      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          "api-key": brevoKey,
-          "Content-Type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "Stampify", email: "noreply@stampify.ch" },
-          to: [{ email: to }],
-          subject,
-          htmlContent: html,
-          attachment: [{ name: filename, content: base64 }],
-        }),
-      });
-      if (res.ok) {
-        sent = true;
-        provider = "brevo";
-        console.log("[receipt-email] ✓ Brevo SUCCESS");
-      } else {
-        lastError = `Brevo ${res.status}: ${await res.text()}`;
-        console.error("[receipt-email] Brevo fallback failed", lastError);
-      }
-    } catch (err) {
-      lastError = err instanceof Error ? err.message : String(err);
-      console.error("[receipt-email] Brevo fallback error", err);
-    }
-  }
 
-  if (!sent) {
-    console.error("[receipt-email] ✗ FAILED", { orderId: order.id, lastError });
+    console.log(
+      "[email-brevo] SUCCESS orderId=%s messageId=%s to=%s",
+      order.id,
+      data.messageId,
+      to,
+    );
+    return NextResponse.json({
+      ok: true,
+      to,
+      provider: "brevo",
+      messageId: data.messageId ?? null,
+    });
+  } catch (err) {
+    console.error("[email-brevo] FAILED fetch err=%s", err);
     return NextResponse.json(
-      { ok: false, error: lastError ?? "Envoi échoué" },
+      { ok: false, error: err instanceof Error ? err.message : String(err) },
       { status: 500 },
     );
   }
-  console.log("[receipt-email] ✓ DONE", {
-    orderId: order.id,
-    orderNumber: order.order_number,
-    to,
-    provider,
-  });
-  return NextResponse.json({ ok: true, to, provider });
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

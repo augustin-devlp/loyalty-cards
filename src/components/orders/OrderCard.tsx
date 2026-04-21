@@ -161,6 +161,7 @@ export default function OrderCard({
 
 function ResendReceiptButton({ orderId }: { orderId: string }) {
   const [status, setStatus] = useState<EmailStatus>({ state: "idle" });
+  const [lastSentAt, setLastSentAt] = useState<string | null>(null);
 
   async function resend(e: React.MouseEvent) {
     e.stopPropagation();
@@ -179,6 +180,11 @@ function ResendReceiptButton({ orderId }: { orderId: string }) {
         return;
       }
       setStatus({ state: "ok" });
+      const now = new Date().toLocaleTimeString("fr-CH", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setLastSentAt(now);
       setTimeout(() => setStatus({ state: "idle" }), 3000);
     } catch (err) {
       setStatus({
@@ -194,36 +200,43 @@ function ResendReceiptButton({ orderId }: { orderId: string }) {
   const isError = status.state === "error";
 
   return (
-    <button
-      type="button"
-      onClick={resend}
-      disabled={isSending}
-      title={
-        isError
-          ? `Erreur : ${(status as { message: string }).message}`
-          : "Renvoyer le ticket PDF par email au restaurant"
-      }
-      className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition ${
-        isOk
-          ? "bg-emerald-100 text-emerald-800"
-          : isError
-            ? "bg-red-100 text-red-800"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      }`}
-    >
-      {isSending ? (
-        <>
-          <Spinner />
-          Envoi…
-        </>
-      ) : isOk ? (
-        "📧 ✓ Envoyé"
-      ) : isError ? (
-        "📧 ✗ Erreur"
-      ) : (
-        "📧 Ticket"
+    <div className="ml-auto inline-flex flex-col items-end gap-0.5">
+      <button
+        type="button"
+        onClick={resend}
+        disabled={isSending}
+        title={
+          isError
+            ? `Erreur : ${(status as { message: string }).message}`
+            : "Renvoyer le ticket PDF par email au restaurant"
+        }
+        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold transition ${
+          isOk
+            ? "bg-emerald-100 text-emerald-800"
+            : isError
+              ? "bg-red-100 text-red-800"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        }`}
+      >
+        {isSending ? (
+          <>
+            <Spinner />
+            Envoi…
+          </>
+        ) : isOk ? (
+          "📧 ✓ Envoyé"
+        ) : isError ? (
+          "📧 ✗ Erreur"
+        ) : (
+          "📧 Ticket"
+        )}
+      </button>
+      {lastSentAt && !isOk && !isSending && !isError && (
+        <span className="text-[9px] font-medium text-gray-400">
+          Envoyé à {lastSentAt}
+        </span>
       )}
-    </button>
+    </div>
   );
 }
 
