@@ -2,6 +2,33 @@
 
 Backlog post-démo Mehmet. Tâches triées par impact business.
 
+## 🔔 Actions non-code pour Augustin au réveil (Phase 10)
+
+1. ✅ **Crédits SMS Brevo** : 447 restants. Pas critique mais garder
+   un œil après la démo Mehmet si envoi massif loterie.
+2. **Remettre horaires Rialto prod** dans le dashboard Stampify :
+   Lun-Dim 11h30-23h30 (actuellement 00-05 pour tests nocturnes).
+3. **Imprimer les 3 PDFs** pour Mehmet samedi :
+   - Devis_Stampify_Rialto_JetPizza.pdf
+   - Fiche_Justification_Pitch_Mehmet.pdf
+   - Offre_SMS_Rialto_Stampify.pdf
+
+## 📦 Reporté après signature Mehmet (pas cette nuit)
+
+- **Pricing SMS dégressif** — tranches 0.20 / 0.17 / 0.14 / 0.12 / 0.10
+  + abo campagnes 49/79/99 (4-6h, après signature)
+- **Refonte images menu Nano Banana Pro** (attend `GEMINI_API_KEY`
+  d'Augustin)
+- **Apple Wallet / Google Wallet** sur `/c/[shortCode]`
+- **Push notifications Service Worker**
+- **Analyses Recharts** sidebar dashboard
+- **Campagnes SMS marketing** UI admin
+- **Rupture produit toggle** menu
+- **Cleanup legacy composants** Rialto SPA (RialtoHome, MenuView,
+  Hero, CheckoutForm, Cart, etc.)
+- **Clé Google Places API** (jeudi avec la mère d'Augustin) — bascule
+  auto `/api/rialto/loyalty/verify-review` en mode normal
+
 ## Migrations DB appliquées en Phase 5 (21/04 → 22/04)
 
 - `menu_items_allergens_and_diet_flags` : `is_vegan`, `is_lactose_free`,
