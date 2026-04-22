@@ -38,13 +38,17 @@ async function generateUniqueShortCode(
 /**
  * Envoie le SMS "loyalty_card_created" avec l'URL publique courte.
  * Non-bloquant : logue mais n'empêche pas la réponse au client.
+ *
+ * Phase 10 C2D : retourne `true` si le SMS a été envoyé avec succès,
+ * `false` en cas d'échec (crédits Brevo, template absent, etc.) —
+ * permet au caller de construire un fallback UI côté client.
  */
 async function sendLoyaltyCardSms(params: {
   admin: ReturnType<typeof createAdminClient>;
   phone: string;
   firstName: string;
   shortCode: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const { admin, phone, firstName, shortCode } = params;
   try {
     const { data: tmpl } = await admin
@@ -68,11 +72,11 @@ async function sendLoyaltyCardSms(params: {
       console.log(
         "[sms-loyalty] loyalty_card_created template absent, skipping SMS",
       );
-      return;
+      return false;
     }
     if (!effective.enabled) {
       console.log("[sms-loyalty] template disabled, skipping SMS");
-      return;
+      return false;
     }
 
     // URL de la carte : pointe vers le site Rialto (Phase 5 FIX 3).
@@ -85,25 +89,85 @@ async function sendLoyaltyCardSms(params: {
       restaurant_name: "Rialto",
     });
 
+    // Phase 10 C2A : logs enrichis sur chaque envoi + fallback Stampify
+    const cardUrl = `${RIALTO_BASE_URL.replace(/\/$/, "")}/c/${shortCode}`;
+    const maskedPhone =
+      phone.length >= 6 ? phone.slice(0, 4) + "***" + phone.slice(-2) : phone;
+    console.log("[sms-loyalty] sending loyalty_card_created", {
+      masked_phone: maskedPhone,
+      card_url_preview: cardUrl.slice(0, 50),
+      first_name: firstName,
+      template_length: effective.content.length,
+    });
+
     // Cascade sender : Rialto → Stampify fallback pour FR
     try {
       await sendSms(phone, content, "Rialto");
-      console.log("[sms-loyalty] success sender=Rialto", {
-        phone,
+      console.log("[sms-loyalty] ✅ success sender=Rialto", {
+        masked_phone: maskedPhone,
         shortCode,
       });
+      return true;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.toLowerCase().includes("sender") || msg.includes("400")) {
-        console.warn("[sms-loyalty] Rialto refusé, retry Stampify");
+        console.warn("[sms-loyalty] Rialto refusé, retry Stampify", {
+          err_msg: msg.slice(0, 200),
+        });
         await sendSms(phone, content, "Stampify");
-        console.log("[sms-loyalty] success sender=Stampify");
+        console.log("[sms-loyalty] ✅ success sender=Stampify");
+        return true;
       } else {
         throw err;
       }
     }
   } catch (err) {
-    console.error("[sms-loyalty] failed (non-blocking)", err);
+    // Phase 10 C2A : log JSON complet NON tronqué (ancien log coupait
+    // la stack trace à cause du 2e arg brut passé à console.error).
+    const err_any = err as {
+      message?: string;
+      stack?: string;
+      response?: {
+        status?: number;
+        data?: { code?: string; message?: string };
+      };
+      responseBody?: string;
+    };
+    const statusCode =
+      err_any?.response?.status ??
+      (err_any?.message?.match(/\((\d{3})\)/)?.[1]
+        ? Number(err_any.message.match(/\((\d{3})\)/)?.[1])
+        : undefined);
+    console.error("[sms-loyalty] failed", {
+      provider: "brevo",
+      error_message: err_any?.message,
+      brevo_code: err_any?.response?.data?.code,
+      brevo_message: err_any?.response?.data?.message,
+      brevo_status: statusCode,
+      brevo_data: err_any?.response?.data,
+      recipient_masked:
+        phone.length >= 6 ? phone.slice(0, 4) + "***" + phone.slice(-2) : phone,
+      template_key: "loyalty_card_created",
+      timestamp: new Date().toISOString(),
+    });
+
+    // Détection crédits Brevo exhausted : on essaie plusieurs signaux
+    const msgLower = (err_any?.message ?? "").toLowerCase();
+    const codeLower = (err_any?.response?.data?.code ?? "").toLowerCase();
+    const brevoMsgLower = (
+      err_any?.response?.data?.message ?? ""
+    ).toLowerCase();
+    if (
+      statusCode === 402 ||
+      codeLower.includes("credit") ||
+      brevoMsgLower.includes("credit") ||
+      msgLower.includes("credit")
+    ) {
+      console.error(
+        "[sms-loyalty] ⚠️ BREVO SMS CREDITS EXHAUSTED — recharge needed at app.brevo.com",
+      );
+    }
+    return false;
   }
 }
 
@@ -330,9 +394,13 @@ export async function POST(req: NextRequest) {
     wasCreated = true;
   }
 
-  // SMS QR link — uniquement à la création (pas sur les retours client)
+  // SMS QR link — uniquement à la création (pas sur les retours client).
+  // Phase 10 C2D : on AWAIT pour récupérer le résultat (envoyé ou non) et
+  // le retourner au client. Si le SMS échoue (crédits Brevo, template
+  // absent), le frontend affiche un fallback copiable avec le lien.
+  let smsSent = false;
   if (wasCreated && shortCode) {
-    void sendLoyaltyCardSms({
+    smsSent = await sendLoyaltyCardSms({
       admin,
       phone,
       firstName: body.first_name.trim(),
@@ -367,6 +435,12 @@ export async function POST(req: NextRequest) {
         short_code: shortCode,
       },
       was_created: wasCreated,
+      // Phase 10 C2D : permet au frontend d'afficher un fallback si le
+      // SMS n'est pas parti (crédits Brevo, template absent, etc.)
+      sms_sent: smsSent,
+      sms_fallback_url: shortCode
+        ? `${RIALTO_BASE_URL.replace(/\/$/, "")}/c/${shortCode}`
+        : null,
     },
     { headers },
   );

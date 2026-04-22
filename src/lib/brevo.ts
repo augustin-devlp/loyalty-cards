@@ -44,7 +44,23 @@ export async function sendSms(
   console.log("[brevo] SMS API response status:", res.status, "| body:", responseText);
 
   if (!res.ok) {
-    throw new Error(`Brevo SMS error (${res.status}): ${responseText}`);
+    // Phase 10 C2A : enrichir l'erreur avec le status + parsed body
+    // pour que le catch appelant puisse inspecter response.data.code,
+    // response.status, etc. (detection credits exhausted notamment).
+    const err = new Error(
+      `Brevo SMS error (${res.status}): ${responseText}`,
+    ) as Error & {
+      response?: { status: number; data?: Record<string, unknown> };
+      responseBody?: string;
+    };
+    err.responseBody = responseText;
+    try {
+      const parsed = JSON.parse(responseText) as Record<string, unknown>;
+      err.response = { status: res.status, data: parsed };
+    } catch {
+      err.response = { status: res.status, data: { raw: responseText } };
+    }
+    throw err;
   }
 }
 
