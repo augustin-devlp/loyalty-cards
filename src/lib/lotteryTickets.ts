@@ -1,87 +1,58 @@
 /**
- * Helper : génération auto d'un ticket de loterie quand une commande
- * est ACCEPTÉE par le restaurant (Phase 7 FIX 7).
+ * Helper : génération auto d'un ticket de loterie (Phase 10 refonte).
  *
- * Décision business (Augustin) : obtenir un ticket de loterie se fait
- * en passant une commande (pas en laissant un avis Google). Déclenché
- * depuis PATCH /api/orders/[id] côté loyalty-cards quand status passe
- * à 'accepted'.
- *
- * Règle : 1 ticket par commande acceptée, par customer, par loterie
- * active. Idempotent : si une entry existe déjà (customer + lottery),
- * on ne recrée rien.
+ * Changements vs Phase 7 :
+ *   - generateTicketForOrder prend désormais UN orderId (string) et
+ *     fetche l'order lui-même → plus simple à appeler et plus safe.
+ *   - Retourne un résultat structuré avec `reason` si échec pour
+ *     diagnostic (order_not_found / no_business / no_active_lottery /
+ *     insert_failed / exception).
+ *   - Idempotence par `order_id` (colonne + unique index partiel
+ *     ajoutés dans la migration lottery_entries_order_id_idempotence).
+ *   - Si `customer_id` absent sur l'order, fallback lookup par phone
+ *     avec phoneLookupVariants (tolérant aux formats mixtes en DB).
+ *   - Logs structurés `[lottery-ticket]` à chaque étape pour tracer
+ *     les échecs silencieux constatés en Phase 9 (5 commandes acceptées
+ *     mais 0 ticket créé).
+ *   - SMS `lottery_ticket_received` fire-and-forget isolé dans
+ *     sendLotteryTicketSms.
  */
 import { createAdminClient } from "./supabase/admin";
+import { phoneLookupVariants } from "./phoneVariants";
 import { renderTemplate, TEMPLATE_META } from "./smsTemplates";
 import { sendSms } from "./brevo";
 
-type Order = {
-  id: string;
-  restaurant_id: string;
-  customer_id: string | null;
-  customer_name?: string | null;
-  customer_phone?: string | null;
-};
+export type TicketResult =
+  | { ok: true; entry_id: string; ticket_number: number; reason?: string }
+  | { ok: false; reason: string };
 
-type LotteryActive = {
-  id: string;
-  name: string | null;
-  title?: string | null;
-  prize_description: string | null;
-  draw_date: string | null;
-  is_active: boolean;
-  is_drawn?: boolean | null;
-};
-
-/**
- * Pour un business_id donné, cherche la loterie active en cours (non
- * tirée, date de tirage dans le futur ou NULL).
- */
-async function findActiveLottery(
-  admin: ReturnType<typeof createAdminClient>,
-  businessId: string,
-): Promise<LotteryActive | null> {
-  const nowIso = new Date().toISOString();
-  const { data } = await admin
-    .from("lotteries")
-    .select(
-      "id, name, title, prize_description, draw_date, is_active, is_drawn",
-    )
-    .eq("business_id", businessId)
-    .eq("is_active", true)
-    .or(`is_drawn.is.null,is_drawn.eq.false`)
-    .or(`draw_date.is.null,draw_date.gte.${nowIso}`)
-    .order("created_at", { ascending: false })
-    .limit(1);
-
-  return (data?.[0] as LotteryActive | undefined) ?? null;
+function maskPhone(phone: string | null | undefined): string {
+  if (!phone) return "(null)";
+  if (phone.length < 6) return phone;
+  return phone.slice(0, 4) + "***" + phone.slice(-2);
 }
 
 /**
- * Détermine le restaurant_id du business Rialto (1:1 pour l'instant).
- * Pour généraliser plus tard : fetch depuis la DB.
+ * Envoie le SMS lottery_ticket_received au client. Cascade sender
+ * Rialto → Stampify fallback. Fire-and-forget côté appelant.
  */
-function restaurantToBusinessId(restaurantId: string): string | null {
-  // Hardcoded Rialto — 046d930d-... (restaurant) ↔ 59b10af2-... (business)
-  if (restaurantId === "046d930d-a4cd-4a43-a11a-7f76bfe74b06") {
-    return "59b10af2-5dbc-4ddd-a659-c49f44804bff";
-  }
-  return null;
-}
-
-/**
- * Envoie un SMS de confirmation de ticket au client (fire-and-forget).
- */
-async function notifyTicketReceived(params: {
-  admin: ReturnType<typeof createAdminClient>;
+async function sendLotteryTicketSms(params: {
   restaurantId: string;
-  phone: string;
-  firstName: string;
+  customerPhone: string;
+  customerName: string;
   ticketNumber: number;
-  lotteryName: string;
+  lotteryTitle: string;
 }): Promise<void> {
-  const { admin, restaurantId, phone, firstName, ticketNumber, lotteryName } =
-    params;
+  const {
+    restaurantId,
+    customerPhone,
+    customerName,
+    ticketNumber,
+    lotteryTitle,
+  } = params;
+
+  const admin = createAdminClient();
+
   try {
     const { data: tmpl } = await admin
       .from("sms_templates")
@@ -96,130 +67,306 @@ async function notifyTicketReceived(params: {
         : {
             content:
               TEMPLATE_META.lottery_ticket_received?.defaultContent ??
-              "🎟️ Ton ticket de loterie Rialto : n°{{ticket_number}}. Tirage bientôt, bonne chance {{customer_name}} !",
+              "🎟️ {{customer_name}}, ton ticket de loterie Rialto : n°{{ticket_number}}. Bonne chance !",
             enabled: true,
           };
 
-    if (!effective.enabled) return;
+    if (!effective.enabled) {
+      console.log("[sms-lottery-ticket] template disabled, skipping");
+      return;
+    }
 
     const content = renderTemplate(effective.content, {
-      customer_name: firstName,
+      customer_name: customerName,
       ticket_number: String(ticketNumber),
-      lottery_name: lotteryName,
+      lottery_name: lotteryTitle,
+    });
+
+    console.log("[sms-lottery-ticket] sending", {
+      masked_phone: maskPhone(customerPhone),
+      ticket_number: ticketNumber,
+      content_length: content.length,
     });
 
     try {
-      await sendSms(phone, content, "Rialto");
-      console.log("[lottery-ticket-sms] success sender=Rialto", {
-        phone,
-        ticketNumber,
+      await sendSms(customerPhone, content, "Rialto");
+      console.log("[sms-lottery-ticket] success sender=Rialto", {
+        masked_phone: maskPhone(customerPhone),
+        ticket_number: ticketNumber,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.toLowerCase().includes("sender") || msg.includes("400")) {
-        await sendSms(phone, content, "Stampify");
+        console.warn("[sms-lottery-ticket] Rialto rejected, retry Stampify", {
+          err_msg: msg.slice(0, 200),
+        });
+        await sendSms(customerPhone, content, "Stampify");
+        console.log("[sms-lottery-ticket] success sender=Stampify");
+      } else {
+        throw err;
       }
     }
   } catch (err) {
-    console.error("[lottery-ticket-sms] failed (non-blocking)", err);
+    const err_any = err as {
+      message?: string;
+      response?: { status?: number; data?: { code?: string; message?: string } };
+    };
+    console.error("[sms-lottery-ticket] failed", {
+      provider: "brevo",
+      error_message: err_any?.message,
+      brevo_code: err_any?.response?.data?.code,
+      brevo_message: err_any?.response?.data?.message,
+      brevo_status: err_any?.response?.status,
+      recipient_masked: maskPhone(customerPhone),
+      template_key: "lottery_ticket_received",
+      timestamp: new Date().toISOString(),
+    });
+    if (
+      err_any?.response?.status === 402 ||
+      err_any?.response?.data?.code?.includes("credit") ||
+      err_any?.response?.data?.message?.toLowerCase().includes("credits")
+    ) {
+      console.error(
+        "[sms-lottery-ticket] ⚠️ BREVO SMS CREDITS EXHAUSTED — recharge needed at app.brevo.com",
+      );
+    }
   }
 }
 
 /**
- * Génère un ticket de loterie pour la commande acceptée.
- * Idempotent : ne crée rien si le customer a déjà un ticket pour la
- * loterie active en cours.
+ * Génère un ticket de loterie pour une commande (déclenché sur
+ * status=accepted dans PATCH /api/orders/[id]).
  *
- * @returns le ticket créé, null si aucune loterie active OU déjà inscrit
+ * Safe à appeler plusieurs fois sur la même commande :
+ *   - Idempotent via (lottery_id, order_id) unique
+ *   - Retourne already_exists si déjà présent
+ *
+ * Non-bloquant côté appelant : toujours retourne un résultat, jamais
+ * ne throw. Les erreurs sont loggées dans la console Vercel.
  */
 export async function generateTicketForOrder(
-  order: Order,
-): Promise<{
-  created: boolean;
-  lottery_id?: string;
-  ticket_number?: number;
-  already_has?: boolean;
-}> {
-  if (!order.customer_id || !order.customer_phone) {
-    return { created: false };
-  }
+  orderId: string,
+): Promise<TicketResult> {
+  console.log("[lottery-ticket] START", { orderId });
 
-  const businessId = restaurantToBusinessId(order.restaurant_id);
-  if (!businessId) {
-    console.log("[lottery-ticket] no business mapping for", order.restaurant_id);
-    return { created: false };
-  }
+  try {
+    const admin = createAdminClient();
 
-  const admin = createAdminClient();
-  const lottery = await findActiveLottery(admin, businessId);
-  if (!lottery) {
-    console.log("[lottery-ticket] no active lottery for", businessId);
-    return { created: false };
-  }
+    // 1. Fetch order
+    const { data: order, error: orderErr } = await admin
+      .from("orders")
+      .select(
+        "id, order_number, restaurant_id, customer_id, customer_phone, customer_name, status",
+      )
+      .eq("id", orderId)
+      .single();
 
-  // Check si le customer a déjà un ticket pour cette loterie (idempotence)
-  const { data: existing } = await admin
-    .from("lottery_entries")
-    .select("id, ticket_number")
-    .eq("lottery_id", lottery.id)
-    .eq("customer_id", order.customer_id)
-    .limit(1)
-    .maybeSingle();
+    if (orderErr || !order) {
+      console.error("[lottery-ticket] order not found", {
+        orderId,
+        error: orderErr?.message,
+      });
+      return { ok: false, reason: "order_not_found" };
+    }
 
-  if (existing) {
-    console.log("[lottery-ticket] customer already has ticket", {
-      customer_id: order.customer_id,
-      lottery_id: lottery.id,
-      ticket_number: existing.ticket_number,
+    console.log("[lottery-ticket] order fetched", {
+      orderNumber: order.order_number,
+      customerId: order.customer_id,
+      masked_phone: maskPhone(order.customer_phone),
+      status: order.status,
     });
+
+    // 2. Fetch business_id via restaurant
+    const { data: restaurant } = await admin
+      .from("restaurants")
+      .select("business_id")
+      .eq("id", order.restaurant_id)
+      .single();
+
+    if (!restaurant?.business_id) {
+      console.error("[lottery-ticket] no business for restaurant", {
+        restaurantId: order.restaurant_id,
+      });
+      return { ok: false, reason: "no_business" };
+    }
+
+    const businessId = restaurant.business_id as string;
+    console.log("[lottery-ticket] business resolved", { businessId });
+
+    // 3. Fetch active lottery (is_active=true, pas encore tirée si la
+    // colonne is_drawn existe)
+    const { data: lottery } = await admin
+      .from("lotteries")
+      .select("id, title, prize_description, is_active, is_drawn")
+      .eq("business_id", businessId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Si is_drawn est true, la loterie est déjà clôturée
+    if (
+      !lottery ||
+      (lottery as { is_drawn?: boolean }).is_drawn === true
+    ) {
+      console.log(
+        "[lottery-ticket] no active lottery for business, skipping",
+        { businessId },
+      );
+      return { ok: false, reason: "no_active_lottery" };
+    }
+
+    console.log("[lottery-ticket] active lottery", {
+      lotteryId: lottery.id,
+      title: lottery.title,
+    });
+
+    // 4. Check idempotence par order_id
+    const { data: existing } = await admin
+      .from("lottery_entries")
+      .select("id, ticket_number")
+      .eq("lottery_id", lottery.id)
+      .eq("order_id", orderId)
+      .maybeSingle();
+
+    if (existing) {
+      console.log("[lottery-ticket] entry already exists, skipping", {
+        entryId: existing.id,
+        ticketNumber: existing.ticket_number,
+      });
+      return {
+        ok: true,
+        entry_id: existing.id as string,
+        ticket_number: Number(existing.ticket_number),
+        reason: "already_exists",
+      };
+    }
+
+    // 5. Résoudre customer si null (fallback lookup par phone)
+    let customerId: string | null = order.customer_id as string | null;
+    let firstName = (order.customer_name as string | null) ?? "";
+
+    if (!customerId && order.customer_phone) {
+      console.log("[lottery-ticket] lookup customer by phone (fallback)", {
+        masked_phone: maskPhone(order.customer_phone),
+      });
+
+      const variants = phoneLookupVariants(order.customer_phone as string);
+      const { data: foundCustomer } = await admin
+        .from("customers")
+        .select("id, first_name, phone")
+        .in("phone", variants.variants)
+        .limit(1)
+        .maybeSingle();
+
+      if (foundCustomer) {
+        customerId = foundCustomer.id as string;
+        firstName = (foundCustomer.first_name as string) || firstName;
+        console.log("[lottery-ticket] customer found via phone variants", {
+          customerId,
+        });
+      } else if (variants.digitsOnly.length >= 8) {
+        // Dernier recours : full scan + filter digits-suffix
+        const suffix = variants.digitsOnly.slice(-8);
+        const { data: allCustomers } = await admin
+          .from("customers")
+          .select("id, first_name, phone");
+        const match = ((allCustomers as Array<{
+          id: string;
+          first_name: string;
+          phone: string | null;
+        }> | null) ?? []).find((c) => {
+          const d = (c.phone ?? "").replace(/[^\d]/g, "");
+          return d.length >= 8 && d.endsWith(suffix);
+        });
+        if (match) {
+          customerId = match.id;
+          firstName = match.first_name || firstName;
+          console.log(
+            "[lottery-ticket] customer found via digits-suffix fallback",
+            { customerId },
+          );
+        } else {
+          console.log(
+            "[lottery-ticket] no customer found, ticket will have customer_id=null",
+          );
+        }
+      }
+    }
+
+    // 6. Next ticket_number (séquentiel par loterie)
+    const { data: maxResult } = await admin
+      .from("lottery_entries")
+      .select("ticket_number")
+      .eq("lottery_id", lottery.id)
+      .order("ticket_number", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const currentMax = Number(maxResult?.ticket_number ?? 0);
+    const nextTicketNumber = (isFinite(currentMax) ? currentMax : 0) + 1;
+    console.log("[lottery-ticket] next ticket_number", {
+      nextTicketNumber,
+      currentMax,
+    });
+
+    // 7. INSERT entry
+    const { data: newEntry, error: insertErr } = await admin
+      .from("lottery_entries")
+      .insert({
+        lottery_id: lottery.id,
+        customer_id: customerId,
+        phone: order.customer_phone,
+        first_name: firstName || "Client",
+        ticket_number: nextTicketNumber,
+        order_id: orderId,
+        google_review_verified: false,
+        is_winner: false,
+      })
+      .select("id")
+      .single();
+
+    if (insertErr || !newEntry) {
+      console.error("[lottery-ticket] INSERT failed", {
+        error_message: insertErr?.message,
+        error_code: insertErr?.code,
+        error_details: insertErr?.details,
+      });
+      return { ok: false, reason: "insert_failed" };
+    }
+
+    console.log("[lottery-ticket] ✅ SUCCESS", {
+      entryId: newEntry.id,
+      ticketNumber: nextTicketNumber,
+      orderNumber: order.order_number,
+    });
+
+    // 8. SMS fire-and-forget (ne bloque pas le résultat)
+    if (order.customer_phone) {
+      void sendLotteryTicketSms({
+        restaurantId: order.restaurant_id as string,
+        customerPhone: order.customer_phone as string,
+        customerName: firstName || "Client",
+        ticketNumber: nextTicketNumber,
+        lotteryTitle:
+          (lottery.title as string) ??
+          (lottery.prize_description as string) ??
+          "Loterie Rialto",
+      });
+    }
+
     return {
-      created: false,
-      already_has: true,
-      lottery_id: lottery.id,
-      ticket_number: (existing.ticket_number as number) ?? undefined,
+      ok: true,
+      entry_id: newEntry.id as string,
+      ticket_number: nextTicketNumber,
     };
+  } catch (err) {
+    const err_any = err as { message?: string; stack?: string };
+    console.error("[lottery-ticket] TOP-LEVEL ERROR", {
+      orderId,
+      message: err_any?.message,
+      stack: err_any?.stack?.slice(0, 500),
+    });
+    return { ok: false, reason: "exception" };
   }
-
-  // Insert — ticket_number est auto-incrémenté via trigger DB (Phase 6)
-  const { data: inserted, error } = await admin
-    .from("lottery_entries")
-    .insert({
-      lottery_id: lottery.id,
-      customer_id: order.customer_id,
-      phone: order.customer_phone,
-      first_name: order.customer_name?.split(" ")[0] ?? "Client",
-    })
-    .select("id, ticket_number")
-    .single();
-
-  if (error || !inserted) {
-    console.error("[lottery-ticket] insert failed", error);
-    return { created: false };
-  }
-
-  const ticketNumber = Number(inserted.ticket_number ?? 0);
-  console.log("[lottery-ticket] ✅ ticket issued", {
-    customer_id: order.customer_id,
-    lottery_id: lottery.id,
-    ticket_number: ticketNumber,
-  });
-
-  // SMS fire-and-forget
-  void notifyTicketReceived({
-    admin,
-    restaurantId: order.restaurant_id,
-    phone: order.customer_phone,
-    firstName: order.customer_name?.split(" ")[0] ?? "Client",
-    ticketNumber,
-    lotteryName:
-      (lottery.name as string) ??
-      (lottery.title as string) ??
-      "Loterie Rialto",
-  });
-
-  return {
-    created: true,
-    lottery_id: lottery.id,
-    ticket_number: ticketNumber,
-  };
 }

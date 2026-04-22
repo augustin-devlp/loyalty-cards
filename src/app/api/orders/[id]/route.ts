@@ -112,21 +112,37 @@ export async function PATCH(
 
   // Email du ticket PDF au restaurant quand Mehmet accepte la commande.
   // Fire-and-forget : n'attend pas la fin pour répondre au dashboard.
-  // + génération auto d'un ticket de loterie si une loterie est active
-  // (Phase 7 FIX 7).
+  // + génération auto d'un ticket de loterie si une loterie est active.
+  //
+  // Phase 10 C1C : on AWAIT generateTicketForOrder pour que le résultat
+  // apparaisse dans les logs Vercel (fire-and-forget masquait les
+  // erreurs). La fonction ne throw jamais (retourne un TicketResult
+  // structuré) donc pas de risque de planter le PATCH.
   if (body.status === "accepted") {
-    console.log("[orders PATCH] accepted → triggering receipt email + lottery ticket", {
-      orderId: updated.id,
-      orderNumber: updated.order_number,
-    });
+    console.log(
+      "[orders PATCH] accepted → triggering receipt email + lottery ticket",
+      {
+        orderId: updated.id,
+        orderNumber: updated.order_number,
+      },
+    );
     void triggerReceiptEmail(updated.id, req.nextUrl.origin);
-    void generateTicketForOrder({
-      id: updated.id,
-      restaurant_id: updated.restaurant_id,
-      customer_id: updated.customer_id,
-      customer_name: updated.customer_name,
-      customer_phone: updated.customer_phone,
-    });
+
+    try {
+      const lotteryResult = await generateTicketForOrder(updated.id);
+      console.log("[orders PATCH] lottery ticket result", {
+        orderId: updated.id,
+        result: lotteryResult,
+      });
+    } catch (err) {
+      // Normalement impossible (la fonction catch tout), mais garde-fou
+      console.error(
+        "[orders PATCH] lottery ticket top-level err (non-blocking)",
+        {
+          error_message: err instanceof Error ? err.message : String(err),
+        },
+      );
+    }
   }
 
   // SMS BLOQUANT — on attend le résultat pour le renvoyer à l'UI dashboard
