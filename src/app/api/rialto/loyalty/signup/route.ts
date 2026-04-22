@@ -7,6 +7,7 @@ import {
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
 import { normalizePhone } from "@/lib/phone";
+import { phoneLookupVariants } from "@/lib/phoneVariants";
 import { renderTemplate, TEMPLATE_META } from "@/lib/smsTemplates";
 import { sendSms } from "@/lib/brevo";
 
@@ -148,15 +149,70 @@ export async function POST(req: NextRequest) {
 
   const admin = createAdminClient();
 
-  // Cherche une carte existante par phone dans le programme Rialto
-  const { data: existingCards } = await admin
-    .from("customer_cards")
-    .select(
-      "id, customer_id, current_stamps, rewards_claimed, qr_code_value, customers!inner (id, phone)",
-    )
-    .eq("card_id", RIALTO_CARD_ID)
-    .eq("customers.phone", phone)
-    .limit(1);
+  // Phase 9 FIX 2 : lookup tolérant aux formats mixtes en DB
+  // (+41..., 41..., 0..., etc.). On essaie d'abord toutes les variantes
+  // canoniques, puis fallback sur un match digits-suffix.
+  const { variants: lookupVariants, digitsOnly: lookupDigits } =
+    phoneLookupVariants(body.phone);
+
+  let existingCustomerId: string | null = null;
+  {
+    // Match strict par variantes canoniques
+    const { data: matchingCustomers } = await admin
+      .from("customers")
+      .select("id, phone")
+      .in("phone", lookupVariants)
+      .limit(10);
+
+    let candidates =
+      (matchingCustomers as Array<{ id: string; phone: string | null }> | null) ??
+      [];
+
+    // Fallback digits-suffix si rien
+    if (candidates.length === 0 && lookupDigits.length >= 8) {
+      const { data: allCustomers } = await admin
+        .from("customers")
+        .select("id, phone");
+      const suffix = lookupDigits.slice(-8);
+      candidates = ((allCustomers as Array<{
+        id: string;
+        phone: string | null;
+      }> | null) ?? []).filter((c) => {
+        const d = (c.phone ?? "").replace(/[^\d]/g, "");
+        return d.length >= 8 && d.endsWith(suffix);
+      });
+    }
+
+    if (candidates.length > 0) {
+      // Cherche une carte Rialto pour l'un de ces customers
+      const ids = candidates.map((c) => c.id);
+      const { data: cardForCustomer } = await admin
+        .from("customer_cards")
+        .select("id, customer_id")
+        .eq("card_id", RIALTO_CARD_ID)
+        .in("customer_id", ids)
+        .limit(1);
+      if (cardForCustomer && cardForCustomer.length > 0) {
+        existingCustomerId = cardForCustomer[0].customer_id as string;
+      } else {
+        // Customer existe mais pas de carte Rialto — on reuse le customer
+        existingCustomerId = candidates[0].id;
+      }
+    }
+  }
+
+  // Legacy : re-fetch la carte complète avec ce customer_id pour
+  // préserver la structure du code qui suit (currentStamps etc.)
+  const { data: existingCards } = existingCustomerId
+    ? await admin
+        .from("customer_cards")
+        .select(
+          "id, customer_id, current_stamps, rewards_claimed, qr_code_value",
+        )
+        .eq("card_id", RIALTO_CARD_ID)
+        .eq("customer_id", existingCustomerId)
+        .limit(1)
+    : { data: [] as Array<Record<string, unknown>> };
 
   let customerId: string;
   let cardId: string;
@@ -203,25 +259,46 @@ export async function POST(req: NextRequest) {
       })
       .eq("id", customerId);
   } else {
-    // Nouveau customer + nouvelle carte
-    const { data: newCustomer, error: custErr } = await admin
-      .from("customers")
-      .insert({
-        first_name: body.first_name.trim(),
-        last_name: body.last_name?.trim() || "",
-        phone,
-        email: body.email?.trim() || null,
-      })
-      .select("id")
-      .single();
-    if (custErr || !newCustomer) {
-      console.error("[loyalty/signup] customer insert failed", custErr);
-      return NextResponse.json(
-        { error: custErr?.message ?? "Création customer échouée" },
-        { status: 500, headers },
-      );
+    // Phase 9 FIX 2 : si un customer existe déjà avec ce numéro (autre
+    // variante en DB) mais PAS de carte Rialto, on réutilise son id au
+    // lieu d'essayer un INSERT qui violerait customers_phone_unique.
+    if (existingCustomerId) {
+      customerId = existingCustomerId;
+      // Update du nom/email si nouveaux
+      await admin
+        .from("customers")
+        .update({
+          first_name: body.first_name.trim(),
+          last_name: body.last_name?.trim() || "",
+          ...(body.email !== undefined
+            ? { email: body.email?.trim() || null }
+            : {}),
+        })
+        .eq("id", customerId);
+      console.log("[loyalty/signup] reused existing customer", {
+        customerId,
+      });
+    } else {
+      // Nouveau customer + nouvelle carte
+      const { data: newCustomer, error: custErr } = await admin
+        .from("customers")
+        .insert({
+          first_name: body.first_name.trim(),
+          last_name: body.last_name?.trim() || "",
+          phone, // canonique E.164 avec "+"
+          email: body.email?.trim() || null,
+        })
+        .select("id")
+        .single();
+      if (custErr || !newCustomer) {
+        console.error("[loyalty/signup] customer insert failed", custErr);
+        return NextResponse.json(
+          { error: custErr?.message ?? "Création customer échouée" },
+          { status: 500, headers },
+        );
+      }
+      customerId = newCustomer.id;
     }
-    customerId = newCustomer.id;
 
     qrCodeValue = crypto.randomUUID();
     shortCode = await generateUniqueShortCode(admin);

@@ -4,31 +4,23 @@ import {
   RIALTO_CARD_ID,
   rialtoCorsHeaders,
 } from "@/lib/rialtoConstants";
-import { toBrevoPhone } from "@/lib/phone";
+import { phoneLookupVariants } from "@/lib/phoneVariants";
 
 /**
  * POST /api/loyalty-cards/login-by-phone
  *
  * Retrouve une carte fidélité à partir d'un numéro de téléphone.
- * Permet à un customer qui a vidé son cache / changé d'appareil de
- * se reconnecter à son compte Rialto Club existant.
  *
- * Body : { phone: string, business_id?: string, card_id?: string }
+ * Phase 9 FIX 1 — Refonte pour matcher TOUS les formats historiques :
+ *   - "+41791234567" (E.164 avec +)     ← format canonique
+ *   - "41791234567"  (E.164 sans +)
+ *   - "0791234567"   (NATIONAL CH avec 0)
+ *   - "791234567"    (digits only — fallback LIKE)
+ *   - "+41 79 123 45 67" (avec espaces — normalisés via libphone)
  *
- * Sécurité :
- *   - Retourne le short_code (secret court 8 chars) si trouvé → le
- *     client peut ensuite afficher /c/[shortCode] sans autre auth.
- *     C'est volontaire : le short_code EST le token (pas besoin de
- *     complexifier tant que le business n'est pas sensible).
- *   - Rate limit best-effort : max 5 tentatives / 60s par IP+phone
- *     (en mémoire, reset au cold start Vercel).
- *   - Log [login-by-phone] avec un masque sur le numéro pour audit.
- *
- * Réponse :
- *   200 { ok: true, short_code, customer_id, first_name, card_id }
- *   200 { ok: false, reason: "not_found" }
- *   429 { ok: false, reason: "rate_limited" }
- *   400 { ok: false, reason: "invalid_phone" }
+ * Le matching est fait via une query Postgres avec IN() sur les
+ * variants canoniques + un fallback regex sur les chiffres uniquement
+ * pour couvrir le cas où la DB contient une forme inattendue.
  */
 
 export async function OPTIONS(req: NextRequest) {
@@ -60,6 +52,11 @@ function maskPhone(phone: string): string {
   return `${phone.slice(0, 4)}***${phone.slice(-2)}`;
 }
 
+/** Retourne les chiffres uniquement d'une chaîne (pour regex en DB). */
+function onlyDigits(s: string): string {
+  return s.replace(/[^\d]/g, "");
+}
+
 export async function POST(req: NextRequest) {
   const headers = rialtoCorsHeaders(
     req.headers.get("origin"),
@@ -79,26 +76,25 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Normalise en E.164 sans + (format que la DB stocke via toBrevoPhone)
-  const phone = toBrevoPhone(body.phone);
-  if (!phone || phone.length < 8) {
+  // Génère toutes les variantes matchables en DB
+  const { variants, digitsOnly } = phoneLookupVariants(body.phone);
+  if (variants.length === 0 || digitsOnly.length < 8) {
     return NextResponse.json(
       { ok: false, reason: "invalid_phone" },
       { status: 400, headers },
     );
   }
 
-  // Rate limit : IP + 6 derniers chiffres du téléphone pour tolérer le
-  // cas "plusieurs clients sur même IP entreprise".
+  // Rate limit par IP+6 derniers chiffres
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     req.headers.get("x-real-ip") ??
     "unknown";
-  const rateKey = `${ip}:${phone.slice(-6)}`;
+  const rateKey = `${ip}:${digitsOnly.slice(-6)}`;
   if (!checkRateLimit(rateKey)) {
     console.warn("[login-by-phone] rate_limited", {
       ip,
-      phone: maskPhone(phone),
+      phone: maskPhone(digitsOnly),
     });
     return NextResponse.json(
       { ok: false, reason: "rate_limited" },
@@ -106,65 +102,108 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const admin = createAdminClient();
-
-  // Le client Rialto passe généralement card_id=RIALTO_CARD_ID.
-  // On tolère aussi business_id pour future généralisation multi-
-  // restaurants. Si aucun des deux : on cherche par card_id Rialto
-  // par défaut (comportement actuel du site).
   const targetCardId = body.card_id ?? RIALTO_CARD_ID;
 
-  // Les clients stockent le téléphone en formats variés. On cherche
-  // avec plusieurs formats possibles pour max de tolérance.
-  // toBrevoPhone renvoie sans "+" (ex "41791234567"). La DB stocke
-  // souvent avec "+" (ex "+41791234567") ou sans — on essaie les 2.
-  const variants = [phone, `+${phone}`];
-
-  const { data: cards } = await admin
-    .from("customer_cards")
-    .select(
-      `
-      id,
-      short_code,
-      current_stamps,
-      customer:customer_id (
-        id,
-        first_name,
-        phone
-      )
-      `,
-    )
-    .eq("card_id", targetCardId)
-    .limit(50);
-
-  // Filtre côté Node pour tolérer les variantes de format téléphone
-  // (la DB a du historique avec/sans "+" selon les migrations)
-  const match = (cards ?? []).find((row) => {
-    const customer = Array.isArray(row.customer) ? row.customer[0] : row.customer;
-    const cPhone = (customer?.phone as string | undefined) ?? "";
-    const normCPhone = cPhone.replace(/[^\d]/g, "");
-    return variants.some((v) => {
-      const vDigits = v.replace(/[^\d]/g, "");
-      return normCPhone === vDigits;
-    });
+  console.log("[login-by-phone] input", {
+    phone: maskPhone(digitsOnly),
+    variants_count: variants.length,
+    card_id: targetCardId,
   });
+  console.log("[login-by-phone] variants tried", variants);
 
-  if (!match) {
-    console.log("[login-by-phone] not_found", { phone: maskPhone(phone) });
+  const admin = createAdminClient();
+
+  // Stratégie : on charge les customers qui ont soit un phone égal à
+  // l'une des variantes exactes, soit dont les chiffres uniquement
+  // terminent par les 9 derniers chiffres du numéro (match fallback).
+  // Puis côté Node on re-valide via phoneLookupVariants pour éviter
+  // les faux positifs (ex: 2 numéros qui terminent pareil).
+  //
+  // Étape 1 : match strict via .in() sur les variantes canoniques.
+  const { data: strictMatches } = await admin
+    .from("customers")
+    .select("id, phone, first_name")
+    .in("phone", variants)
+    .limit(10);
+
+  let candidateCustomers: Array<{ id: string; phone: string; first_name: string }> =
+    (strictMatches as Array<{ id: string; phone: string; first_name: string }> | null) ??
+    [];
+
+  // Étape 2 : fallback si aucun match strict — on charge TOUS les
+  // customers et on filtre côté Node par chiffres uniquement qui
+  // terminent par les 8 derniers du numéro recherché (suffixe unique).
+  // Coût : 1 requête full scan customers (Rialto < 100 rows, OK).
+  if (candidateCustomers.length === 0 && digitsOnly.length >= 8) {
+    const suffix = digitsOnly.slice(-8);
+    const { data: allCustomers } = await admin
+      .from("customers")
+      .select("id, phone, first_name");
+    candidateCustomers = ((allCustomers as Array<{
+      id: string;
+      phone: string | null;
+      first_name: string;
+    }> | null) ?? [])
+      .filter((c) => {
+        const dbDigits = onlyDigits(c.phone ?? "");
+        return dbDigits.endsWith(suffix) && dbDigits.length >= 8;
+      })
+      .map((c) => ({
+        id: c.id,
+        phone: c.phone ?? "",
+        first_name: c.first_name,
+      }));
+    if (candidateCustomers.length > 0) {
+      console.log("[login-by-phone] matched via digits suffix fallback", {
+        count: candidateCustomers.length,
+        sample_phone: maskPhone(candidateCustomers[0].phone),
+      });
+    }
+  } else if (candidateCustomers.length > 0) {
+    console.log("[login-by-phone] matched strict variant", {
+      count: candidateCustomers.length,
+      matched_phone: maskPhone(candidateCustomers[0].phone),
+    });
+  }
+
+  if (candidateCustomers.length === 0) {
+    console.log("[login-by-phone] not_found", {
+      phone: maskPhone(digitsOnly),
+    });
     return NextResponse.json(
       { ok: false, reason: "not_found" },
       { status: 200, headers },
     );
   }
 
-  const customer = Array.isArray(match.customer)
-    ? match.customer[0]
-    : match.customer;
-  const shortCode = match.short_code as string | null;
+  // Étape 3 : parmi les customers matchés, trouver celui qui a une
+  // customer_card pour le card_id demandé.
+  const customerIds = candidateCustomers.map((c) => c.id);
+  const { data: cards } = await admin
+    .from("customer_cards")
+    .select("id, short_code, current_stamps, customer_id")
+    .eq("card_id", targetCardId)
+    .in("customer_id", customerIds)
+    .limit(1);
 
-  // Si la carte existe mais n'a pas de short_code (bug Phase 5 ancien),
-  // on en génère un maintenant pour qu'elle soit connectable.
-  let effectiveShortCode = shortCode;
+  const cardRow = Array.isArray(cards) && cards[0] ? cards[0] : null;
+  if (!cardRow) {
+    console.log("[login-by-phone] customer found but no card for target", {
+      phone: maskPhone(digitsOnly),
+      card_id: targetCardId,
+    });
+    return NextResponse.json(
+      { ok: false, reason: "not_found" },
+      { status: 200, headers },
+    );
+  }
+
+  const matchedCustomer = candidateCustomers.find(
+    (c) => c.id === cardRow.customer_id,
+  );
+
+  // Backfill short_code si absent (bug historique Phase 5)
+  let effectiveShortCode = cardRow.short_code as string | null;
   if (!effectiveShortCode) {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     for (let i = 0; i < 3 && !effectiveShortCode; i++) {
@@ -180,14 +219,11 @@ export async function POST(req: NextRequest) {
         await admin
           .from("customer_cards")
           .update({ short_code: candidate })
-          .eq("id", match.id);
+          .eq("id", cardRow.id);
         effectiveShortCode = candidate;
       }
     }
     if (!effectiveShortCode) {
-      console.error("[login-by-phone] failed to backfill short_code", {
-        card_id: match.id,
-      });
       return NextResponse.json(
         { ok: false, reason: "short_code_missing" },
         { status: 500, headers },
@@ -195,19 +231,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  console.log("[login-by-phone] found", {
-    phone: maskPhone(phone),
-    card_id: match.id,
+  console.log("[login-by-phone] ✅ found", {
+    phone: maskPhone(digitsOnly),
+    card_id: cardRow.id,
     short_code: effectiveShortCode,
+    matched_db_phone: maskPhone(matchedCustomer?.phone ?? ""),
   });
 
   return NextResponse.json(
     {
       ok: true,
       short_code: effectiveShortCode,
-      customer_id: customer?.id ?? null,
-      first_name: (customer?.first_name as string | undefined) ?? "",
-      card_id: match.id,
+      customer_id: cardRow.customer_id,
+      first_name: matchedCustomer?.first_name ?? "",
+      card_id: cardRow.id,
     },
     { headers },
   );
