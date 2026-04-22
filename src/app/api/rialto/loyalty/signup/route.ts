@@ -73,11 +73,15 @@ async function sendLoyaltyCardSms(params: {
       return;
     }
 
-    const siteUrl =
-      process.env.NEXT_PUBLIC_STAMPIFY_URL ?? "https://www.stampify.ch";
+    // URL de la carte : pointe vers le site Rialto (FIX 3 phase 5).
+    // Le SMS envoie un lien stylé Rialto, pas Stampify — meilleure UX.
+    // Env : NEXT_PUBLIC_RIALTO_URL peut override en dev/staging.
+    const rialtoUrl =
+      process.env.NEXT_PUBLIC_RIALTO_URL ??
+      "https://rialto-lausanne.vercel.app";
     const content = renderTemplate(effective.content, {
       customer_name: firstName,
-      card_url: `${siteUrl.replace(/\/$/, "")}/c/${shortCode}`,
+      card_url: `${rialtoUrl.replace(/\/$/, "")}/c/${shortCode}`,
       restaurant_name: "Rialto",
     });
 
