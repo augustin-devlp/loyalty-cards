@@ -8,6 +8,11 @@ export const TEMPLATE_KEYS = [
   "order_cancelled",
   "wheel_prize_code",
   "lottery_winner",
+  "lottery_loser",
+  "lottery_new",
+  "lottery_result_winner",
+  "lottery_result_loser",
+  "wheel_available_again",
   "birthday_offer",
   "loyalty_card_created",
 ] as const;
@@ -78,6 +83,40 @@ export const TEMPLATE_META: Record<
     defaultContent:
       "Bienvenue chez Rialto {{customer_name}} ! Ta carte fidelite est prete. Montre-la a chaque commande : {{card_url}} - 1 pizza offerte apres 10 tampons !",
   },
+  lottery_new: {
+    title: "Nouvelle loterie lancée",
+    description:
+      "Batch envoyé à tous les membres du Rialto Club quand une nouvelle loterie est créée. Variables : {{prize_description}}, {{draw_date}}, {{lottery_url}}.",
+    defaultContent:
+      "🎟️ Nouvelle loterie Rialto ! {{prize_description}} a gagner. Tirage le {{draw_date}}. Passe commande pour recevoir ton ticket : {{lottery_url}}",
+  },
+  lottery_result_winner: {
+    title: "Résultat loterie - gagnant",
+    description:
+      "Envoyé au gagnant d'une loterie tirée. Variables : {{prize_description}}, {{ticket_number}}, {{lottery_url}}.",
+    defaultContent:
+      "🎉 TU AS GAGNE la loterie Rialto ! {{prize_description}}. Presente ton ticket n°{{ticket_number}} chez Rialto pour reclamer : {{lottery_url}}",
+  },
+  lottery_result_loser: {
+    title: "Résultat loterie - perdants",
+    description:
+      "Batch envoyé aux non-gagnants après tirage. Variables : {{winner_ticket}}.",
+    defaultContent:
+      "Loterie Rialto : pas cette fois 😔 Le gagnant est le n°{{winner_ticket}}. Prochaine loterie bientot, tu seras prevenu !",
+  },
+  lottery_loser: {
+    title: "Loterie loser (legacy)",
+    description: "Alias ancien de lottery_result_loser.",
+    defaultContent:
+      "Loterie Rialto : pas cette fois. Prochaine bientot !",
+  },
+  wheel_available_again: {
+    title: "Roue disponible à nouveau",
+    description:
+      "Envoyé quand la fréquence est écoulée et que le client remplit les conditions pour respin. Variables : {{wheel_url}}.",
+    defaultContent:
+      "🎰 Tu peux retenter ta chance a la roue Rialto ! {{wheel_url}}",
+  },
 };
 
 export const TEMPLATE_VARIABLES = [
@@ -109,6 +148,12 @@ export const TEMPLATE_VARIABLES = [
     label: "URL carte fidélité",
     example: "https://www.stampify.ch/c/K7H9M2P4",
   },
+  { key: "prize_description", label: "Lot à gagner", example: "Pizza Bethusy + 2 bières" },
+  { key: "draw_date", label: "Date de tirage", example: "30 mai" },
+  { key: "lottery_url", label: "URL loterie", example: "https://rialto-lausanne.vercel.app/rialto-club/loterie" },
+  { key: "ticket_number", label: "Numéro de ticket gagnant", example: "0247" },
+  { key: "winner_ticket", label: "Numéro ticket du gagnant", example: "0123" },
+  { key: "wheel_url", label: "URL roue", example: "https://rialto-lausanne.vercel.app/rialto-club/roue" },
 ] as const;
 
 export type TemplateVariableKey = (typeof TEMPLATE_VARIABLES)[number]["key"];
