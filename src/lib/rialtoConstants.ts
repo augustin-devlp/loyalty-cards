@@ -8,7 +8,20 @@ export const RIALTO_CARD_ID = "f4cb1a3f-fc5c-40eb-87db-8d2c2b0a8b5f";
 export const RIALTO_SPIN_WHEEL_ID = "37933bc4-9adf-4aa2-91fc-b422ce026c41";
 export const RIALTO_LOTTERY_ID = "aadf3919-e81c-4fef-8ea4-60d871e1121f";
 
+/**
+ * Base URL publique du site Rialto utilisée pour construire les liens
+ * envoyés dans les SMS (confirmation, loterie, roue, carte fidélité).
+ *
+ * Phase 7 FIX 2 : tous les SMS pointent vers vercel.app en attendant
+ * la bascule DNS du domaine rialto-lausanne.ch. Override possible via
+ * NEXT_PUBLIC_RIALTO_BASE_URL dans Vercel.
+ */
+export const RIALTO_BASE_URL =
+  process.env.NEXT_PUBLIC_RIALTO_BASE_URL ??
+  "https://rialto-lausanne.vercel.app";
+
 export const ALLOWED_RIALTO_ORIGINS = [
+  // Garde rialto-lausanne.ch en CORS pour le jour où le DNS sera bascule
   "https://rialto-lausanne.ch",
   "https://www.rialto-lausanne.ch",
   "https://rialto-lausanne.vercel.app",

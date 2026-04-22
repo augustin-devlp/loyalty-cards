@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
+  RIALTO_BASE_URL,
   RIALTO_BUSINESS_ID,
   RIALTO_CARD_ID,
   RIALTO_RESTAURANT_ID,
@@ -117,9 +118,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Lance le batch SMS en arrière-plan (non bloquant pour la réponse)
-  const lotteryUrl =
-    (process.env.NEXT_PUBLIC_RIALTO_URL ??
-      "https://rialto-lausanne.vercel.app") + "/rialto-club/loterie";
+  const lotteryUrl = `${RIALTO_BASE_URL.replace(/\/$/, "")}/rialto-club/loterie`;
   const drawDateFormatted = new Date(body.draw_date).toLocaleDateString(
     "fr-CH",
     {

@@ -213,7 +213,12 @@ export function buildContext(params: {
     pickup_time: formatZurichHHMM(order.requested_pickup_time),
     customer_name: firstName,
     total: Number(order.total_amount).toFixed(2),
-    order_url: siteUrl ? `${siteUrl.replace(/\/$/, "")}/order/${order.id}` : "",
+    // Phase 7 FIX 2 : lien tracking pointe vers /confirmation/[orderNumber]
+    // (nouveau flow) au lieu de l'ancien /order/[id] qui chez certains
+    // domaines renvoyait vers un vieux site Just Eat.
+    order_url: siteUrl
+      ? `${siteUrl.replace(/\/$/, "")}/confirmation/${order.order_number}`
+      : "",
     reason: order.cancellation_reason ?? "",
     restaurant_name: restaurant.name,
     restaurant_phone: restaurant.phone ?? "",

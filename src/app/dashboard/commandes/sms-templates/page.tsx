@@ -25,7 +25,7 @@ const PREVIEW_CTX: Record<string, string> = {
   pickup_time: "21:30",
   customer_name: "Augustin",
   total: "47.50",
-  order_url: "https://rialto-lausanne.ch/order/abc123",
+  order_url: "https://rialto-lausanne.vercel.app/confirmation/R-2026-042",
   reason: "Plat indisponible. ",
   restaurant_name: "Rialto",
   restaurant_phone: "021 312 64 60",

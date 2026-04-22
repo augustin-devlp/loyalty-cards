@@ -150,7 +150,10 @@ async function sendTemplated(
       phone: restaurant.phone,
       address: restaurant.address,
     },
-    siteUrl: process.env.NEXT_PUBLIC_RIALTO_URL ?? "https://rialto-lausanne.ch",
+    siteUrl:
+      process.env.NEXT_PUBLIC_RIALTO_BASE_URL ??
+      process.env.NEXT_PUBLIC_RIALTO_URL ??
+      "https://rialto-lausanne.vercel.app",
   });
 
   const content = renderTemplate(tmpl.content, ctx);

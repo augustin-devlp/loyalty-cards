@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { notifyAllClubMembers } from "@/lib/notifyAll";
 import {
+  RIALTO_BASE_URL,
   RIALTO_CARD_ID,
   RIALTO_RESTAURANT_ID,
 } from "@/lib/rialtoConstants";
@@ -110,9 +111,7 @@ export async function POST(
     .eq("id", lotteryId);
 
   // 6) SMS au gagnant
-  const lotteryUrl =
-    (process.env.NEXT_PUBLIC_RIALTO_URL ??
-      "https://rialto-lausanne.vercel.app") + "/rialto-club/loterie";
+  const lotteryUrl = `${RIALTO_BASE_URL.replace(/\/$/, "")}/rialto-club/loterie`;
 
   if (winner.phone) {
     void (async () => {

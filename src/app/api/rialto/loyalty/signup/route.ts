@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  RIALTO_BASE_URL,
   RIALTO_CARD_ID,
   RIALTO_RESTAURANT_ID,
   rialtoCorsHeaders,
@@ -73,15 +74,13 @@ async function sendLoyaltyCardSms(params: {
       return;
     }
 
-    // URL de la carte : pointe vers le site Rialto (FIX 3 phase 5).
-    // Le SMS envoie un lien stylé Rialto, pas Stampify — meilleure UX.
-    // Env : NEXT_PUBLIC_RIALTO_URL peut override en dev/staging.
-    const rialtoUrl =
-      process.env.NEXT_PUBLIC_RIALTO_URL ??
-      "https://rialto-lausanne.vercel.app";
+    // URL de la carte : pointe vers le site Rialto (Phase 5 FIX 3).
+    // Centralisée via RIALTO_BASE_URL (Phase 7 FIX 2) pour éviter les
+    // fallbacks éparpillés vers rialto-lausanne.ch qui renvoyait vers
+    // un vieux site Just Eat.
     const content = renderTemplate(effective.content, {
       customer_name: firstName,
-      card_url: `${rialtoUrl.replace(/\/$/, "")}/c/${shortCode}`,
+      card_url: `${RIALTO_BASE_URL.replace(/\/$/, "")}/c/${shortCode}`,
       restaurant_name: "Rialto",
     });
 
