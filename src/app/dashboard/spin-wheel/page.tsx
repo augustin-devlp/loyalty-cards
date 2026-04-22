@@ -20,10 +20,39 @@ interface WheelRow {
   segments: Segment[];
   require_google_review: boolean;
   // Chantier 4 : paramétrage fin de la fréquence
-  frequency_days?: number;
+  frequency_days?: number | null;
   requires_order_since?: boolean;
   min_orders_count?: number;
+  // Phase 7 : modes exclusifs
+  config_mode?: "frequency" | "weekdays" | "disabled";
+  allowed_weekdays?: number[];
 }
+
+/**
+ * Paliers du slider Mode Fréquence (Phase 7).
+ * Valeur en frequency_days : null = "Pas de roue" (palier max)
+ */
+const FREQUENCY_STEPS: {
+  value: number | null;
+  label: string;
+  sub: string;
+}[] = [
+  { value: 1, label: "1/jour", sub: "Chaque jour" },
+  { value: 3, label: "2/sem", sub: "Tous les 3 jours" },
+  { value: 7, label: "1/sem", sub: "Chaque semaine" },
+  { value: 30, label: "1/mois", sub: "Chaque mois" },
+  { value: null, label: "Pas de roue", sub: "Désactivée" },
+];
+
+const WEEKDAYS_ISO: { iso: number; label: string; short: string }[] = [
+  { iso: 1, label: "Lundi", short: "Lun" },
+  { iso: 2, label: "Mardi", short: "Mar" },
+  { iso: 3, label: "Mercredi", short: "Mer" },
+  { iso: 4, label: "Jeudi", short: "Jeu" },
+  { iso: 5, label: "Vendredi", short: "Ven" },
+  { iso: 6, label: "Samedi", short: "Sam" },
+  { iso: 7, label: "Dimanche", short: "Dim" },
+];
 
 const PALETTE = [
   "#534AB7", "#7C3AED", "#2563EB", "#059669",
@@ -88,10 +117,13 @@ export default function SpinWheelPage() {
   const [isActive, setIsActive]   = useState(false);
   const [requireGoogleReview, setRequireGoogleReview] = useState(false);
   const [businessId, setBusinessId] = useState<string>("");
-  // Chantier 4 : règles avancées
-  const [frequencyDays, setFrequencyDays] = useState<number>(30);
-  const [requiresOrderSince, setRequiresOrderSince] = useState<boolean>(true);
-  const [minOrdersCount, setMinOrdersCount] = useState<number>(1);
+  // Phase 7 : modes exclusifs (frequency slider vs weekdays)
+  const [configMode, setConfigMode] = useState<"frequency" | "weekdays">(
+    "frequency",
+  );
+  // Palier du slider Fréquence (0=1j, 1=3j, 2=7j, 3=30j, 4=Pas de roue)
+  const [frequencyStepIndex, setFrequencyStepIndex] = useState<number>(0);
+  const [allowedWeekdays, setAllowedWeekdays] = useState<number[]>([]);
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
   const [saveOk, setSaveOk]     = useState(false);
@@ -118,9 +150,15 @@ export default function SpinWheelPage() {
         setFrequency(w.frequency as "once" | "daily" | "weekly" | "monthly");
         setIsActive(w.is_active);
         setRequireGoogleReview(w.require_google_review ?? false);
-        setFrequencyDays(w.frequency_days ?? 30);
-        setRequiresOrderSince(w.requires_order_since ?? true);
-        setMinOrdersCount(w.min_orders_count ?? 1);
+
+        // Phase 7 : config_mode + palier frequency + weekdays
+        const mode = (w.config_mode as "frequency" | "weekdays") ?? "frequency";
+        setConfigMode(mode);
+        // Retrouver l'index du palier correspondant à frequency_days
+        const fd = w.frequency_days === null ? null : (w.frequency_days ?? 1);
+        const idx = FREQUENCY_STEPS.findIndex((s) => s.value === fd);
+        setFrequencyStepIndex(idx >= 0 ? idx : 0);
+        setAllowedWeekdays(Array.isArray(w.allowed_weekdays) ? w.allowed_weekdays : []);
       }
       setLoading(false);
     });
@@ -135,14 +173,19 @@ export default function SpinWheelPage() {
     const sb = createClient();
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
-    const payload = {
+    // Phase 7 : la config est soit frequency (avec palier) soit weekdays
+    const currentStep = FREQUENCY_STEPS[frequencyStepIndex] ?? FREQUENCY_STEPS[0];
+    const payload: Record<string, unknown> = {
       segments,
       frequency,
       is_active: isActive,
       require_google_review: requireGoogleReview,
-      frequency_days: frequencyDays,
-      requires_order_since: requiresOrderSince,
-      min_orders_count: minOrdersCount,
+      config_mode: configMode,
+      frequency_days: configMode === "frequency" ? currentStep.value : null,
+      allowed_weekdays: configMode === "weekdays" ? allowedWeekdays : [],
+      // requires_order_since retiré (Phase 7 décision Augustin)
+      requires_order_since: false,
+      min_orders_count: 0,
     };
     if (wheel) {
       await sb.from("spin_wheels").update(payload).eq("id", wheel.id);
@@ -162,9 +205,9 @@ export default function SpinWheelPage() {
     frequency,
     isActive,
     requireGoogleReview,
-    frequencyDays,
-    requiresOrderSince,
-    minOrdersCount,
+    configMode,
+    frequencyStepIndex,
+    allowedWeekdays,
     total,
   ]);
 
@@ -265,17 +308,180 @@ export default function SpinWheelPage() {
           {/* ── Left: configuration ── */}
           <div className="space-y-4">
 
-            {/* Frequency */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-              <h2 className="text-sm font-bold text-gray-700 mb-3">Fréquence de participation</h2>
-              <div className="grid grid-cols-2 gap-2">
-                {(["once", "daily", "weekly", "monthly"] as const).map(f => (
-                  <button key={f} onClick={() => setFrequency(f)}
-                    className={`py-2 px-3 rounded-xl text-sm font-semibold border transition-all ${frequency === f ? "bg-[#534AB7] text-white border-[#534AB7]" : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"}`}>
-                    {f === "once" ? "Une fois" : f === "daily" ? "Chaque jour" : f === "weekly" ? "Chaque semaine" : "Chaque mois"}
-                  </button>
-                ))}
+            {/* ── Config roue : modes exclusifs (Phase 7 FIX 5) ── */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
+              <div>
+                <h2 className="text-sm font-bold text-gray-700">Configuration de la roue</h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Choisis UN des 2 modes ci-dessous.
+                </p>
               </div>
+
+              {/* Mode A — Fréquence */}
+              <label
+                className={`block rounded-2xl border-2 p-4 cursor-pointer transition-all ${
+                  configMode === "frequency"
+                    ? "border-[#534AB7] bg-indigo-50/50"
+                    : "border-gray-200 bg-white hover:border-indigo-300"
+                }`}
+              >
+                <div className="flex items-start gap-2">
+                  <input
+                    type="radio"
+                    name="configMode"
+                    checked={configMode === "frequency"}
+                    onChange={() => setConfigMode("frequency")}
+                    className="mt-0.5 accent-[#534AB7]"
+                  />
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-gray-800">
+                      Mode Fréquence régulière
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-0.5">
+                      Le client peut tourner la roue à intervalle régulier.
+                    </p>
+                  </div>
+                </div>
+
+                {configMode === "frequency" && (
+                  <div className="mt-4 pl-5 space-y-3">
+                    <input
+                      type="range"
+                      min={0}
+                      max={FREQUENCY_STEPS.length - 1}
+                      step={1}
+                      value={frequencyStepIndex}
+                      onChange={(e) => setFrequencyStepIndex(Number(e.target.value))}
+                      className="w-full accent-[#534AB7]"
+                    />
+                    <div className="flex justify-between gap-1 text-[10px] font-semibold text-gray-500">
+                      {FREQUENCY_STEPS.map((s, i) => (
+                        <span
+                          key={i}
+                          className={`flex-1 text-center ${
+                            i === frequencyStepIndex
+                              ? "text-[#534AB7]"
+                              : ""
+                          }`}
+                        >
+                          {s.label}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="rounded-xl bg-indigo-50 px-3 py-2 text-xs">
+                      <span className="font-semibold text-indigo-800">
+                        ✓ Sélectionné :
+                      </span>{" "}
+                      <span className="text-indigo-700">
+                        {FREQUENCY_STEPS[frequencyStepIndex]?.sub ?? ""}
+                        {FREQUENCY_STEPS[frequencyStepIndex]?.value === null && (
+                          <span className="italic"> (la roue n'apparaît plus côté client)</span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </label>
+
+              {/* Mode B — Jours fixes */}
+              <label
+                className={`block rounded-2xl border-2 p-4 cursor-pointer transition-all ${
+                  configMode === "weekdays"
+                    ? "border-[#534AB7] bg-indigo-50/50"
+                    : "border-gray-200 bg-white hover:border-indigo-300"
+                }`}
+              >
+                <div className="flex items-start gap-2">
+                  <input
+                    type="radio"
+                    name="configMode"
+                    checked={configMode === "weekdays"}
+                    onChange={() => setConfigMode("weekdays")}
+                    className="mt-0.5 accent-[#534AB7]"
+                  />
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-gray-800">
+                      Mode Calendrier (jours fixes)
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-0.5">
+                      La roue est disponible uniquement certains jours de la semaine.
+                    </p>
+                  </div>
+                </div>
+
+                {configMode === "weekdays" && (
+                  <div className="mt-4 pl-5 space-y-3">
+                    {/* Grille 7 checkboxes */}
+                    <div className="grid grid-cols-7 gap-1">
+                      {WEEKDAYS_ISO.map((d) => {
+                        const active = allowedWeekdays.includes(d.iso);
+                        return (
+                          <button
+                            key={d.iso}
+                            type="button"
+                            onClick={() =>
+                              setAllowedWeekdays((prev) =>
+                                prev.includes(d.iso)
+                                  ? prev.filter((x) => x !== d.iso)
+                                  : [...prev, d.iso].sort((a, b) => a - b),
+                              )
+                            }
+                            className={`py-2 rounded-lg text-xs font-semibold transition-all ${
+                              active
+                                ? "bg-[#534AB7] text-white"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            }`}
+                          >
+                            {d.short}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Raccourcis */}
+                    <div className="flex gap-2 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => setAllowedWeekdays([6, 7])}
+                        className="rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-700 hover:bg-gray-200"
+                      >
+                        Week-end
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAllowedWeekdays([1, 2, 3, 4, 5, 6, 7])}
+                        className="rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-700 hover:bg-gray-200"
+                      >
+                        Tous les jours
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAllowedWeekdays([])}
+                        className="rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-700 hover:bg-gray-200"
+                      >
+                        Aucun
+                      </button>
+                    </div>
+
+                    {/* Résumé */}
+                    <div className="rounded-xl bg-indigo-50 px-3 py-2 text-xs">
+                      <span className="font-semibold text-indigo-800">
+                        ✓ Roue disponible :
+                      </span>{" "}
+                      <span className="text-indigo-700">
+                        {allowedWeekdays.length === 0
+                          ? "Aucun jour sélectionné"
+                          : allowedWeekdays
+                              .map(
+                                (iso) =>
+                                  WEEKDAYS_ISO.find((d) => d.iso === iso)?.label ?? "",
+                              )
+                              .join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </label>
             </div>
 
             {/* Google Review Mode */}
@@ -305,111 +511,10 @@ export default function SpinWheelPage() {
               )}
             </div>
 
-            {/* ── Règles avancées (Chantier 4) ───────────────────────── */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
-              <div>
-                <h2 className="text-sm font-bold text-gray-700">Règles avancées</h2>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  Affinez qui peut retenter sa chance et à quelle fréquence.
-                </p>
-              </div>
-
-              {/* Fréquence en jours */}
-              <div className="space-y-1.5">
-                <label className="flex items-center justify-between text-xs font-semibold text-gray-700">
-                  <span>Fréquence minimale entre 2 spins</span>
-                  <span className="text-gray-400 font-normal">{frequencyDays} jours</span>
-                </label>
-                <input
-                  type="range"
-                  min={1}
-                  max={90}
-                  value={frequencyDays}
-                  onChange={(e) => setFrequencyDays(Number(e.target.value))}
-                  className="w-full accent-[#534AB7]"
-                />
-                <div className="flex justify-between text-[10px] text-gray-400">
-                  <span>1j</span>
-                  <span>30j</span>
-                  <span>60j</span>
-                  <span>90j</span>
-                </div>
-                <p className="text-[11px] text-gray-400 leading-snug">
-                  Remplace l&apos;ancienne option &quot;Chaque jour / semaine / mois&quot;. Le
-                  client ne pourra pas retenter avant {frequencyDays} jour{frequencyDays > 1 ? "s" : ""}.
-                </p>
-              </div>
-
-              {/* Toggle requires_order_since */}
-              <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-4">
-                <div>
-                  <h3 className="text-xs font-bold text-gray-700">
-                    Nécessite une nouvelle commande
-                  </h3>
-                  <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
-                    Le client doit avoir passé au moins {minOrdersCount} commande
-                    {minOrdersCount > 1 ? "s" : ""} depuis son dernier spin.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setRequiresOrderSince(!requiresOrderSince)}
-                  className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
-                    requiresOrderSince ? "bg-[#534AB7]" : "bg-gray-200"
-                  }`}
-                  aria-pressed={requiresOrderSince}
-                >
-                  <span
-                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-                      requiresOrderSince
-                        ? "translate-x-[22px]"
-                        : "translate-x-0.5"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* Nombre de commandes minimum (visible uniquement si toggle actif) */}
-              {requiresOrderSince && (
-                <div className="space-y-1.5">
-                  <label className="flex items-center justify-between text-xs font-semibold text-gray-700">
-                    <span>Nombre de commandes minimum</span>
-                    <span className="text-gray-400 font-normal">
-                      {minOrdersCount}
-                    </span>
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setMinOrdersCount(Math.max(1, minOrdersCount - 1))}
-                      className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold disabled:opacity-40"
-                      disabled={minOrdersCount <= 1}
-                    >
-                      −
-                    </button>
-                    <input
-                      type="number"
-                      min={1}
-                      max={50}
-                      value={minOrdersCount}
-                      onChange={(e) =>
-                        setMinOrdersCount(
-                          Math.max(1, Math.min(50, Number(e.target.value) || 1)),
-                        )
-                      }
-                      className="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm font-semibold text-black focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setMinOrdersCount(Math.min(50, minOrdersCount + 1))}
-                      className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Ancien bloc "Règles avancées" retiré en Phase 7 :
+                la fréquence est maintenant pilotée par le palier du slider
+                ci-dessus (1/3/7/30/null jours) et la logique
+                requires_order_since est supprimée. */}
 
             {/* ─────────────────────────────────────────────────────────────── */}
             {/* SECTION A — Apparence de la roue                               */}
