@@ -12,6 +12,7 @@ export const TEMPLATE_KEYS = [
   "lottery_new",
   "lottery_result_winner",
   "lottery_result_loser",
+  "lottery_ticket_received",
   "wheel_available_again",
   "birthday_offer",
   "loyalty_card_created",
@@ -75,6 +76,13 @@ export const TEMPLATE_META: Record<
       "Envoyé pour l'anniversaire d'un client fidèle. {{code}} = code promo.",
     defaultContent:
       "Joyeux anniversaire {{customer_name}} ! Rialto t'offre {{reward_label}}. Code : {{code}}. Valable 30 jours.",
+  },
+  lottery_ticket_received: {
+    title: "Ticket loterie reçu",
+    description:
+      "Envoyé au client quand sa commande est acceptée + une loterie est active. {{ticket_number}} = n° du ticket, {{lottery_name}} = nom de la loterie.",
+    defaultContent:
+      "🎟️ {{customer_name}}, ton ticket de loterie Rialto : n°{{ticket_number}}. Tirage bientôt, bonne chance !",
   },
   loyalty_card_created: {
     title: "Carte fidélité créée",
@@ -150,6 +158,9 @@ export const TEMPLATE_VARIABLES = [
   },
   { key: "prize_description", label: "Lot à gagner", example: "Pizza Bethusy + 2 bières" },
   { key: "draw_date", label: "Date de tirage", example: "30 mai" },
+  { key: "ticket_number", label: "Numéro de ticket loterie", example: "0247" },
+  { key: "lottery_name", label: "Nom de la loterie", example: "Loterie de Mai" },
+  { key: "winner_ticket", label: "Numéro du ticket gagnant", example: "0132" },
   { key: "lottery_url", label: "URL loterie", example: "https://rialto-lausanne.vercel.app/rialto-club/loterie" },
   { key: "ticket_number", label: "Numéro de ticket gagnant", example: "0247" },
   { key: "winner_ticket", label: "Numéro ticket du gagnant", example: "0123" },
