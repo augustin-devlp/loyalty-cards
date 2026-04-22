@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { generateShortCode } from "@/lib/shortCode";
 
 interface JoinFormProps {
   cardId: string;
@@ -139,7 +140,12 @@ export default function JoinForm({ cardId, primaryColor, textColor, country }: J
 
     const { data: newCard, error: cardErr } = await supabase
       .from("customer_cards")
-      .insert({ customer_id: customerId, card_id: cardId, qr_code_value: crypto.randomUUID() })
+      .insert({
+        customer_id: customerId,
+        card_id: cardId,
+        qr_code_value: crypto.randomUUID(),
+        short_code: generateShortCode(),
+      })
       .select("id")
       .single();
 
