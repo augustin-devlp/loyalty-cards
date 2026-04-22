@@ -2,6 +2,25 @@
 
 Backlog post-démo Mehmet. Tâches triées par impact business.
 
+## Migrations DB appliquées en Phase 5 (21/04 → 22/04)
+
+- `menu_items_allergens_and_diet_flags` : `is_vegan`, `is_lactose_free`,
+  `is_halal`, `is_kids_friendly`, `ingredients TEXT[]`, `allergens TEXT[]`,
+  `description_long TEXT`. Seed Rialto : 56 items avec gluten, 48 milk,
+  6 eggs, 3 molluscs, 7 sulphites (vins), 1 halal (kebab), 5 kids_friendly
+  (margherita/funghi/prosciutto). `is_vegan` laissé à false manuellement
+  (trop risqué à inférer automatiquement).
+
+## Décisions manuelles à prendre dans Supabase Studio
+
+- [ ] **Review vegan** : valider avec Mehmet quelles pizzas sont vegan
+  (a priori margherita peut l'être si mozzarella vegan, mais c'est
+  rarement le cas). Default=false actuellement pour éviter faux positif.
+- [ ] **Enrichir `ingredients[]`** : scraper la carte Rialto officielle
+  pour remplir les ingrédients visibles par plat (actuellement tous vides).
+- [ ] **`description_long`** : description enrichie pour la page produit
+  (actuellement on fallback sur `description` courte).
+
 ## Infrastructure (attente clés API)
 
 - [ ] **Google Places API Key** — intégration automatique review gate
