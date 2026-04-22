@@ -44,7 +44,9 @@ type RestaurantData = {
 
 const styles = StyleSheet.create({
   page: {
-    padding: 28,
+    // Padding réduit (28 → 22) pour gagner ~12pt sur la hauteur utile A5
+    padding: 22,
+    paddingBottom: 18,
     fontSize: 10,
     fontFamily: "Helvetica",
     color: "#1a1a1a",
@@ -52,18 +54,18 @@ const styles = StyleSheet.create({
   header: {
     borderBottom: 2,
     borderColor: "#E30613",
-    paddingBottom: 12,
-    marginBottom: 12,
+    paddingBottom: 10,
+    marginBottom: 10,
   },
-  title: { fontSize: 28, fontWeight: 700, color: "#E30613", letterSpacing: 2 },
-  subtitle: { fontSize: 11, color: "#6b7280", marginTop: 2 },
+  title: { fontSize: 26, fontWeight: 700, color: "#E30613", letterSpacing: 2 },
+  subtitle: { fontSize: 10, color: "#6b7280", marginTop: 2 },
   orderNumber: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 700,
-    marginTop: 10,
+    marginTop: 8,
     color: "#111827",
   },
-  section: { marginTop: 12 },
+  section: { marginTop: 10 },
   sectionTitle: {
     fontSize: 9,
     fontWeight: 700,
@@ -76,15 +78,15 @@ const styles = StyleSheet.create({
   label: { color: "#6b7280" },
   value: { fontWeight: 700 },
   typeBadge: {
-    marginTop: 8,
-    paddingVertical: 6,
+    marginTop: 6,
+    paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 4,
     backgroundColor: "#dbeafe",
     color: "#1e40af",
     fontWeight: 700,
     textAlign: "center",
-    fontSize: 11,
+    fontSize: 10,
     letterSpacing: 1,
   },
   typeBadgeText: {
@@ -103,10 +105,10 @@ const styles = StyleSheet.create({
     color: "#374151",
   },
   infoBlock: {
-    padding: 8,
+    padding: 6,
     backgroundColor: "#f9fafb",
     borderRadius: 4,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   tableHeader: {
     flexDirection: "row",
@@ -126,33 +128,44 @@ const styles = StyleSheet.create({
   itemRow: { flexDirection: "row", paddingVertical: 5, borderBottom: 0.5, borderColor: "#f3f4f6" },
   itemName: { fontWeight: 700 },
   itemOptions: { color: "#6b7280", fontSize: 9, marginTop: 1 },
-  totals: { marginTop: 10, borderTop: 1, borderColor: "#e5e7eb", paddingTop: 6 },
+  totals: { marginTop: 8, borderTop: 1, borderColor: "#e5e7eb", paddingTop: 5 },
   totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 3 },
   grandTotal: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 4,
-    padding: 8,
+    padding: 7,
     backgroundColor: "#111827",
     color: "#ffffff",
     borderRadius: 4,
     fontWeight: 700,
-    fontSize: 14,
+    fontSize: 13,
   },
   payment: {
-    marginTop: 10,
-    padding: 8,
+    marginTop: 8,
+    padding: 6,
     backgroundColor: "#fef3c7",
     borderRadius: 4,
-    fontSize: 10,
+    fontSize: 9,
     textAlign: "center",
     color: "#78350f",
   },
+  // footer : placé dans un bloc wrap=false groupé avec payment pour éviter
+  // qu'il bascule seul sur une page 2 blanche. marginTop léger + padding
+  // minimal pour coller au contenu précédent.
   footer: {
-    marginTop: 18,
+    marginTop: 10,
     textAlign: "center",
-    fontSize: 9,
+    fontSize: 8,
     color: "#9ca3af",
+    lineHeight: 1.3,
+  },
+  // Bloc bas de page : contient payment + notes + footer. wrap={false}
+  // empêche un saut de page à l'intérieur — si ça ne rentre pas, tout
+  // le bloc glisse sur la page suivante (mieux que de laisser "Merci"
+  // seul sur une page blanche).
+  bottomBlock: {
+    marginTop: 6,
   },
 });
 
@@ -289,7 +302,7 @@ export function OrderReceipt({
             <Text style={styles.col4}>Total</Text>
           </View>
           {items.map((it, idx) => (
-            <View key={idx} style={styles.itemRow}>
+            <View key={idx} wrap={false} style={styles.itemRow}>
               <Text style={styles.col1}>{it.quantity}×</Text>
               <View style={styles.col2}>
                 <Text style={styles.itemName}>{it.item_name_snapshot}</Text>
@@ -328,26 +341,35 @@ export function OrderReceipt({
           </View>
         </View>
 
-        <View style={styles.payment}>
-          <Text>
-            Paiement sur place : espèces, TWINT ou carte bancaire
+        {/*
+          Bloc bas de page : payment + notes client + footer.
+          wrap={false} force le groupe à rester ensemble. Si ça ne rentre
+          pas avec les items précédents, tout glisse sur la page suivante
+          mais le "Merci de votre commande" ne sera plus jamais seul en
+          haut d'une page blanche.
+        */}
+        <View wrap={false} style={styles.bottomBlock}>
+          <View style={styles.payment}>
+            <Text>
+              Paiement sur place : espèces, TWINT ou carte bancaire
+            </Text>
+          </View>
+
+          {order.notes && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Notes du client</Text>
+              <View style={styles.infoBlock}>
+                <Text>{order.notes}</Text>
+              </View>
+            </View>
+          )}
+
+          <Text style={styles.footer}>
+            Rialto · {restaurant.address ?? "Av. de Béthusy 29, 1012 Lausanne"}
+            {"\n"}Tél : {restaurant.phone ?? "+41 21 312 64 60"}
+            {"  "}·{"  "}Merci de votre commande !
           </Text>
         </View>
-
-        {order.notes && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Notes du client</Text>
-            <View style={styles.infoBlock}>
-              <Text>{order.notes}</Text>
-            </View>
-          </View>
-        )}
-
-        <Text style={styles.footer}>
-          Rialto · {restaurant.address ?? "Av. de Béthusy 29, 1012 Lausanne"}
-          {"\n"}Tél : {restaurant.phone ?? "+41 21 312 64 60"}
-          {"\n\n"}Merci de votre commande !
-        </Text>
       </Page>
     </Document>
   );
