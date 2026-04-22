@@ -193,27 +193,55 @@ export async function generateTicketForOrder(
     const businessId = restaurant.business_id as string;
     console.log("[lottery-ticket] business resolved", { businessId });
 
-    // 3. Fetch active lottery (is_active=true, pas encore tirée si la
-    // colonne is_drawn existe)
+    // 3. Fetch active lottery (is_active=true).
+    //
+    // Phase 11 C1 : retrait de `is_drawn` du select car cette colonne
+    // n'existe PAS dans la table lotteries (schéma réel : id,
+    // business_id, title, reward_description, is_active, is_permanent,
+    // start_date, end_date, max_winners, draw_date, prize_description,
+    // claim_token_template, require_google_review). Inclure is_drawn
+    // faisait planter le .select() → lottery = null → retour silencieux
+    // reason=no_active_lottery alors que la loterie existe bien.
+    //
+    // Pour déterminer si une loterie est "terminée", on se base désormais
+    // sur is_active + (draw_date passé ET pas is_permanent).
     const { data: lottery } = await admin
       .from("lotteries")
-      .select("id, title, prize_description, is_active, is_drawn")
+      .select(
+        "id, title, prize_description, reward_description, is_active, is_permanent, draw_date",
+      )
       .eq("business_id", businessId)
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
-    // Si is_drawn est true, la loterie est déjà clôturée
-    if (
-      !lottery ||
-      (lottery as { is_drawn?: boolean }).is_drawn === true
-    ) {
+    if (!lottery) {
       console.log(
         "[lottery-ticket] no active lottery for business, skipping",
         { businessId },
       );
       return { ok: false, reason: "no_active_lottery" };
+    }
+
+    // Loterie non-permanente dont la date de tirage est passée → terminée
+    if (
+      !(lottery as { is_permanent?: boolean }).is_permanent &&
+      (lottery as { draw_date?: string }).draw_date
+    ) {
+      const drawDate = new Date(
+        (lottery as { draw_date: string }).draw_date,
+      ).getTime();
+      if (drawDate < Date.now()) {
+        console.log(
+          "[lottery-ticket] lottery draw_date already passed, skipping",
+          {
+            lotteryId: lottery.id,
+            draw_date: (lottery as { draw_date: string }).draw_date,
+          },
+        );
+        return { ok: false, reason: "lottery_closed" };
+      }
     }
 
     console.log("[lottery-ticket] active lottery", {
