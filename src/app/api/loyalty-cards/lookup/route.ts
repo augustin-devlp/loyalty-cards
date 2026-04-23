@@ -43,7 +43,8 @@ export async function GET(req: NextRequest) {
       rewards_claimed,
       qr_code_value,
       short_code,
-      customer:customer_id (first_name, phone),
+      is_fully_activated,
+      customer:customer_id (first_name, phone, date_of_birth, gender),
       card:card_id (card_name, reward_description, stamps_required, business_id)
       `,
     )
@@ -73,6 +74,13 @@ export async function GET(req: NextRequest) {
         first_name: (customer?.first_name as string) ?? "",
         // phone masked pour affichage sans exposer le numéro complet
         phone_masked: maskPhone((customer?.phone as string) ?? ""),
+        // Phase 11 C1 : flag activation 2e étape (date anniversaire)
+        is_fully_activated: Boolean(
+          (data as unknown as { is_fully_activated?: boolean }).is_fully_activated,
+        ),
+        has_birthday: Boolean(
+          (customer as unknown as { date_of_birth?: string | null })?.date_of_birth,
+        ),
       },
     },
     { headers },

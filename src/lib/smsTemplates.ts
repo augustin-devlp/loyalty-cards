@@ -15,6 +15,10 @@ export const TEMPLATE_KEYS = [
   "lottery_ticket_received",
   "wheel_available_again",
   "birthday_offer",
+  "birthday_wish",
+  "birthday_wish_vip",
+  "referral_success",
+  "vip_tier_unlocked",
   "loyalty_card_created",
 ] as const;
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -124,6 +128,34 @@ export const TEMPLATE_META: Record<
       "Envoyé quand la fréquence est écoulée et que le client remplit les conditions pour respin. Variables : {{wheel_url}}.",
     defaultContent:
       "🎰 Tu peux retenter ta chance a la roue Rialto ! {{wheel_url}}",
+  },
+  birthday_wish: {
+    title: "Anniversaire client (standard)",
+    description:
+      "Envoyé via cron quotidien à 09h00 aux clients dont c'est l'anniversaire. Génère automatiquement un code promo -20% valable 7 jours. Variables : {{customer_name}}, {{code}}, {{reward_label}}.",
+    defaultContent:
+      "🎂 Joyeux anniversaire {{customer_name}} ! Rialto te souhaite une belle journee. Ton cadeau : {{reward_label}}. Code : {{code}} (valable 7 jours). A bientot !",
+  },
+  birthday_wish_vip: {
+    title: "Anniversaire client VIP (silver/gold)",
+    description:
+      "Envoyé via cron quotidien à 09h00 aux clients VIP silver/gold dont c'est l'anniversaire. Pas de code promo : dessert offert à presenter en restaurant. Variables : {{customer_name}}.",
+    defaultContent:
+      "🎂 Joyeux anniversaire {{customer_name}} ! En tant que membre VIP Rialto, un dessert t'est offert aujourd'hui. Viens le chercher, on t'attend ! Av. de Bethusy 29.",
+  },
+  referral_success: {
+    title: "Parrainage réussi",
+    description:
+      "Envoyé au parrain quand un filleul passe sa 1re commande. Variables : {{customer_name}}, {{reward_label}}, {{code}}.",
+    defaultContent:
+      "🎉 Merci {{customer_name}} ! Ton filleul a commande chez Rialto. Tu gagnes {{reward_label}}. Code : {{code}} (valable 30 jours).",
+  },
+  vip_tier_unlocked: {
+    title: "Passage niveau VIP",
+    description:
+      "Envoyé quand un client atteint un nouveau palier VIP (bronze/silver/gold). Variables : {{customer_name}}, {{reward_label}}.",
+    defaultContent:
+      "🏆 Bravo {{customer_name}} ! Tu es desormais membre VIP Rialto. Avantage : {{reward_label}}. Merci pour ta fidelite !",
   },
 };
 

@@ -3,6 +3,10 @@
     {
       "path": "/api/reports/monthly",
       "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/birthday-sms",
+      "schedule": "0 9 * * *"
     }
   ]
 }
