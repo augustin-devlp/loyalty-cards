@@ -22,19 +22,22 @@ export type GeminiImageResult =
   | { ok: false; reason: string; status?: number; detail?: string };
 
 /**
- * Liste des modèles texte à essayer en cascade. Les noms Google Gemini
- * ont changé plusieurs fois — on tente dans l'ordre jusqu'à avoir 200.
- * La liste est mémoïsée après le premier succès pour éviter les
- * cascades inutiles.
+ * Liste des modèles texte à essayer en cascade. Ordre optimisé :
+ * on commence par gemini-1.5-flash (quota free tier le plus généreux
+ * et le plus stable), puis on cascade vers les plus récents si besoin.
+ * Les noms Google Gemini ont changé plusieurs fois — cet ordre évite
+ * l'usage prioritaire de gemini-2.5-flash qui est souvent saturé (503).
+ *
+ * Pas de memoization : la variable module-level n'est pas fiable en
+ * serverless Vercel (cold start crée de nouvelles instances), et la
+ * cascade complète est rapide (le 1er qui répond 200 termine la boucle).
  */
 const TEXT_MODEL_FALLBACKS = [
-  "gemini-2.5-flash",
+  "gemini-1.5-flash",
   "gemini-2.0-flash",
   "gemini-2.0-flash-001",
-  "gemini-1.5-flash",
-  "gemini-1.5-flash-latest",
+  "gemini-2.5-flash",
 ];
-let memoizedTextModel: string | null = null;
 
 /**
  * Génère un texte via Gemini (cascade fallback sur plusieurs modèles).
@@ -52,11 +55,7 @@ export async function generateGeminiText(params: {
     return { ok: false, reason: "missing_api_key" };
   }
 
-  const modelsToTry = params.model
-    ? [params.model]
-    : memoizedTextModel
-      ? [memoizedTextModel, ...TEXT_MODEL_FALLBACKS.filter((m) => m !== memoizedTextModel)]
-      : TEXT_MODEL_FALLBACKS;
+  const modelsToTry = params.model ? [params.model] : TEXT_MODEL_FALLBACKS;
   let lastError: GeminiTextResult | null = null;
 
   for (const model of modelsToTry) {
@@ -127,8 +126,6 @@ export async function generateGeminiText(params: {
         };
       }
 
-      // Succès : mémoïse le modèle qui a marché
-      memoizedTextModel = model;
       return {
         ok: true,
         text: text.trim(),
@@ -152,7 +149,6 @@ const IMAGE_MODEL_FALLBACKS = [
   "gemini-2.5-flash-image-preview",
   "gemini-2.0-flash-exp-image-generation",
 ];
-let memoizedImageModel: string | null = null;
 
 /**
  * Génère une image via Gemini Nano Banana Pro (cascade fallback).
@@ -169,9 +165,7 @@ export async function generateGeminiImage(params: {
 
   const modelsToTry = params.model
     ? [params.model]
-    : memoizedImageModel
-      ? [memoizedImageModel, ...IMAGE_MODEL_FALLBACKS.filter((m) => m !== memoizedImageModel)]
-      : IMAGE_MODEL_FALLBACKS;
+    : IMAGE_MODEL_FALLBACKS;
   let lastError: GeminiImageResult | null = null;
 
   for (const model of modelsToTry) {
@@ -247,7 +241,6 @@ export async function generateGeminiImage(params: {
         };
       }
 
-      memoizedImageModel = model;
       return {
         ok: true,
         mime_type: mimeType,
