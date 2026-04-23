@@ -22,20 +22,17 @@ export type GeminiImageResult =
   | { ok: false; reason: string; status?: number; detail?: string };
 
 /**
- * Liste des modèles texte à essayer en cascade. Ordre optimisé :
- * on commence par gemini-1.5-flash (quota free tier le plus généreux
- * et le plus stable), puis on cascade vers les plus récents si besoin.
- * Les noms Google Gemini ont changé plusieurs fois — cet ordre évite
- * l'usage prioritaire de gemini-2.5-flash qui est souvent saturé (503).
- *
- * Pas de memoization : la variable module-level n'est pas fiable en
- * serverless Vercel (cold start crée de nouvelles instances), et la
- * cascade complète est rapide (le 1er qui répond 200 termine la boucle).
+ * Cascade texte — ordre optimisé pour le free tier d'Augustin (vérifié
+ * via GET /api/admin/gemini-models). Les modèles "lite" ont un quota
+ * plus généreux, on les met en premier pour éviter les 429 sur les
+ * modèles flagship. gemini-1.5-flash-* n'est plus dispo en v1beta.
  */
 const TEXT_MODEL_FALLBACKS = [
-  "gemini-1.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash-lite",
+  "gemini-flash-lite-latest",
   "gemini-2.0-flash",
-  "gemini-2.0-flash-001",
+  "gemini-flash-latest",
   "gemini-2.5-flash",
 ];
 
@@ -153,11 +150,12 @@ export async function generateGeminiText(params: {
  * non implémenté ici).
  */
 const IMAGE_MODEL_FALLBACKS = [
-  "gemini-2.5-flash-image-preview",
+  // Vrais noms dispos sur la clé Augustin (vérifiés via
+  // /api/admin/gemini-models) :
   "gemini-2.5-flash-image",
-  "gemini-2.0-flash-preview-image-generation",
-  "gemini-2.0-flash-exp-image-generation",
-  "gemini-2.0-flash-exp",
+  "gemini-3.1-flash-image-preview",
+  "gemini-3-pro-image-preview",
+  "nano-banana-pro-preview",
 ];
 
 /**
