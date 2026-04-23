@@ -22,7 +22,22 @@ export type GeminiImageResult =
   | { ok: false; reason: string; status?: number; detail?: string };
 
 /**
- * Génère un texte via gemini-2.0-flash.
+ * Liste des modèles texte à essayer en cascade. Les noms Google Gemini
+ * ont changé plusieurs fois — on tente dans l'ordre jusqu'à avoir 200.
+ * La liste est mémoïsée après le premier succès pour éviter les
+ * cascades inutiles.
+ */
+const TEXT_MODEL_FALLBACKS = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-001",
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-latest",
+];
+let memoizedTextModel: string | null = null;
+
+/**
+ * Génère un texte via Gemini (cascade fallback sur plusieurs modèles).
  * Retourne un résultat structuré pour faciliter le diag.
  */
 export async function generateGeminiText(params: {
@@ -30,84 +45,102 @@ export async function generateGeminiText(params: {
   temperature?: number;
   maxOutputTokens?: number;
   apiKey?: string;
+  model?: string;
 }): Promise<GeminiTextResult> {
   const apiKey = params.apiKey ?? process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return { ok: false, reason: "missing_api_key" };
   }
 
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  const modelsToTry = params.model
+    ? [params.model]
+    : memoizedTextModel
+      ? [memoizedTextModel, ...TEXT_MODEL_FALLBACKS.filter((m) => m !== memoizedTextModel)]
+      : TEXT_MODEL_FALLBACKS;
+  let lastError: GeminiTextResult | null = null;
 
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: params.prompt }] }],
-        generationConfig: {
-          temperature: params.temperature ?? 0.7,
-          maxOutputTokens: params.maxOutputTokens ?? 600,
+  for (const model of modelsToTry) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
         },
-      }),
-    });
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: params.prompt }] }],
+          generationConfig: {
+            temperature: params.temperature ?? 0.7,
+            maxOutputTokens: params.maxOutputTokens ?? 600,
+          },
+        }),
+      });
 
-    const raw = await res.text();
-    if (!res.ok) {
+      const raw = await res.text();
+      if (!res.ok) {
+        lastError = {
+          ok: false,
+          reason: "http_error",
+          status: res.status,
+          detail: `model=${model} ${raw.slice(0, 400)}`,
+        };
+        // Si 404 (modèle n'existe pas) ou 400 (model not found), on tente
+        // le modèle suivant. Autre erreur (429, 500+) : on abandonne la
+        // cascade car l'API est up mais nous rejette.
+        if (res.status === 404 || res.status === 400) continue;
+        return lastError;
+      }
+
+      type GeminiResp = {
+        candidates?: Array<{
+          content?: { parts?: Array<{ text?: string }> };
+          finishReason?: string;
+        }>;
+        promptFeedback?: { blockReason?: string };
+      };
+      const body = JSON.parse(raw) as GeminiResp;
+
+      if (body.promptFeedback?.blockReason) {
+        return {
+          ok: false,
+          reason: "safety_block",
+          detail: body.promptFeedback.blockReason,
+        };
+      }
+
+      const candidate = body.candidates?.[0];
+      const text = candidate?.content?.parts
+        ?.map((p) => p.text)
+        .filter(Boolean)
+        .join("\n");
+
+      if (!text || text.trim().length === 0) {
+        return {
+          ok: false,
+          reason: "empty_response",
+          detail: `model=${model} finishReason=${candidate?.finishReason}`,
+        };
+      }
+
+      // Succès : mémoïse le modèle qui a marché
+      memoizedTextModel = model;
       return {
+        ok: true,
+        text: text.trim(),
+        finish_reason: candidate?.finishReason,
+      };
+    } catch (err) {
+      lastError = {
         ok: false,
-        reason: "http_error",
-        status: res.status,
-        detail: raw.slice(0, 500),
+        reason: "exception",
+        detail: `model=${model} ${err instanceof Error ? err.message : String(err)}`,
       };
     }
-
-    type GeminiResp = {
-      candidates?: Array<{
-        content?: { parts?: Array<{ text?: string }> };
-        finishReason?: string;
-      }>;
-      promptFeedback?: { blockReason?: string };
-    };
-    const body = JSON.parse(raw) as GeminiResp;
-
-    if (body.promptFeedback?.blockReason) {
-      return {
-        ok: false,
-        reason: "safety_block",
-        detail: body.promptFeedback.blockReason,
-      };
-    }
-
-    const candidate = body.candidates?.[0];
-    const text = candidate?.content?.parts
-      ?.map((p) => p.text)
-      .filter(Boolean)
-      .join("\n");
-
-    if (!text || text.trim().length === 0) {
-      return {
-        ok: false,
-        reason: "empty_response",
-        detail: candidate?.finishReason,
-      };
-    }
-
-    return {
-      ok: true,
-      text: text.trim(),
-      finish_reason: candidate?.finishReason,
-    };
-  } catch (err) {
-    return {
-      ok: false,
-      reason: "exception",
-      detail: err instanceof Error ? err.message : String(err),
-    };
   }
+
+  return lastError ?? { ok: false, reason: "no_model_responded" };
 }
 
 /**

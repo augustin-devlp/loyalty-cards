@@ -172,6 +172,7 @@ export async function POST(req: NextRequest) {
     ok: boolean;
     length?: number;
     reason?: string;
+    detail?: string;
     sample?: string;
   }> = [];
   let ok = 0;
@@ -225,6 +226,7 @@ export async function POST(req: NextRequest) {
         name: item.name,
         ok: false,
         reason: result.reason,
+        detail: result.detail?.slice(0, 200),
       });
       failed += 1;
       await sleep(1000);
