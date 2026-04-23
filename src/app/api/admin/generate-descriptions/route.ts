@@ -45,9 +45,9 @@ Catégorie : ${params.categoryName ?? "(non précisée)"}
 Prix : ${params.price} CHF
 Description courte existante : ${params.description ?? "(aucune)"}
 
-Contraintes :
+Contraintes OBLIGATOIRES :
 - Français, ton chaleureux et professionnel
-- MINIMUM 5 lignes pleines (environ 350-450 caractères)
+- LONGUEUR IMPÉRATIVE : entre 400 et 700 caractères (4 à 6 phrases complètes)
 - Décrire précisément les ingrédients principaux
 - Évoquer la technique de cuisson ou de préparation si pertinent
 - Parler de l'origine culturelle (italienne, anatolienne) si applicable
@@ -56,6 +56,7 @@ Contraintes :
 - Privilégier : détails sensoriels précis (texture, chaleur, odeurs, couleurs), origines géographiques, techniques
 - NE PAS inventer d'ingrédients qui ne sont pas dans la description courte
 - Format : 1 seul paragraphe fluide, pas de bullet points, pas de titres markdown
+- IMPORTANT : vise vraiment 5 phrases pleines pour atteindre la longueur demandée
 
 Descriptions à éviter absolument :
 - "Un plat délicieux qui ravira vos papilles"
@@ -197,22 +198,44 @@ export async function POST(req: NextRequest) {
     // 1er essai
     let result = await generateGeminiText({
       prompt,
-      temperature: 0.7,
-      maxOutputTokens: 600,
+      temperature: 0.8,
+      maxOutputTokens: 1024,
     });
 
-    // Retry 1 fois si http_error ou empty_response
+    // Retry 1 fois si http_error ou empty_response (503 high demand
+    // est fréquent sur gemini-2.5-flash, on insiste)
     if (
       !result.ok &&
       (result.reason === "http_error" || result.reason === "empty_response")
     ) {
       console.warn("[description-gen] retry after", result.reason);
-      await sleep(2000);
+      await sleep(3000);
       result = await generateGeminiText({
         prompt,
-        temperature: 0.7,
-        maxOutputTokens: 600,
+        temperature: 0.8,
+        maxOutputTokens: 1024,
       });
+    }
+
+    // Si la réponse est trop courte (< 250 chars), re-prompter avec
+    // une instruction plus explicite
+    if (result.ok && result.text.length < 250) {
+      console.warn("[description-gen] description too short, re-prompting", {
+        item_name: item.name,
+        length: result.text.length,
+      });
+      await sleep(1500);
+      const longerPrompt =
+        prompt +
+        "\n\nIMPORTANT : ta précédente réponse était trop courte. Produis maintenant une description de 500 caractères minimum, en décrivant les ingrédients, la préparation, et l'expérience gustative en détail. 5 phrases complètes.";
+      const retryResult = await generateGeminiText({
+        prompt: longerPrompt,
+        temperature: 0.85,
+        maxOutputTokens: 1024,
+      });
+      if (retryResult.ok && retryResult.text.length > result.text.length) {
+        result = retryResult;
+      }
     }
 
     if (!result.ok) {
