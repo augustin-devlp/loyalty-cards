@@ -143,11 +143,18 @@ export async function generateGeminiText(params: {
   return lastError ?? { ok: false, reason: "no_model_responded" };
 }
 
-/** Cascade des modèles image — Nano Banana Pro puis anciens noms. */
+/**
+ * Cascade des modèles image. Les noms ont changé plusieurs fois chez
+ * Google, on tente dans l'ordre de popularité observée. Si aucun ne
+ * marche → la clé n'a probablement pas accès aux modèles image (tier
+ * free limité, billing à activer).
+ */
 const IMAGE_MODEL_FALLBACKS = [
-  "gemini-2.5-flash-image",
   "gemini-2.5-flash-image-preview",
+  "gemini-2.5-flash-image",
+  "gemini-2.0-flash-preview-image-generation",
   "gemini-2.0-flash-exp-image-generation",
+  "gemini-2.0-flash-exp",
 ];
 
 /**
@@ -180,6 +187,13 @@ export async function generateGeminiImage(params: {
         },
         body: JSON.stringify({
           contents: [{ parts: [{ text: params.prompt }] }],
+          // Les modèles gemini-*-exp-image-generation et
+          // gemini-2.0-flash-exp exigent responseModalities pour
+          // retourner une image. Pour gemini-2.5-flash-image-preview,
+          // le champ est ignoré s'il n'est pas supporté.
+          generationConfig: {
+            responseModalities: ["IMAGE", "TEXT"],
+          },
         }),
       });
 
