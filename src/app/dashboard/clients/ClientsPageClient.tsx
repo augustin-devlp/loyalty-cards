@@ -90,6 +90,26 @@ const SEGMENT_COLORS: Record<string, string> = {
   lost: "#374151",
 };
 
+type CustomerTag = {
+  id: string;
+  tag: string;
+  note: string | null;
+  created_at: string;
+};
+
+const TAG_PRESETS = [
+  "VIP",
+  "Allergique arachide",
+  "Allergique gluten",
+  "Allergique lactose",
+  "Halal",
+  "Cash uniquement",
+  "Difficile",
+  "Regulier",
+  "Ami",
+  "Mauvais payeur",
+];
+
 export default function ClientsPageClient() {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [total, setTotal] = useState(0);
@@ -99,6 +119,9 @@ export default function ClientsPageClient() {
   const [selectedPhone, setSelectedPhone] = useState<string | null>(null);
   const [detail, setDetail] = useState<ClientDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [tags, setTags] = useState<CustomerTag[]>([]);
+  const [newTagInput, setNewTagInput] = useState("");
+  const [tagSubmitting, setTagSubmitting] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -120,14 +143,54 @@ export default function ClientsPageClient() {
     setSelectedPhone(phone);
     setDetailLoading(true);
     setDetail(null);
+    setTags([]);
     try {
       const res = await fetch(`/api/dashboard/clients/${encodeURIComponent(phone)}`);
       const body = await res.json();
-      if (body.ok) setDetail(body);
+      if (body.ok) {
+        setDetail(body);
+        // Phase 11 C16 : load tags
+        if (body.customer?.id) {
+          const tRes = await fetch(
+            `/api/dashboard/customer-tags?customer_id=${body.customer.id}`,
+          );
+          const tBody = await tRes.json();
+          if (tBody.ok) setTags(tBody.tags);
+        }
+      }
     } finally {
       setDetailLoading(false);
     }
   };
+
+  async function addTag(tag: string) {
+    if (!detail?.customer?.id || !tag.trim()) return;
+    setTagSubmitting(true);
+    try {
+      const res = await fetch("/api/dashboard/customer-tags", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          customer_id: detail.customer.id,
+          tag: tag.trim(),
+        }),
+      });
+      const body = await res.json();
+      if (body.ok) {
+        setTags((prev) => [body.tag, ...prev]);
+        setNewTagInput("");
+      } else {
+        alert(body.error ?? "Erreur");
+      }
+    } finally {
+      setTagSubmitting(false);
+    }
+  }
+
+  async function removeTag(id: string) {
+    await fetch(`/api/dashboard/customer-tags?id=${id}`, { method: "DELETE" });
+    setTags((prev) => prev.filter((t) => t.id !== id));
+  }
 
   return (
     <div className="space-y-4">
@@ -267,6 +330,77 @@ export default function ClientsPageClient() {
                     color={detail.totals.sms_failed > 0 ? "#DC2626" : "#374151"}
                   />
                 </section>
+
+                {/* Phase 11 C16 : Tags clients */}
+                {detail.customer && (
+                  <section>
+                    <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">
+                      Tags 🏷️
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {tags.length === 0 && (
+                        <span className="text-xs text-gray-400">
+                          Pas encore de tag.
+                        </span>
+                      )}
+                      {tags.map((t) => (
+                        <span
+                          key={t.id}
+                          className="inline-flex items-center gap-1 rounded-full bg-[#C73E1D]/10 px-2.5 py-0.5 text-xs font-semibold text-[#C73E1D]"
+                        >
+                          {t.tag}
+                          <button
+                            type="button"
+                            onClick={() => removeTag(t.id)}
+                            className="rounded-full text-[#C73E1D]/60 hover:text-[#C73E1D]"
+                            aria-label="Retirer"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {TAG_PRESETS.filter(
+                        (p) => !tags.find((t) => t.tag === p),
+                      ).map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => addTag(p)}
+                          disabled={tagSubmitting}
+                          className="rounded-full border border-gray-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-gray-600 hover:border-[#C73E1D] hover:text-[#C73E1D] disabled:opacity-50"
+                        >
+                          + {p}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        type="text"
+                        value={newTagInput}
+                        onChange={(e) => setNewTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTag(newTagInput);
+                          }
+                        }}
+                        placeholder="Tag personnalisé…"
+                        maxLength={40}
+                        className="flex-1 rounded-xl border border-gray-300 px-3 py-1.5 text-xs focus:border-[#C73E1D] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => addTag(newTagInput)}
+                        disabled={!newTagInput.trim() || tagSubmitting}
+                        className="rounded-xl bg-[#C73E1D] px-3 py-1.5 text-xs font-bold text-white hover:bg-red-900 disabled:opacity-50"
+                      >
+                        Ajouter
+                      </button>
+                    </div>
+                  </section>
+                )}
 
                 {detail.customer && (
                   <section>
