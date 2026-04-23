@@ -2,6 +2,36 @@
 
 Backlog post-démo Mehmet. Tâches triées par impact business.
 
+## 🔔 Actions Augustin au réveil — Phase 11
+
+1. ⚠️ **Lancer la génération images Nano Banana Pro** quand quota reset
+   (le quota free tier images Gemini se reset minuit Pacific Time ≈
+   09h00 CET le matin). Exécuter en boucle :
+   ```bash
+   # Batch de 8 images (7s × 8 = 56s, safe pour Vercel timeout 300s)
+   curl -X POST https://www.stampify.ch/api/admin/generate-dish-images \
+     -H "content-type: application/json" \
+     -d '{"business_id":"59b10af2-5dbc-4ddd-a659-c49f44804bff","pin":"0808","only_missing":true,"limit":8}'
+   # Relancer la commande jusqu'à avoir `"processed":0`
+   ```
+   Le endpoint est idempotent (only_missing=true skip les images déjà
+   dans le bucket Supabase Storage `menu-images`).
+
+2. **Diag endpoint** pour vérifier quels modèles sont dispos :
+   ```bash
+   curl 'https://www.stampify.ch/api/admin/gemini-models?pin=0808'
+   ```
+   → `text_candidates` et `image_candidates` listent les modèles
+   accessibles à la clé GEMINI_API_KEY.
+
+3. **Remettre horaires Rialto prod** dans le dashboard Stampify :
+   Lun-Dim 11h30-23h30 (actuellement 00-05 pour tests nocturnes).
+
+4. **Imprimer les 3 PDFs** pour Mehmet samedi :
+   - Devis_Stampify_Rialto_JetPizza.pdf
+   - Fiche_Justification_Pitch_Mehmet.pdf
+   - Offre_SMS_Rialto_Stampify.pdf
+
 ## 🔔 Actions non-code pour Augustin au réveil (Phase 10)
 
 1. ✅ **Crédits SMS Brevo** : 447 restants. Pas critique mais garder
