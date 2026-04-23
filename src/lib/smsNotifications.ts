@@ -7,6 +7,7 @@ import {
   type TemplateKey,
 } from "./smsTemplates";
 import { logSms } from "./smsLogging";
+import { tryPushByPhone } from "./pushCascade";
 
 type OrderForSms = {
   id: string;
@@ -159,6 +160,54 @@ async function sendTemplated(
 
   const content = renderTemplate(tmpl.content, ctx);
   const phone = normalizePhone(order.customer_phone);
+
+  // Phase 11 C6 : cascade push → SMS. Si le client a activé les push,
+  // on envoie d'abord via Web Push (gratuit). Si ça échoue, fallback SMS.
+  const pushTitleByKey: Partial<Record<TemplateKey, string>> = {
+    order_confirmation: "Commande confirmée 🍕",
+    order_accepted: "Commande acceptée ✓",
+    order_preparing: "En préparation 🔥",
+    order_ready: "Commande prête ! 🎉",
+    order_cancelled: "Commande annulée",
+  };
+  const pushTitle = pushTitleByKey[key];
+  if (pushTitle) {
+    try {
+      const pushResult = await tryPushByPhone({
+        phone: order.customer_phone,
+        payload: {
+          title: pushTitle,
+          body: content,
+          url: `/confirmation/${order.order_number}`,
+          tag: `order-${order.order_number}`,
+        },
+      });
+      if (pushResult.pushed) {
+        console.log("[SMS] ✅ PUSH sent (cascade skip SMS)", {
+          orderId: order.id,
+          key,
+          succeeded: pushResult.succeeded,
+        });
+        await logSms({
+          restaurant_id: order.restaurant_id ?? null,
+          phone,
+          template_key: key,
+          sender_used: "WebPush",
+          content,
+          status: "sent",
+          order_id: order.id,
+          context_meta: {
+            order_number: order.order_number,
+            channel: "push",
+            push_succeeded: pushResult.succeeded,
+          },
+        });
+        return { success: true, reference: `push-${pushResult.succeeded}` };
+      }
+    } catch (err) {
+      console.warn("[SMS] push cascade failed, fallback to SMS", err);
+    }
+  }
 
   const isFrench = phone.startsWith("33");
   if (isFrench) {

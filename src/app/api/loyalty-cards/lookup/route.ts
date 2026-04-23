@@ -60,6 +60,13 @@ export async function GET(req: NextRequest) {
 
   const customer = Array.isArray(data.customer) ? data.customer[0] : data.customer;
   const card = Array.isArray(data.card) ? data.card[0] : data.card;
+  const customerRow = customer as unknown as {
+    id?: string;
+    first_name?: string;
+    phone?: string;
+    date_of_birth?: string | null;
+    gender?: string | null;
+  } | null;
 
   return NextResponse.json(
     {
@@ -78,9 +85,9 @@ export async function GET(req: NextRequest) {
         is_fully_activated: Boolean(
           (data as unknown as { is_fully_activated?: boolean }).is_fully_activated,
         ),
-        has_birthday: Boolean(
-          (customer as unknown as { date_of_birth?: string | null })?.date_of_birth,
-        ),
+        has_birthday: Boolean(customerRow?.date_of_birth),
+        // Phase 11 C6 : customer_id pour subscribe push par identifiant
+        customer_id: customerRow?.id ?? null,
       },
     },
     { headers },
