@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       qr_code_value,
       short_code,
       is_fully_activated,
-      customer:customer_id (first_name, phone, date_of_birth, gender),
+      customer:customer_id (first_name, phone, date_of_birth, gender, vip_tier, vip_lifetime_spend, vip_order_count),
       card:card_id (card_name, reward_description, stamps_required, business_id)
       `,
     )
@@ -66,6 +66,9 @@ export async function GET(req: NextRequest) {
     phone?: string;
     date_of_birth?: string | null;
     gender?: string | null;
+    vip_tier?: "bronze" | "silver" | "gold" | null;
+    vip_lifetime_spend?: number | string | null;
+    vip_order_count?: number | null;
   } | null;
 
   return NextResponse.json(
@@ -88,6 +91,12 @@ export async function GET(req: NextRequest) {
         has_birthday: Boolean(customerRow?.date_of_birth),
         // Phase 11 C6 : customer_id pour subscribe push par identifiant
         customer_id: customerRow?.id ?? null,
+        // Phase 11 C11 : VIP tier
+        vip_tier: customerRow?.vip_tier ?? null,
+        vip_lifetime_spend: customerRow?.vip_lifetime_spend
+          ? Number(customerRow.vip_lifetime_spend)
+          : 0,
+        vip_order_count: customerRow?.vip_order_count ?? 0,
       },
     },
     { headers },
