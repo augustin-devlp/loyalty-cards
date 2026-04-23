@@ -202,6 +202,7 @@ const OWNER_LINKS: NavLink[] = [
   { href: "/dashboard/cards",         label: "Mes cartes",       icon: <CardIcon />,       feature: "cards" },
   { href: "/dashboard/scan",          label: "Scanner",          icon: <ScanIcon />,       feature: "scanner" },
   { href: "/dashboard/stats",         label: "Statistiques",     icon: <StatsIcon />,      feature: "stats" },
+  { href: "/dashboard/analytics",     label: "Analytics RFM",    title: "Segmentation clients RFM-A + KPIs avancés", icon: <StatsIcon />, feature: "analytics" },
   { href: "/dashboard/reservations",  label: "Réservations",     icon: <CalendarIcon />,   feature: "reservations" },
   { href: "/dashboard/spin-wheel",    label: "Roue",             icon: <WheelIcon />,      feature: "spin-wheel" },
   { href: "/dashboard/lottery",       label: "Loterie",          icon: <GiftIcon />,       feature: "lottery" },
