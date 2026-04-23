@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { renderTemplate, TEMPLATE_META } from "@/lib/smsTemplates";
 import { sendSms } from "@/lib/brevo";
+import { logSms } from "@/lib/smsLogging";
 import {
   RIALTO_BUSINESS_ID,
   RIALTO_RESTAURANT_ID,
@@ -130,17 +131,40 @@ export async function GET(req: NextRequest) {
         restaurant_name: "Rialto",
       });
 
-      // 3. Send SMS (cascade sender Rialto → Stampify)
+      // 3. Send SMS (cascade sender Rialto → Stampify) + log
+      let senderUsed = "Rialto";
       try {
         await sendSms(customer.phone, content, "Rialto");
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         if (msg.toLowerCase().includes("sender") || msg.includes("400")) {
+          senderUsed = "Stampify";
           await sendSms(customer.phone, content, "Stampify");
         } else {
+          await logSms({
+            restaurant_id: RIALTO_RESTAURANT_ID,
+            customer_id: customer.id,
+            phone: customer.phone,
+            template_key: templateKey,
+            sender_used: senderUsed,
+            content,
+            status: "failed",
+            error_message: msg,
+          });
           throw err;
         }
       }
+
+      await logSms({
+        restaurant_id: RIALTO_RESTAURANT_ID,
+        customer_id: customer.id,
+        phone: customer.phone,
+        template_key: templateKey,
+        sender_used: senderUsed,
+        content,
+        status: "sent",
+        context_meta: { promo_code: promoCode || null, vip: isVipDessert },
+      });
 
       sent++;
       console.log("[birthday-sms] ✅ sent", {

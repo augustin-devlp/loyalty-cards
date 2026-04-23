@@ -6,6 +6,7 @@ import {
   TEMPLATE_META,
   type TemplateKey,
 } from "./smsTemplates";
+import { logSms } from "./smsLogging";
 
 type OrderForSms = {
   id: string;
@@ -220,6 +221,18 @@ async function sendTemplated(
           httpStatus: res.status,
           sender: currentSender,
         });
+        // Phase 11 C3 : log SMS réussi
+        await logSms({
+          restaurant_id: order.restaurant_id ?? null,
+          phone,
+          template_key: key,
+          sender_used: currentSender,
+          content,
+          status: "sent",
+          brevo_message_id: reference,
+          order_id: order.id,
+          context_meta: { order_number: order.order_number, attempt },
+        });
         return { success: true, reference };
       }
 
@@ -249,6 +262,17 @@ async function sendTemplated(
       }
 
       if (res.status >= 400 && res.status < 500) {
+        await logSms({
+          restaurant_id: order.restaurant_id ?? null,
+          phone,
+          template_key: key,
+          sender_used: currentSender,
+          content,
+          status: "failed",
+          error_message: `${res.status} ${lastError}`,
+          order_id: order.id,
+          context_meta: { order_number: order.order_number, attempt },
+        });
         return { success: false, error: lastError, status: res.status };
       }
       if (attempt < 3) {
@@ -268,5 +292,17 @@ async function sendTemplated(
     }
   }
 
+  // 3 attempts épuisés → log l'échec
+  await logSms({
+    restaurant_id: order.restaurant_id ?? null,
+    phone,
+    template_key: key,
+    sender_used: currentSender,
+    content,
+    status: "failed",
+    error_message: `${lastStatus ?? "?"} ${lastError} (3 retries)`,
+    order_id: order.id,
+    context_meta: { order_number: order.order_number },
+  });
   return { success: false, error: lastError, status: lastStatus };
 }
