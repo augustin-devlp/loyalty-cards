@@ -86,10 +86,13 @@ export async function generateGeminiText(params: {
           status: res.status,
           detail: `model=${model} ${raw.slice(0, 400)}`,
         };
-        // Si 404 (modèle n'existe pas) ou 400 (model not found), on tente
-        // le modèle suivant. Autre erreur (429, 500+) : on abandonne la
-        // cascade car l'API est up mais nous rejette.
-        if (res.status === 404 || res.status === 400) continue;
+        // Cascade sur :
+        //   - 400/404 : modèle n'existe pas (nom changé)
+        //   - 429 : quota épuisé sur ce modèle (chaque modèle a son
+        //           propre quota, gemini-1.5-flash a une limite distincte
+        //           de gemini-2.5-flash)
+        //   - 503 : high demand temporaire
+        if ([400, 404, 429, 503].includes(res.status)) continue;
         return lastError;
       }
 
@@ -143,104 +146,124 @@ export async function generateGeminiText(params: {
   return lastError ?? { ok: false, reason: "no_model_responded" };
 }
 
+/** Cascade des modèles image — Nano Banana Pro puis anciens noms. */
+const IMAGE_MODEL_FALLBACKS = [
+  "gemini-2.5-flash-image",
+  "gemini-2.5-flash-image-preview",
+  "gemini-2.0-flash-exp-image-generation",
+];
+let memoizedImageModel: string | null = null;
+
 /**
- * Génère une image via gemini-2.5-flash-image (Nano Banana Pro).
- * Retourne le base64 + mime_type si succès.
+ * Génère une image via Gemini Nano Banana Pro (cascade fallback).
  */
 export async function generateGeminiImage(params: {
   prompt: string;
   apiKey?: string;
+  model?: string;
 }): Promise<GeminiImageResult> {
   const apiKey = params.apiKey ?? process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return { ok: false, reason: "missing_api_key" };
   }
 
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent";
+  const modelsToTry = params.model
+    ? [params.model]
+    : memoizedImageModel
+      ? [memoizedImageModel, ...IMAGE_MODEL_FALLBACKS.filter((m) => m !== memoizedImageModel)]
+      : IMAGE_MODEL_FALLBACKS;
+  let lastError: GeminiImageResult | null = null;
 
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: params.prompt }] }],
-      }),
-    });
+  for (const model of modelsToTry) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-    const raw = await res.text();
-    if (!res.ok) {
-      return {
-        ok: false,
-        reason: "http_error",
-        status: res.status,
-        detail: raw.slice(0, 500),
-      };
-    }
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: params.prompt }] }],
+        }),
+      });
 
-    type GeminiImageResp = {
-      candidates?: Array<{
-        content?: {
-          parts?: Array<{
-            inlineData?: { mimeType?: string; data?: string };
-            inline_data?: { mime_type?: string; data?: string };
-            text?: string;
-          }>;
+      const raw = await res.text();
+      if (!res.ok) {
+        lastError = {
+          ok: false,
+          reason: "http_error",
+          status: res.status,
+          detail: `model=${model} ${raw.slice(0, 400)}`,
         };
-        finishReason?: string;
-      }>;
-      promptFeedback?: { blockReason?: string };
-    };
-    const body = JSON.parse(raw) as GeminiImageResp;
+        if ([400, 404, 429, 503].includes(res.status)) continue;
+        return lastError;
+      }
 
-    if (body.promptFeedback?.blockReason) {
+      type GeminiImageResp = {
+        candidates?: Array<{
+          content?: {
+            parts?: Array<{
+              inlineData?: { mimeType?: string; data?: string };
+              inline_data?: { mime_type?: string; data?: string };
+              text?: string;
+            }>;
+          };
+          finishReason?: string;
+        }>;
+        promptFeedback?: { blockReason?: string };
+      };
+      const body = JSON.parse(raw) as GeminiImageResp;
+
+      if (body.promptFeedback?.blockReason) {
+        return {
+          ok: false,
+          reason: "safety_block",
+          detail: body.promptFeedback.blockReason,
+        };
+      }
+
+      const candidate = body.candidates?.[0];
+      const parts = candidate?.content?.parts ?? [];
+
+      const imagePart = parts.find(
+        (p) =>
+          (p.inlineData?.data && p.inlineData?.mimeType) ||
+          (p.inline_data?.data && p.inline_data?.mime_type),
+      );
+
+      const data = imagePart?.inlineData?.data ?? imagePart?.inline_data?.data;
+      const mimeType =
+        imagePart?.inlineData?.mimeType ??
+        imagePart?.inline_data?.mime_type ??
+        "image/png";
+
+      if (!data) {
+        return {
+          ok: false,
+          reason: "no_image_in_response",
+          detail: `model=${model} finishReason=${candidate?.finishReason}`,
+        };
+      }
+
+      memoizedImageModel = model;
       return {
+        ok: true,
+        mime_type: mimeType,
+        data_base64: data,
+        finish_reason: candidate?.finishReason,
+      };
+    } catch (err) {
+      lastError = {
         ok: false,
-        reason: "safety_block",
-        detail: body.promptFeedback.blockReason,
+        reason: "exception",
+        detail: `model=${model} ${err instanceof Error ? err.message : String(err)}`,
       };
     }
-
-    const candidate = body.candidates?.[0];
-    const parts = candidate?.content?.parts ?? [];
-
-    // Le SDK retourne tantôt inlineData (camelCase), tantôt inline_data
-    const imagePart = parts.find(
-      (p) =>
-        (p.inlineData?.data && p.inlineData?.mimeType) ||
-        (p.inline_data?.data && p.inline_data?.mime_type),
-    );
-
-    const data = imagePart?.inlineData?.data ?? imagePart?.inline_data?.data;
-    const mimeType =
-      imagePart?.inlineData?.mimeType ??
-      imagePart?.inline_data?.mime_type ??
-      "image/png";
-
-    if (!data) {
-      return {
-        ok: false,
-        reason: "no_image_in_response",
-        detail: candidate?.finishReason,
-      };
-    }
-
-    return {
-      ok: true,
-      mime_type: mimeType,
-      data_base64: data,
-      finish_reason: candidate?.finishReason,
-    };
-  } catch (err) {
-    return {
-      ok: false,
-      reason: "exception",
-      detail: err instanceof Error ? err.message : String(err),
-    };
   }
+
+  return lastError ?? { ok: false, reason: "no_model_responded" };
 }
 
 /**
