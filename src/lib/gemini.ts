@@ -144,10 +144,13 @@ export async function generateGeminiText(params: {
 }
 
 /**
- * Cascade des modèles image. Les noms ont changé plusieurs fois chez
- * Google, on tente dans l'ordre de popularité observée. Si aucun ne
- * marche → la clé n'a probablement pas accès aux modèles image (tier
- * free limité, billing à activer).
+ * Cascade des modèles image. IMPORTANT : les modèles image Gemini
+ * nécessitent BILLING ACTIVÉ sur Google Cloud (pas disponibles en
+ * free tier 100%). Si les 5 tentatives retournent 404 → Augustin doit
+ * activer le billing sur console.cloud.google.com → API Gemini.
+ *
+ * Alternative : utiliser Imagen API via Vertex AI (autre endpoint,
+ * non implémenté ici).
  */
 const IMAGE_MODEL_FALLBACKS = [
   "gemini-2.5-flash-image-preview",
