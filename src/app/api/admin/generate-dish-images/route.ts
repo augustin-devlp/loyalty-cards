@@ -276,6 +276,7 @@ export async function POST(req: NextRequest) {
     ok: boolean;
     url?: string;
     reason?: string;
+    detail?: string;
     ms?: number;
   }> = [];
   let ok = 0;
@@ -324,6 +325,7 @@ export async function POST(req: NextRequest) {
         name: item.name,
         ok: false,
         reason: `${result.reason}${result.status ? ` (HTTP ${result.status})` : ""}`,
+        detail: result.detail?.slice(0, 250),
       });
       failed += 1;
       await sleep(7_000);
