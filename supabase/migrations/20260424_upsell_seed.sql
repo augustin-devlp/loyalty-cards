@@ -1,0 +1,7 @@
+-- Phase 12 Upsell Monstre — Étage 1 seeding
+-- Seeding 121 plats Rialto avec 20 dimensions + pairings + avoids.
+-- Les UPDATE sont idempotents (on peut relancer sans casser).
+-- Tout le contenu de ce fichier est déjà appliqué directement en DB
+-- via le MCP Supabase lors de la session Phase 12 upsell.
+-- Conservé ici pour traçabilité.
+-- Voir Phase 12 prompt pour le détail des UUIDs taggés.
