@@ -10,15 +10,15 @@
     },
     {
       "path": "/api/cron/reactivate-stocks",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/reward-referrals",
-      "schedule": "*/30 * * * *"
+      "schedule": "15 9 * * *"
     },
     {
       "path": "/api/cron/recompute-vip",
-      "schedule": "0 * * * *"
+      "schedule": "30 9 * * *"
     }
   ]
 }
