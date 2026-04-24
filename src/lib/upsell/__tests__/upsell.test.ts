@@ -55,7 +55,7 @@ describe('UPSELL — 30 scénarios TDD', () => {
         }
       }
 
-      // Tags (union upsell_tags + semantic_tags + dish_role) de toutes les suggestions
+      // Tags (union upsell_tags + semantic_tags + dish_role + flags) de toutes les suggestions
       const suggestionTags = new Set<string>();
       for (const s of result.suggestions) {
         const it = Object.values(FIXTURE_ITEMS).find((i) => i.id === s.menu_item_id);
@@ -63,16 +63,19 @@ describe('UPSELL — 30 scénarios TDD', () => {
         if (it?.semantic_tags) it.semantic_tags.forEach((t: string) => suggestionTags.add(t));
         if (it?.dish_role) suggestionTags.add(it.dish_role);
         if (it?.contains_pork) suggestionTags.add('contains_pork');
+        if (it?.is_shareable) suggestionTags.add('shareable');
+        // Ajoute aussi les mots-clés dérivés comme 'alcoholic' pour simplifier les tests
+        if (it?.contains_alcohol) suggestionTags.add('alcoholic');
       }
 
       if (e.mustMatchTags && e.mustMatchTags.length > 0 && result.suggestions.length > 0) {
         const hasMatch = e.mustMatchTags.some((t) => suggestionTags.has(t));
-        expect(hasMatch, `must match one of [${e.mustMatchTags.join(', ')}] — got: [${[...suggestionTags].join(', ')}]`).toBe(true);
+        expect(hasMatch, `must match one of [${e.mustMatchTags.join(', ')}] — got: [${Array.from(suggestionTags).join(', ')}]`).toBe(true);
       }
 
       if (e.mustNotMatchTags) {
         for (const t of e.mustNotMatchTags) {
-          expect(suggestionTags.has(t), `must NOT match ${t} — got: [${[...suggestionTags].join(', ')}]`).toBe(false);
+          expect(suggestionTags.has(t), `must NOT match ${t} — got: [${Array.from(suggestionTags).join(', ')}]`).toBe(false);
         }
       }
     });
