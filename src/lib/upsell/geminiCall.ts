@@ -22,11 +22,23 @@ export async function callGeminiForMessages(
 
   const prompt = buildGeminiPrompt({ analysis, context, topCandidates, maxSuggestions });
   const start = Date.now();
-  const res = await generateGeminiText({
-    prompt,
-    temperature: 0.6,
-    maxOutputTokens: 300,
-  });
+
+  // Phase 12 V3 — timeout 3500ms via Promise.race pour éviter les 30s+
+  // observés en prod. Si Gemini ne répond pas → fallback déterministe.
+  const TIMEOUT_MS = 3500;
+  let res: Awaited<ReturnType<typeof generateGeminiText>>;
+  try {
+    res = await Promise.race([
+      generateGeminiText({ prompt, temperature: 0.6, maxOutputTokens: 300 }),
+      new Promise<Awaited<ReturnType<typeof generateGeminiText>>>((_, rej) =>
+        setTimeout(() => rej(new Error('gemini_timeout')), TIMEOUT_MS),
+      ),
+    ]);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn('[upsell/gemini] timeout/error → fallback', { latency: Date.now() - start, error: msg });
+    return fallbackMessages(topCandidates, maxSuggestions, analysis);
+  }
   const latency = Date.now() - start;
 
   if (!res.ok) {
