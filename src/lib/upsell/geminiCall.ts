@@ -23,9 +23,9 @@ export async function callGeminiForMessages(
   const prompt = buildGeminiPrompt({ analysis, context, topCandidates, maxSuggestions });
   const start = Date.now();
 
-  // Phase 12 V3 — timeout 3500ms via Promise.race pour éviter les 30s+
-  // observés en prod. Si Gemini ne répond pas → fallback déterministe.
-  const TIMEOUT_MS = 3500;
+  // Phase 12 V3 — timeout 2000ms via Promise.race pour viser une médiane <3s.
+  // (3500ms initialement : médiane prod = 4.4s. Réduction à 2000ms.)
+  const TIMEOUT_MS = 2000;
   let res: Awaited<ReturnType<typeof generateGeminiText>>;
   try {
     res = await Promise.race([
