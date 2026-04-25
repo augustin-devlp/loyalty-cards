@@ -63,7 +63,7 @@ export async function POST(
   const { data: order, error: orderErr } = await admin
     .from("orders")
     .select(
-      "id, restaurant_id, order_number, customer_name, customer_phone, payer_phone, fulfillment_type, delivery_address, delivery_postal_code, delivery_city, delivery_floor_door, delivery_instructions, delivery_fee, total_amount, notes, requested_pickup_time, created_at",
+      "id, restaurant_id, order_number, customer_name, customer_phone, customer_email, payer_phone, fulfillment_type, delivery_address, delivery_postal_code, delivery_city, delivery_floor_door, delivery_instructions, delivery_fee, total_amount, notes, requested_pickup_time, created_at, housing_type, entry_code_1, entry_code_2, floor, apartment_number, doorbell_name, payment_method, payment_card_timing, payment_cash_bills",
     )
     .eq("id", params.id)
     .single();

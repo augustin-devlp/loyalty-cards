@@ -24,6 +24,7 @@ type OrderData = {
   fulfillment_type: "pickup" | "delivery";
   customer_name: string;
   customer_phone: string;
+  customer_email?: string | null;
   payer_phone: string | null;
   delivery_address: string | null;
   delivery_postal_code: string | null;
@@ -34,6 +35,16 @@ type OrderData = {
   total_amount: number | string;
   notes: string | null;
   requested_pickup_time: string | null;
+  // Phase 1 checkout refonte
+  housing_type?: "house" | "apartment" | null;
+  entry_code_1?: string | null;
+  entry_code_2?: string | null;
+  floor?: string | null;
+  apartment_number?: string | null;
+  doorbell_name?: string | null;
+  payment_method?: "card" | "cash" | "twint" | null;
+  payment_card_timing?: "on_delivery" | "remote" | null;
+  payment_cash_bills?: number | string | null;
 };
 
 type RestaurantData = {
@@ -255,13 +266,44 @@ export function OrderReceipt({
 
         {isDelivery && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Adresse de livraison</Text>
+            <Text style={styles.sectionTitle}>
+              Adresse de livraison
+              {order.housing_type === "house" && " — Maison"}
+              {order.housing_type === "apartment" && " — Appartement"}
+            </Text>
             <View style={styles.infoBlock}>
               <Text>{order.delivery_address}</Text>
               <Text>
                 {order.delivery_postal_code} {order.delivery_city}
               </Text>
-              {order.delivery_floor_door && (
+              {order.housing_type === "apartment" && (
+                <>
+                  {(order.entry_code_1 || order.entry_code_2) && (
+                    <Text style={{ marginTop: 3, fontWeight: 700 }}>
+                      Code(s) entrée :{" "}
+                      {[order.entry_code_1, order.entry_code_2]
+                        .filter(Boolean)
+                        .join(" puis ")}
+                    </Text>
+                  )}
+                  {order.floor && (
+                    <Text style={{ marginTop: 1 }}>
+                      Étage : {order.floor}
+                    </Text>
+                  )}
+                  {order.apartment_number && (
+                    <Text style={{ marginTop: 1 }}>
+                      N° appartement / Porte : {order.apartment_number}
+                    </Text>
+                  )}
+                  {order.doorbell_name && (
+                    <Text style={{ marginTop: 1 }}>
+                      Sonnette : {order.doorbell_name}
+                    </Text>
+                  )}
+                </>
+              )}
+              {order.delivery_floor_door && !order.apartment_number && (
                 <Text style={{ marginTop: 2 }}>
                   Étage / porte : {order.delivery_floor_door}
                 </Text>
@@ -350,9 +392,45 @@ export function OrderReceipt({
         */}
         <View wrap={false} style={styles.bottomBlock}>
           <View style={styles.payment}>
-            <Text>
-              Paiement sur place : espèces, TWINT ou carte bancaire
-            </Text>
+            {order.payment_method === "card" &&
+              order.payment_card_timing === "on_delivery" && (
+                <Text>
+                  Paiement par CARTE — au livreur (terminal sur place)
+                </Text>
+              )}
+            {order.payment_method === "card" &&
+              order.payment_card_timing === "remote" && (
+                <Text>
+                  Paiement par CARTE — À DISTANCE. Mehmet doit envoyer un
+                  lien de paiement au {order.customer_phone} dans les 5 min.
+                </Text>
+              )}
+            {order.payment_method === "cash" && (
+              <Text>
+                Paiement ESPÈCES — Le client donnera{" "}
+                {order.payment_cash_bills
+                  ? `${Number(order.payment_cash_bills).toFixed(2)} CHF`
+                  : "un montant approximatif"}
+                . Préparer la monnaie (rendu :{" "}
+                {order.payment_cash_bills
+                  ? `${(
+                      Number(order.payment_cash_bills) -
+                      Number(order.total_amount)
+                    ).toFixed(2)} CHF`
+                  : "à calculer"}
+                ).
+              </Text>
+            )}
+            {order.payment_method === "twint" && (
+              <Text>
+                Paiement TWINT — au livreur (QR code à montrer à l&apos;arrivée)
+              </Text>
+            )}
+            {!order.payment_method && (
+              <Text>
+                Paiement sur place : espèces, TWINT ou carte bancaire
+              </Text>
+            )}
           </View>
 
           {order.notes && (
