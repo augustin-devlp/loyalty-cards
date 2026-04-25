@@ -423,5 +423,98 @@ export const SCENARIOS: Scenario[] = [
     cart: [item('bethusy')],
     context: {},
     expectations: { maxSuggestions: 2 }
+  },
+
+  // ===== GROUPE P V3 : REGRESSION BUGS =====
+  {
+    name: 'BUG #1 V3 — Grillade mixte seule -> JAMAIS Chianti (regression cohérence anatolienne)',
+    cart: [item('grillade_mixte')],
+    context: {},
+    expectations: { mustExclude: ['a970e962-5f81-4b53-84b3-37adc5de08e8'] }
+  },
+  {
+    name: 'BUG #1 V3 — Kavurma seule -> JAMAIS Chianti',
+    cart: [item('kavurma')],
+    context: {},
+    expectations: { mustExclude: ['a970e962-5f81-4b53-84b3-37adc5de08e8'] }
+  },
+  {
+    name: 'BUG #2 V3 — Panier complet (entrée+main+drink+dessert) -> 0 suggestion strictement',
+    cart: [
+      item('salade_meslee'), // starter
+      item('bethusy'),       // main
+      item('chianti'),       // drink
+      item('tiramisu'),      // dessert
+    ],
+    context: {},
+    expectations: { maxSuggestions: 0 }
+  },
+  {
+    name: 'BUG #2 V3 — Panier 6 items mixte -> max 1 suggestion',
+    cart: [
+      item('bethusy'),
+      item('chianti'),
+      item('coca'),
+      item('carbonara'),
+      item('fusetea_peche'),
+      item('baklava'),
+    ],
+    context: {},
+    expectations: { maxSuggestions: 1 }
+  },
+  {
+    name: 'BUG #3 V3 — 2 boissons soft -> JAMAIS 3e boisson (soft ou alcool)',
+    cart: [
+      item('coca'),
+      item('fusetea_peche'),
+      item('bethusy'),
+    ],
+    context: {},
+    // Pas de tag drink_soft / drink_alcohol dans suggestions (les desserts
+    // peuvent avoir contains_alcohol=true comme le tiramisu, c'est OK)
+    expectations: { mustNotMatchTags: ['drink_soft', 'drink_alcohol'] }
+  },
+  {
+    name: 'BUG #3 V3 — 1 soft + 1 vin -> JAMAIS autre boisson',
+    cart: [
+      item('coca'),
+      item('chianti'),
+      item('bethusy'),
+    ],
+    context: {},
+    expectations: { mustNotMatchTags: ['drink_soft', 'drink_alcohol'] }
+  },
+  {
+    name: 'BUG #4 V3 — 2 mains -> JAMAIS 3e main',
+    cart: [
+      item('bethusy'),
+      item('carbonara'),
+    ],
+    context: {},
+    expectations: { mustNotMatchTags: ['main'] }
+  },
+  {
+    name: 'BUG #4 V3 — 2 combos -> JAMAIS 3e main ou combo',
+    cart: [
+      item('combo_bolo'),
+      item('combo_bolo'),
+    ],
+    context: {},
+    expectations: { mustNotMatchTags: ['main', 'combo'] }
+  },
+  {
+    name: 'V3 — 8 items -> 0 suggestion (panier ULTRA gros)',
+    cart: [
+      item('bethusy'),
+      item('carbonara'),
+      item('arrabbiata'),
+      item('coca'),
+      item('chianti'),
+      item('salade_meslee'),
+      item('tiramisu'),
+      item('frites'),
+    ],
+    context: {},
+    expectations: { maxSuggestions: 0 }
   }
 ];

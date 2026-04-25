@@ -50,14 +50,21 @@ export function passesHardFilters(
   }
 
   // 10. Redondance role :
-  //     - Si déjà 1+ dessert → pas d'autre dessert
-  //     - Si déjà 1+ starter → pas d'autre starter (sauf shareable pour familles)
-  //     - Si déjà 1+ softdrink OU combo → pas de softdrink
-  //     - Si déjà 1+ drink_alcohol → pas d'autre alcool
+  //     V3 — durci pour fix BUG #3 (2 boissons) et BUG #4 (2 mains).
   if (analysis.hasDessert && item.dish_role === 'dessert') return false;
   if (analysis.hasStarter && item.dish_role === 'starter' && !analysis.isFamily && !analysis.isGroup) return false;
-  if ((analysis.hasSoftDrink || analysis.roleCount.combo > 0) && item.dish_role === 'drink_soft') return false;
-  if (analysis.hasAlcohol && item.dish_role === 'drink_alcohol') return false;
+
+  // BUG #3 V3 : si AU MOINS UNE boisson au panier (soft, alcool, ou combo
+  // qui inclut une boisson) → JAMAIS proposer une autre boisson (soft ou alcool).
+  if (analysis.hasAnyDrink && (item.dish_role === 'drink_soft' || item.dish_role === 'drink_alcohol')) {
+    return false;
+  }
+
+  // BUG #4 V3 : déjà 2+ mains (main+combo confondus) → JAMAIS un 3e main/combo.
+  const totalMainsAndCombos = analysis.roleCount.main + analysis.roleCount.combo;
+  if (totalMainsAndCombos >= 2 && (item.dish_role === 'main' || item.dish_role === 'combo')) {
+    return false;
+  }
 
   // 11. Side redondant : pas de frites si panier contient déjà des fries (via fries_included flag)
   //     Ce cas est déjà géré par avoid_with_ids mais double-barrière.

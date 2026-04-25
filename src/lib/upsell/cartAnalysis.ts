@@ -17,6 +17,7 @@ export function analyzeCart(items: MenuItemFull[]): CartAnalysis {
     anyPork: false, anyAlcohol: false,
     estimatedPax: 1, isSolo: false, isDuo: false, isFamily: false, isGroup: false,
     hasSpicyItem: false, hasSignatureItem: false, hasSeafood: false,
+    isFullMeal: false, hasAnyDrink: false, hasFriesIncluded: false,
     itemIds: new Set(), itemNames: [],
     allUpsellTags: new Set(), expectedPairings: new Set(), forbiddenPairings: new Set()
   };
@@ -71,6 +72,13 @@ export function analyzeCart(items: MenuItemFull[]): CartAnalysis {
   a.hasAlcohol = a.roleCount.drink_alcohol > 0;
   a.hasDrink = a.hasSoftDrink || a.hasAlcohol;
   if (a.roleCount.combo > 0) a.hasDrink = true;
+
+  // Phase 12 V3 — détecteurs robustes pour les filtres durs
+  a.hasAnyDrink = a.hasSoftDrink || a.hasAlcohol || a.roleCount.combo > 0;
+  a.hasFriesIncluded =
+    a.allUpsellTags.has('fries_included') || a.roleCount.side > 0;
+  // isFullMeal = repas complet (starter + main + drink + dessert)
+  a.isFullMeal = a.hasStarter && a.hasMain && a.hasAnyDrink && a.hasDessert;
 
   a.avgRichnessLevel = totalQty > 0 ? richSum / totalQty : 0;
   a.isHeavyMeal = a.avgRichnessLevel >= 4 || a.totalCaloricDensity >= 10;

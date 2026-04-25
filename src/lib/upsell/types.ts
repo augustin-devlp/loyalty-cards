@@ -65,6 +65,12 @@ export interface CartAnalysis {
   hasSpicyItem: boolean;
   hasSignatureItem: boolean;
   hasSeafood: boolean;
+  /** Phase 12 V3 — repas complet : starter + main + drink + dessert tous présents. */
+  isFullMeal: boolean;
+  /** Phase 12 V3 — au moins une boisson au panier (soft + alcool + combo qui inclut). */
+  hasAnyDrink: boolean;
+  /** Phase 12 V3 — fries déjà incluses (hamburgers + side). */
+  hasFriesIncluded: boolean;
   itemIds: Set<string>;
   itemNames: string[];
   allUpsellTags: Set<string>;

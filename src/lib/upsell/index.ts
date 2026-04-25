@@ -30,6 +30,23 @@ export async function generateUpsell(
     return { suggestions: [] };
   }
 
+  // Phase 12 V3 — F1 : repas complet → 0 suggestion (BUG #2)
+  if (analysis.isFullMeal) {
+    return {
+      suggestions: [],
+      debug: {
+        analysis: { isFullMeal: true, hasMain: analysis.hasMain, hasDessert: analysis.hasDessert, hasDrink: analysis.hasDrink, hasStarter: analysis.hasStarter },
+        context: { timeOfDay: context.timeOfDay },
+        shortlist: [],
+      },
+    };
+  }
+
+  // Phase 12 V3 — F2 : panier ULTRA gros (>=8 items) → 0
+  if (analysis.totalItems >= 8) {
+    return { suggestions: [], debug: { analysis: { totalItems: analysis.totalItems }, context: {}, shortlist: [] } };
+  }
+
   const menu = await fetchFullMenu();
 
   // Filtres durs + scoring
@@ -68,8 +85,14 @@ export async function generateUpsell(
     }
   }
 
-  // Budget (0/1/2)
-  const budget = decideSuggestionBudget(analysis, diverseTop);
+  // Budget (0/1/2) - puis plafond dynamique V3 BUG #4
+  let budget = decideSuggestionBudget(analysis, diverseTop);
+  // Cap à 1 si panier déjà chargé (>=6 items, ou 2+ mains, ou 2+ boissons)
+  const totalMains = analysis.roleCount.main + analysis.roleCount.combo;
+  const totalDrinks = analysis.roleCount.drink_soft + analysis.roleCount.drink_alcohol;
+  if (analysis.totalItems >= 6 || totalMains >= 2 || totalDrinks >= 2) {
+    budget = Math.min(budget, 1);
+  }
   if (budget === 0) {
     return {
       suggestions: [],

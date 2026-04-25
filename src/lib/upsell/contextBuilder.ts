@@ -22,8 +22,18 @@ export async function buildContext(params: {
   supabase?: any;
 }): Promise<UpsellContext> {
   const now = params.now || new Date();
-  const hour = now.getHours();
-  const dayOfWeek = now.getDay();
+  // Phase 12 V3 — fuseau Europe/Zurich (Vercel tourne en UTC, le restaurant
+  // est à Lausanne). Sans ça, samedi 10h CET serait classé 'late_night'.
+  const fmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Zurich',
+    weekday: 'short',
+    hour: '2-digit',
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(now);
+  const wkMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const dayOfWeek = wkMap[parts.find((p) => p.type === 'weekday')?.value ?? 'Mon'] ?? now.getUTCDay();
+  const hour = Number(parts.find((p) => p.type === 'hour')?.value ?? now.getUTCHours());
   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6 || (dayOfWeek === 5 && hour >= 18);
 
   const ctx: UpsellContext = {
