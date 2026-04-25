@@ -1,0 +1,2 @@
+-- Phase 12 V3 — Étage 1 : pairs_well_with_ids + semantic_tags complet
+-- Appliqué via Supabase MCP. Ce fichier sert de traçabilité.
